@@ -1,0 +1,21 @@
+commit 89860aa3f6dc3e0ad4eb263c382d37a92746b68d
+Author: Silvio Rhatto <rhatto@riseup.net>
+Date:   Fri Nov 7 14:36:25 2014 -0200
+
+    Rsync: check test mode also in prepare_storage (#8196)
+
+diff --git a/handlers/rsync.in b/handlers/rsync.in
+index 000f3ea..ee2b733 100644
+--- a/handlers/rsync.in
++++ b/handlers/rsync.in
+@@ -747,6 +747,10 @@ function move_files {
+ 
+ function prepare_storage {
+ 
++  if [ "$test" ]; then
++    return
++  fi
++
+   section="`basename $SECTION`"
+ 
+   if [ "$format" == "short" ]; then

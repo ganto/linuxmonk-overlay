@@ -1,0 +1,32 @@
+commit 21bcb7e6bd0a4b226e9932691736802189d33238
+Author: Mark Janssen -- Sig-I/O Automatisering <mark@sig-io.nl>
+Date:   Wed Jun 11 14:44:29 2014 +0200
+
+    Ignore files ending in ~
+
+diff --git a/src/backupninja.in b/src/backupninja.in
+index 0901742..c3733cf 100755
+--- a/src/backupninja.in
++++ b/src/backupninja.in
+@@ -544,7 +544,7 @@ errormsg=""
+ if [ "$singlerun" ]; then
+    files=$singlerun
+ else
+-   files=`find $configdirectory -follow -mindepth 1 -maxdepth 1 -type f ! -name '.*.swp' | sort -n`
++   files=`find $configdirectory -follow -mindepth 1 -maxdepth 1 -type f ! -name '.*.swp' ! -name '*~' | sort -n`
+ 
+    if [ -z "$files" ]; then
+       info "No backup actions configured in '$configdirectory', run ninjahelper!"
+diff --git a/src/ninjahelper.in b/src/ninjahelper.in
+index 2a7faa9..4b4dceb 100755
+--- a/src/ninjahelper.in
++++ b/src/ninjahelper.in
+@@ -240,7 +240,7 @@ while true; do
+ menulist=
+ action=
+ let "i = 1"
+-for file in `find ${configdirectory} -follow -mindepth 1 -maxdepth 1 -type f ! -name '.*.swp' | sort -n`; do
++for file in `find ${configdirectory} -follow -mindepth 1 -maxdepth 1 -type f ! -name '.*.swp' ! -name '*~' | sort -n`; do
+    menulist="$menulist $i $file"
+    actions[$i]=$file
+    let "i += 1"

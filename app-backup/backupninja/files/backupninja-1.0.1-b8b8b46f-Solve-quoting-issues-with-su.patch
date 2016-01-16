@@ -1,0 +1,37 @@
+commit b8b8b46fbaf9acbdc769d311a064ab89bb670ef7
+Author: Silvio Rhatto <rhatto@riseup.net>
+Date:   Sat Apr 20 12:07:27 2013 -0300
+
+    Solve quoting issue with "su" (debian #683731) (upstream #4019)
+    
+    A fix for debian #677410 on commit 29dcdbae introduces a new issue on wheezy
+    machines where some rsync_options gets out of the rsync command quotes when
+    invoked by su.
+    
+    As reported, running backupninja through `bash -x` shows that the `--delete`
+    option from the rsync command is not included in the single quote for the `su
+    -c` command:
+    
+        nice -n 0 su -c '/usr/bin/rsync -av' --delete '--recursive
+        --delete-excluded    //home/ /tmp/test//home//'
+    
+    This patch attempt to solve that issue by using the intermediary variable
+    $command.
+
+diff --git a/handlers/rsync.in b/handlers/rsync.in
+index 1954fc1..b2c4b59 100644
+--- a/handlers/rsync.in
++++ b/handlers/rsync.in
+@@ -1136,9 +1136,10 @@ for SECTION in $include; do
+   set_dest
+ 
+   info "Syncing $SECTION on $dest_path..."
+-  debug $nice $rsync ${rsync_options[@]} $filelist_flag $excludes $batch_option $orig $dest_path
++  command="$rsync ${rsync_options[@]} --delete-excluded $filelist_flag $excludes $batch_option $orig $dest_path"
++  debug $nice su -c "$command"
+   set_pipefail
+-  $nice su -c "$rsync ${rsync_options[@]} --delete-excluded $filelist_flag $excludes $batch_option $orig $dest_path" | tee -a $log
++  $nice su -c "$command" | tee -a $log
+ 
+   check_rsync_exit_status $?
+   restore_pipefail

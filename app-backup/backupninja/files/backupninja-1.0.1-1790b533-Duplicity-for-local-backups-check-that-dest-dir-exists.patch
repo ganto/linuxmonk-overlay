@@ -1,0 +1,51 @@
+commit 1790b5332bf116cbf2c4637a310eed157d44e6e3
+Author: intrigeri <intrigeri@boum.org>
+Date:   Thu Sep 20 00:10:10 2012 +0200
+
+    duplicity: for local backups, check that the destination directory exists.
+    
+    Thanks to ulrich for the preliminary patch.
+    
+    Closes Redmine#4049.
+
+diff --git a/AUTHORS b/AUTHORS
+index 7721b0b..a04c515 100644
+--- a/AUTHORS
++++ b/AUTHORS
+@@ -45,3 +45,4 @@ Yuval Kogman <nothingmuch@woobling.org> -- RackSpace's CloudFiles support for du
+ exobuzz - mysql bugfixes
+ Glennie Vignarajah <glennie@glennie.fr> -- mysql bugfix
+ ddpaul <paul@reic.ru> -- rsync bugfix
++ulrich -- duplicity bugfix preliminary patch
+diff --git a/ChangeLog b/ChangeLog
+index 141b8be..9e73d19 100644
+--- a/ChangeLog
++++ b/ChangeLog
+@@ -1,3 +1,9 @@
++version 1.1  -- UNRELEASED
++    handler changes
++	dup:
++	 . For local backups, check that the destination directory exists.
++	   Thanks to ulrich for the preliminary patch. (Redmine#4049)
++
+ version 1.0.1 -- June 29, 2012
+     handler changes
+ 	rsync:
+diff --git a/handlers/dup.in b/handlers/dup.in
+index 9eb2fbb..36db959 100644
+--- a/handlers/dup.in
++++ b/handlers/dup.in
+@@ -55,6 +55,13 @@ fi
+ if [ "`echo $desturl | @AWK@ -F ':' '{print $1}'`" == "ftp" ]; then
+    [ -n "$ftp_password" ]  || fatal "ftp_password must be set for FTP backups."
+ fi
++if [ "`echo $desturl | @AWK@ -F ':' '{print $1}'`" == "file" ]; then
++   if [ ! -e "`echo $desturl | @AWK@ -F '://' '{print $2}'`" ]; then
++      fatal "The destination directory ($desturl) does not exist."
++   elif [ ! -d "`echo $desturl | @AWK@ -F '://' '{print $2}'`" ]; then
++      fatal "The destination ($desturl) is not a directory."
++   fi
++fi
+ 
+ ### VServers
+ # If vservers are configured, check that the ones listed in $vsnames do exist.

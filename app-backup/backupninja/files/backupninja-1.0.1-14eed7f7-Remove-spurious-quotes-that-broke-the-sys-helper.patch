@@ -1,0 +1,35 @@
+commit 14eed7f751c1196439f517768be76df6bf06884b
+Author: intrigeri <intrigeri@boum.org>
+Date:   Sat May 3 13:38:45 2014 +0000
+
+    Remove spurious quotes that broke the sys helper (Closes: Redmine#6803).
+    
+    Thanks to Jools Wills <jools@oxfordinspire.co.uk> for the patch.
+
+diff --git a/handlers/sys.helper.in b/handlers/sys.helper.in
+index f728f51..c584dfb 100644
+--- a/handlers/sys.helper.in
++++ b/handlers/sys.helper.in
+@@ -24,14 +24,14 @@ sys_wizard() {
+    bios="bios = no"
+    for opt in $result; do
+       case $opt in
+-         '"packages"') packages="packages = yes";;
+-         '"partitions"') partitions="partitions = yes";;
+-         '"sfdisk"') sfdisk="dosfdisk = yes";;
+-         '"hardware"') hardware="hardware = yes";;
+-         '"luksheaders"') luksheaders="luksheaders = yes";;
+-         '"lvm"') lvm="lvm = yes";;
+-         '"mbr"') mbr="mbr = yes";;
+-         '"bios"') bios="bios = yes";;
++         'packages') packages="packages = yes";;
++         'partitions') partitions="partitions = yes";;
++         'sfdisk') sfdisk="dosfdisk = yes";;
++         'hardware') hardware="hardware = yes";;
++         'luksheaders') luksheaders="luksheaders = yes";;
++         'lvm') lvm="lvm = yes";;
++         'mbr') mbr="mbr = yes";;
++         'bios') bios="bios = yes";;
+       esac
+    done
+    get_next_filename $configdirectory/10.sys

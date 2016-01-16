@@ -1,0 +1,167 @@
+commit c5738b11d91beeade620e282001074f6177c94c6
+Author: Dominik George <nik@naturalnet.de>
+Date:   Wed Nov 13 15:18:15 2013 +0100
+
+    Added SIGN_PASSPHRASE support for dup handler.
+
+diff --git a/examples/example.dup b/examples/example.dup
+index ff8b70d..067b6b1 100644
+--- a/examples/example.dup
++++ b/examples/example.dup
+@@ -56,7 +56,7 @@
+ 
+ ## when set to yes, encryptkey variable must be set below; if you want to use
+ ## two different keys for encryption and signing, you must also set the signkey
+-## variable below.
++## variable (and probably signpassword) below.
+ ## default is set to no, for backwards compatibility with backupninja <= 0.5.
+ ##
+ ## Default:
+@@ -77,14 +77,23 @@
+ ## Default:
+ # signkey = 
+ 
+-## password
+-## NB: neither quote this, nor should it contain any quotes, 
++## password used to unlock the encryption key
++## NB: neither quote this, nor should it contain any quotes,
+ ## an example setting would be:
+ ## password = a_very_complicated_passphrase
+ ##
+ ## Default:
+ # password = 
+ 
++## password used to unlock the signature key, used only if
++## it differs from the encryption key
++## NB: neither quote this, nor should it contain any quotes,
++## an example setting would be:
++## signpassword = a_very_complicated_passphrase
++##
++## Default:
++# signpassword =
++
+ ######################################################
+ ## source section
+ ## (where the files to be backed up are coming from)
+diff --git a/handlers/dup.helper.in b/handlers/dup.helper.in
+index dc21bfc..6f3281e 100644
+--- a/handlers/dup.helper.in
++++ b/handlers/dup.helper.in
+@@ -193,7 +193,7 @@ do_dup_gpg_signkey() {
+ }
+ 
+ do_dup_gpg_passphrase() {
+-   local question="Enter the passphrase needed to unlock the GnuPG key:"
++   local question="Enter the passphrase needed to unlock the GnuPG encryption key:"
+    REPLY=
+    while [ -z "$REPLY" -o -z "$dup_gpg_password" ]; do
+       passwordBox "$dup_title - GnuPG" "$question"
+@@ -202,6 +202,16 @@ do_dup_gpg_passphrase() {
+    done
+ }
+ 
++do_dup_gpg_sign_passphrase() {
++   local question="Enter the passphrase needed to unlock the GnuPG signature key:"
++   REPLY=
++   while [ -z "$REPLY" -o -z "$dup_gpg_signpassword" ]; do
++      passwordBox "$dup_title - GnuPG" "$question"
++      [ $? = 0 ] || return 1
++      dup_gpg_signpassword="$REPLY"
++   done
++}
++
+ do_dup_gpg() {
+ 
+    # symmetric or public key encryption ?
+@@ -226,6 +236,9 @@ do_dup_gpg() {
+    # a passphrase is alway needed
+    do_dup_gpg_passphrase
+ 
++   # If the signature key differs, we also need a passphrase for it
++   [ -n "$dup_gpg_signkey" -a -n "$dup_gpg_encryptkey" -a "$dup_gpg_signkey" != "$dup_gpg_encryptkey" ] && do_dup_gpg_sign_passphrase
++
+    _gpg_done="(DONE)"
+    setDefault adv
+    # TODO: replace the above line by the following when do_dup_conn is written
+@@ -329,10 +342,19 @@ encryptkey = $dup_gpg_encryptkey
+ # if not set, encryptkey will be used.
+ signkey = $dup_gpg_signkey
+ 
+-# password
+-# NB: neither quote this, nor should it include any quotes
++## password used to unlock the encryption key
++## NB: neither quote this, nor should it contain any quotes,
++## an example setting would be:
++## password = a_very_complicated_passphrase
+ password = $dup_gpg_password
+ 
++## password used to unlock the signature key, used only if
++## it differs from the encryption key
++## NB: neither quote this, nor should it contain any quotes,
++## an example setting would be:
++## signpassword = a_very_complicated_passphrase
++signpassword = $dup_gpg_signpassword
++
+ ######################################################
+ ## source section
+ ## (where the files to be backed up are coming from)
+@@ -584,6 +606,7 @@ dup_wizard() {
+    dup_gpg_onekeypair="yes"
+    dup_gpg_signkey=""
+    dup_gpg_password=""
++   dup_gpg_signpassword=""
+    dup_nicelevel=19
+    dup_testconnect=yes
+    dup_options=
+diff --git a/handlers/dup.in b/handlers/dup.in
+index 41364d2..3ffe931 100644
+--- a/handlers/dup.in
++++ b/handlers/dup.in
+@@ -12,6 +12,7 @@ getconf tmpdir
+ 
+ setsection gpg
+ getconf password
++getconf signpassword
+ getconf sign no
+ getconf encryptkey
+ getconf signkey
+@@ -46,6 +47,7 @@ destdir=${destdir%/}
+ [ -n "$desturl" -o -n "$destdir" ]  || fatal "The destination directory (destdir) must be set when desturl is not used."
+ [ -n "$include" -o -n "$vsinclude" ]  || fatal "No source includes specified"
+ [ -n "$password" ] || fatal "The password option must be set."
++[ -n "$signpassword" -a -n "$signkey" -a -n "$encryptkey" -a "$signkey" != "$encryptkey" ] || fatal "The signpassword option must be set because signkey is different from encryptkey."
+ if [ "`echo $desturl | @AWK@ -F ':' '{print $1}'`" == "s3+http" ]; then
+    [ -n "$awsaccesskeyid" -a -n "$awssecretaccesskey" ]  || fatal "AWS access keys must be set for S3 backups."
+ fi
+@@ -283,6 +285,7 @@ fi
+ debug "$execstr_precmd duplicity cleanup --force $execstr_options $execstr_serverpart"
+ if [ ! $test ]; then
+    export PASSPHRASE=$password
++   export SIGN_PASSPHRASE=$signpassword
+    export FTP_PASSWORD=$ftp_password
+    output=`nice -n $nicelevel \
+              su -c \
+@@ -302,6 +305,7 @@ if [ "$keep" != "yes" ]; then
+    debug "$execstr_precmd duplicity remove-older-than $keep --force $execstr_options $execstr_serverpart"
+    if [ ! $test ]; then
+       export PASSPHRASE=$password
++      export SIGN_PASSPHRASE=$signpassword
+       export FTP_PASSWORD=$ftp_password
+       output=`nice -n $nicelevel \
+                 su -c \
+@@ -324,6 +328,7 @@ if [ "$keep" != "yes" ]; then
+          debug "$execstr_precmd duplicity remove-all-inc-of-but-n-full $keepincroffulls --force $execstr_options $execstr_serverpart"
+          if [ ! $test ]; then
+             export PASSPHRASE=$password
++            export SIGN_PASSPHRASE=$signpassword
+             export FTP_PASSWORD=$ftp_password
+             output=`nice -n $nicelevel \
+                su -c \
+@@ -346,6 +351,7 @@ debug "$execstr_precmd duplicity $execstr_command $execstr_options $execstr_sour
+ if [ ! $test ]; then
+    outputfile=`maketemp backupout`
+    export PASSPHRASE=$password
++   export SIGN_PASSPHRASE=$signpassword
+    export FTP_PASSWORD=$ftp_password
+    output=`nice -n $nicelevel \
+              su -c \

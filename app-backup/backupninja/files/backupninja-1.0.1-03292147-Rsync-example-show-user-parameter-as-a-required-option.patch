@@ -1,0 +1,19 @@
+commit 03292147f6b1102d82e10ca291ed2c33affa4554
+Author: Silvio Rhatto <rhatto@riseup.net>
+Date:   Thu Apr 17 19:13:07 2014 -0300
+
+    Rsync example: show 'user' parameter as a required option (#4380)
+
+diff --git a/examples/example.rsync b/examples/example.rsync
+index 80365ae..e4cea15 100644
+--- a/examples/example.rsync
++++ b/examples/example.rsync
+@@ -98,7 +98,7 @@ days = 7
+ #port = 22
+ 
+ # remote user name (remote source only)
+-#user =
++user = remoteuser
+ 
+ # when "yes", test the connection for a remote source before backup
+ #testconnect = no

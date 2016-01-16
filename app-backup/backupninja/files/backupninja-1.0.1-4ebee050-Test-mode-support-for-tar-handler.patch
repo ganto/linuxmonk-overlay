@@ -1,0 +1,24 @@
+commit 4ebee050b49ed882aa3d778e9d971b2df29fd158
+Author: Pierre ROUDIER <contact@pierreroudier.net>
+Date:   Fri Jun 28 10:53:47 2013 +0200
+
+    test mode support for tar handler
+
+diff --git a/handlers/tar.in b/handlers/tar.in
+index eb5942b..7497306 100644
+--- a/handlers/tar.in
++++ b/handlers/tar.in
+@@ -72,11 +72,13 @@ debug "Running backup: " $TAR -c -p -v $compress_option $exclude_options \
+    -f "$backupdir/$backupname-"`$DATE "+$DATEFORMAT"`".$EXTENSION" \
+    $includes
+ 
++if [ ! $test ]; then
+ $TAR -c -p -v $compress_option $exclude_options \
+    -f "$backupdir/$backupname-"`$DATE "+$DATEFORMAT"`".$EXTENSION" \
+    $includes \
+    > "$backupdir/$backupname-"`$DATE "+$DATEFORMAT"`.list \
+    2> "$backupdir/$backupname-"`$DATE "+$DATEFORMAT"`.err
++fi
+ 
+ [ $? -ne 0 ] && fatal "Tar backup failed"
+ 

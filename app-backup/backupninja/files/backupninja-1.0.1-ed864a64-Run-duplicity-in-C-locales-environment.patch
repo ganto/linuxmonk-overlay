@@ -1,0 +1,29 @@
+commit ed864a64e341e4e7a42a530c5a0f6642f4b3d6e9
+Author: intrigeri <intrigeri@boum.org>
+Date:   Sat Mar 1 11:54:34 2014 +0000
+
+    Run duplicity in a C locales environment (Closes: #736280).
+    
+    This workarounds a bug in duplicity. Quoting the reporter (thanks, Jonathan
+    Dupart <jonathan@dupart.org>, for the detailed report and initial patch):
+    
+    The duplicity backend is broken when the gpg ecryption is set up and the
+    system default locale is not english (or C).
+    
+    The bug reports on duplicity are here :
+    http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=565398
+    https://bugs.launchpad.net/duplicity/+bug/510625
+
+diff --git a/handlers/dup.in b/handlers/dup.in
+index 3ffe931..3c586c6 100644
+--- a/handlers/dup.in
++++ b/handlers/dup.in
+@@ -104,7 +104,7 @@ fi
+ ### COMMAND-LINE MANGLING ######################################################
+ 
+ ### initialize $execstr*
+-execstr_precmd=
++execstr_precmd='LC_ALL=C'
+ execstr_command=
+ execstr_options="$options --no-print-statistics"
+ execstr_source=
