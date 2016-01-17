@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<herd></herd>
+	<maintainer>
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<longdescription lang="en">
+		libgsystem was intended to be used as a git external for components
+		that depend on GLib, but accept a hard dependency on things which are
+		difficult to do in GLib itself. For example, the local-alloc API
+		depends on GCC/clang.
+	</longdescription>
+	<use>
+		<flag name="systemd">Use systemd journal</flag>
+	</use>
+</pkgmetadata>
