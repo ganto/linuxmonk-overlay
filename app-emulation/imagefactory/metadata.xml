@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<herd></herd>
+	<maintainer>
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<upstream>
+		<doc>http://imgfac.org/documentation</doc>
+		<bugs-to>https://github.com/redhat-imaging/imagefactory/issues</bugs-to>
+	</upstream>
+	<longdescription lang="en">
+		imagefactory builds images for a variety of operating system/cloud
+		combinations.
+	</longdescription>
+	<use>
+		<flag name="aws">Add support for Amazon EC2 Web services via dev-python/boto</flag>
+	</use>
+</pkgmetadata>
