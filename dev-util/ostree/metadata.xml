@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<herd></herd>
+	<maintainer>
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<upstream>
+		<doc>https://developer.gnome.org/ostree</doc>
+		<bugs-to>https://bugzilla.gnome.org</bugs-to>
+	</upstream>
+	<longdescription lang="en">
+		OSTree is a tool for managing bootable, immutable, versioned
+		filesystem trees. It is not a package system; nor is it a tool for
+		managing full disk images. Instead, it sits between those levels,
+		offering a blend of the advantages (and disadvantages) of both.
+	</longdescription>
+	<use>
+		<flag name="doc">Build HTML documentation</flag>
+		<flag name="dracut">Install dracut module</flag>
+		<flag name="grub">Install grub2 hook</flag>
+		<flag name="selinux">Enable support for Security Enhanced Linux</flag>
+	</use>
+</pkgmetadata>
