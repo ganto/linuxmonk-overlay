@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<herd></herd>
+	<maintainer>
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<upstream>
+		<doc>http://rpm-software-management.github.io/librepo</doc>
+		<remote-id type="github">rpm-software-management/librepo</remote-id>
+	</upstream>
+	<longdescription lang="en">
+		A library providing C and Python (libcURL like) API for downloading
+		packages and linux repository metadata in rpm-md format
+	</longdescription>
+	<use>
+		<flag name="doc">Build HTML documentation</flag>
+	</use>
+</pkgmetadata>
