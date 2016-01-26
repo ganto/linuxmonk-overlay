@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<herd></herd>
+	<maintainer>
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<upstream>
+		<doc>https://github.com/rpm-software-management/hawkey/wiki</doc>
+		<remote-id type="github">rpm-software-management/hawkey</remote-id>
+	</upstream>
+	<longdescription lang="en">
+		A library providing simplified C and Python API to libsolv.
+	</longdescription>
+</pkgmetadata>
