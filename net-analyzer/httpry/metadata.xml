@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<herd></herd>
+	<maintainer>
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<upstream>
+		<bugs-to>https://github.com/jbittel/httpry/issues</bugs-to>
+		<remote-id type="github">jbittel/httpry</remote-id>
+	</upstream>
+	<longdescription lang="en">
+		httpry is a specialized packet sniffer designed for displaying and
+		logging HTTP traffic. It is not intended to perform analysis itself,
+		but to capture, parse, and log the traffic for later analysis. It can
+		be run in real-time displaying the traffic as it is parsed, or as a
+		daemon process that logs to an output file.
+	</longdescription>
+</pkgmetadata>
