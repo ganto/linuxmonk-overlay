@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<herd></herd>
+	<maintainer>
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<upstream>
+		<bugs-to>https://github.com/waltertamboer/davtest/issues</bugs-to>
+		<remote-id type="github">waltertamboer/davtest</remote-id>
+	</upstream>
+	<longdescription lang="en">
+		This program attempts to exploit WebDAV enabled servers by:
+		- attempting to create a new directory (MKCOL)
+		- attempting to put test files of various programming langauges (PUT)
+		- optionally attempt to put files with .txt extension, then move to executable (MOVE)
+		- check if files executed or were uploaded properly
+		- optionally upload a backdoor/shell file for languages which execute
+		Additionally, this can be used to put an arbitrary file to remote systems.
+	</longdescription>
+</pkgmetadata>
