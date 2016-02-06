@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<herd></herd>
+	<maintainer>
+		<email>cheepeero@gmx.net</email>
+		<name>Ciprian Ciubotariu</name>
+	</maintainer>
+	<upstream>
+		<bugs-to>https://github.com/CMoH/grub2-theme-gentoo/issues</bugs-to>
+		<remote-id type="github">CMoH/grub2-theme-gentoo</remote-id>
+	</upstream>
+	<longdescription lang="en">
+		Grub2 theme for Gentoo
+	</longdescription>
+</pkgmetadata>
