@@ -14,14 +14,11 @@ inherit ruby-fakegem
 
 DESCRIPTION="Vagrant provisioning plugin to generate Ansible inventory to use outside Vagrant"
 HOMEPAGE="https://github.com/MatthewMi11er/vai"
-SRC_URI="https://github.com/MatthewMi11er/vai/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="MIT"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE=""
-
-RUBY_S="vai-${PV}"
 
 ruby_add_rdepend ">=app-emulation/vagrant-1.8.0"
 
@@ -35,12 +32,12 @@ pkg_postinst() {
 	# register plugin
 	ruby -e '\
 		require "vagrant/plugin/manager"; \
-		Vagrant::Plugin::StateFile.new(Pathname.new(File.expand_path "/var/lib/vagrant/plugins.json")).add_plugin "vagrant-vai";'
+		Vagrant::Plugin::StateFile.new(Pathname.new(File.expand_path "/var/lib/vagrant/plugins.json")).add_plugin "vai";'
 }
 
 pkg_prerm() {
 	# un-register plugin
 	ruby -e '\
 		require "vagrant/plugin/manager"; \
-		Vagrant::Plugin::StateFile.new(Pathname.new(File.expand_path "/var/lib/vagrant/plugins.json")).remove_plugin "vagrant-vai";'
+		Vagrant::Plugin::StateFile.new(Pathname.new(File.expand_path "/var/lib/vagrant/plugins.json")).remove_plugin "vai";'
 }
