@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<herd></herd>
+	<maintainer>
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<upstream>
+		<bugs-to>https://github.com/MatthewMi11er/vai/issues</bugs-to>
+		<remote-id type="github">MatthewMi11er/vai</remote-id>
+	</upstream>
+	<longdescription lang="en">
+		A Vagrant provisioning plugin to output a usable Ansible inventory
+		to use outside Vagrant.
+	</longdescription>
+</pkgmetadata>
