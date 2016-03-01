@@ -1,0 +1,43 @@
+From 9479b6d68b0dc7c3e717bee3675ef20d0e9e7afa Mon Sep 17 00:00:00 2001
+From: Reto Gantenbein <reto.gantenbein@linuxmonk.ch>
+Date: Tue, 1 Mar 2016 23:34:23 +0100
+Subject: [PATCH 2/2] sys: Don't try to investigate ram disks
+
+---
+ handlers/sys.in | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/handlers/sys.in b/handlers/sys.in
+index ba0e94c..85dc11b 100644
+--- a/handlers/sys.in
++++ b/handlers/sys.in
+@@ -617,7 +617,7 @@ fi
+ 
+ if [ "$partitions" == "yes" ]; then
+    if [ "$dosfdisk" == "yes" ]; then
+-      devices=`LC_ALL=C $SFDISK -l 2>/dev/null | grep "^Disk /dev" | @AWK@ '{print $2}' | cut -d: -f1`
++      devices=`LC_ALL=C $SFDISK -l 2>/dev/null | grep "^Disk /dev" | grep -v ram[0-9]* | @AWK@ '{print $2}' | cut -d: -f1`
+       if [ "$devices" == "" ]; then
+          warning "No harddisks found"
+       fi
+@@ -642,7 +642,7 @@ if [ "$partitions" == "yes" ]; then
+ fi
+ 
+ if [ "$luksheaders" == "yes" ]; then
+-   devices=`LC_ALL=C $SFDISK -l 2>/dev/null | grep "^Disk /dev" | @AWK@ '{print $2}' | cut -d: -f1`
++   devices=`LC_ALL=C $SFDISK -l 2>/dev/null | grep "^Disk /dev" | grep -v ram[0-9]* | @AWK@ '{print $2}' | cut -d: -f1`
+    [ -n "$devices" ] || warning "No block device found"
+    partitions=`LC_ALL=C $SFDISK -l 2>/dev/null |grep "^/dev" | @AWK@ '{print $1}'`
+    [ -n "$partitions" ] || warning "No partitions found"
+@@ -683,7 +683,7 @@ if [ "$luksheaders" == "yes" ]; then
+ fi
+ 
+ if [ "$mbr" == "yes" ]; then
+-   devices=`LC_ALL=C $SFDISK -l 2>/dev/null | grep "^Disk /dev" | @AWK@ '{print $2}' | cut -d: -f1`
++   devices=`LC_ALL=C $SFDISK -l 2>/dev/null | grep "^Disk /dev" | grep -v ram[0-9]* | @AWK@ '{print $2}' | cut -d: -f1`
+    if [ "$devices" == "" ]; then
+       warning "No harddisks found"
+    fi
+-- 
+2.4.10
+

@@ -49,12 +49,16 @@ src_prepare() {
 	epatch "${FILESDIR}/${MY_P}-48134276-Update-increment-folder-date.patch"
 	epatch "${FILESDIR}/${MY_P}-5bc3e60a-Rsync-restoring-IFS-noglob.patch"
 	epatch "${FILESDIR}/${MY_P}-03292147-Rsync-example-show-user-parameter-as-a-required-option.patch"
+	epatch "${FILESDIR}/${MY_P}-8ed2f8de-Add-suse-to-the-list-of-supported-OS.patch"
 	epatch "${FILESDIR}/${MY_P}-14eed7f7-Remove-spurious-quotes-that-broke-the-sys-helper.patch"
+	epatch "${FILESDIR}/${MY_P}-8db80421-Fix-indentation-in-sys-handler.patch"
 	epatch "${FILESDIR}/${MY_P}-9b37f756-Exclude-tmpfs-from-df-output-in-sys-handler.patch"
 	epatch "${FILESDIR}/${MY_P}-21bcb7e6-Ignore-files-ending-in-tilde.patch"
 	epatch "${FILESDIR}/${MY_P}-c649339b-Rsync-support-for-backupninjas-test-option.patch"
 	epatch "${FILESDIR}/${MY_P}-89860aa3-Rsync-check-test-mode-also-in-prepare_storage.patch"
 	epatch "${FILESDIR}/${MY_P}-3094b04d-Rsync-check-test-mode-should-set-proper-dest-path.patch"
+	epatch "${FILESDIR}/${MY_P}-sys-Add-support-for-Gentoo.patch"
+	epatch "${FILESDIR}/${MY_P}-sys-Don-t-try-to-investigate-ram-disks.patch"
 
 	if ${AUTOCONF_VERSION} > 2.13; then
         mv configure.in configure.ac
