@@ -1,0 +1,23 @@
+commit 1a762885e26a6396e8e1798b51def7b103e92302
+Author: intrigeri <intrigeri@boum.org>
+Date:   Sat Feb 22 13:40:42 2014 +0000
+
+    Make logic consistent with what we're using elsewhere.
+    
+    Without this change, e.g. 0.5.20 would not get --extra-clean, while it should.
+    Granted, the new test is buggy too, e.g. 0.7.1 will get --extra-clean,
+    while it should not. Will report that to Redmine.
+
+diff --git a/handlers/dup.in b/handlers/dup.in
+index 1ce7710..18afb98 100644
+--- a/handlers/dup.in
++++ b/handlers/dup.in
+@@ -191,7 +191,7 @@ else
+ fi
+ 
+ ### Cleanup options
+-if [ "$duplicity_major" -le 0 -a "$duplicity_minor" -le 6 -a "$duplicity_sub" -le 19 ]; then
++if ! [ "$duplicity_major" -ge 0 -a "$duplicity_minor" -ge 6 -a "$duplicity_sub" -ge 20 ]; then
+    execstr_options="${execstr_options} --extra-clean"
+ fi
+ 

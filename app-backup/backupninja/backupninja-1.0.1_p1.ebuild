@@ -39,6 +39,8 @@ src_prepare() {
 	epatch "${FILESDIR}/${MY_P}-29e2c75e-mysql-make-nodata-option-with-compress-no.patch"
 	epatch "${FILESDIR}/${MY_P}-3c19ee1f-Update-ChangeLog.patch"
 	epatch "${FILESDIR}/${MY_P}-e96a894b-mysql-fix-non-qualified-table-name-extraction.patch"
+	epatch "${FILESDIR}/${MY_P}-e27654df-Dont-remove-useful-signature-files.patch"
+	epatch "${FILESDIR}/${MY_P}-1a762885-Make-logic-consistent-with-what-were-using-elsewhere.patch"
 	epatch "${FILESDIR}/${MY_P}-0e6df840-Add-shell-functions-to-compare-version-numbers.patch"
 	epatch "${FILESDIR}/${MY_P}-1017ec31-dup-fix-buggy-version-comparison.patch"
 	epatch "${FILESDIR}/${MY_P}-c5738b11-Added-SIGN_PASSPHRASE-support-for-dup-handler.patch"
