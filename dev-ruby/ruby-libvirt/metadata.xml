@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer>
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<upstream>
+		<doc>https://libvirt.org/ruby/documentation.html</doc>
+		<bugs-to>http://bugzilla.redhat.com</bugs-to>
+	</upstream>
+	<longdescription lang="en">
+		ruby-libvirt provides Ruby bindings for libvirt. With them you can
+		use libvirt directly from your Ruby programs.
+	</longdescription>
+</pkgmetadata>
