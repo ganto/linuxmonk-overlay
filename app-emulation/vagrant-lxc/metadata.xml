@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer>
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<upstream>
+		<bugs-to>https://github.com/fgrehm/vagrant-lxc/issues</bugs-to>
+		<remote-id type="github">fgrehm/vagrant-lxc</remote-id>
+	</upstream>
+	<longdescription lang="en">
+		This is a Vagrant plugin that allows it to control and provision
+		Linux Containers as an alternative to the built in VirtualBox
+		provider for Linux hosts.
+	</longdescription>
+</pkgmetadata>
