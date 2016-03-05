@@ -32,7 +32,7 @@ pkg_postinst() {
 	# register plugin
 	ruby -e '\
 		require "vagrant/plugin/manager"; \
-		Vagrant::Plugin::StateFile.new(Pathname.new(File.expand_path "/var/lib/vagrant/plugins.json")).add_plugin "vagrant-hostmanagers";'
+		Vagrant::Plugin::StateFile.new(Pathname.new(File.expand_path "/var/lib/vagrant/plugins.json")).add_plugin "vagrant-hostmanager";'
 }
 
 pkg_prerm() {
