@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer>
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<upstream>
+		<bugs-to>https://github.com/smdahlen/vagrant-hostmanager/issues</bugs-to>
+		<remote-id type="github">smdahlen/vagrant-hostmanager</remote-id>
+	</upstream>
+	<longdescription lang="en">
+		vagrant-hostmanager is a Vagrant 1.1+ plugin that manages the
+		/etc/hosts file on guest machines (and optionally the host). Its goal
+		is to enable resolution of multi-machine environments deployed with a
+		cloud provider where IP addresses are not known in advance.
+	</longdescription>
+</pkgmetadata>
