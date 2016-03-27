@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+    <maintainer>
+        <email>reto.gantenbein@linuxmonk.ch</email>
+        <name>Reto Gantenbein</name>
+    </maintainer>
+    <upstream>
+		<remote-id type="sourceforge">nicotine-plus</remote-id>
+		<remote-id type="github">eLvErDe/nicotine-plus</remote-id>
+	</upstream>
+    <longdescription lang="en">
+		Nicotine+ is a fork of Hyriand's Soulseek PyGTK2 client, Nicotine.
+		Fixing bugs, adding new features, and keeping up-to-date with
+		Soulseek's protocol is the goal of this project.
+    </longdescription>
+	<use>
+		<flag name='geoip'>Country lookup and flag display</flag>
+		<flag name='metadata'>Media metadata extraction</flag>
+		<flag name='upnp'>Automatic UPnP portmapping</flag>
+	</use>
+</pkgmetadata>
