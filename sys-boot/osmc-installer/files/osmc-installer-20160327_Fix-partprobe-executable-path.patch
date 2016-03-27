@@ -1,0 +1,25 @@
+From b1c903d0cbfd9fecf44ff29185a5da7e87f66d78 Mon Sep 17 00:00:00 2001
+From: Reto Gantenbein <reto.gantenbein@linuxmonk.ch>
+Date: Sat, 7 Nov 2015 01:18:00 +0100
+Subject: [PATCH 1/2] Fix partprobe executable path
+
+---
+ installer/host/qt_host_installer/io_linux.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/installer/host/qt_host_installer/io_linux.cpp b/installer/host/qt_host_installer/io_linux.cpp
+index 479c7ad..292599c 100644
+--- a/installer/host/qt_host_installer/io_linux.cpp
++++ b/installer/host/qt_host_installer/io_linux.cpp
+@@ -169,7 +169,7 @@ bool unmount(QString devicePath, bool isDisk)
+ void updateKernelTable()
+ {
+     utils::writeLog("Running partprobe to inform operating system about partition table changes");
+-    system("/sbin/partprobe");
++    system("/usr/sbin/partprobe");
+ }
+ 
+ bool installImagingTool() { return true; }
+-- 
+2.7.3
+
