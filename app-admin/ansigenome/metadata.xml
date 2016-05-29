@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer>
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<upstream>
+		<bugs-to>https://github.com/nickjj/ansigenome/issues</bugs-to>
+		<remote-id type="github">nickjj/ansigenome</remote-id>
+	</upstream>
+	<longdescription lang="en">
+		A tool to help you gather information and manage your Ansible roles.
+		It can gather metrics on your roles, standardize READMEs, generate
+		dependency graphs, template role creation and much more.
+	</longdescription>
+</pkgmetadata>
