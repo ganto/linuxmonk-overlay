@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer>
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<upstream>
+		<remote-id type="sourceforge">egd</remote-id>
+	</upstream>
+	<longdescription lang="en">
+		EGD is an Entropy Gathering Daemon meant to be used on systems that can
+		run GPG but which don't have this convenient source of random bits. It
+		is a regular user-space program that sits around, running programs like
+		'w' and 'last' and 'vmstat', collecting the randomness (or at least the
+		unpredictability) inherent in the output of these system statistics
+		programs when used on a reasonably busy system.
+	</longdescription>
+</pkgmetadata>
