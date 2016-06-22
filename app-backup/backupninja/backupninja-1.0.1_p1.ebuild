@@ -1,6 +1,6 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2016 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/app-backup/backupninja/backupninja-0.9.10.ebuild,v 1.2 2012/04/01 12:02:37 hwoarang Exp $
+# $Id$
 
 EAPI=5
 
@@ -61,7 +61,7 @@ src_prepare() {
 	epatch "${FILESDIR}/${MY_P}-sys-Don-t-try-to-investigate-ram-disks.patch"
 
 	if ${AUTOCONF_VERSION} > 2.13; then
-        mv configure.in configure.ac
+		mv configure.in configure.ac
 	fi
 	eautoreconf
 }
