@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer>
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<upstream>
+		<bugs-to>https://github.com/vagrant-libvirt/vagrant-libvirt/issues</bugs-to>
+		<remote-id type="github">vagrant-libvirt/vagrant-libvirt</remote-id>
+	</upstream>
+	<longdescription lang="en">
+		This is a Vagrant plugin that adds an Libvirt provider to Vagrant, allowing
+		Vagrant to control and provision machines via Libvirt toolkit.
+	</longdescription>
+</pkgmetadata>
