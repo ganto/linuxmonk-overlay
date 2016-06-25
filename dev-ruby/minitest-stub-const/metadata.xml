@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer>
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<upstream>
+		<bugs-to>https://github.com/adammck/minitest-stub-const/issues</bugs-to>
+		<remote-id type="github">adammck/minitest-stub-const</remote-id>
+	</upstream>
+	<longdescription lang="en">
+		Stub constants for the duration of a block in MiniTest. Like RSpec's
+		stub_const, but boring and non-magical.
+	</longdescription>
+</pkgmetadata>
