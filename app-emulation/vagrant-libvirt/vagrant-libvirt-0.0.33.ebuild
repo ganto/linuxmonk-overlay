@@ -4,7 +4,7 @@
 
 EAPI=5
 
-USE_RUBY="ruby20 ruby21"
+USE_RUBY="ruby21"
 
 RUBY_FAKEGEM_RECIPE_TEST="rspec"
 RUBY_FAKEGEM_RECIPE_DOC=""
@@ -19,7 +19,7 @@ HOMEPAGE="https://github.com/pradels/vagrant-libvirt"
 
 LICENSE="MIT"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64"
 IUSE=""
 
 ruby_add_rdepend "
