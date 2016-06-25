@@ -12,6 +12,8 @@ RUBY_FAKEGEM_RECIPE_DOC=""
 RUBY_FAKEGEM_EXTRAINSTALL="locales tools"
 RUBY_FAKEGEM_EXTRADOC="CHANGELOG.md README.md"
 
+RUBY_FAKEGEM_GEMSPEC="${PN}.gemspec"
+
 inherit ruby-fakegem
 
 DESCRIPTION="libvirt provider for Vagrant"
@@ -34,7 +36,7 @@ all_ruby_prepare() {
 	rm Gemfile || die
 
 	# loosen dependencies
-	sed -e '/fog-libvirt/s/~>/>=/' -i ${PN}.gemspec || die
+	sed -e "/fog-libvirt/s/0.0.3/>= 0.0.3/" -i ${PN}.gemspec || die
 }
 
 all_ruby_install() {
