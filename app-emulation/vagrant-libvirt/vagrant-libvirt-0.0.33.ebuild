@@ -12,8 +12,6 @@ RUBY_FAKEGEM_RECIPE_DOC=""
 RUBY_FAKEGEM_EXTRAINSTALL="locales tools"
 RUBY_FAKEGEM_EXTRADOC="CHANGELOG.md README.md"
 
-RUBY_FAKEGEM_GEMSPEC="${PN}.gemspec"
-
 inherit ruby-fakegem
 
 DESCRIPTION="libvirt provider for Vagrant"
@@ -26,7 +24,7 @@ IUSE=""
 
 ruby_add_rdepend "
 	>=app-emulation/vagrant-1.8.0
-	>=dev-ruby/fog-libvirt-0.0.3
+	=dev-ruby/fog-libvirt-0.0.3
 	=dev-ruby/nokogiri-1.6*
 "
 
@@ -34,9 +32,6 @@ all_ruby_prepare() {
 	# remove bundler support
 	sed -i '/[Bb]undler/d' Rakefile || die
 	rm Gemfile || die
-
-	# loosen dependencies
-	sed -e "/fog-libvirt/s/0.0.3/>= 0.0.3/" -i ${PN}.gemspec || die
 }
 
 all_ruby_install() {
