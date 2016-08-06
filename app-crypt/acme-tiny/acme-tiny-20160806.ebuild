@@ -8,7 +8,7 @@ PYTHON_COMPAT=( python{2_7,3_3,3_4,3_5} )
 inherit distutils-r1
 
 inherit git-r3
-KEYWORDS=""
+KEYWORDS="~amd64"
 EGIT_REPO_URI="https://github.com/diafygi/${PN}.git"
 EGIT_COMMIT="5a7b4e79bc9bd5b51739c0d8aaf644f62cc440e6"
 
