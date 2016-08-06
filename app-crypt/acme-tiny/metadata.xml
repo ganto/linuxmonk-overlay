@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<upstream>
+		<remote-id type="github">diafygi/acme-tiny</remote-id>
+	</upstream>
+	<longdescription lang="en">
+		This is a tiny, auditable script that you can throw on your server to issue
+		and renew Let's Encrypt certificates. Since it has to be run on your server
+		and have access to your private Let's Encrypt account key, I tried to make
+		it as tiny as possible (currently less than 200 lines). The only
+		prerequisites are python and openssl.
+	</longdescription>
+</pkgmetadata>
