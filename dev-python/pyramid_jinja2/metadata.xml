@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer>
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<longdescription lang="en">
+		pyramid_jinja2 is a set of bindings that make templates written for the
+		Jinja2 templating system work under the Pyramid web framework.
+	</longdescription>
+	<upstream>
+		<bugs-to>https://github.com/Pylons/pyramid_jinja2/issues</bugs-to>
+		<remote-id type="github">Pylons/pyramid_jinja2</remote-id>
+		<doc>http://docs.pylonsproject.org/projects/pyramid-jinja2/en/latest</doc>
+	</upstream>
+</pkgmetadata>
