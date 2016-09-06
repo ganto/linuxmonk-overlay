@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+    <upstream>
+		<bugs-to>https://github.com/mozilla-services/tokenserver/issues</bugs-to>
+		<remote-id type="github">mozilla-services/tokenserver</remote-id>
+		<doc>https://docs.services.mozilla.com/token/index.html</doc>
+	</upstream>
+	<longdescription lang="en">
+		This application implements the Token Server as defined at
+		https://wiki.mozilla.org/Services/Sagrada/TokenServer.
+	</longdescription>
+</pkgmetadata>
