@@ -15,7 +15,13 @@ In order to manage the overlay, the package **app-portage/layman** must be insta
 emerge -av app-portage/layman
 ```
 
-If the installation of _layman_ was successfully completed, then you are ready to add this overlay by fetching its remote list as showed below:
+If the installation of _layman_ was successfully completed, enable custom overlays by uncommenting the following line in `/etc/layman/layman.cfg`:
+
+```
+overlay_defs : /etc/layman/overlays
+```
+
+Add this overlay by fetching its remote list as showed below:
 
 ```
 wget -O /etc/layman/overlays/linuxmonk-overlay.xml https://raw.github.com/ganto/linuxmonk-overlay/master/overlay.xml
@@ -25,6 +31,12 @@ At this point you can execute:
 
 ```
 layman -a linuxmonk-overlay
+```
+
+Finally make sure that _emerge_ can find the ebuilds of the custom overlay:
+
+```
+echo "source /var/lib/layman/make.conf" >> /etc/portage/make.conf
 ```
 
 
@@ -43,5 +55,5 @@ The process of removing this overlay from your Gentoo environment is quite strai
 
 ```
 layman -d linuxmonk-overlay
-rm -r /etc/layman/overlays/linuxmonk-overlay.xml
+rm /etc/layman/overlays/linuxmonk-overlay.xml
 ```
