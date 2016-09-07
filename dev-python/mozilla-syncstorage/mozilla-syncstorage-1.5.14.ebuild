@@ -38,7 +38,7 @@ RDEPEND="
 	dev-python/umemcache[${PYTHON_USEDEP}]
 	dev-python/wsgiproxy[${PYTHON_USEDEP}]
 	>=dev-python/webob-1.4.1[${PYTHON_USEDEP}]
-	!~dev-python/webob-1.5[${PYTHON_USEDEP}]
+	<dev-python/webob-1.5[${PYTHON_USEDEP}]
 	dev-python/zope-deprecation[${PYTHON_USEDEP}]
 	dev-python/zope-interface[${PYTHON_USEDEP}]
 "
