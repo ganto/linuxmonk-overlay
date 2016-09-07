@@ -35,6 +35,7 @@ RDEPEND="
 	dev-python/sqlalchemy[${PYTHON_USEDEP}]
 	dev-python/tokenlib[${PYTHON_USEDEP}]
 	dev-python/zope-component[${PYTHON_USEDEP}]
+	dev-python/zope-deprecation[${PYTHON_USEDEP}]
 "
 DEPEND="${RDEPEND}
 	dev-python/setuptools[${PYTHON_USEDEP}]
