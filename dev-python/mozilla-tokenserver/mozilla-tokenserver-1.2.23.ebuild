@@ -36,9 +36,9 @@ RDEPEND="
 	dev-python/tokenlib[${PYTHON_USEDEP}]
 	dev-python/zope-component[${PYTHON_USEDEP}]
 "
-DEPEND="
+DEPEND="${RDEPEND}
 	dev-python/setuptools[${PYTHON_USEDEP}]
-	doc? ( dev-python/sphinx[${PYTHON_USEDEP}] )
+	dev-python/sphinx[${PYTHON_USEDEP}]
 	test? (	dev-python/nose[${PYTHON_USEDEP}]
 		dev-python/testfixtures[${PYTHON_USEDEP}]
 		dev-python/unittest2[${PYTHON_USEDEP}]
