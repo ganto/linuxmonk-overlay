@@ -5,7 +5,7 @@
 EAPI=6
 PYTHON_COMPAT=( python2_7 )
 
-inherit distutils-r1
+inherit distutils-r1 eutils
 
 MY_PN="server-syncstorage"
 MY_P="${MY_PN}-${PV}"
@@ -17,29 +17,24 @@ SRC_URI="https://github.com/mozilla-services/${MY_PN}/archive/v${PV}.tar.gz -> $
 
 LICENSE="MPL-1.1"
 SLOT="0"
-KEYWORDS="~amd64 ~amd64-linux"
-IUSE="mysql test"
+KEYWORDS="~amd64"
+IUSE="test"
 
 RDEPEND="
-	dev-python/beautifulsoup:4[${PYTHON_USEDEP}]
 	dev-python/configparser[${PYTHON_USEDEP}]
 	<dev-python/cornice-1.0[${PYTHON_USEDEP}]
 	dev-python/gevent[${PYTHON_USEDEP}]
 	dev-python/hawkauthlib[${PYTHON_USEDEP}]
-	dev-python/konfig[${PYTHON_USEDEP}]
 	dev-python/mozsvc[${PYTHON_USEDEP}]
 	>=dev-python/paste-2.0.2[${PYTHON_USEDEP}]
 	dev-python/pastedeploy[${PYTHON_USEDEP}]
-	mysql? ( dev-python/pymysql[${PYTHON_USEDEP}] )
 	dev-python/pyramid[${PYTHON_USEDEP}]
-	dev-python/repoze-lru[${PYTHON_USEDEP}]
+	dev-python/pyramid_hawkauth[${PYTHON_USEDEP}]
 	>=dev-python/requests-2.8.0[${PYTHON_USEDEP}]
 	>=dev-python/simplejson-3.8.0[${PYTHON_USEDEP}]
-	>=dev-python/six-1.10.0[${PYTHON_USEDEP}]
 	>=dev-python/sqlalchemy-1.0.8[${PYTHON_USEDEP}]
 	dev-python/tokenlib[${PYTHON_USEDEP}]
 	dev-python/traceback2[${PYTHON_USEDEP}]
-	dev-python/translationstring[${PYTHON_USEDEP}]
 	dev-python/umemcache[${PYTHON_USEDEP}]
 	dev-python/wsgiproxy[${PYTHON_USEDEP}]
 	>=dev-python/webob-1.4.1[${PYTHON_USEDEP}]
@@ -48,7 +43,7 @@ RDEPEND="
 	dev-python/zope-interface[${PYTHON_USEDEP}]
 "
 
-DEPEND="
+DEPEND="${RDEPEND}
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	test? ( dev-python/pybrowserid[${PYTHON_USEDEP}]
 		dev-python/nose[${PYTHON_USEDEP}]
@@ -73,4 +68,9 @@ python_test() {
 	${PYTHON} syncstorage/tests/functional/test_storage.py http://localhost:5000; return=$?
 	kill $server_pid
 	test $return -eq 0 || die "Live tests fail with ${EPYTHON}"
+}
+
+pkg_postinst() {
+	elog "Optional features"
+	optfeature "MySQL backend" dev-python/pymysql
 }
