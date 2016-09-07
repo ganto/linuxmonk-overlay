@@ -3,10 +3,9 @@
 # $Id$
 
 EAPI=6
-
 PYTHON_COMPAT=( python2_7 )
 
-inherit distutils-r1
+inherit distutils-r1 eutils
 
 MY_PN="tokenserver"
 MY_P="${MY_PN}-${PV}"
