@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+    <upstream>
+		<bugs-to>https://github.com/mozilla-services/syncservice/issues</bugs-to>
+		<remote-id type="github">mozilla-services/syncservice</remote-id>
+		<doc>https://docs.services.mozilla.com/howtos/run-sync-1.5.html</doc>
+	</upstream>
+</pkgmetadata>
