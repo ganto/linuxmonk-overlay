@@ -12,15 +12,15 @@ SRC_URI="https://github.com/dkopecek/usbguard/releases/download/${P}/${P}.tar.gz
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
-IUSE="+dbus debug gcrypt +qt4 qt5 static"
+KEYWORDS="~amd64"
+IUSE="+dbus debug gcrypt +qt4 qt5 static test"
 
 RDEPEND="
 	gcrypt? ( >=dev-libs/libgcrypt-1.5.0:0 )
 	!gcrypt? ( >=dev-libs/libsodium-0.4.5 )
 	>=dev-libs/protobuf-2.5.0
-	qt4? ( dev-qt/qtgui:4 dev-qt/qtsvg:4 )
-	qt5? ( dev-qt/qtgui:5 dev-qt/qtwidgets:5 dev-qt/qtsvg:5 )
+	qt4? ( dev-qt/qtcore:4 dev-qt/qtgui:4 dev-qt/qtsvg:4 )
+	qt5? ( dev-qt/qtcore:5 dev-qt/qtgui:5 dev-qt/qtwidgets:5 dev-qt/qtsvg:5 )
 	dbus? ( sys-auth/polkit[introspection]
 		>=dev-libs/dbus-glib-0.100
 		dev-libs/glib:2
@@ -35,6 +35,7 @@ RDEPEND="
 "
 DEPEND="${RDEPEND}
 	dev-cpp/catch
+	dev-cpp/pegtl
 	virtual/pkgconfig
 "
 
@@ -55,7 +56,8 @@ src_prepare() {
 
 src_configure() {
 	local myeconfargs=(
-		--with-bundled-pegtl
+		--without-bundled-catch
+		--without-bundled-pegtl
 		$(use_with dbus)
 		$(use_enable static)
 		$(use_enable debug debug-build)
@@ -75,7 +77,23 @@ src_configure() {
 	econf "${myeconfargs[@]}"
 }
 
+src_compile() {
+	use qt4 && export QT_SELECT=4
+	use qt5 && export QT_SELECT=5
+
+	default_src_compile
+}
+
+src_test() {
+	emake check || die "Testsuite failed"
+}
+
 src_install() {
 	default_src_install
 	prune_libtool_files
+}
+
+pkg_postinst() {
+	elog "To generate an initial policy for your system, run:"
+	elog "  usbguard generate-policy > /etc/usbguard/rules.conf"
 }
