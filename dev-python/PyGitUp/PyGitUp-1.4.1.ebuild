@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
+EAPI=6
 
 PYTHON_COMPAT=( python{2_7,3_3,3_4} )
 
@@ -18,12 +18,12 @@ KEYWORDS="~amd64 ~x86"
 IUSE="test"
 
 DEPEND="
-	>=dev-python/colorama-0.3.3[${PYTHON_USEDEP}]
+	>=dev-python/colorama-0.3.7[${PYTHON_USEDEP}]
 	>=dev-python/docopt-0.6.2[${PYTHON_USEDEP}]
-	>=dev-python/git-python-1.0.1[${PYTHON_USEDEP}]
+	>=dev-python/git-python-1.0.2[${PYTHON_USEDEP}]
 	test? ( dev-python/nose[${PYTHON_USEDEP}] )
 	dev-python/setuptools[${PYTHON_USEDEP}]
-	>=dev-python/six-1.9.0[${PYTHON_USEDEP}]
+	>=dev-python/six-1.10.0[${PYTHON_USEDEP}]
 	>=dev-python/termcolor-1.1.0[${PYTHON_USEDEP}]
 	dev-vcs/git
 "
