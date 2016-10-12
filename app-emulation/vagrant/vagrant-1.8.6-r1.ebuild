@@ -53,6 +53,7 @@ all_ruby_prepare() {
 
 	# loosen dependencies
 	sed -e '/hashicorp-checkpoint\|listen\|net-ssh\|net-scp/s/~>/>=/' \
+		-e '/ruby_dep/s/<=/>=/' \
 		-e '/nokogiri\|bundler/s/=/>=/' \
 		-i ${PN}.gemspec || die
 
@@ -73,12 +74,8 @@ all_ruby_prepare() {
 	# fix rvm issue (bug #474476)
 	epatch "${FILESDIR}"/${PN}-1.8.1-rvm.patch
 
-	# https://github.com/mitchellh/vagrant/issues/7610 (#592996)
-	sed -e 's/bsd/linux/g ; 57i \              chmod 0600 ~/.ssh/authorized_keys' \
-		-i plugins/guests/linux/cap/public_key.rb || die
-
 	# fix Vagrant GH #7826
-	epatch "${FILESDIR}"/${P}-Make-Debian-guest-detection-more-reliable.patch
+	epatch "${FILESDIR}"/${PN}-1.8.5-Make-Debian-guest-detection-more-reliable.patch
 }
 
 all_ruby_install() {
