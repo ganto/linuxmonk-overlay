@@ -26,7 +26,6 @@ RDEPEND="
 	>=app-emulation/docker-1.11.0
 "
 DEPEND="
-	dev-python/pip[${PYTHON_USEDEP}]
 	>=dev-python/setuptools-20.0.0[${PYTHON_USEDEP}]
 	dev-python/sphinx[${PYTHON_USEDEP}]
 "
