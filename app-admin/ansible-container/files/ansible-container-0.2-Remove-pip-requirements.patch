@@ -1,0 +1,27 @@
+commit 483a591d1ea6e84923d60dd6684d36780c30ade6
+Author: Reto Gantenbein <reto.gantenbein@linuxmonk.ch>
+Date:   Sat Oct 15 13:58:29 2016 +0200
+
+    Remove pip requirements
+
+diff --git a/setup.py b/setup.py
+index e3d8b5e..0552d1a 100644
+--- a/setup.py
++++ b/setup.py
+@@ -1,10 +1,6 @@
+ from setuptools import setup, find_packages
+-from pip.req import parse_requirements
+ import container
+ 
+-install_reqs = parse_requirements('requirements.txt', session=False)
+-reqs = [str(ir.req) for ir in install_reqs]
+-
+ setup(
+     name='ansible-container',
+     version=container.__version__,
+@@ -19,5 +15,4 @@ setup(
+     entry_points={
+         'console_scripts': ['ansible-container = container.cli:commandline']
+     },
+-    install_requires=reqs
+ )
