@@ -26,11 +26,8 @@ DEPEND="${RDEPEND}
 	dev-python/setuptools[${PYTHON_USEDEP}]
 "
 
+PATCHES=(
+	"${FILESDIR}/${PN}-Fix-packaging.patch"
+)
+
 S="${WORKDIR}/${PN}-${MY_SHA}"
-
-python_prepare_all() {
-	distutils-r1_python_prepare_all
-
-	# don't install tests
-	sed -i 's/find_packages()/find_packages(exclude=("tests",))/' setup.py
-}
