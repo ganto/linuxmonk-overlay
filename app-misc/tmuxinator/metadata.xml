@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<upstream>
+		<bugs-to>https://github.com/tmuxinator/tmuxinator/issues</bugs-to>
+		<remote-id type="github">tmuxinator/tmuxinator</remote-id>
+	</upstream>
+	<longdescription lang="en">
+		Create and manage tmux sessions easily.
+	</longdescription>
+</pkgmetadata>
