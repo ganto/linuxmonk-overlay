@@ -7,11 +7,9 @@ EAPI=6
 PYTHON_COMPAT=( python3_{4,5} )
 inherit distutils-r1
 
-MY_SHA=4a922f41490af54c4293da0ce92054c5354cf46b
-
 DESCRIPTION="Linting/reformatting tool for YAML files documented with inline RST"
 HOMEPAGE="https://github.com/ypid/yaml4rst"
-SRC_URI="https://github.com/ypid/${PN}/archive/${MY_SHA}.zip -> ${P}.zip"
+SRC_URI="https://github.com/ypid/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="AFL-3.0"
 SLOT="0"
@@ -29,5 +27,3 @@ DEPEND="${RDEPEND}
 PATCHES=(
 	"${FILESDIR}/${PN}-Fix-packaging.patch"
 )
-
-S="${WORKDIR}/${PN}-${MY_SHA}"
