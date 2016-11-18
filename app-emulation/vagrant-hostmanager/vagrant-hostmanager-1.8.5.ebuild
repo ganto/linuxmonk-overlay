@@ -4,7 +4,7 @@
 
 EAPI=5
 
-USE_RUBY="ruby20 ruby21"
+USE_RUBY="ruby20 ruby21 ruby22"
 
 RUBY_FAKEGEM_RECIPE_TEST=""
 RUBY_FAKEGEM_RECIPE_DOC=""
@@ -18,7 +18,7 @@ HOMEPAGE="https://github.com/smdahlen/vagrant-hostmanager"
 
 LICENSE="MIT"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64"
 IUSE=""
 
 ruby_add_rdepend ">=app-emulation/vagrant-1.8.0"
