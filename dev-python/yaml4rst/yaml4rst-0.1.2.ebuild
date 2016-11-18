@@ -23,7 +23,3 @@ RDEPEND="
 DEPEND="${RDEPEND}
 	dev-python/setuptools[${PYTHON_USEDEP}]
 "
-
-PATCHES=(
-	"${FILESDIR}/${PN}-Fix-packaging.patch"
-)
