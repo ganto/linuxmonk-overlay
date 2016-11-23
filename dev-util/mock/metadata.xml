@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<upstream>
+		<bugs-to>https://github.com/rpm-software-management/mock/issues</bugs-to>
+		<remote-id type="github">rpm-software-management/mock</remote-id>
+	</upstream>
+	<longdescription lang="en">
+		A 'simple' chroot build environment manager for building RPMs. Mock is
+		used by the Fedora Build system to populate a chroot environment, which
+		is then used in building a source-RPM (SRPM). It can be used for
+		long-term management of a chroot environment, but generally a chroot
+		is populated (using YUM), an SRPM is built in the chroot to generate
+		binary RPMs, and the chroot is then discarded.
+	</longdescription>
+</pkgmetadata>
