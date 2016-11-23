@@ -1,0 +1,40 @@
+From f6521c50f6836374a0f7995f8f393aaf36e178ea Mon Sep 17 00:00:00 2001
+Message-Id: <f6521c50f6836374a0f7995f8f393aaf36e178ea.1478522529.git.pmatilai@redhat.com>
+From: Panu Matilainen <pmatilai@redhat.com>
+Date: Mon, 7 Nov 2016 13:38:39 +0200
+Subject: [PATCH] Fix %transfiletriggerpostun undeterministic behavior
+ (RhBug:1284645)
+
+Keys from rpmdbIndexIteratorNext() are not necessarily \0-terminated,
+buyer beware.
+
+Sometimes you get lucky, but in particular when built as PIE (such as
+by default in Fedora) this falls over consistently.
+In Fedora this has been hidden by the fact that test suite has been
+disabled because its been so broken with fakechroot until recently,
+and without PIE the testsuite regularly passes. Valgrind does
+complain though.
+---
+ lib/rpmtriggers.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/lib/rpmtriggers.c b/lib/rpmtriggers.c
+index a8612c0..ca22a6b 100644
+--- a/lib/rpmtriggers.c
++++ b/lib/rpmtriggers.c
+@@ -114,8 +114,11 @@ void rpmtriggersPrepPostUnTransFileTrigs(rpmts ts, rpmte te)
+ 
+     /* Iterate over file triggers in rpmdb */
+     while ((rpmdbIndexIteratorNext(ii, &key, &keylen)) == 0) {
++	char pfx[keylen + 1];
++	memcpy(pfx, key, keylen);
++	pfx[keylen] = '\0';
+ 	/* Check if file trigger matches any file in this te */
+-	rpmfi fi = rpmfilesFindPrefix(files, key);
++	rpmfi fi = rpmfilesFindPrefix(files, pfx);
+ 	if (rpmfiFC(fi) > 0) {
+ 	    /* If yes then store it */
+ 	    rpmdbAppendIterator(mi, rpmdbIndexIteratorPkgOffsets(ii),
+-- 
+2.7.4
+

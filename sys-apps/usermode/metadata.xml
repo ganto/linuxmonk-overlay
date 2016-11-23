@@ -5,12 +5,9 @@
 		<email>reto.gantenbein@linuxmonk.ch</email>
 		<name>Reto Gantenbein</name>
 	</maintainer>
-	<upstream>
-		<doc>http://rpm.org/wiki/Docs</doc>
-	</upstream>
 	<longdescription lang="en">
-		The RPM Package Manager (RPM) is a powerful command line driven package
-		management system capable of installing, uninstalling, verifying,
-		querying, and updating computer software packages.
+		The usermode package contains the userhelper program, which can be
+		used to allow configured programs to be run with superuser privileges
+		by ordinary users.
 	</longdescription>
 </pkgmetadata>
