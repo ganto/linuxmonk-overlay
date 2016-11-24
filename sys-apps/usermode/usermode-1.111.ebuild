@@ -13,7 +13,7 @@ SRC_URI="https://fedorahosted.org/releases/u/s/usermode/usermode-1.111.tar.xz"
 LICENSE="GPL-2+"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE="selinux"
+IUSE="selinux +suid"
 
 CDEPEND="
 	dev-libs/glib:2
@@ -52,6 +52,10 @@ src_configure() {
 
 src_install() {
 	default_src_install
+
+	if use suid; then
+		chmod 4711 "${D}"/usr/sbin/userhelper
+	fi
 
 	dosym usermount /usr/bin/userformat
 	dosym usermount.1.bz2 /usr/share/man/man1/userformat.1.bz2

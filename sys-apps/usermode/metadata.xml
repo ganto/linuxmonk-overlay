@@ -10,4 +10,7 @@
 		used to allow configured programs to be run with superuser privileges
 		by ordinary users.
 	</longdescription>
+	<use>
+		<flag name="suid">Install userhelper as suid root binary</flag>
+	</use>
 </pkgmetadata>
