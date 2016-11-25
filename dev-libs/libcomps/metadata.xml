@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<upstream>
+		<doc>https://github.com/rpm-software-management/libcomps/wiki</doc>
+		<remote-id type="github">rpm-software-management/libcomps</remote-id>
+	</upstream>
+	<longdescription lang="en">
+		Libcomps is library for structure-like manipulation with content of
+		comps XML files. Supports read/write XML file, structure(s) modification.
+	</longdescription>
+</pkgmetadata>
