@@ -34,7 +34,7 @@ RDEPEND="${CDEPEND}
 	dev-python/iniparse[${PYTHON_USEDEP}]
 	dev-python/pygpgme[${PYTHON_USEDEP}]
 	>=sys-libs/librepo-1.7.16[${PYTHON_USEDEP}]
-	!<=sys-apps/yum-3.4.3
+	!!sys-apps/yum
 	$(python_gen_cond_dep 'dev-python/pyliblzma[${PYTHON_USEDEP}]' python2_7)
 "
 DEPEND="${CDEPEND}
@@ -51,14 +51,6 @@ for X in "${LANGS[@]}" ; do
 	IUSE+=" l10n_${X}"
 done
 unset X
-
-#src_prepare() {
-#	default
-#	if [[ -n ${L10N} ]] ; then
-#		sed -i -e "/GETTEXT_CREATE_TRANSLATIONS/a ${L10N//-/_}" \
-#			po/CMakeLists.txt || die
-#	fi
-#}
 
 src_configure() {
 	dnf_src_configure_internal() {
