@@ -66,6 +66,13 @@ src_compile() {
 	dnf_src_compile_internal() {
 		cmake-utils_src_compile
 		cmake-utils_src_compile doc-man
+
+		# fix shebang of temporary build python path
+		if python_is_python3 ; then
+			sed -i '1 s|^.*$|#!/usr/bin/python3|' "${S}"/bin/*-3
+		else
+			sed -i '1 s|^.*$|#!/usr/bin/python2|' "${S}"/bin/*-2
+		fi
 	}
 	python_foreach_impl dnf_src_compile_internal
 }
@@ -80,7 +87,7 @@ src_install() {
 
 	dosym dnf-${python_major} /usr/bin/dnf
 	mv "${D}"/usr/bin/dnf-automatic-${python_major} "${D}"/usr/bin/dnf-automatic
-	rm "${D}"/usr/bin/dnf-automatic-*
+	rm -f "${D}"/usr/bin/dnf-automatic-*
 
 	einfo "Cleaning up locales..."
 	for lang in ${LANGS[@]}; do
