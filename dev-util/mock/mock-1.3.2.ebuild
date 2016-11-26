@@ -22,7 +22,8 @@ IUSE=""
 DEPEND=""
 RDEPEND="
 	app-arch/pigz
-	app-arch/rpm[python,${PYTHON_USEDEP}]
+	app-arch/rpm[lua,python,${PYTHON_USEDEP}]
+	app-misc/distribution-gpg-keys
 	dev-python/requests[${PYTHON_USEDEP}]
 	>=dev-python/six-1.4.0[${PYTHON_USEDEP}]
 	sys-apps/usermode
@@ -77,4 +78,19 @@ src_install() {
 
 pkg_postinst() {
 	enewgroup mock
+
+	elog
+	elog "Mock includes a number of plugins which might need additional runtime"
+	elog "dependencies:"
+	elog "  nspawn:        sys-apps/systemd"
+	elog "  ccache         dev-util/ccache"
+	elog "  compress_logs  app-arch/xz-utils"
+	elog "  lvm_root       sys-fs/lvm2"
+	elog "  scm:           dev-vcs/git"
+	elog "                 dev-vcs/subversion"
+	elog "                 dev-vcs/cvs"
+	elog
+	elog "To use mock as a non-root user, add yourself to the 'mock' group:"
+	elog "  usermod -aG mock youruser"
+	elog
 }
