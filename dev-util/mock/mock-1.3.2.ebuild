@@ -26,7 +26,7 @@ RDEPEND="
 	dev-python/requests[${PYTHON_USEDEP}]
 	>=dev-python/six-1.4.0[${PYTHON_USEDEP}]
 	sys-apps/usermode
-	sys-apps/yum
+	|| ( sys-apps/dnf sys-apps/yum )
 	$(python_gen_cond_dep 'dev-python/pyliblzma[${PYTHON_USEDEP}]' 'python2_7' )
 "
 
