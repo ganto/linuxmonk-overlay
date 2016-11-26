@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+    <upstream>
+		<bugs-to>https://github.com/rpm-software-management/dnf/issues</bugs-to>
+		<remote-id type="github">rpm-software-management/dnf</remote-id>
+	</upstream>
+	<longdescription lang="en">
+		Dandified Yum (DNF) is the next upcoming major version of Yum. It
+		does package management using RPM, libsolv and hawkey libraries. For
+		metadata handling and package downloads it utilizes librepo. To
+		process and effectively handle the comps data it uses libcomps.
+	</longdescription>
+</pkgmetadata>
