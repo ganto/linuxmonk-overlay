@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+    <upstream>
+		<bugs-to>https://github.com/rpm-software-management/dnf-plugins-core/issues</bugs-to>
+		<remote-id type="github">rpm-software-management/dnf-plugins-core</remote-id>
+	</upstream>
+	<longdescription lang="en">
+		Experimental plugins to use with DNF package manager.
+	</longdescription>
+</pkgmetadata>
