@@ -8,7 +8,7 @@ PYTHON_COMPAT=( python2_7 python3_{4,5} )
 
 inherit cmake-utils python-r1 bash-completion-r1
 
-DESCRIPTION="dnf is a package manager based on yum and libsolv"
+DESCRIPTION="DNF is a package manager based on yum and libsolv"
 HOMEPAGE="https://github.com/rpm-software-management/dnf"
 SRC_URI="https://github.com/rpm-software-management/${PN}/archive/${P}-1.tar.gz"
 
@@ -16,13 +16,6 @@ LICENSE="GPL-2+"
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE=""
-
-DEPEND=""
-RDEPEND="${DEPEND}"
-
-PATCHES=( "${FILESDIR}"/${PN}-1.1.10-cli-repolist-fix-showing-repository-name-with-disabl.patch )
-
-S="${WORKDIR}/dnf-${P}-1"
 
 CDEPEND="
 	>=sys-libs/hawkey-0.6.1[${PYTHON_USEDEP}]
@@ -41,6 +34,10 @@ DEPEND="${CDEPEND}
 	${PYTHON_DEPS}
 	sys-devel/gettext
 "
+
+PATCHES=( "${FILESDIR}"/${PN}-1.1.10-cli-repolist-fix-showing-repository-name-with-disabl.patch )
+
+S="${WORKDIR}/dnf-${P}-1"
 
 LANGS=(
 	bg ca cs da de el es eu fi fr gu he hi hr hu id it ja ka kk ko
