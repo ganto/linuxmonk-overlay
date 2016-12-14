@@ -1,0 +1,49 @@
+From eb8c0256997b8d7f2cccdd37ab78674fe9c769c1 Mon Sep 17 00:00:00 2001
+From: Jan Synacek <jsynacek@redhat.com>
+Date: Tue, 10 May 2016 13:34:05 +0200
+Subject: [PATCH] postfix: fix column alignment in output
+
+Some sections are clearly longer than 23 chars, which might result in a
+misaligned output:
+
+ 3602   Connections                                  3,602
+   82   Connections lost (inbound)                         82
+ 3602   Disconnections                               3,602
+
+   12   Timeouts (inbound)                              12
+   16   DNS lookup errors                               16
+   46   Hostname verification errors (FCRDNS)                         46
+   49   SMTP protocol violations                         49
+ 2154   TLS connections (server)                      2,154
+
+Align to 39 chars now, which is currently the length of the longest
+description in the output table plus one.
+---
+ scripts/services/postfix | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/scripts/services/postfix b/scripts/services/postfix
+index 9f8e07f..ddd5968 100755
+--- a/scripts/services/postfix
++++ b/scripts/services/postfix
+@@ -1360,7 +1360,7 @@ sub print_summary_report (\@) {
+             my ($numfmt, $desc, $divisor) = ($sref->{FMT}, $sref->{TITLE}, $sref->{DIVISOR});
+ 
+             my $fmt   = '%8';
+-            my $extra = ' %25s';
++            my $extra = ' %9s';
+             my $total = $Totals{$keyname};
+ 
+             # Z format provides  unitized or unaltered totals, as appropriate
+@@ -1383,7 +1383,7 @@ sub print_summary_report (\@) {
+             }
+             else {
+                push @{$lines[$cur_level]}, 
+-                  sprintf "$fmt  %-23s $extra\n", $total, $desc, commify ($Totals{$keyname});
++                  sprintf "$fmt  %-39s $extra\n", $total, $desc, commify ($Totals{$keyname});
+             }
+          }
+       }
+-- 
+2.7.4
+
