@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>reto.gantenbein@linuxmonk.ch</email>
+	<name>Reto Gantenbein</name>
+  </maintainer>
+  <use>
+    <flag name="gpac">Enable GPAC support when exporting to 3GPP format</flag>
+  </use>
+  <upstream>
+    <remote-id type="sourceforge">kino</remote-id>
+  </upstream>
+</pkgmetadata>
