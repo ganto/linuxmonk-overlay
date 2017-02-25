@@ -1,4 +1,4 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
@@ -27,7 +27,7 @@ src_prepare() {
 
 src_install() {
 	doman lynis.8
-	dodoc CHANGELOG.md CONTRIBUTIONS.md CONTRIBUTORS FAQ README
+	dodoc CHANGELOG.md CONTRIBUTIONS.md CONTRIBUTORS.md FAQ README
 
 	dobashcomp extras/bash_completion.d/lynis
 
