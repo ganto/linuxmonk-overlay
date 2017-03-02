@@ -1,9 +1,8 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=5
-USE_RUBY="ruby20 ruby21"
+USE_RUBY="ruby21 ruby22 ruby23"
 
 RUBY_FAKEGEM_RECIPE_DOC="rdoc"
 RUBY_FAKEGEM_EXTRADOC="NEWS README"
@@ -22,6 +21,9 @@ DEPEND="
 	app-emulation/libvirt
 	test? ( app-emulation/qemu )
 "
+
+# Disable test suite for now, as it tries to access /var/lib/libvirt/images
+RESTRICT="test"
 
 each_ruby_configure() {
 	${RUBY} -Cext/libvirt extconf.rb || die
