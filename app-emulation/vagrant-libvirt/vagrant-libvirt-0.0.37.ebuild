@@ -1,10 +1,8 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=5
-
-USE_RUBY="ruby21"
+USE_RUBY="ruby21 ruby22 ruby23"
 
 RUBY_FAKEGEM_RECIPE_TEST="rspec"
 RUBY_FAKEGEM_RECIPE_DOC=""
@@ -24,7 +22,7 @@ IUSE=""
 
 ruby_add_rdepend "
 	>=app-emulation/vagrant-1.8.0
-	=dev-ruby/fog-libvirt-0.0.3
+	=dev-ruby/fog-libvirt-0.3.0
 	=dev-ruby/nokogiri-1.6*
 "
 
