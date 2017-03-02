@@ -1,10 +1,8 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=5
-
-USE_RUBY="ruby21"
+USE_RUBY="ruby21 ruby22 ruby23"
 
 RUBY_FAKEGEM_RECIPE_DOC="yard"
 RUBY_FAKEGEM_EXTRADOC="README.md"
@@ -28,8 +26,7 @@ ruby_add_rdepend "
 	>=dev-ruby/fog-core-1.27.4
 	dev-ruby/fog-json
 	>=dev-ruby/fog-xml-0.1.1
-	>=dev-ruby/ruby-libvirt-0.5.0
-	<dev-ruby/ruby-libvirt-0.7.0
+	>=dev-ruby/ruby-libvirt-0.7.0
 "
 
 all_ruby_prepare() {
