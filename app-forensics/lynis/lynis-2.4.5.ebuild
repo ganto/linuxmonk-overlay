@@ -1,6 +1,5 @@
 # Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI="5"
 
@@ -21,6 +20,9 @@ RDEPEND="app-shells/bash"
 S="${WORKDIR}/${PN}"
 
 src_prepare() {
+	# Fix script path
+	sed -i 's|/path/to/lynis|/usr/sbin/lynis|' extras/systemd/lynis.service
+
 	# Bug 507438
 	epatch_user
 }
