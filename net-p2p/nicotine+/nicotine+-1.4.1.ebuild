@@ -4,7 +4,6 @@
 EAPI=5
 
 PYTHON_COMPAT=( python2_7 )
-DISTUTILS_SINGLE_IMPL=1
 
 inherit distutils-r1
 
@@ -18,19 +17,17 @@ KEYWORDS="~amd64 ~x86"
 IUSE="geoip metadata upnp"
 
 RDEPEND="
-	geoip? ( dev-python/geoip-python )
+	geoip? ( dev-python/geoip-python[${PYTHON_USEDEP}] )
+	dev-python/pygobject:2[${PYTHON_USEDEP}]
 	>=dev-python/pygtk-2.24:2[${PYTHON_USEDEP}]
-	metadata? ( media-libs/mutagen )
+	metadata? ( >=media-libs/mutagen-1.25[${PYTHON_USEDEP}] )
 	upnp? ( net-libs/miniupnpc )
+	x11-misc/xdg-utils
 "
 
 DEPEND="${RDEPEND}"
 
 S="${WORKDIR}/nicotine-plus-${PV}"
-
-pkg_setup() {
-	python-single-r1_pkg_setup
-}
 
 src_prepare() {
 	distutils-r1_src_prepare
@@ -43,12 +40,6 @@ python_install_all() {
 	insinto /usr/share/nicotine
 	doins -r plugins
 	distutils-r1_python_install_all
-}
-
-src_install() {
-	distutils-r1_src_install
-	python_fix_shebang "${D}"
-	dosym nicotine.py /usr/bin/nicotine
 }
 
 pkg_postinst() {
