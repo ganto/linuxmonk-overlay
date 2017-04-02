@@ -1,0 +1,79 @@
+diff --git a/hack/build-cross.sh b/hack/build-cross.sh
+index 6a1a572..dec7a6d 100755
+--- a/hack/build-cross.sh
++++ b/hack/build-cross.sh
+@@ -20,7 +20,15 @@ OS_BUILD_PLATFORMS=("${platforms[@]}")
+ host_platform=$(os::build::host_platform)
+ if [[ $host_platform == "linux/ppc64le" ]]; then
+   OS_GOFLAGS_LINUX_PPC64LE="-tags=gssapi" os::build::build_binaries "${OS_CROSS_COMPILE_TARGETS[@]}"
+-else
++elif [[ $host_platform == "linux/ppc64" ]]; then
++  OS_GOFLAGS_LINUX_PPC64="-tags=gssapi" os::build::build_binaries "${OS_CROSS_COMPILE_TARGETS[@]}"
++elif [[ $host_platform == "linux/arm" ]]; then
++  OS_GOFLAGS_LINUX_ARM="-tags=gssapi" os::build::build_binaries "${OS_CROSS_COMPILE_TARGETS[@]}"
++elif [[ $host_platform == "linux/arm64" ]]; then
++  OS_GOFLAGS_LINUX_ARM64="-tags=gssapi" os::build::build_binaries "${OS_CROSS_COMPILE_TARGETS[@]}"
++elif [[ $host_platform == "linux/386" ]]; then
++  OS_GOFLAGS_LINUX_386="-tags=gssapi" os::build::build_binaries "${OS_CROSS_COMPILE_TARGETS[@]}"
++elif [[ $host_platform == "linux/amd64" ]]; then
+   OS_GOFLAGS_LINUX_AMD64="-tags=gssapi" os::build::build_binaries "${OS_CROSS_COMPILE_TARGETS[@]}"
+ fi
+ 
+diff --git a/hack/common.sh b/hack/common.sh
+index 463ef9c..33a904d 100755
+--- a/hack/common.sh
++++ b/hack/common.sh
+@@ -52,6 +52,21 @@ if [[ "$(os::build::host_platform)" == "linux/ppc64le" ]]; then
+     "linux/ppc64le"
+   )
+ fi
++if [[ "$(os::build::host_platform)" == "linux/ppc64" ]]; then
++  OS_CROSS_COMPILE_PLATFORMS+=(
++    "linux/ppc64"
++  )
++fi
++if [[ "$(os::build::host_platform)" == "linux/arm" ]]; then
++  OS_CROSS_COMPILE_PLATFORMS+=(
++    "linux/arm"
++  )
++fi
++if [[ "$(os::build::host_platform)" == "linux/arm64" ]]; then
++  OS_CROSS_COMPILE_PLATFORMS+=(
++    "linux/arm64"
++  )
++fi
+ 
+ readonly OS_IMAGE_COMPILE_PLATFORMS
+ 
+@@ -468,14 +483,31 @@ function os::build::place_bins() {
+         elif [[ $platform == "linux/ppc64le" ]]; then
+           platform="linux/ppc64le" OS_RELEASE_ARCHIVE="openshift-origin-client-tools" os::build::archive_tar "${OS_BINARY_RELEASE_CLIENT_LINUX[@]}"
+           platform="linux/ppc64le" OS_RELEASE_ARCHIVE="openshift-origin-server" os::build::archive_tar "${OS_BINARY_RELEASE_SERVER_LINUX[@]}"
++        elif [[ $platform == "linux/ppc64" ]]; then
++          platform="linux/ppc64" OS_RELEASE_ARCHIVE="openshift-origin-client-tools" os::build::archive_tar "${OS_BINARY_RELEASE_CLIENT_LINUX[@]}"
++          platform="linux/ppc64" OS_RELEASE_ARCHIVE="openshift-origin-server" os::build::archive_tar "${OS_BINARY_RELEASE_SERVER_LINUX[@]}"
++        elif [[ $platform == "linux/arm" ]]; then
++          platform="linux/arm" OS_RELEASE_ARCHIVE="openshift-origin-client-tools" os::build::archive_tar "${OS_BINARY_RELEASE_CLIENT_LINUX[@]}"
++          platform="linux/arm" OS_RELEASE_ARCHIVE="openshift-origin-server" os::build::archive_tar "${OS_BINARY_RELEASE_SERVER_LINUX[@]}"
++        elif [[ $platform == "linux/arm64" ]]; then
++          platform="linux/arm64" OS_RELEASE_ARCHIVE="openshift-origin-client-tools" os::build::archive_tar "${OS_BINARY_RELEASE_CLIENT_LINUX[@]}"
++          platform="linux/arm64" OS_RELEASE_ARCHIVE="openshift-origin-server" os::build::archive_tar "${OS_BINARY_RELEASE_SERVER_LINUX[@]}"
+         else
+           echo "++ ERROR: No release type defined for $platform"
+         fi
+       else
+         if [[ $platform == "linux/amd64" ]]; then
+           platform="linux/64bit" os::build::archive_tar "./*"
++        elif [[ $platform == "linux/386" ]]; then
++          platform="linux/386" os::build::archive_tar "./*"
+         elif [[ $platform == "linux/ppc64le" ]]; then
+           platform="linux/ppc64le" os::build::archive_tar "./*"
++        elif [[ $platform == "linux/ppc64" ]]; then
++          platform="linux/ppc64" os::build::archive_tar "./*"
++        elif [[ $platform == "linux/arm" ]]; then
++          platform="linux/arm" os::build::archive_tar "./*"
++        elif [[ $platform == "linux/arm64" ]]; then
++          platform="linux/arm64" os::build::archive_tar "./*"
+         else
+           echo "++ ERROR: No release type defined for $platform"
+         fi
