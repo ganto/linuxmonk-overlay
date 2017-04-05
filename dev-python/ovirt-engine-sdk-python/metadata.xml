@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<upstream>
+		<remote-id type="pypi">ovirt-engine-sdk-python</remote-id>
+		<remote-id type="github">oVirt/ovirt-engine-sdk</remote-id>
+	</upstream>
+	<longdescription lang="en">
+		This project contains the Python SDK for the oVirt Engine API.
+	</longdescription>
+</pkgmetadata>
