@@ -1,4 +1,4 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -17,14 +17,14 @@ KEYWORDS="~amd64"
 IUSE="doc"
 
 RDEPEND="
+	>=app-emulation/docker-1.12.0
+	<app-emulation/docker-1.13.0
 	=app-emulation/docker-compose-1.9.0[${PYTHON_USEDEP}]
 	=dev-python/docker-py-1.10.6[${PYTHON_USEDEP}]
 	>=dev-python/jinja-2.8[${PYTHON_USEDEP}]
 	>=dev-python/pyyaml-3.11[${PYTHON_USEDEP}]
 	=dev-python/requests-2.11.1[${PYTHON_USEDEP}]
-	<dev-python/requests-2.12[${PYTHON_USEDEP}]
 	dev-python/six[${PYTHON_USEDEP}]
-	>=app-emulation/docker-1.11.0
 "
 DEPEND="
 	>=dev-python/setuptools-20.0.0[${PYTHON_USEDEP}]
