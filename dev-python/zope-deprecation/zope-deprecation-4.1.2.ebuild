@@ -11,7 +11,7 @@ MY_PN="${PN/-/.}"
 MY_P="${MY_PN}-${PV}"
 
 DESCRIPTION="Zope Deprecation Infrastructure"
-HOMEPAGE="http://pypi.python.org/pypi/zope.deprecation"
+HOMEPAGE="https://pypi.python.org/pypi/zope.deprecation"
 SRC_URI="mirror://pypi/${MY_PN:0:1}/${MY_PN}/${MY_P}.tar.gz"
 
 LICENSE="ZPL"

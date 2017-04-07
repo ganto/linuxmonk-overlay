@@ -13,7 +13,7 @@ RUBY_FAKEGEM_EXTRADOC="README.md"
 inherit ruby-fakegem
 
 DESCRIPTION="Automatic Ruby code style checking tool."
-HOMEPAGE="http://github.com/bbatsov/rubocop"
+HOMEPAGE="https://github.com/bbatsov/rubocop"
 
 LICENSE="MIT"
 SLOT="0"

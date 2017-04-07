@@ -10,7 +10,7 @@ MY_PN="WSGIProxy"
 MY_P="${MY_PN}-${PV}"
 
 DESCRIPTION="HTTP proxying tools for WSGI apps"
-HOMEPAGE="http://pypi.python.org/pypi/WSGIProxy"
+HOMEPAGE="https://pypi.python.org/pypi/WSGIProxy"
 SRC_URI="mirror://pypi/${MY_PN:0:1}/${MY_PN}/${MY_P}.tar.gz"
 
 LICENSE="MIT"
