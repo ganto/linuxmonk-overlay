@@ -15,6 +15,8 @@ IUSE="test"
 RDEPEND="
 	>=dev-perl/Parse-RecDescent-1.967.9
 	>=dev-perl/Pod-Strip-1.00
+	virtual/perl-Pod-Escapes
+	virtual/perl-Pod-Simple
 "
 DEPEND="
 	${RDEPEND}
