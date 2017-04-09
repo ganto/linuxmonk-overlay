@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<upstream>
+		<remote-id type="cpan">Module-ExtractUse</remote-id>
+		<remote-id type="cpan-module">Module::ExtractUse</remote-id>
+		<remote-id type="cpan-module">Module::ExtractUse::Grammar</remote-id>
+	</upstream>
+</pkgmetadata>
