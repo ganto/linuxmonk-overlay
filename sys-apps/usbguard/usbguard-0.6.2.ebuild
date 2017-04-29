@@ -1,4 +1,4 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -34,7 +34,7 @@ RDEPEND="
 "
 DEPEND="${RDEPEND}
 	dev-cpp/catch
-	dev-cpp/pegtl
+	=dev-libs/pegtl-1.3.1*
 	virtual/pkgconfig
 "
 
