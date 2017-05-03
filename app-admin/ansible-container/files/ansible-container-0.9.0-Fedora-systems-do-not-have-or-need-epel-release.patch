@@ -1,0 +1,22 @@
+From 4e9393e7aa206b8862846d67f9970ba84dd2aaa3 Mon Sep 17 00:00:00 2001
+From: fignew <thomas@vorget.com>
+Date: Fri, 21 Apr 2017 13:00:50 -0400
+Subject: [PATCH] Fedora systems do not have or need epel-release (#452)
+
+---
+ container/docker/templates/conductor-dockerfile.j2 | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/container/docker/templates/conductor-dockerfile.j2 b/container/docker/templates/conductor-dockerfile.j2
+index 246d99d..28723bd 100644
+--- a/container/docker/templates/conductor-dockerfile.j2
++++ b/container/docker/templates/conductor-dockerfile.j2
+@@ -3,7 +3,7 @@ ENV ANSIBLE_CONTAINER=1
+ {% set distro = conductor_base.split(':')[0] %}
+ {% if distro in ["fedora", "centos"] %}
+ RUN yum update -y && \
+-    yum install -y epel-release   && \
++    {% if distro in ["centos"] %}yum install -y epel-release && \{% endif %}
+     yum install -y gcc git python-devel rsync libffi-devel openssl-devel && \
+     yum clean all
+ {% elif distro in ["debian", "ubuntu"] %}

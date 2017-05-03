@@ -3,7 +3,7 @@
 
 EAPI=6
 
-PYTHON_COMPAT=( python2_7 python3_{4,5} )
+PYTHON_COMPAT=( python2_7 python3_5 )
 
 inherit distutils-r1
 
@@ -26,14 +26,28 @@ RDEPEND="
 "
 DEPEND="
 	>=dev-python/setuptools-20.0.0[${PYTHON_USEDEP}]
-	dev-python/sphinx[${PYTHON_USEDEP}]
+	>=dev-python/sphinx-1.5.0[${PYTHON_USEDEP}]
 "
 
 DOCS=( AUTHORS CONTRIBUTORS.md EXAMPLES.md README.md ROADMAP.rst )
 
-PATCHES=( "${FILESDIR}/${PN}-0.9.0-Remove-pip-requirements.patch" )
+PATCHES=(
+	"${FILESDIR}/${PN}-0.9.0-Remove-pip-requirements.patch"
+	"${FILESDIR}/${P}-Install-gcc-when-Debian-Fixes-default-deployment_output_path.patch"
+	"${FILESDIR}/${P}-Fedora-systems-do-not-have-or-need-epel-release.patch"
+	"${FILESDIR}/${P}-Make-life-better-for-Xenial-users.patch"
+	"${FILESDIR}/${P}-Conductor-image-support-fedora.patch"
+	"${FILESDIR}/${P}-Fixes-builds-for-debian-ubuntu-based-images.patch"
+)
 
 S="${WORKDIR}/${PN}-release-${PV}"
+
+src_prepare() {
+	default
+
+	# copy conductor build files which are packaged wrongly
+	cp setup.py conductor-requirements.* container/docker/files
+}
 
 python_compile_all() {
 	cd docs; emake man
@@ -52,4 +66,14 @@ python_install_all() {
 python_test() {
 	# needs docker access
 	test/run.sh || die "Running test with ${EPYTHON} failed."
+}
+
+pkg_postinst() {
+	elog "There are multiple container orchestrators supported. Please manually install"
+	elog "the required Python bindings:"
+	elog
+	elog "   docker:             >=dev-python/docker-py-2.1"
+	elog "   kubernetes (k8s):   >=dev-python/openshift-restclient-python-0.0.1"
+	elog "   openshift:          >=dev-python/openshift-restclient-python-0.0.1"
+	elog
 }

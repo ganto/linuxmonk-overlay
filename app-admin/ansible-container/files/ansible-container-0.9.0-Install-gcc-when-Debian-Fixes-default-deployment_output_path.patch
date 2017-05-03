@@ -1,0 +1,72 @@
+From e19129857c419e3a2737c792ae6192dbfc9beaca Mon Sep 17 00:00:00 2001
+From: Chris Houseknecht <chouseknecht@ansible.com>
+Date: Tue, 18 Apr 2017 16:09:01 -0400
+Subject: [PATCH] Installs gcc when Debian. Fixes default
+ deployment_output_path. (#438)
+
+---
+ container/config.py                                | 13 +++----------
+ container/docker/templates/conductor-dockerfile.j2 |  2 +-
+ container/templates/init/container.j2.yml          |  8 ++++----
+ 3 files changed, 8 insertions(+), 15 deletions(-)
+
+diff --git a/container/config.py b/container/config.py
+index ad4e4b4..a0d4bcb 100644
+--- a/container/config.py
++++ b/container/config.py
+@@ -48,16 +48,9 @@ def __init__(self, base_path, var_file=None, engine_name=None):
+ 
+     @property
+     def deployment_path(self):
+-        return self.get('settings', {}).get(
+-            'deployment_output_path',
+-            path.normpath(
+-                path.abspath(
+-                    path.expanduser(
+-                        path.join(self.base_path, 'ansible-deployment/')
+-                    )
+-                )
+-            )
+-        )
++        dep_path = self.get('settings', {}).get('deployment_output_path',
++                                                path.join(self.base_path, 'ansible-deployment/'))
++        return path.normpath(path.abspath(path.expanduser(dep_path)))
+ 
+     def set_env(self, env):
+         """
+diff --git a/container/docker/templates/conductor-dockerfile.j2 b/container/docker/templates/conductor-dockerfile.j2
+index 7389d9f..246d99d 100644
+--- a/container/docker/templates/conductor-dockerfile.j2
++++ b/container/docker/templates/conductor-dockerfile.j2
+@@ -8,7 +8,7 @@ RUN yum update -y && \
+     yum clean all
+ {% elif distro in ["debian", "ubuntu"] %}
+ RUN apt-get update -y && \
+-    apt-get install -y python2.7 git python-dev rsync libffi-dev libssl-dev python-apt && \
++    apt-get install -y gcc python2.7 git python-dev rsync libffi-dev libssl-dev python-apt && \
+     cd /usr/bin && \
+     ln -fs python2.7 python && \
+     apt-get clean
+diff --git a/container/templates/init/container.j2.yml b/container/templates/init/container.j2.yml
+index be5f050..fcc1718 100644
+--- a/container/templates/init/container.j2.yml
++++ b/container/templates/init/container.j2.yml
+@@ -1,14 +1,14 @@
+ version: "2"
+ settings:
+-  # The deployment_output_path is mounted to the Conductor container, so
+-  # that the `run` and `deployment` commands can write generated Ansible
+-  # playbooks to it.
+-  # deployment_output_path: ~/ansible-deployment
+   # The Conductor container does the heavy lifting, and provides a portable
+   # Python runtime for building your target containers. It should be derived
+   # from the same distribution as you're building your target containers with.
+   conductor_base: {{ default_base }}
+ 
++  # The deployment_output_path is mounted to the Conductor container, and the 
++  # `run` and `deployment` commands then write generated Ansible playbooks to it.
++  # deployment_output_path: ./ansible-deployment
++
+   # When using the k8s or openshift engines, use the following to authorize with the API.
+   # Values set here will be passed to the Ansible modules. Any file paths will be mounted
+   # to the conductor container, allowing the `run` command to access the API.
