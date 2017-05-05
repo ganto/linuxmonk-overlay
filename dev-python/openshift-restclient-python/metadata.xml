@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<upstream>
+		<remote-id type="pypi">openshift</remote-id>
+		<remote-id type="github">openshift/openshift-restclient-python</remote-id>
+	</upstream>
+	<longdescription lang="en">
+		Python client for the OpenShift API.
+	</longdescription>
+</pkgmetadata>
