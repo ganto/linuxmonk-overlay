@@ -9,6 +9,7 @@ RUBY_FAKEGEM_RECIPE_DOC=""
 # TODO: make tools scripts executable, move to better place
 RUBY_FAKEGEM_EXTRAINSTALL="locales tools"
 RUBY_FAKEGEM_EXTRADOC="CHANGELOG.md README.md"
+RUBY_FAKEGEM_GEMSPEC=vagrant-libvirt.gemspec
 
 inherit ruby-fakegem
 
