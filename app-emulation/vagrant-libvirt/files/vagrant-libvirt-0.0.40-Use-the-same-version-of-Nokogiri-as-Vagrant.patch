@@ -1,0 +1,27 @@
+From 13451c0e82904639c1d371d83e1d6dcead5c9e2f Mon Sep 17 00:00:00 2001
+From: James Conroy-Finn <git@invetica.co.uk>
+Date: Thu, 27 Apr 2017 13:51:28 +0100
+Subject: [PATCH] Use the same version of Nokogiri as Vagrant
+
+---
+ vagrant-libvirt.gemspec | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/vagrant-libvirt.gemspec b/vagrant-libvirt.gemspec
+index c975df6..aa4f31f 100644
+--- a/vagrant-libvirt.gemspec
++++ b/vagrant-libvirt.gemspec
+@@ -20,9 +20,11 @@ Gem::Specification.new do |gem|
+   gem.add_development_dependency "rspec-expectations", "~> 2.14.0"
+   gem.add_development_dependency "rspec-mocks", "~> 2.14.0"
+ 
+-  gem.add_runtime_dependency 'fog-libvirt', '>= 0.3.0'
+-  gem.add_runtime_dependency 'nokogiri', '~> 1.6.0'
+   gem.add_runtime_dependency 'fog-core', '~> 1.43.0'
++  gem.add_runtime_dependency 'fog-libvirt', '>= 0.3.0'
++
++  # Make sure to use the same version of Nokogiri as Vagrant (https://git.io/v9sSO).
++  gem.add_runtime_dependency 'nokogiri', '~> 1.7.1'
+ 
+   gem.add_development_dependency 'rake'
+ end

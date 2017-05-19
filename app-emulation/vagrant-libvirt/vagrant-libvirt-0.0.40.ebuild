@@ -1,7 +1,7 @@
 # Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=5
+EAPI=6
 USE_RUBY="ruby21 ruby22 ruby23"
 
 RUBY_FAKEGEM_RECIPE_TEST="rspec"
@@ -20,10 +20,13 @@ SLOT="0"
 KEYWORDS="~amd64"
 IUSE=""
 
+PATCHES=( "${FILESDIR}/${P}-Use-the-same-version-of-Nokogiri-as-Vagrant.patch" )
+
 ruby_add_rdepend "
-	>=app-emulation/vagrant-1.8.0
-	=dev-ruby/fog-libvirt-0.0.3*
-	=dev-ruby/nokogiri-1.6*
+	>=app-emulation/vagrant-1.9.0
+	=dev-ruby/fog-core-1.43.0*
+	>=dev-ruby/fog-libvirt-0.3.0
+	=dev-ruby/nokogiri-1.7.1*
 "
 
 all_ruby_prepare() {
