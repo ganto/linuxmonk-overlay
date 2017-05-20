@@ -1,0 +1,57 @@
+diff --git a/hack/build-cross.sh b/hack/build-cross.sh
+index 9305258..9c7f7d2 100755
+--- a/hack/build-cross.sh
++++ b/hack/build-cross.sh
+@@ -38,6 +38,16 @@ if [[ "${host_platform}" == "linux/s390x" ]]; then
+   platforms+=( "linux/s390x" )
+ fi
+ 
++# Special case armv7hl
++if [[ "${host_platform}" == "linux/arm" ]]; then
++  platforms+=( "linux/arm" )
++fi
++
++# Special case ppc64
++if [[ "${host_platform}" == "linux/ppc64" ]]; then
++  platforms+=( "linux/ppc64" )
++fi
++
+ # On linux platforms, build images
+ if [[ "${host_platform}" == linux/* ]]; then
+   image_platforms+=( "${host_platform}" )
+diff --git a/hack/common.sh b/hack/common.sh
+index d977b53..7c448e6 100755
+--- a/hack/common.sh
++++ b/hack/common.sh
+@@ -36,8 +36,12 @@ function os::build::host_platform_friendly() {
+     echo "linux-64bit"
+   elif [[ $platform == "linux/ppc64le" ]]; then
+     echo "linux-powerpc64"
++  elif [[ $platform == "linux/ppc64" ]]; then
++    echo "linux-powerpc64"
+   elif [[ $platform == "linux/arm64" ]]; then
+     echo "linux-arm64"
++  elif [[ $platform == "linux/arm" ]]; then
++    echo "linux-arm"
+   elif [[ $platform == "linux/s390x" ]]; then
+     echo "linux-s390"
+   else
+@@ -371,6 +375,9 @@ function os::build::place_bins() {
+         elif [[ $platform == "linux-arm64" ]]; then
+           OS_RELEASE_ARCHIVE="openshift-origin-client-tools" os::build::archive_tar "${OS_BINARY_RELEASE_CLIENT_LINUX[@]}"
+           OS_RELEASE_ARCHIVE="openshift-origin-server" os::build::archive_tar "${OS_BINARY_RELEASE_SERVER_LINUX[@]}"
++        elif [[ $platform == "linux-arm" ]]; then
++          OS_RELEASE_ARCHIVE="openshift-origin-client-tools" os::build::archive_tar "${OS_BINARY_RELEASE_CLIENT_LINUX[@]}"
++          OS_RELEASE_ARCHIVE="openshift-origin-server" os::build::archive_tar "${OS_BINARY_RELEASE_SERVER_LINUX[@]}"
+         elif [[ $platform == "linux-s390" ]]; then
+           OS_RELEASE_ARCHIVE="openshift-origin-client-tools" os::build::archive_tar "${OS_BINARY_RELEASE_CLIENT_LINUX[@]}"
+           OS_RELEASE_ARCHIVE="openshift-origin-server" os::build::archive_tar "${OS_BINARY_RELEASE_SERVER_LINUX[@]}"
+@@ -378,7 +385,7 @@ function os::build::place_bins() {
+           echo "++ ERROR: No release type defined for $platform"
+         fi
+       else
+-        if [[ $platform == "linux-64bit" || $platform == "linux-powerpc64" || $platform == "linux-arm64" || $platform == "linux-s390" ]]; then
++        if [[ $platform == "linux-64bit" || $platform == "linux-powerpc64" || $platform == "linux-arm64" || $platform == "linux-arm" || $platform == "linux-s390" ]]; then
+           os::build::archive_tar "./*"
+         else
+           echo "++ ERROR: No release type defined for $platform"
