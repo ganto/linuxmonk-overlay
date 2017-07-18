@@ -3,7 +3,7 @@
 
 EAPI=6
 
-PYTHON_COMPAT=( python2_7 python3_4 )
+PYTHON_COMPAT=( python2_7 python3_5 )
 
 inherit distutils-r1 git-r3
 
@@ -18,21 +18,30 @@ KEYWORDS=""
 IUSE="doc"
 
 RDEPEND="
-	>=app-emulation/docker-1.12.0
-	<app-emulation/docker-1.13.0
-	=app-emulation/docker-compose-1.9.0[${PYTHON_USEDEP}]
-	=dev-python/docker-py-1.10.6[${PYTHON_USEDEP}]
-	>=dev-python/jinja-2.8[${PYTHON_USEDEP}]
-	>=dev-python/pyyaml-3.11[${PYTHON_USEDEP}]
-	=dev-python/requests-2.11.1[${PYTHON_USEDEP}]
-	dev-python/six[${PYTHON_USEDEP}]
+	>=dev-python/jinja-2.9[${PYTHON_USEDEP}]
+	>=dev-python/pyyaml-3.12[${PYTHON_USEDEP}]
+	>=dev-python/requests-2[${PYTHON_USEDEP}]
+	>=dev-python/ruamel-yaml-0.14.2[${PYTHON_USEDEP}]
+	>=dev-python/six-1.10[${PYTHON_USEDEP}]
+	>=dev-python/structlog-16.1[${PYTHON_USEDEP}]
 "
 DEPEND="
 	>=dev-python/setuptools-20.0.0[${PYTHON_USEDEP}]
-	dev-python/sphinx[${PYTHON_USEDEP}]
+	>=dev-python/sphinx-1.5.0[${PYTHON_USEDEP}]
 "
 
-PATCHES=( "${FILESDIR}/${PN}-0.2-Remove-pip-requirements.patch" )
+DOCS=( AUTHORS CONTRIBUTORS.md EXAMPLES.md README.md ROADMAP.rst )
+
+PATCHES=(
+	"${FILESDIR}/${PN}-0.9.0-Remove-pip-requirements.patch"
+)
+
+src_prepare() {
+	default
+
+	# copy conductor build files which are packaged wrongly
+	cp setup.py conductor-requirements.* container/docker/files
+}
 
 python_compile_all() {
 	cd docs; emake man
@@ -46,4 +55,19 @@ python_install_all() {
 	distutils-r1_python_install_all
 
 	doman docs/_build/man/*.1
+}
+
+python_test() {
+	# needs docker access
+	test/run.sh || die "Running test with ${EPYTHON} failed."
+}
+
+pkg_postinst() {
+	elog "There are multiple container orchestrators supported. Please manually install"
+	elog "the required Python bindings:"
+	elog
+	elog "   docker:             >=dev-python/docker-py-2.1"
+	elog "   kubernetes (k8s):   >=dev-python/openshift-restclient-python-0.0.1"
+	elog "   openshift:          >=dev-python/openshift-restclient-python-0.0.1"
+	elog
 }
