@@ -1,8 +1,8 @@
 # Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=5
-USE_RUBY="ruby21 ruby22 ruby23"
+EAPI=6
+USE_RUBY="ruby22 ruby23 ruby24"
 
 RUBY_FAKEGEM_RECIPE_TEST=""             # → build_error test will/must always fail, wtf?!
 RUBY_FAKEGEM_TASK_TEST="shindo_tests"   # only works if shindo is already installed
