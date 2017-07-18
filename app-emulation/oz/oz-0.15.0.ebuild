@@ -1,7 +1,7 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2016 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=5
+EAPI=6
 
 PYTHON_COMPAT=( python2_7 )
 
@@ -21,19 +21,25 @@ CDEPEND="
 	>=dev-python/libvirt-python-0.9.7[${PYTHON_USEDEP}]
 	dev-python/lxml[${PYTHON_USEDEP}]
 	dev-python/m2crypto[${PYTHON_USEDEP}]
-	dev-python/pycurl[${PYTHON_USEDEP}]"
-
+	dev-python/pycurl[${PYTHON_USEDEP}]
+"
 RDEPEND="${CDEPEND}
-	app-cdr/cdrkit
+	app-cdr/cdrtools
 	app-emulation/libvirt[qemu]
 	net-misc/openssh
-	sys-fs/mtools"
-
+	sys-fs/mtools
+"
 DEPEND="${CDEPEND}
-	dev-python/setuptools[${PYTHON_USEDEP}]"
+	dev-python/pytest[${PYTHON_USEDEP}]
+	dev-python/setuptools[${PYTHON_USEDEP}]
+"
+
+PATCHES=(
+	"${FILESDIR}/${P}-Replace-genisoimage-with-mkisofs.patch"
+)
 
 python_test() {
-	esetup.py test || die
+	py.test --debug -v -v -v || die "Tests fail with ${EPYTHON}"
 }
 
 python_install_all() {

@@ -1,0 +1,144 @@
+commit 311ffba7770a5333129a979f2c154e7b1c88e056
+Author: Reto Gantenbein <reto.gantenbein@linuxmonk.ch>
+Date:   Tue Jul 18 22:45:45 2017 +0200
+
+    Replace genisoimage with mkisofs
+
+diff --git a/oz/Debian.py b/oz/Debian.py
+index f98457e..9a511d6 100644
+--- a/oz/Debian.py
++++ b/oz/Debian.py
+@@ -148,7 +148,7 @@ label customiso
+         Method to create a new ISO based on the modified CD/DVD.
+         """
+         self.log.info("Generating new ISO")
+-        oz.ozutil.subprocess_check_output(["genisoimage", "-r", "-V", "Custom",
++        oz.ozutil.subprocess_check_output(["mkisofs", "-r", "-V", "Custom",
+                                            "-J", "-l", "-no-emul-boot",
+                                            "-b", "isolinux/isolinux.bin",
+                                            "-c", "isolinux/boot.cat",
+diff --git a/oz/FreeBSD.py b/oz/FreeBSD.py
+index 504cb9c..19b2449 100644
+--- a/oz/FreeBSD.py
++++ b/oz/FreeBSD.py
+@@ -40,7 +40,7 @@ class FreeBSD(oz.Guest.CDGuest):
+         Method to create a new ISO based on the modified CD/DVD.
+         """
+         self.log.debug("Generating new ISO")
+-        oz.ozutil.subprocess_check_output(["genisoimage",
++        oz.ozutil.subprocess_check_output(["mkisofs",
+                                            "-R", "-no-emul-boot",
+                                            "-b", "boot/cdboot", "-v",
+                                            "-o", self.output_iso,
+diff --git a/oz/Mageia.py b/oz/Mageia.py
+index c3bbd55..1f3316e 100644
+--- a/oz/Mageia.py
++++ b/oz/Mageia.py
+@@ -96,7 +96,7 @@ label customiso
+         isolinuxbin = os.path.join(isolinuxdir, "isolinux/isolinux.bin")
+         isolinuxboot = os.path.join(isolinuxdir, "isolinux/boot.cat")
+ 
+-        oz.ozutil.subprocess_check_output(["genisoimage", "-r", "-V", "Custom",
++        oz.ozutil.subprocess_check_output(["mkisofs", "-r", "-V", "Custom",
+                                            "-J", "-l", "-no-emul-boot",
+                                            "-b", isolinuxbin,
+                                            "-c", isolinuxboot,
+diff --git a/oz/Mandrake.py b/oz/Mandrake.py
+index 33743d9..043b1e5 100644
+--- a/oz/Mandrake.py
++++ b/oz/Mandrake.py
+@@ -83,7 +83,7 @@ label customiso
+         Method to create a new ISO based on the modified CD/DVD.
+         """
+         self.log.info("Generating new ISO")
+-        oz.ozutil.subprocess_check_output(["genisoimage", "-r", "-V", "Custom",
++        oz.ozutil.subprocess_check_output(["mkisofs", "-r", "-V", "Custom",
+                                            "-J", "-l", "-no-emul-boot",
+                                            "-b", "isolinux/isolinux.bin",
+                                            "-c", "isolinux/boot.cat",
+@@ -149,7 +149,7 @@ label customiso
+         Method to create a new ISO based on the modified CD/DVD.
+         """
+         self.log.info("Generating new ISO")
+-        oz.ozutil.subprocess_check_output(["genisoimage", "-r", "-V", "Custom",
++        oz.ozutil.subprocess_check_output(["mkisofs", "-r", "-V", "Custom",
+                                            "-J", "-cache-inodes",
+                                            "-b", "Boot/cdrom.img",
+                                            "-c", "Boot/boot.cat",
+diff --git a/oz/Mandriva.py b/oz/Mandriva.py
+index 2ed187e..0270ae8 100644
+--- a/oz/Mandriva.py
++++ b/oz/Mandriva.py
+@@ -95,7 +95,7 @@ label customiso
+         isolinuxbin = os.path.join(isolinuxdir, "isolinux/isolinux.bin")
+         isolinuxboot = os.path.join(isolinuxdir, "isolinux/boot.cat")
+ 
+-        oz.ozutil.subprocess_check_output(["genisoimage", "-r", "-V", "Custom",
++        oz.ozutil.subprocess_check_output(["mkisofs", "-r", "-V", "Custom",
+                                            "-J", "-l", "-no-emul-boot",
+                                            "-b", isolinuxbin,
+                                            "-c", isolinuxboot,
+diff --git a/oz/OpenSUSE.py b/oz/OpenSUSE.py
+index 080809c..f505fc2 100644
+--- a/oz/OpenSUSE.py
++++ b/oz/OpenSUSE.py
+@@ -103,7 +103,7 @@ class OpenSUSEGuest(oz.Linux.LinuxCDGuest):
+         Method to create a new ISO based on the modified CD/DVD.
+         """
+         self.log.info("Generating new ISO")
+-        oz.ozutil.subprocess_check_output(["genisoimage", "-r", "-V", "Custom",
++        oz.ozutil.subprocess_check_output(["mkisofs", "-r", "-V", "Custom",
+                                            "-J", "-no-emul-boot",
+                                            "-b", "boot/" + self.tdl.arch + "/loader/isolinux.bin",
+                                            "-c", "boot/" + self.tdl.arch + "/loader/boot.cat",
+diff --git a/oz/RedHat.py b/oz/RedHat.py
+index aaa102c..d8a2f6c 100644
+--- a/oz/RedHat.py
++++ b/oz/RedHat.py
+@@ -86,7 +86,7 @@ Subsystem	sftp	/usr/libexec/openssh/sftp-server
+         Method to create a new ISO based on the modified CD/DVD.
+         """
+         self.log.debug("Generating new ISO")
+-        oz.ozutil.subprocess_check_output(["genisoimage", "-r", "-T", "-J",
++        oz.ozutil.subprocess_check_output(["mkisofs", "-r", "-T", "-J",
+                                            "-V", "Custom", "-no-emul-boot",
+                                            "-b", "isolinux/isolinux.bin",
+                                            "-c", "isolinux/boot.cat",
+diff --git a/oz/Ubuntu.py b/oz/Ubuntu.py
+index c05c7a0..a49066b 100644
+--- a/oz/Ubuntu.py
++++ b/oz/Ubuntu.py
+@@ -199,7 +199,7 @@ PROMPT 0
+         Method to create a new ISO based on the modified CD/DVD.
+         """
+         self.log.info("Generating new ISO")
+-        oz.ozutil.subprocess_check_output(["genisoimage", "-r", "-V", "Custom",
++        oz.ozutil.subprocess_check_output(["mkisofs", "-r", "-V", "Custom",
+                                            "-J", "-l", "-no-emul-boot",
+                                            "-b", "isolinux/isolinux.bin",
+                                            "-c", "isolinux/boot.cat",
+diff --git a/oz/Windows.py b/oz/Windows.py
+index 54bc397..af72fec 100644
+--- a/oz/Windows.py
++++ b/oz/Windows.py
+@@ -63,7 +63,7 @@ class Windows_v5(Windows):
+         Method to create a new ISO based on the modified CD/DVD.
+         """
+         self.log.debug("Generating new ISO")
+-        oz.ozutil.subprocess_check_output(["genisoimage",
++        oz.ozutil.subprocess_check_output(["mkisofs",
+                                            "-b", "cdboot/boot.bin",
+                                            "-no-emul-boot", "-boot-load-seg",
+                                            "1984", "-boot-load-size", "4",
+@@ -164,9 +164,9 @@ class Windows_v6(Windows):
+         Method to create a new ISO based on the modified CD/DVD.
+         """
+         self.log.debug("Generating new ISO")
+-        # NOTE: Windows 2008 is very picky about which arguments to genisoimage
++        # NOTE: Windows 2008 is very picky about which arguments to mkisofs
+         # will generate a bootable CD, so modify these at your own risk
+-        oz.ozutil.subprocess_check_output(["genisoimage",
++        oz.ozutil.subprocess_check_output(["mkisofs",
+                                            "-b", "cdboot/boot.bin",
+                                            "-no-emul-boot", "-c", "BOOT.CAT",
+                                            "-iso-level", "2", "-J", "-l", "-D",
