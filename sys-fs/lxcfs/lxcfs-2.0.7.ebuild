@@ -28,7 +28,7 @@ IUSE="pam"
 # lxcfs makes no direct use of dbus.
 RDEPEND="
 	dev-libs/glib:2
-	sys-fs/fuse
+	sys-fs/fuse:0
 	virtual/pam
 "
 DEPEND="
