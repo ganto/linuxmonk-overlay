@@ -10,6 +10,6 @@
 		<remote-id type="github">geemus/formatador</remote-id>
 	</upstream>
 	<longdescription lang="en">
-		 STDOUT text formatting
+		STDOUT text formatting
 	</longdescription>
 </pkgmetadata>
