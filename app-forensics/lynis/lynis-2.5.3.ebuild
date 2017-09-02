@@ -6,8 +6,8 @@ EAPI="5"
 inherit eutils bash-completion-r1 systemd
 
 DESCRIPTION="Security and system auditing tool"
-HOMEPAGE="http://cisofy.com/lynis/"
-SRC_URI="http://cisofy.com/files/${P}.tar.gz"
+HOMEPAGE="https://cisofy.com/lynis/"
+SRC_URI="https://cisofy.com/files/${P}.tar.gz"
 
 LICENSE="GPL-3"
 SLOT="0"
