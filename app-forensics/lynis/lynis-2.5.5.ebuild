@@ -29,7 +29,7 @@ src_prepare() {
 
 src_install() {
 	doman lynis.8
-	dodoc CHANGELOG.md CONTRIBUTIONS.md CONTRIBUTORS.md FAQ README
+	dodoc CHANGELOG.md CODE_OF_CONDUCT.md CONTRIBUTING.md CONTRIBUTORS.md FAQ README
 
 	dobashcomp extras/bash_completion.d/lynis
 
