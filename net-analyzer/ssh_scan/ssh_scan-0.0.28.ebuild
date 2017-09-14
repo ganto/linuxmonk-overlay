@@ -3,7 +3,7 @@
 
 EAPI=6
 
-USE_RUBY="ruby21 ruby22 ruby23"
+USE_RUBY="ruby22 ruby23 ruby24"
 
 RUBY_FAKEGEM_RECIPE_TEST="rspec3"
 RUBY_FAKEGEM_RECIPE_DOC=""
@@ -12,7 +12,7 @@ RUBY_FAKEGEM_EXTRAINSTALL="config data"
 
 inherit ruby-fakegem
 
-SSH_BADKEYS_COMMIT=5f935f0e0ef28d26eca775140fcef493ca7a2cc6
+SSH_BADKEYS_COMMIT=4ec6c95bfe257c4bba7a966afe6eca562fd6b3fc
 
 DESCRIPTION="A prototype SSH configuration and policy scanner"
 HOMEPAGE="https://mozilla.github.io/ssh_scan/"
@@ -25,7 +25,7 @@ KEYWORDS="~amd64"
 IUSE=""
 
 ruby_add_rdepend "
-	=dev-ruby/bindata-2*
+	dev-ruby/bindata:*
 	dev-ruby/netaddr
 	dev-ruby/net-ssh:*
 	dev-ruby/sshkey
@@ -38,9 +38,6 @@ all_ruby_prepare() {
 
 	# Remove (unpackaged) Coveralls dependency
 	sed -i -e '/[Cc]overalls/d' spec/spec_helper.rb || die
-
-	# Don't install example config as binary
-	rm -f bin/ssh_scan_worker_example_config.yml
 
 	# Don't install license and readme of ssh-badkeys
 	rm -f "${WORKDIR}"/all/ssh-badkeys-${SSH_BADKEYS_COMMIT}/{README.md,LICENSE}
