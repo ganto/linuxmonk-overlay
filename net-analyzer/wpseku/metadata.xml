@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<upstream>
+		<remote-id type="github">m4ll0k/WPSeku</remote-id>
+	</upstream>
+	<longdescription lang="en">
+		WPSeku is a black box WordPress vulnerability scanner that can be used
+		to scan remote WordPress installations to find security issues.
+	</longdescription>
+</pkgmetadata>
