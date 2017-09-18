@@ -1,9 +1,9 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="5"
+EAPI="6"
 
-WX_GTK_VER="2.8"
+WX_GTK_VER="3.0"
 
 inherit autotools wxwidgets
 
@@ -21,13 +21,15 @@ RDEPEND=">=dev-libs/libxml2-2.7.3-r1
 	dev-libs/xerces-c[icu]
 	dev-libs/libpcre
 	app-text/aspell
-	x11-libs/wxGTK:2.8[X]"
+	x11-libs/wxGTK:3.0[X]"
 DEPEND="${RDEPEND}
 	dev-libs/boost"
 
 DOCS=( AUTHORS ChangeLog README NEWS )
 
 src_prepare() {
+	eapply_user
+
 	# fix desktop file
 	sed -i  -e '/Categories/s/Application;//' \
 		-e '/Icon/s/.png//' \
