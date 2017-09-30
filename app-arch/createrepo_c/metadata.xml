@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<upstream>
+		<remote-id type="github">rpm-software-management/createrepo_c</remote-id>
+	</upstream>
+	<longdescription lang="en">
+		createrepo_c is a C implementation of the classical createrepo tool and
+		simultaneously a C library for manipulation with a repodata. createrepo_c
+		provides Python bindings too, so could be easily used instead of yum
+		library for certain kinds of manipulations with repodata.
+	</longdescription>
+</pkgmetadata>

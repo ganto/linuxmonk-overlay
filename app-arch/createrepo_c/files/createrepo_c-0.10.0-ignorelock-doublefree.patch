@@ -1,0 +1,72 @@
+From 3519f493ce51bac53d178f7ff9e5b84ca98a158a Mon Sep 17 00:00:00 2001
+From: Tomas Mlcoch <tmlcoch@redhat.com>
+Date: Fri, 19 Aug 2016 14:59:26 +0200
+Subject: [PATCH 1/2] cr_lock_repo: Fix segfault caused by freed
+ tmp_repodata_dir variable
+
+---
+ src/createrepo_shared.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/src/createrepo_shared.c b/src/createrepo_shared.c
+index 5872029..d4df86c 100644
+--- a/src/createrepo_shared.c
++++ b/src/createrepo_shared.c
+@@ -258,12 +258,11 @@ cr_lock_repo(const gchar *repo_dir,
+             g_debug("(--ignore-lock enabled) For data generation is used: %s",
+                     tmp_repodata_dir);
+         }
+-    }
+ 
+-    if (tmp_repodata_dir)
+         *tmp_repodata_dir_p = g_strdup(tmp_repodata_dir);
+-    else
++    } else {
+         *tmp_repodata_dir_p = g_strdup(lock_dir);
++    }
+ 
+     return TRUE;
+ }
+-- 
+2.9.3
+
+
+From 07f5cce3eff5c62f0c16143c7eaab64eb0e3ebf8 Mon Sep 17 00:00:00 2001
+From: Tomas Mlcoch <tmlcoch@redhat.com>
+Date: Thu, 8 Sep 2016 09:45:38 +0200
+Subject: [PATCH 2/2] cr_lock_repo: Fix double free (RhBz: 1355720)
+
+---
+ src/createrepo_shared.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/src/createrepo_shared.c b/src/createrepo_shared.c
+index d4df86c..8a26787 100644
+--- a/src/createrepo_shared.c
++++ b/src/createrepo_shared.c
+@@ -188,7 +188,6 @@ cr_lock_repo(const gchar *repo_dir,
+     assert(!err || *err == NULL);
+ 
+     _cleanup_free_ gchar *lock_dir = NULL;
+-    _cleanup_free_ gchar *tmp_repodata_dir = NULL;
+     _cleanup_error_free_ GError *tmp_err = NULL;
+ 
+     lock_dir = g_build_filename(repo_dir, ".repodata/", NULL);
+@@ -242,10 +241,11 @@ cr_lock_repo(const gchar *repo_dir,
+         }
+ 
+         // To data generation use a different one
++        _cleanup_free_ gchar *tmp_repodata_dir = NULL;
+         _cleanup_free_ gchar *tmp = NULL;
+-        tmp_repodata_dir = g_build_filename(repo_dir, ".repodata.", NULL);
+-        tmp = cr_append_pid_and_datetime(tmp_repodata_dir, "/");
+-        tmp_repodata_dir = tmp;
++
++        tmp = g_build_filename(repo_dir, ".repodata.", NULL);
++        tmp_repodata_dir = cr_append_pid_and_datetime(tmp, "/");
+ 
+         if (g_mkdir(tmp_repodata_dir, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH)) {
+             g_critical("(--ignore-lock enabled) Cannot create %s: %s",
+-- 
+2.9.3
+
