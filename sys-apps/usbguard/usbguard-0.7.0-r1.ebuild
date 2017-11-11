@@ -45,10 +45,11 @@ REQUIRED_USE="
 
 DOCS=( CHANGELOG.md README.md )
 
-src_prepare() {
-	# file should be generated from .in file
-	rm usbguard-daemon.conf
+PATCHES=(
+	"${FILESDIR}/${PN}-0.7.0-kernel-4.13-fix.patch"
+)
 
+src_prepare() {
 	default_src_prepare
 	eautoreconf
 }
