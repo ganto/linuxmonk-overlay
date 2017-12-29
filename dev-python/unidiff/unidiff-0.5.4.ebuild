@@ -1,9 +1,9 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 
-PYTHON_COMPAT=( python2_7 )
+PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
 
 inherit distutils-r1
 
@@ -20,10 +20,3 @@ DEPEND="dev-python/setuptools[${PYTHON_USEDEP}]"
 DOCS=( AUTHORS HISTORY README.md )
 
 S="${WORKDIR}/python-${P}"
-
-python_prepare_all() {
-	distutils-r1_python_prepare_all
-
-	# ebuild complains when trying to install tests
-	sed -i "s/find_packages()/find_packages(exclude=('tests',))/" setup.py
-}
