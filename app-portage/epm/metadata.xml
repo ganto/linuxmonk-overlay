@@ -9,6 +9,6 @@
 		<remote-id type="github">fuzzyray/epm</remote-id>
 	</upstream>
 	<longdescription lang="en">
-		 rpm workalike for Gentoo Linux
+		rpm workalike for Gentoo Linux
 	</longdescription>
 </pkgmetadata>
