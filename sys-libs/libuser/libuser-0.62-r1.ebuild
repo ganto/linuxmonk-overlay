@@ -1,17 +1,17 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=5
+EAPI=6
 
-AUTOTOOLS_AUTORECONF=1
-AUTOTOOLS_PRUNE_LIBTOOL_FILES=all
-PYTHON_COMPAT=( python2_7 python3_{4,5} )
+#AUTOTOOLS_AUTORECONF=1
+#AUTOTOOLS_PRUNE_LIBTOOL_FILES=all
+PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
 
-inherit autotools-utils python-r1
+inherit autotools python-r1
 
 DESCRIPTION="A user and group account administration library"
-HOMEPAGE="https://fedorahosted.org/libuser/"
-SRC_URI="https://fedorahosted.org/releases/l/i/${PN}/${P}.tar.xz"
+HOMEPAGE="https://pagure.io/libuser"
+SRC_URI="https://releases.pagure.org/${PN}/${P}.tar.xz"
 
 LICENSE="LGPL-2+"
 SLOT="0"
@@ -36,8 +36,17 @@ DEPEND="${CDEPEND}
 "
 RDEPEND="${CDEPEND}"
 
+src_prepare() {
+	default
+	eautoreconf
+
+	if use python; then
+		python_copy_sources
+	fi
+}
+
 src_configure() {
-	local myconf=(
+	local mybaseconf=(
 		--disable-static
 		$(use_with ldap)
 		$(use_with sasl)
@@ -46,7 +55,7 @@ src_configure() {
 
 	# set up the library build
 	local myeconfargs=(
-		${myconf[@]}
+		${mybaseconf[@]}
 		--without-python
 	)
 
@@ -54,45 +63,51 @@ src_configure() {
 		myeconfargs+=( --enable-gtk-doc )
 	fi
 
-	autotools-utils_src_configure
+	econf ${myeconfargs[@]}
 
 	# set up the python bindings build(s)
 	if use python; then
-		myeconfargs=(
-			${myconf[@]}
-			--with-python
-		)
-		python_foreach_impl autotools-utils_src_configure
+		configure_py() {
+			myeconfargs=(
+				${mybaseconf[@]}
+				--with-python
+			)
+			cd "${BUILD_DIR}"
+			econf ${myeconfargs[@]}
+		}
+		python_foreach_impl configure_py
 	fi
 }
 
 src_compile() {
-	autotools-utils_src_compile
+	emake || die "emake failed"
 
 	if use python; then
-		python_compile() {
+		compile_py() {
 			local CFLAGS=${CFLAGS}
 
 			python_is_python3 || CFLAGS+=" -fno-strict-aliasing"
 
+			cd "${BUILD_DIR}"
 			# couldn't figure out how to only compile the python parts,
 			# therefore everything is compiled again
-			autotools-utils_src_compile
+			emake || die "emake failed under ${EPYTHON}"
 		}
-		python_foreach_impl python_compile
+		python_foreach_impl compile_py
 	fi
 }
 
 src_install() {
-	autotools-utils_src_install
+	default
+	find "${D}" -name '*.la' -delete || die
 
 	if use python; then
-		installation() {
+		install_py() {
 			# this will generate a rpath warning, but there is currently no
 			# cleaner way to install without patching the build system
 			python_domodule "${BUILD_DIR}"/python/.libs/libuser.so
 		}
-		python_foreach_impl installation
+		python_foreach_impl install_py
 	fi
 
 	dodoc python/modules.txt
