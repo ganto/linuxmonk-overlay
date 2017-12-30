@@ -1,0 +1,11 @@
+--- data/terminator.desktop.in.orig	2017-02-27 10:19:04.779904158 +0100
++++ data/terminator.desktop.in	2017-02-27 10:19:19.924000420 +0100
+@@ -10,7 +10,7 @@
+ X-Ubuntu-Gettext-Domain=terminator
+ X-Ayatana-Desktop-Shortcuts=NewWindow;
+ Keywords=terminal;shell;prompt;command;commandline;
+-[NewWindow Shortcut Group]
++[X-NewWindow Shortcut Group]
+ Name=Open a New Window
+ Exec=terminator
+ TargetEnvironment=Unity
