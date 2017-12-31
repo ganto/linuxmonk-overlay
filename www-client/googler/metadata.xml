@@ -5,7 +5,7 @@
 		<email>reto.gantenbein@linuxmonk.ch</email>
 		<name>Reto Gantenbein</name>
 	</maintainer>
-    <upstream>
+	<upstream>
 		<bugs-to>https://github.com/jarun/googler/issues</bugs-to>
 		<remote-id type="github">jarun/googler</remote-id>
 	</upstream>
