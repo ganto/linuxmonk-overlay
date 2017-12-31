@@ -1,4 +1,4 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -23,8 +23,6 @@ DEPEND="${RDEPEND}
 	doc? ( dev-python/sphinx[${PYTHON_USEDEP}] )
 	test? ( dev-python/nose[${PYTHON_USEDEP}] )"
 
-S="${WORKDIR}/debops-tools-${PV}"
-
 DOCS=( CHANGES.rst CONTRIBUTING.rst README.rst )
 
 python_compile_all() {
@@ -35,7 +33,7 @@ python_compile_all() {
 }
 
 python_test() {
-	nosetests || die "Tests failed"
+	nosetests -v || die "Tests failed"
 }
 
 python_install_all() {
