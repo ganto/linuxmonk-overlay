@@ -31,6 +31,7 @@ DEPEND="${CDEPEND}
 "
 RDEPEND="${PYTHON_DEPS}
 	${CDEPEND}
+	!sys-libs/hawkey[${PYTHON_USEDEP}]
 "
 
 src_prepare() {
