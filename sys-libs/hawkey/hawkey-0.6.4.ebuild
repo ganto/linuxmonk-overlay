@@ -1,9 +1,9 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=5
+EAPI=6
 
-PYTHON_COMPAT=( python{2_7,3_3,3_4,3_5} )
+PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
 
 inherit cmake-utils python-r1
 
@@ -30,14 +30,18 @@ DEPEND="${RDEPEND}
 S="${WORKDIR}/hawkey-${P}-1"
 
 src_prepare() {
+	eapply_user
+
 	# adjust python-3 specific tool names
 	sed -i 's/sphinx-build-3/sphinx-build/' doc/CMakeLists.txt
 	sed -i 's/nosetests-${PYTHON_MAJOR_DOT_MINOR_VERSION}/nosetests/' tests/python/tests/run_nosetests.in
+
+	cmake-utils_src_prepare
 }
 
 hawkey_src_configure_internal() {
 	local python_major=$( cut -d'.' -f1 <<< "${EPYTHON/python/}" )
-	mycmakeargs="${mycmakeargs} -DPYTHON_DESIRED=${python_major}"
+	mycmakeargs=( -DPYTHON_DESIRED=${python_major} )
 	cmake-utils_src_configure
 }
 
