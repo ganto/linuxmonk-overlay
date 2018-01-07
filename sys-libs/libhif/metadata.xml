@@ -9,7 +9,7 @@
 		<remote-id type="github">rpm-software-management/libhif</remote-id>
 	</upstream>
 	<longdescription lang="en">
-		 Simple package manager built on top of hawkey and librepo
+		Simple package manager built on top of hawkey and librepo
 	</longdescription>
 	<use>
 		<flag name="doc">Build HTML documentation</flag>
