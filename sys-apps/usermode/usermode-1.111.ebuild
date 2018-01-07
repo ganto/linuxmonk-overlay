@@ -1,4 +1,4 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -6,8 +6,8 @@ EAPI=6
 inherit autotools
 
 DESCRIPTION="Tools for certain user account management tasks"
-HOMEPAGE="https://fedorahosted.org/usermode/"
-SRC_URI="https://fedorahosted.org/releases/u/s/usermode/usermode-1.111.tar.xz"
+HOMEPAGE="https://pagure.io/usermode/"
+SRC_URI="https://releases.pagure.org/${PN}/${P}.tar.xz"
 
 LICENSE="GPL-2+"
 SLOT="0"
