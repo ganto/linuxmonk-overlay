@@ -1,0 +1,33 @@
+From ef940df32e0d4be0f0de32781f92e5253af1ac01 Mon Sep 17 00:00:00 2001
+From: Igor Gnatenko <ignatenko@redhat.com>
+Date: Wed, 8 Mar 2017 12:11:38 +0100
+Subject: [PATCH 3/5] builddep: show message if package is already installed
+
+Signed-off-by: Igor Gnatenko <ignatenko@redhat.com>
+
+Closes: #204
+Approved by: jmracek
+
+(cherry picked from commit e8ac21f0a5f92b11ca6cfc175208fbd284504f1c)
+---
+ plugins/builddep.py | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/plugins/builddep.py b/plugins/builddep.py
+index b15f8d0..5e1f5a0 100644
+--- a/plugins/builddep.py
++++ b/plugins/builddep.py
+@@ -165,6 +165,10 @@ class BuildDepCommand(dnf.cli.Command):
+             msg = _("No matching package to install: '%s'")
+             logger.warning(msg, reldep_str)
+             return False
++        already_inst = self.base._sltr_matches_installed(sltr)
++        if already_inst:
++            for package in already_inst:
++                dnf.base._msg_installed(package)
+         self.base._goal.install(select=sltr, optional=False)
+         return True
+ 
+-- 
+2.12.1
+

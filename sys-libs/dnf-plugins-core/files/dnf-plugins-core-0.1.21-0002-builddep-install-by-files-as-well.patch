@@ -1,0 +1,43 @@
+From a0bef08d1b39982168115f5014f16d82fe04efb8 Mon Sep 17 00:00:00 2001
+From: Igor Gnatenko <ignatenko@redhat.com>
+Date: Wed, 8 Mar 2017 12:11:22 +0100
+Subject: [PATCH 2/5] builddep: install by files as well
+
+Signed-off-by: Igor Gnatenko <ignatenko@redhat.com>
+
+Closes: #204
+Approved by: jmracek
+
+(cherry picked from commit 294c7ab7f4d28e79d9ee3904542007fc1c52c974)
+---
+ plugins/builddep.py | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/plugins/builddep.py b/plugins/builddep.py
+index 03a6efc..b15f8d0 100644
+--- a/plugins/builddep.py
++++ b/plugins/builddep.py
+@@ -157,14 +157,16 @@ class BuildDepCommand(dnf.cli.Command):
+ 
+     def _install(self, reldep_str):
+         sltr = dnf.selector.Selector(self.base.sack)
+-        sltr = sltr.set(provides=reldep_str)
+-        if sltr.matches():
+-            self.base._goal.install(select=sltr)
+-            return True
++        if reldep_str.startswith("/"):
++            sltr.set(file=reldep_str)
+         else:
++            sltr.set(provides=reldep_str)
++        if not sltr.matches():
+             msg = _("No matching package to install: '%s'")
+             logger.warning(msg, reldep_str)
+             return False
++        self.base._goal.install(select=sltr, optional=False)
++        return True
+ 
+     def _src_deps(self, src_fn):
+         fd = os.open(src_fn, os.O_RDONLY)
+-- 
+2.12.1
+

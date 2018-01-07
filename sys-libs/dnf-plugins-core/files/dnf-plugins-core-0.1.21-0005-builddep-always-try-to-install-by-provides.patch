@@ -1,0 +1,52 @@
+From 42b6c09870d480cdd19e6bca2c3fcf71b9109cff Mon Sep 17 00:00:00 2001
+From: Igor Gnatenko <ignatenko@redhat.com>
+Date: Fri, 10 Mar 2017 07:25:13 +0100
+Subject: [PATCH 5/5] builddep: always try to install by provides
+
+Even for files-like. It might be that some package has
+Provides: /usr/bin/foo, then we should find it by provides, not by files.
+
+Signed-off-by: Igor Gnatenko <ignatenko@redhat.com>
+
+Closes: #204
+Approved by: jmracek
+
+(cherry picked from commit 776ebc30b7238d030e47329ee5628656038abc38)
+---
+ plugins/builddep.py | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
+
+diff --git a/plugins/builddep.py b/plugins/builddep.py
+index 5e1f5a0..bbfa857 100644
+--- a/plugins/builddep.py
++++ b/plugins/builddep.py
+@@ -156,15 +156,22 @@ class BuildDepCommand(dnf.cli.Command):
+         return rpm_dep.DNEVR()[2:]
+ 
+     def _install(self, reldep_str):
++        # Try to find something by provides
+         sltr = dnf.selector.Selector(self.base.sack)
+-        if reldep_str.startswith("/"):
++        sltr.set(provides=reldep_str)
++        found = sltr.matches()
++        if not found and reldep_str.startswith("/"):
++            # Nothing matches by provides and since it's file, try by files
++            sltr = dnf.selector.Selector(self.base.sack)
+             sltr.set(file=reldep_str)
+-        else:
+-            sltr.set(provides=reldep_str)
+-        if not sltr.matches():
++            found = sltr.matches()
++
++        if not found:
++            # No provides, no files
+             msg = _("No matching package to install: '%s'")
+             logger.warning(msg, reldep_str)
+             return False
++
+         already_inst = self.base._sltr_matches_installed(sltr)
+         if already_inst:
+             for package in already_inst:
+-- 
+2.12.1
+
