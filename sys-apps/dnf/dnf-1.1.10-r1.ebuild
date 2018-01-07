@@ -1,4 +1,4 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -14,27 +14,30 @@ SRC_URI="https://github.com/rpm-software-management/${PN}/archive/${P}-1.tar.gz"
 LICENSE="GPL-2+"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE=""
+IUSE="test"
 
 CDEPEND="
-	>=sys-libs/hawkey-0.6.1[${PYTHON_USEDEP}]
-	<sys-libs/hawkey-0.7
-"
-RDEPEND="${CDEPEND}
 	>=app-arch/rpm-4.12.0[${PYTHON_USEDEP}]
+	app-crypt/gpgme[python,${PYTHON_USEDEP}]
 	>=dev-libs/libcomps-0.1.6[${PYTHON_USEDEP}]
 	dev-python/iniparse[${PYTHON_USEDEP}]
-	dev-python/pygpgme[${PYTHON_USEDEP}]
-	>=sys-libs/librepo-1.7.16[${PYTHON_USEDEP}]
-	!!sys-apps/yum
 	$(python_gen_cond_dep 'dev-python/pyliblzma[${PYTHON_USEDEP}]' python2_7)
+	>=sys-libs/hawkey-0.6.1[${PYTHON_USEDEP}]
+	>=sys-libs/librepo-1.7.16[${PYTHON_USEDEP}]
+"
+RDEPEND="${CDEPEND}
+	!!sys-apps/yum
 "
 DEPEND="${CDEPEND}
 	${PYTHON_DEPS}
+	dev-python/sphinx
 	sys-devel/gettext
+	test? ( dev-python/nose )
 "
 
-PATCHES=( "${FILESDIR}"/${PN}-1.1.10-cli-repolist-fix-showing-repository-name-with-disabl.patch )
+PATCHES=(
+	"${FILESDIR}"/${PN}-1.1.10-cli-repolist-fix-showing-repository-name-with-disabl.patch
+)
 
 S="${WORKDIR}/dnf-${P}-1"
 
@@ -48,6 +51,11 @@ for X in "${LANGS[@]}" ; do
 done
 unset X
 
+src_prepare() {
+	cmake-utils_src_prepare
+	python_copy_sources
+}
+
 src_configure() {
 	dnf_src_configure_internal() {
 		local python_major=$( cut -d'.' -f1 <<< "${EPYTHON/python/}" )
@@ -60,6 +68,9 @@ src_configure() {
 
 src_compile() {
 	dnf_src_compile_internal() {
+		# make sure we get a processed const.py
+		cp -p "${S}"/dnf/const.py "${BUILD_DIR}"/dnf
+
 		cmake-utils_src_compile
 		cmake-utils_src_compile doc-man
 
@@ -73,8 +84,21 @@ src_compile() {
 	python_foreach_impl dnf_src_compile_internal
 }
 
+src_test() {
+	dnf_src_test_internal() {
+		cmake-utils_src_make DESTDIR="${WORKDIR}-test-${EPYTHON}" install
+		PYTHONPATH="${WORKDIR}-test-${EPYTHON}"/$(python_get_sitedir) nosetests -s tests || die "tests failed with ${EPYTHON}"
+	}
+	python_foreach_impl dnf_src_test_internal
+}
+
 src_install() {
 	python_foreach_impl cmake-utils_src_install
+
+	dnf_src_install_optimize() {
+		python_optimize "${ED}"/$(python_get_sitedir)
+	}
+	python_foreach_impl dnf_src_install_optimize
 
 	bashcomp_alias dnf dnf-2 dnf-3
 
@@ -82,8 +106,10 @@ src_install() {
 	local python_major=$( cut -d'.' -f1 <<< "${EPYTHON/python/}" )
 
 	dosym dnf-${python_major} /usr/bin/dnf
-	mv "${D}"/usr/bin/dnf-automatic-${python_major} "${D}"/usr/bin/dnf-automatic
-	rm -f "${D}"/usr/bin/dnf-automatic-*
+	mv "${ED}"/usr/bin/dnf-automatic-${python_major} "${ED}"/usr/bin/dnf-automatic
+	rm -f "${ED}"/usr/bin/dnf-automatic-*
+
+	dosym dnf /usr/bin/yum
 
 	einfo "Cleaning up locales..."
 	for lang in ${LANGS[@]}; do
@@ -91,7 +117,10 @@ src_install() {
 			einfo "- keeping ${lang}"
 			continue
 		}
-		rm -Rf "${D}"/usr/share/locale/${lang} || die
+		rm -Rf "${ED}"/usr/share/locale/${lang} || die
 	done
-	rm -Rf "${D}"/usr/share/locale/{bn_IN,en_GB,pt_BR,sr@latin,ur,zh_CN,zh_TW}
+	rm -Rf "${ED}"/usr/share/locale/{bn_IN,en_GB,pt_BR,sr@latin,ur,zh_CN,zh_TW}
+
+	# remove locale directory when empty
+	rmdir "${ED}"/usr/share/locale 2>/dev/null
 }

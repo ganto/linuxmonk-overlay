@@ -1,0 +1,44 @@
+From aebbc222b85a7949a705360ea51b7c987126c2d8 Mon Sep 17 00:00:00 2001
+From: Jaroslav Mracek <jmracek@redhat.com>
+Date: Tue, 28 Nov 2017 09:21:40 +0100
+Subject: [PATCH 3/3] Remove unnecessary code for set cacheonly
+
+Attribute repo._md_only_cached is set on different place during
+_progress_demands().
+---
+ dnf/repo.py       | 5 -----
+ tests/test_cli.py | 2 --
+ 2 files changed, 7 deletions(-)
+
+diff --git a/dnf/repo.py b/dnf/repo.py
+index e9ce597e..75a11a47 100644
+--- a/dnf/repo.py
++++ b/dnf/repo.py
+@@ -858,11 +858,6 @@ class Repo(dnf.conf.RepoConf):
+         else:
+             return self._try_revive_by_repomd()
+ 
+-    def _configure_from_options(self, opts):
+-        if getattr(opts, 'cacheonly', None):
+-            self._md_only_cached = True
+-        super(Repo, self)._configure_from_options(opts)
+-
+     def disable(self):
+         # :api
+         self.enabled = False
+diff --git a/tests/test_cli.py b/tests/test_cli.py
+index f4ea27ee..8963783a 100644
+--- a/tests/test_cli.py
++++ b/tests/test_cli.py
+@@ -136,8 +136,6 @@ class CliTest(TestCase):
+         self.assertTrue(self.base.repos['comb'].enabled)
+         self.assertFalse(self.base.repos["comb"].gpgcheck)
+         self.assertFalse(self.base.repos["comb"].repo_gpgcheck)
+-        self.assertEqual(self.base.repos["comb"]._sync_strategy,
+-                         dnf.repo.SYNC_ONLY_CACHE)
+ 
+     def test_configure_repos_expired(self, _):
+         """Ensure that --cacheonly beats the expired status."""
+-- 
+2.13.6
+
