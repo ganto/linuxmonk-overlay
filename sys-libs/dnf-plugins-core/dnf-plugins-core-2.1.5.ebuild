@@ -35,8 +35,8 @@ done
 unset X
 
 src_prepare() {
-    cmake-utils_src_prepare
-    python_copy_sources
+	cmake-utils_src_prepare
+	python_copy_sources
 }
 
 src_configure() {
