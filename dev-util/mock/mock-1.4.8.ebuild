@@ -35,7 +35,7 @@ RDEPEND="
 "
 
 PATCHES=(
-	"${FILESDIR}"/${P}-Fix-machinectl-path.patch
+	"${FILESDIR}"/${P}-Fix-path.patch
 )
 
 S="${WORKDIR}/mock-${P}-1"

@@ -35,3 +35,22 @@ index fc484ae..ecba301 100644
  
  
  @traceLog()
+commit 95560303b437fae32c2982dec8107ccbf35c2465
+Author: Reto Gantenbein <reto.gantenbein@linuxmonk.ch>
+Date:   Sun Jan 7 17:03:19 2018 +0100
+
+    Fix df path
+
+diff --git a/mock/py/mockbuild/plugins/hw_info.py b/mock/py/mockbuild/plugins/hw_info.py
+index 1b17743..41f59db 100644
+--- a/mock/py/mockbuild/plugins/hw_info.py
++++ b/mock/py/mockbuild/plugins/hw_info.py
+@@ -47,7 +47,7 @@ class HwInfo(object):
+         out.write("\n\nMemory:\n")
+         out.write(output)
+ 
+-        cmd = ["/usr/bin/df", "-H", self.buildroot.make_chroot_path()]
++        cmd = ["/bin/df", "-H", self.buildroot.make_chroot_path()]
+         output = mockbuild.util.do(cmd, shell=False, returnOutput=True, raiseExc=False)
+         out.write("\n\nStorage:\n")
+         out.write(output)
