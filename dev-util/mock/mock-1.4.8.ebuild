@@ -34,6 +34,10 @@ RDEPEND="
 	|| ( sys-apps/dnf sys-apps/yum )
 "
 
+PATCHES=(
+	"${FILESDIR}"/${P}-Fix-machinectl-path.patch
+)
+
 S="${WORKDIR}/mock-${P}-1"
 
 src_compile() {
