@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<upstream>
+		<bugs-to>https://github.com/mricon/rev-proxy-grapher/issues</bugs-to>
+		<remote-id type="github">mricon/rev-proxy-grapher</remote-id>
+	</upstream>
+	<longdescription lang="en">
+		This is a useful little tool that will generate a nice graphviz graph
+		illustrating your reverse proxy flow. It takes a manually curated YAML
+		file describing the topology of your network, proxy definitions, and
+		optionally a collection of nmap output files for additional port/service
+		information and output a graph in any format supported by graphviz.
+	</longdescription>
+</pkgmetadata>
