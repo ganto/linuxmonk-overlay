@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<longdescription lang="en">
+		The Debian project wants developers to digitally sign the announcements of
+		their packages with GnuPG, to protect against forgeries. This package contains
+		keyrings of GnuPG and keys of Debian Developers (uploading and non-uploading),
+		as well as of Debian Maintainers. 
+	</longdescription>
+</pkgmetadata>
