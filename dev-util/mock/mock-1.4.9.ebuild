@@ -1,11 +1,11 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_IN_SOURCE_BUILD=1
-PYTHON_COMPAT=( python2_7 python3_{4,5} )
+PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
 
 inherit distutils-r1 user bash-completion-r1
 
@@ -20,19 +20,29 @@ IUSE=""
 
 DEPEND=""
 RDEPEND="
+	app-arch/createrepo_c
 	app-arch/pigz
 	app-arch/rpm[lua,python,${PYTHON_USEDEP}]
 	app-misc/distribution-gpg-keys
+	dev-python/distro[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep 'dev-python/pyliblzma[${PYTHON_USEDEP}]' 'python2_7' )
+	dev-python/pyroute2[${PYTHON_USEDEP}]
 	dev-python/requests[${PYTHON_USEDEP}]
 	>=dev-python/six-1.4.0[${PYTHON_USEDEP}]
+	sys-apps/iproute2
 	sys-apps/usermode
-	|| ( sys-apps/dnf sys-apps/yum )
-	$(python_gen_cond_dep 'dev-python/pyliblzma[${PYTHON_USEDEP}]' 'python2_7' )
+	|| ( ( sys-apps/dnf sys-libs/dnf-plugins-core ) sys-apps/yum )
+
 "
+
+PATCHES=(
+	"${FILESDIR}"/${PN}-1.4.8-Fix-path.patch
+)
 
 S="${WORKDIR}/mock-${P}-1"
 
 src_compile() {
+	pushd mock
 	for i in py/mock.py py/mockchain.py; do
 		sed -i -e "s|^__VERSION__\s*=.*|__VERSION__=\"${PV}\"|" ${i}
 		sed -i -e "s|^SYSCONFDIR\s*=.*|SYSCONFDIR=\"/etc\"|" ${i}
@@ -45,9 +55,11 @@ src_compile() {
 
 	# Gentoo doesn't know /etc/pki
 	sed -i -e "s|/etc/pki/mock|/etc/ssl/mock|g" etc/mock/*
+	popd
 }
 
 src_install() {
+	pushd mock
 	python_scriptinto /usr/bin
 	python_newscript py/mockchain.py mockchain
 
@@ -76,6 +88,12 @@ src_install() {
 
 	dobashcomp etc/bash_completion.d/mock
 	newbashcomp etc/bash_completion.d/mock mockchain
+	popd
+
+	pushd mock-core-configs
+	insinto /etc/mock
+	doins etc/mock/*
+	popd
 }
 
 pkg_postinst() {
