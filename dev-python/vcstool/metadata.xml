@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<upstream>
+		<remote-id type="pypi">vcstool</remote-id>
+		<remote-id type="github">dirk-thomas/vcstool</remote-id>
+	</upstream>
+	<longdescription lang="en">
+		Vcstool is a command line tool designed to make working with multiple
+		repositories easier.
+	</longdescription>
+</pkgmetadata>

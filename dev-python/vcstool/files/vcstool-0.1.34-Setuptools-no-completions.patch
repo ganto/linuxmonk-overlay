@@ -1,0 +1,24 @@
+commit 1194e14c05c67b8e6bbf5f5c2134b302d553e7b6
+Author: Reto Gantenbein <reto.gantenbein@linuxmonk.ch>
+Date:   Sat Mar 17 12:10:50 2018 +0100
+
+    Setuptools: Don't install shell completions
+
+diff --git a/setup.py b/setup.py
+index 980cf66..e96713a 100755
+--- a/setup.py
++++ b/setup.py
+@@ -32,13 +32,6 @@ setup(
+ vcstool enables batch commands on multiple different vcs repositories. \
+ Currently it supports git, hg, svn and bzr.',
+     license='Apache License, Version 2.0',
+-    data_files=[
+-        ('share/vcstool-completion', [
+-            'vcstool-completion/vcs.bash',
+-            'vcstool-completion/vcs.tcsh',
+-            'vcstool-completion/vcs.zsh'
+-        ])
+-    ],
+     entry_points={
+         'console_scripts': [
+             'vcs = vcstool.commands.vcs:main',
