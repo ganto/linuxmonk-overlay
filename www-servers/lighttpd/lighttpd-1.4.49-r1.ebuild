@@ -1,4 +1,4 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI="6"
@@ -50,6 +50,8 @@ DEPEND="${CDEPEND}
 RDEPEND="${CDEPEND}
 	selinux? ( sec-policy/selinux-apache )
 "
+
+PATCHES=( "${FILESDIR}"/${P}-mod_proxy-fix-segfault-in-Set-Cookie-reverse-map.patch )
 
 # update certain parts of lighttpd.conf based on conditionals
 update_config() {
