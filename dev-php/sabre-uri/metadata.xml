@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<upstream>
+		<remote-id type="github">sabre-io/uri</remote-id>
+	</upstream>
+	<longdescription lang="en">
+		sabre/uri is a lightweight library that provides several functions for
+		working with URIs, staying true to the rules of RFC3986.
+		Partially inspired by Node.js URL library, and created to solve real
+		problems in PHP applications. 100% unitested and many tests are based
+		on examples from RFC3986.
+	</longdescription>
+</pkgmetadata>
