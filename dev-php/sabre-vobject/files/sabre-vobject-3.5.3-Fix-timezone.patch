@@ -1,0 +1,21 @@
+From f70b5b5c7113c8781c1fb208a89093315be942da Mon Sep 17 00:00:00 2001
+From: Remi Collet <remi@remirepo.net>
+Date: Mon, 30 Oct 2017 13:21:53 +0100
+Subject: [PATCH] Canada/East-Saskatchewan removed in 2017.3
+
+---
+ lib/timezonedata/php-bc.php | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/lib/timezonedata/php-bc.php b/lib/timezonedata/php-bc.php
+index 906ccb0e..83f38f50 100644
+--- a/lib/timezonedata/php-bc.php
++++ b/lib/timezonedata/php-bc.php
+@@ -68,7 +68,6 @@
+     'Brazil/West',
+     'Canada/Atlantic',
+     'Canada/Central',
+-    'Canada/East-Saskatchewan',
+     'Canada/Eastern',
+     'Canada/Mountain',
+     'Canada/Newfoundland',

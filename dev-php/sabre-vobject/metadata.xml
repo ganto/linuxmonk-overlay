@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<upstream>
+		<remote-id type="github">sabre-io/vobject</remote-id>
+	</upstream>
+	<longdescription lang="en">
+		The VObject library allows you to easily parse and manipulate iCalendar and
+		vCard objects using PHP.
+	</longdescription>
+</pkgmetadata>
