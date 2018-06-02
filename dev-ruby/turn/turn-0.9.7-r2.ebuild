@@ -1,8 +1,8 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
-USE_RUBY="ruby22 ruby23"
+USE_RUBY="ruby23 ruby24"
 
 RUBY_FAKEGEM_RECIPE_TEST="none"
 RUBY_FAKEGEM_TASK_DOC=""
@@ -20,10 +20,10 @@ KEYWORDS="~amd64 ~x86"
 IUSE=""
 
 ruby_add_rdepend "
-	>=dev-ruby/ansi-1.1
+	dev-ruby/ansi
 	=dev-ruby/minitest-4*
 "
 
 each_ruby_test() {
-	${RUBY} bin/turn -v test/*.rb || die "tests failed"
+	${RUBY} "-Ilib bin/turn -Ilib -v test/*.rb" || die "tests failed"
 }
