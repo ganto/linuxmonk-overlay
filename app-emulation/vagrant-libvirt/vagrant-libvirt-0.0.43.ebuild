@@ -1,14 +1,14 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
-USE_RUBY="ruby22 ruby23"
+USE_RUBY="ruby23 ruby24"
 
 RUBY_FAKEGEM_RECIPE_TEST="rspec"
 RUBY_FAKEGEM_RECIPE_DOC=""
 # TODO: make tools scripts executable, move to better place
 RUBY_FAKEGEM_EXTRAINSTALL="locales tools"
-RUBY_FAKEGEM_EXTRADOC="CHANGELOG.md README.md"
+RUBY_FAKEGEM_EXTRADOC="README.md"
 RUBY_FAKEGEM_GEMSPEC=vagrant-libvirt.gemspec
 
 inherit ruby-fakegem
@@ -21,13 +21,11 @@ SLOT="0"
 KEYWORDS="~amd64"
 IUSE=""
 
-PATCHES=( "${FILESDIR}/${P}-Use-the-same-version-of-Nokogiri-as-Vagrant.patch" )
-
 ruby_add_rdepend "
 	>=app-emulation/vagrant-1.9.0
 	=dev-ruby/fog-core-1.43.0*
 	>=dev-ruby/fog-libvirt-0.3.0
-	=dev-ruby/nokogiri-1.7.1*
+	>=dev-ruby/nokogiri-1.6.0
 "
 
 all_ruby_prepare() {
