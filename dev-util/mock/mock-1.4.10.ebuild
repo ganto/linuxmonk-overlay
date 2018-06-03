@@ -31,11 +31,12 @@ RDEPEND="
 	>=dev-python/six-1.4.0[${PYTHON_USEDEP}]
 	sys-apps/iproute2
 	sys-apps/usermode
-	|| ( sys-apps/dnf sys-apps/yum )
+	|| ( ( sys-apps/dnf sys-libs/dnf-plugins-core ) sys-apps/yum )
+
 "
 
 PATCHES=(
-	"${FILESDIR}"/${P}-Fix-path.patch
+	"${FILESDIR}"/${PN}-1.4.8-Fix-path.patch
 )
 
 S="${WORKDIR}/mock-${P}-1"
@@ -83,10 +84,12 @@ src_install() {
 
 	doman docs/mockchain.1 docs/mock.1
 
-	dodir /var/lib/mock
+	keepdir /var/lib/mock
 
 	dobashcomp etc/bash_completion.d/mock
-	newbashcomp etc/bash_completion.d/mock mockchain
+	bashcomp_alias mock mock.py
+	bashcomp_alias mock mockchain
+	bashcomp_alias mock mockchain.py
 	popd
 
 	pushd mock-core-configs
