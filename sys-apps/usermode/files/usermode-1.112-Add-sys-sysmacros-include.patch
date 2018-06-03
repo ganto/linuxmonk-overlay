@@ -1,0 +1,25 @@
+commit 643db0c4846ef80b323eea49320c5dac84f8251a
+Author: Reto Gantenbein <reto.gantenbein@linuxmonk.ch>
+Date:   Sun Jun 3 14:00:56 2018 +0200
+
+    Add sys/sysmacros.h to included headers
+    
+    Fixes build failure when linking to major():
+    
+    usermount-usermount.o: In function `build_mountinfo_list':
+    usermount.c:(.text+0x446): undefined reference to `major'
+    usermount.c:(.text+0x460): undefined reference to `major'
+    collect2: error: ld returned 1 exit status
+
+diff --git a/usermount.c b/usermount.c
+index 3aafadd..2c5bdf4 100644
+--- a/usermount.c
++++ b/usermount.c
+@@ -38,6 +38,7 @@
+ 
+ #include "config.h"
+ #include <sys/stat.h>
++#include <sys/sysmacros.h>
+ #include <sys/time.h>
+ #include <sys/types.h>
+ #include <errno.h>
