@@ -1,0 +1,12 @@
+diff --git a/pitivi/coptimizations/renderer.c b/pitivi/coptimizations/renderer.c
+index c655ca5c..2f939412 100644
+--- a/pitivi/coptimizations/renderer.c
++++ b/pitivi/coptimizations/renderer.c
+@@ -4,7 +4,6 @@
+ #include <py3cairo.h>
+ #include <gst/gst.h>
+ 
+-static Pycairo_CAPI_t *Pycairo_CAPI;
+ static GObjectClass * gobject_class;
+ 
+ /*
