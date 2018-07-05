@@ -21,7 +21,7 @@ CDEPEND="
 	dev-libs/glib
 	dev-libs/gobject-introspection
 	sys-libs/librepo
-	>=sys-libs/libsolv-0.6.21
+	>=dev-libs/libsolv-0.6.21
 "
 DEPEND="${CDEPEND}
 	dev-libs/check
