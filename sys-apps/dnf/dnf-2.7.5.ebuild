@@ -3,7 +3,7 @@
 
 EAPI=6
 
-PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
+PYTHON_COMPAT=( python2_7 python3_{5,6} )
 
 inherit cmake-utils python-r1 bash-completion-r1
 
@@ -17,7 +17,7 @@ KEYWORDS="~amd64"
 IUSE="test"
 
 CDEPEND="
-	>=app-arch/rpm-4.13.0[${PYTHON_USEDEP}]
+	>=app-arch/rpm-4.13.0[python,${PYTHON_USEDEP}]
 	>=app-crypt/gpgme-1.10.0[python,${PYTHON_USEDEP}]
 	>=dev-libs/libcomps-0.1.8[${PYTHON_USEDEP}]
 	dev-python/iniparse[${PYTHON_USEDEP}]
