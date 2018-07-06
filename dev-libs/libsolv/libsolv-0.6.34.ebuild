@@ -21,6 +21,7 @@ REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
 RDEPEND="
 	dev-libs/expat
+	dev-libs/libxml2
 	sys-libs/zlib
 	bzip2? ( app-arch/bzip2 )
 	lzma? ( app-arch/xz-utils )
@@ -49,19 +50,26 @@ src_prepare() {
 
 	# The python bindings are tightly integrated w/cmake.
 	sed -i \
-		-e 's: libsolv: -lsolv:g' \
+		-e 's: libsolvext libsolv: -lsolv:g' \
 		bindings/python/CMakeLists.txt || die
 }
 
 src_configure() {
 	local mycmakeargs=(
-		-DUSE_VENDORDIRS=1
-		-DLIB="$(get_libdir)"
+		-DENABLE_APPDATA=1
+		-DENABLE_COMPLEX_DEPS=1
 		-DENABLE_PYTHON=0
+		-DLIB="$(get_libdir)"
+		-DMULTI_SEMANTICS=ON
+		-DUSE_VENDORDIRS=1
+		-DWITH_LIBXML2=ON
 		$(cmake-utils_use_enable bzip2 BZIP2_COMPRESSION)
 		$(cmake-utils_use_enable lzma LZMA_COMPRESSION)
 		$(cmake-utils_use_enable perl PERL)
 		$(cmake-utils_use_enable rpm RPMDB)
+		$(cmake-utils_use_enable rpm RPMDB_BYRPMHEADER)
+		$(cmake-utils_use_enable rpm RPMDB_LIBRPM)
+		$(cmake-utils_use_enable rpm RPMPKG_LIBRPM)
 		$(cmake-utils_use_enable rpm RPMMD)
 		$(cmake-utils_use_enable ruby RUBY)
 		$(cmake-utils_use_enable tcl TCL)
