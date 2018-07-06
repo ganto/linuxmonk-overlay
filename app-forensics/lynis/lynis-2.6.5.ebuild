@@ -20,11 +20,10 @@ RDEPEND="app-shells/bash"
 S="${WORKDIR}/${PN}"
 
 src_prepare() {
+	default
+
 	# Fix script path
 	sed -i 's|/path/to/lynis|/usr/sbin/lynis|' extras/systemd/lynis.service
-
-	# Bug 507438
-	epatch_user
 }
 
 src_install() {
