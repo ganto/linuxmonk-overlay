@@ -16,8 +16,11 @@ SLOT="0"
 KEYWORDS="~amd64"
 IUSE="test"
 
+# the upstream app-arch/rpm uses python-single-r1 eclass and only supports one
+# python implementation, don't restrict ourselves and support multiple python
+# implementations in case rpm will ever switch to python-r1 eclass
 CDEPEND="
-	>=app-arch/rpm-4.13.0[python,${PYTHON_USEDEP}]
+	>=app-arch/rpm-4.13.0[python,python_targets_python2_7?,python_targets_python3_5?,python_targets_python3_6?]
 	>=app-crypt/gpgme-1.10.0[python,${PYTHON_USEDEP}]
 	>=dev-libs/libcomps-0.1.8[${PYTHON_USEDEP}]
 	dev-python/iniparse[${PYTHON_USEDEP}]
