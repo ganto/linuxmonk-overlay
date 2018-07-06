@@ -5,7 +5,7 @@ EAPI=6
 
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_IN_SOURCE_BUILD=1
-PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
+PYTHON_COMPAT=( python2_7 python3_{5,6} )
 
 inherit distutils-r1 user bash-completion-r1
 
