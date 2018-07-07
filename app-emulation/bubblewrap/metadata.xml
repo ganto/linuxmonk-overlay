@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<longdescription lang="en">
+		The goal of bubblewrap is to run an application in a sandbox, where it
+		has restricted access to parts of the operating system or user data
+		such as the home directory.
+
+		bubblewrap always creates a new mount namespace, and the user can
+		specify exactly what parts of the filesystem should be visible in the
+		sandbox. Any such directories you specify mounted nodev by default, and
+		can be made readonly.
+
+		Additionally you can use these kernel features: User namespaces, IPC
+		namespaces, PID namespaces, network namespaces, UTS namespaces and
+		seccomp filters.
+	</longdescription>
+	<upstream>
+		<remote-id type="github">projectatomic/bubblewrap</remote-id>
+	</upstream>
+</pkgmetadata>
