@@ -1,0 +1,11 @@
+diff --git a/Makefile-rpm-ostree.am b/Makefile-rpm-ostree.am
+index d2caaf5..26cd921 100644
+--- a/Makefile-rpm-ostree.am
++++ b/Makefile-rpm-ostree.am
+@@ -96,5 +96,5 @@ $(libtreefilepath): Makefile $(TREEFILE_RUST_SRCS)
+ EXTRA_DIST += $(TREEFILE_RUST_SRCS) rust/Cargo.lock
+ 
+ rpm_ostree_SOURCES += src/app/libtreefile_rs.h
+-rpm_ostree_LDADD += $(libtreefilepath)
++rpm_ostree_LDADD += $(libtreefilepath) -ldl
+ endif # ENABLE_RUST
