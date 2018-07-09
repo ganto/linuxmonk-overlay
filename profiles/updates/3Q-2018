@@ -1,1 +1,2 @@
+move app-emulation/imagefactory dev-util/imagefactory
 move sys-libs/libsolv dev-libs/libsolv

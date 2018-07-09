@@ -1,0 +1,41 @@
+commit e8c7d56365365b5538cf131656b33d505fae06f5
+Author: Reto Gantenbein <reto.gantenbein@linuxmonk.ch>
+Date:   Mon Jul 9 16:39:16 2018 +0200
+
+    Adjust certificate path for Gentoo
+
+diff --git a/imagefactory_plugins/EC2/EC2.py b/imagefactory_plugins/EC2/EC2.py
+index 3758908..d176d8e 100644
+--- a/imagefactory_plugins/EC2/EC2.py
++++ b/imagefactory_plugins/EC2/EC2.py
+@@ -745,7 +745,7 @@ class EC2(object):
+             if ami.root_device_type == "instance-store":
+                 # This is an S3 image so we snapshot to another S3 image using euca-bundle-vol and
+                 # associated tools
+-                ec2cert =  "/etc/pki/imagefactory/cert-ec2.pem"
++                ec2cert =  "/etc/ssl/imagefactory/cert-ec2.pem"
+ 
+                 # This is needed for uploading and registration
+                 # Note that it is excluded from the final image
+@@ -1280,7 +1280,7 @@ class EC2(object):
+                 raise
+ 
+         # TODO: Make configurable?
+-        ec2_service_cert = "/etc/pki/imagefactory/cert-ec2.pem"
++        ec2_service_cert = "/etc/ssl/imagefactory/cert-ec2.pem"
+ 
+         bundle_command = [ "euca-bundle-image", "-i", input_image,
+                            "-d", bundle_destination,
+diff --git a/setup.py b/setup.py
+index 2ad73b7..bd0b8cd 100644
+--- a/setup.py
++++ b/setup.py
+@@ -58,7 +58,7 @@ class sdist(_sdist):
+         _sdist.run(self)
+ 
+ datafiles=[('/etc/imagefactory', ['imagefactory.conf']),
+-           ('/etc/pki/imagefactory', ['cert-ec2.pem']),
++           ('/etc/ssl/imagefactory', ['cert-ec2.pem']),
+            ('/etc/sysconfig', ['conf/sysconfig/imagefactoryd']),
+            ('/etc/logrotate.d', ['conf/logrotate.d/imagefactoryd']),
+            ('/etc/rc.d/init.d', ['scripts/imagefactoryd']),
