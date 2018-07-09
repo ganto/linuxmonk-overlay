@@ -1,0 +1,13 @@
+weekly
+rotate 52
+compress
+missingok
+notifempty
+
+/var/log/imagefactoryd.log {
+  sharedscripts
+  postrotate
+      test -e /run/openrc/softlevel && /etc/init.d/imagefactoryd restart 1>/dev/null || true
+      test -e /run/systemd/system && systemctl try-restart imagefactoryd 1>/dev/null || true
+  endscript
+}

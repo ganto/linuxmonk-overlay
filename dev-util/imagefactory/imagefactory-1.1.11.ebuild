@@ -20,9 +20,10 @@ RDEPEND="${PYTHON_DEPS}
 	app-emulation/libguestfs[python,python_targets_python2_7?]
 	>=app-emulation/oz-0.12.0[${PYTHON_USEDEP}]
 	dev-libs/libxml2:2[python,${PYTHON_USEDEP}]
+	dev-python/faulthandler[${PYTHON_USEDEP}]
 	dev-python/httplib2[${PYTHON_USEDEP}]
 	dev-python/oauth2[${PYTHON_USEDEP}]
-	dev-python/pastedeploy[${PYTHON_USEDEP}]
+	dev-python/paste[${PYTHON_USEDEP}]
 	dev-python/pycurl[${PYTHON_USEDEP}]
 	dev-python/zope-interface[${PYTHON_USEDEP}]
 	ec2? (
@@ -69,17 +70,34 @@ python_compile() {
 python_install() {
 	distutils-r1_python_install
 
+	rm -rf "${ED}"/etc/sysconfig
+	rm -rf "${ED}"/etc/rc.d
+
+	newconfd "${FILESDIR}"/imagefactoryd.confd imagefactoryd
+	newinitd "${FILESDIR}"/imagefactoryd.initd imagefactoryd
 	systemd_dounit "${FILESDIR}"/imagefactoryd.service
+
+	insinto /etc/logrotate.d
+	newins "${FILESDIR}"/imagefactoryd.logrotate imagefactoryd
+
+	dodir /etc/imagefactory/plugins.d
 
 	pushd imagefactory_plugins || die
 	distutils-r1_python_install
 	if ! use ec2; then
 		einfo "Remove deselected plugin 'EC2'"
 		rm -r "${ED}"$(python_get_sitedir)/imagefactory_plugins/EC2
+		rm "${ED}"/usr/bin/create-ec2-factory-credentials
+		rm "${ED}"$(python_get_scriptdir)/create-ec2-factory-credentials
+		rm -r "${ED}"/etc/ssl/imagefactory/cert-ec2.pem
+		rm "${ED}"/etc/imagefactory/jeos_images/ec2_fedora_jeos.conf
+		rm "${ED}"/etc/imagefactory/jeos_images/ec2_rhel_jeos.conf
 	fi
 	if ! use openstack; then
 		einfo "Remove deselected plugin 'OpenStack'"
 		rm -r "${ED}"$(python_get_sitedir)/imagefactory_plugins/OpenStack
+		rm "${ED}"/etc/imagefactory/jeos_images/rackspace_fedora_jeos.conf
+		rm "${ED}"/etc/imagefactory/jeos_images/rackspace_rhel_jeos.conf
 	fi
 	if ! use nova; then
 		einfo "Remove deselected plugin 'Nova'"
@@ -97,5 +115,10 @@ python_install() {
 		einfo "Remove deselected plugin 'vSphere'"
 		rm -r "${ED}"$(python_get_sitedir)/imagefactory_plugins/vSphere
 	fi
+
+	# Register remaining plugins
+	for plugin in $(ls "${ED}"$(python_get_sitedir)/imagefactory_plugins/*/*.info); do
+		dosym "../../../${plugin##${ED}}" /etc/imagefactory/plugins.d/$(basename ${plugin})
+	done
 	popd || die
 }

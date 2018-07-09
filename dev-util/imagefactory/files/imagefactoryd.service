@@ -7,4 +7,3 @@ Type=forking
 ExecStart=/usr/bin/imagefactoryd 
 ExecStop=killall imagefactoryd
 PIDFile=/var/run/imagefactoryd.pid
-LOCKFile=/var/lock/subsys/imagefactoryd
