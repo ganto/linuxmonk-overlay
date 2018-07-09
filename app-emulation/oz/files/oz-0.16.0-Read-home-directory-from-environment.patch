@@ -1,0 +1,19 @@
+commit 579dd5a4ad480b55a27c0e5f3bbba1211b1df704
+Author: Reto Gantenbein <reto.gantenbein@linuxmonk.ch>
+Date:   Mon Jul 9 13:40:49 2018 +0200
+
+    Read home directory from environment
+
+diff --git a/tests/guest/test_guest.py b/tests/guest/test_guest.py
+index 076ab90..71e869a 100644
+--- a/tests/guest/test_guest.py
++++ b/tests/guest/test_guest.py
+@@ -348,7 +348,7 @@ def test_init_guest():
+ 
+     assert guest.disksize == 20
+     assert guest.image_name() == 'tester'
+-    assert guest.output_image_path() == '/home/%s/.oz/images/tester.dsk' % getpass.getuser()
++    assert guest.output_image_path() == '%s/.oz/images/tester.dsk' % os.getenv('HOME')
+     assert guest.default_auto_file() == True
+ 
+ def test_init_guest_bad_arch():

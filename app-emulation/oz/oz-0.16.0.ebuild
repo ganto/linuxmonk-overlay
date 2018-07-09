@@ -1,4 +1,4 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -16,30 +16,31 @@ SLOT="0"
 KEYWORDS="~amd64"
 IUSE="test"
 
-CDEPEND="
-	app-emulation/libguestfs[python,${PYTHON_USEDEP}]
-	>=dev-python/libvirt-python-0.9.7[${PYTHON_USEDEP}]
+COMMON_DEPEND="
+	dev-python/libvirt-python[${PYTHON_USEDEP}]
 	dev-python/lxml[${PYTHON_USEDEP}]
 	dev-python/m2crypto[${PYTHON_USEDEP}]
-	dev-python/pycurl[${PYTHON_USEDEP}]
+	dev-python/monotonic[${PYTHON_USEDEP}]
+	dev-python/requests[${PYTHON_USEDEP}]
 "
-RDEPEND="${CDEPEND}
+RDEPEND="${COMMON_DEPEND}
 	app-cdr/cdrtools
 	app-emulation/libvirt[qemu]
 	net-misc/openssh
 	sys-fs/mtools
 "
-DEPEND="${CDEPEND}
-	dev-python/pytest[${PYTHON_USEDEP}]
+DEPEND="${COMMON_DEPEND}
 	dev-python/setuptools[${PYTHON_USEDEP}]
+	test? ( dev-python/pytest[${PYTHON_USEDEP}] )
 "
 
 PATCHES=(
-	"${FILESDIR}/${P}-Replace-genisoimage-with-mkisofs.patch"
+	"${FILESDIR}"/${P}-Replace-genisoimage-with-mkisofs.patch
+	"${FILESDIR}"/${P}-Read-home-directory-from-environment.patch
 )
 
 python_test() {
-	py.test --debug -v -v -v || die "Tests fail with ${EPYTHON}"
+	PYTHONPATH="${BUILD_DIR}"/lib py.test || die "Tests fail for ${EPYTHON}"
 }
 
 python_install_all() {
