@@ -17,7 +17,7 @@ KEYWORDS="~amd64"
 IUSE="ec2 openstack nova rackspace rhevm test vmware"
 
 RDEPEND="${PYTHON_DEPS}
-	app-emulation/libguestfs[python,${PYTHON_USEDEP}]
+	app-emulation/libguestfs[python,python_targets_python2_7?]
 	>=app-emulation/oz-0.12.0[${PYTHON_USEDEP}]
 	dev-libs/libxml2:2[python,${PYTHON_USEDEP}]
 	dev-python/httplib2[${PYTHON_USEDEP}]
