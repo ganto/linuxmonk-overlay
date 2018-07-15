@@ -17,5 +17,7 @@
 	</longdescription>
 	<use>
 		<flag name="gcrypt">Use dev-libs/libgcrypt instead of dev-libs/libsodium</flag>
+		<flag name="system-catch">Use system dev-cpp/catch instead of bundled</flag>
+		<flag name="system-pegtl">Use system dev-libs/pegtl instead of bundled</flag>
 	</use>
 </pkgmetadata>

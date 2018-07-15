@@ -1,4 +1,4 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -12,13 +12,13 @@ SRC_URI="https://github.com/dkopecek/usbguard/releases/download/${P}/${P}.tar.gz
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE="+dbus debug gcrypt +qt4 qt5 static test"
+IUSE="audit +dbus debug gcrypt +qt5 static system-catch system-pegtl test"
 
 RDEPEND="
+	audit? ( >=sys-process/audit-2.7.7 )
 	gcrypt? ( >=dev-libs/libgcrypt-1.5.0:0 )
 	!gcrypt? ( >=dev-libs/libsodium-0.4.5 )
 	>=dev-libs/protobuf-2.5.0
-	qt4? ( dev-qt/qtcore:4 dev-qt/qtgui:4 dev-qt/qtsvg:4 )
 	qt5? ( dev-qt/qtcore:5 dev-qt/qtgui:5 dev-qt/qtwidgets:5 dev-qt/qtsvg:5 )
 	dbus? ( sys-auth/polkit[introspection]
 		>=dev-libs/dbus-glib-0.100
@@ -33,21 +33,12 @@ RDEPEND="
 	>=virtual/libudev-200
 "
 DEPEND="${RDEPEND}
-	dev-cpp/catch
-	=dev-libs/pegtl-1.3.1*
+	system-catch? ( dev-cpp/catch )
+	system-pegtl? ( >=dev-libs/pegtl-2.0.0 )
 	virtual/pkgconfig
 "
 
-REQUIRED_USE="
-	qt4? ( !qt5 )
-	qt5? ( !qt4 )
-"
-
-DOCS=( CHANGELOG.md README.md )
-
-PATCHES=(
-	"${FILESDIR}/${PN}-0.7.0-kernel-4.13-fix.patch"
-)
+DOCS=( CHANGELOG.md )
 
 src_prepare() {
 	default_src_prepare
@@ -56,21 +47,22 @@ src_prepare() {
 
 src_configure() {
 	local myeconfargs=(
-		--without-bundled-catch
-		--without-bundled-pegtl
 		$(use_with dbus)
+		$(use_with !system-catch bundled-catch)
+		$(use_with !system-pegtl bundled-pegtl)
 		$(use_enable static)
 		$(use_enable debug debug-build)
 		--enable-systemd
+		--localstatedir=/var
 	)
 	if use gcrypt; then
 		myeconfargs+=(--with-crypto-library=gcrypt)
 	else
 		myeconfargs+=(--with-crypto-library=sodium)
 	fi
-	use qt4 && myeconfargs+=(--with-gui-qt=qt4)
-	use qt5 && myeconfargs+=(--with-gui-qt=qt5)
-	if ! use qt4 && ! use qt5; then
+	if use qt5; then
+		myeconfargs+=(--with-gui-qt=qt5)
+	else
 		myeconfargs+=(--with-gui-qt=no)
 	fi
 
@@ -78,7 +70,6 @@ src_configure() {
 }
 
 src_compile() {
-	use qt4 && export QT_SELECT=4
 	use qt5 && export QT_SELECT=5
 
 	default_src_compile
@@ -90,6 +81,8 @@ src_test() {
 
 src_install() {
 	default_src_install
+	keepdir /var/log/usbguard
+
 	prune_libtool_files
 }
 
