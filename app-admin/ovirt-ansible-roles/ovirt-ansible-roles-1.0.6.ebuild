@@ -14,7 +14,8 @@ IUSE=""
 
 DEPEND=""
 RDEPEND="
-	app-admin/ansible
+	>=app-admin/ansible-2.3.0
+	dev-python/jmespath
 	dev-python/ovirt-engine-sdk-python
 "
 
