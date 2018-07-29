@@ -3,9 +3,9 @@
 
 EAPI=6
 GNOME2_LA_PUNT="yes"
-PYTHON_COMPAT=( python3_{4,5,6} )
+PYTHON_COMPAT=( python{3_4,3_5,3_6} )
 
-inherit gnome2 meson python-r1
+inherit gnome2 python-r1 meson
 
 DESCRIPTION="Tool to customize GNOME 3 options"
 HOMEPAGE="https://wiki.gnome.org/action/show/Apps/GnomeTweakTool"
@@ -16,13 +16,14 @@ SLOT="0"
 IUSE=""
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
-KEYWORDS="~amd64 ~ia64 ~x86"
+KEYWORDS="~alpha ~amd64 ~arm ~ia64 ~ppc ~ppc64 ~x86"
 
+# Newer pygobject needed due upstream bug #723951
 COMMON_DEPEND="
 	${PYTHON_DEPS}
 	dev-libs/glib:2[dbus]
 	>=dev-python/pygobject-3.10.2:3[${PYTHON_USEDEP}]
-	>=gnome-base/gsettings-desktop-schemas-3.23.3
+	>=gnome-base/gsettings-desktop-schemas-3.21.2
 "
 # g-s-d, gnome-desktop, gnome-shell etc. needed at runtime for the gsettings schemas
 RDEPEND="${COMMON_DEPEND}
@@ -33,42 +34,30 @@ RDEPEND="${COMMON_DEPEND}
 	x11-libs/libnotify[introspection]
 
 	>=gnome-base/gnome-settings-daemon-3
-	>=gnome-base/gnome-shell-3.24
+	gnome-base/gnome-shell
 	>=gnome-base/nautilus-3
-
-	!gnome-extra/gnome-tweak-tool
 "
 DEPEND="${COMMON_DEPEND}
-	sys-devel/gettext
-	>=dev-util/intltool-0.40.0
 	virtual/pkgconfig
 "
-run_in_sane_meson_variables() {
-	local EMESON_SOURCE
-	EMESON_SOURCE=${BUILD_DIR}
-	BUILD_DIR="${BUILD_DIR}-build"
-	"$@"
-	BUILD_DIR=${EMESON_SOURCE}
-}
 
 src_prepare() {
-	default
+	gnome2_src_prepare
 	python_copy_sources
 }
 
 src_configure() {
-	python_foreach_impl run_in_build_dir run_in_sane_meson_variables meson_src_configure
+	meson_src_configure
 }
 
 src_compile() {
-	python_foreach_impl run_in_build_dir run_in_sane_meson_variables meson_src_compile
+	meson_src_compile
 }
 
 src_test() {
-	python_foreach_impl run_in_build_dir run_in_sane_meson_variables meson_src_test
+	meson_src_test
 }
 
 src_install() {
-	python_foreach_impl run_in_build_dir run_in_sane_meson_variables meson_src_install
-	python_foreach_impl run_in_build_dir python_doscript gnome-tweaks || die
+	meson_src_install
 }
