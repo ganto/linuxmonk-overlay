@@ -3,4 +3,5 @@
 # SystemD has no support in the SELinux policy at the moment.
 # Please see: https://wiki.gentoo.org/wiki/SELinux/FAQ#Can_I_use_SELinux_with_SystemD.3F
 dev-util/rpm-ostree
+gnome-extra/gnome-tweaks
 sys-cluster/openshift-origin
