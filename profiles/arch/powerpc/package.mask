@@ -1,0 +1,3 @@
+# Reto Gantenbein <reto.gantenbein@linuxmonk.ch> (2 Aug 2018)
+# No net-libs/webkit-gtk:4 support on ppc at the moment
+www-client/epiphany
