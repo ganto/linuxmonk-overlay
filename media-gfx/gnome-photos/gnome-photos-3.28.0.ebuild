@@ -16,7 +16,7 @@ IUSE="flickr test upnp-av"
 
 COMMON_DEPEND="
 	>=app-misc/tracker-2:=
-	>=dev-libs/dazzle-3.26.0
+	>=dev-libs/libdazzle-3.26.0
 	>=dev-libs/glib-2.44:2
 	gnome-base/gsettings-desktop-schemas
 	>=dev-libs/libgdata-0.15.2:0=[gnome-online-accounts]
