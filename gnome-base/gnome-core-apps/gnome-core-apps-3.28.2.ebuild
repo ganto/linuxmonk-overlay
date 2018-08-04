@@ -20,7 +20,7 @@ RDEPEND="
 
 	>=gnome-base/gnome-session-3.28.1
 	>=gnome-base/gnome-settings-daemon-3.28.1
-	>=gnome-base/gnome-control-center-${PV}[cups?]
+	>=gnome-base/gnome-control-center-${PV}
 
 	>=app-crypt/gcr-3.28.0
 	>=gnome-base/nautilus-3.28.1
