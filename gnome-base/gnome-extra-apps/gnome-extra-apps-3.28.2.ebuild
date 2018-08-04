@@ -30,7 +30,7 @@ RDEPEND="
 	>=media-gfx/gnome-screenshot-3.26.0
 	>=gnome-extra/gnome-system-monitor-${PV}
 	>=gnome-extra/gnome-weather-3.26.0
-	>=gnome-extra/gnome-maps-${PV}
+	>=sci-geosciences/gnome-maps-${PV}
 	>=gnome-extra/sushi-3.28.3
 	>=net-misc/vino-3.22.0
 
