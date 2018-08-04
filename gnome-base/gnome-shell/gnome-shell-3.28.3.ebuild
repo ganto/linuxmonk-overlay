@@ -18,7 +18,7 @@ SLOT="0"
 IUSE="+bluetooth +networkmanager nsplugin +ibus -openrc-force systemd"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
-KEYWORDS="~alpha ~amd64 ~arm ~ia64 ~ppc ~ppc64 ~sparc ~x86"
+KEYWORDS="~amd64 ~arm ~ppc ~ppc64 ~x86"
 
 # libXfixes-5.0 needed for pointer barriers
 # FIXME:
@@ -84,7 +84,7 @@ COMMON_DEPEND="
 RDEPEND="${COMMON_DEPEND}
 	app-accessibility/at-spi2-core:2[introspection]
 	>=app-accessibility/caribou-0.4.8
-	dev-libs/libgweather:2[introspection]
+	dev-libs/libgweather:2=
 	>=sys-apps/accountsservice-0.6.14[introspection]
 	>=sys-power/upower-0.99:=[introspection]
 	x11-libs/pango[introspection]
