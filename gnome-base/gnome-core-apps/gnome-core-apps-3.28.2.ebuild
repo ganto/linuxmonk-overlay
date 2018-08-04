@@ -39,7 +39,7 @@ RDEPEND="
 	>=gnome-extra/yelp-3.28.1
 
 	>=x11-themes/adwaita-icon-theme-3.28.0
-	>=x11-themes/gnome-themes-extra-3.28.0
+	>=x11-themes/gnome-themes-extra-3.28
 
 	bluetooth? ( >=net-wireless/gnome-bluetooth-3.28.0 )
 	cdr? ( >=app-cdr/brasero-3.12.2 )
