@@ -7,7 +7,7 @@ DESCRIPTION="Sub-meta package for the applications of GNOME 3"
 HOMEPAGE="https://www.gnome.org/"
 LICENSE="metapackage"
 SLOT="3.0"
-IUSE="+share +shotwell +tracker"
+IUSE="+share +shotwell systemd +tracker"
 
 KEYWORDS="~amd64 ~x86"
 
@@ -40,11 +40,12 @@ RDEPEND="
 
 	share? ( >=gnome-extra/gnome-user-share-3.28.0 )
 	shotwell? ( >=media-gfx/shotwell-0.24 )
+	systemd? ( >=gnome-extra/gnome-logs-${PV} )
 	tracker? (
 		>=app-misc/tracker-2.1.0
 		>=gnome-extra/gnome-documents-3.28.1
-		>=media-gfx/gnome-photos-${PV}
-		>=media-sound/gnome-music-${PV} )
+		>=media-gfx/gnome-photos-3.28.0
+		>=media-sound/gnome-music-3.28.2.1 )
 "
 DEPEND=""
 S=${WORKDIR}
