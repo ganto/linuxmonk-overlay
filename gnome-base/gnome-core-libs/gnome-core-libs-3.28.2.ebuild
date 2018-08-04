@@ -21,7 +21,7 @@ RDEPEND="
 	>=x11-libs/pango-1.42.1
 	>=x11-libs/gtk+-3.22.30:3[cups?]
 	>=dev-libs/atk-2.28.1
-	>=gnome-base/librsvg-2.42.4
+	>=gnome-base/librsvg-2.42.2
 	>=gnome-base/gnome-desktop-${PV}:3
 	>=x11-libs/startup-notification-0.12
 
