@@ -6,7 +6,7 @@ EAPI=6
 # Python 3 used for g-ir-merge script
 PYTHON_COMPAT=( python3_{4,5,6} )
 
-inherit bash-completion-r1 gnome.org linux-info python-any-r1 meson vala
+inherit bash-completion-r1 gnome.org gnome2-utils linux-info python-any-r1 meson vala
 
 DESCRIPTION="A tagging metadata database, search tool and indexer"
 HOMEPAGE="https://wiki.gnome.org/Projects/Tracker"
@@ -67,6 +67,7 @@ pkg_setup() {
 
 src_prepare() {
 	default
+	gnome2_environment_reset
 	vala_src_prepare
 }
 
@@ -86,4 +87,16 @@ src_configure() {
 		emesonargs+=(-Dunicode_support=unistring)
 	fi
 	meson_src_configure
+}
+
+pkg_preinst() {
+	gnome2_schema_savelist
+}
+
+pkg_postinst() {
+	gnome2_schema_update
+}
+
+pkg_postrm() {
+	gnome2_schema_update
 }
