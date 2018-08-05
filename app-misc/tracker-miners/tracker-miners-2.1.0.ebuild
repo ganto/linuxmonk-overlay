@@ -3,7 +3,7 @@
 
 EAPI="6"
 
-inherit gnome.org meson vala
+inherit gnome.org gnome2-utils meson vala
 
 DESCRIPTION="Tracker miners and metadata extractors"
 HOMEPAGE="https://wiki.gnome.org/Projects/Tracker"
@@ -69,6 +69,7 @@ DEPEND="${RDEPEND}
 
 src_prepare() {
 	default
+	gnome2_environment_reset
 	vala_src_prepare
 }
 
@@ -114,4 +115,16 @@ src_install() {
 	if ! use rss; then
 		rm -f "${ED}"/usr/share/tracker/miners/org.freedesktop.Tracker1.Miner.RSS.service
 	fi
+}
+
+pkg_preinst() {
+	gnome2_schema_savelist
+}
+
+pkg_postinst() {
+	gnome2_schema_update
+}
+
+pkg_postrm() {
+	gnome2_schema_update
 }
