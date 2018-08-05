@@ -42,7 +42,7 @@ RDEPEND="
 	shotwell? ( >=media-gfx/shotwell-0.24 )
 	systemd? ( >=gnome-extra/gnome-logs-${PV} )
 	tracker? (
-		>=app-misc/tracker-2.1.0
+		>=app-misc/tracker-miners-2.0.4
 		>=gnome-extra/gnome-documents-3.28.1
 		>=media-gfx/gnome-photos-3.28.0
 		>=media-sound/gnome-music-3.28.2.1 )
