@@ -15,7 +15,7 @@ KEYWORDS="~amd64 ~x86"
 IUSE="flickr test upnp-av"
 
 COMMON_DEPEND="
-	>=app-misc/tracker-2:=
+	>=app-misc/tracker-miners-2[miner-fs]
 	>=dev-libs/libdazzle-3.26.0
 	>=dev-libs/glib-2.44:2
 	gnome-base/gsettings-desktop-schemas

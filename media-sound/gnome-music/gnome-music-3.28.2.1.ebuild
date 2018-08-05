@@ -18,7 +18,7 @@ KEYWORDS="~amd64 ~x86"
 
 COMMON_DEPEND="
 	${PYTHON_DEPS}
-	>=app-misc/tracker-2
+	>=app-misc/tracker-miners-2
 	>=dev-python/pycairo-1.14.0[${PYTHON_USEDEP}]
 	>=dev-python/pygobject-3.21.1:3[cairo,${PYTHON_USEDEP}]
 	>=dev-libs/glib-2.28:2
@@ -30,7 +30,7 @@ COMMON_DEPEND="
 # xdg-user-dirs-update needs to be there to create needed dirs
 # https://bugzilla.gnome.org/show_bug.cgi?id=731613
 RDEPEND="${COMMON_DEPEND}
-	app-misc/tracker[gstreamer]
+	app-misc/tracker-miners[gstreamer,miner-fs]
 	x11-libs/libnotify[introspection]
 	dev-python/dbus-python[${PYTHON_USEDEP}]
 	dev-python/requests[${PYTHON_USEDEP}]
