@@ -90,13 +90,13 @@ src_configure() {
 }
 
 pkg_preinst() {
-	gnome2_schema_savelist
+	gnome2_schemas_savelist
 }
 
 pkg_postinst() {
-	gnome2_schema_update
+	gnome2_schemas_update
 }
 
 pkg_postrm() {
-	gnome2_schema_update
+	gnome2_schemas_update
 }
