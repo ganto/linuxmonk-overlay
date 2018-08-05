@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<upstream>
+		<bugs-to>https://github.com/openshift/origin/issues</bugs-to>
+		<remote-id type="github">openshift/origin</remote-id>
+	</upstream>
+	<longdescription lang="en">
+		OpenShift Origin is a distribution of Kubernetes optimized for
+		application development and deployment. OpenShift Origin adds developer
+		and operational centric tools on top of Kubernetes to enable rapid
+		application development, easy deployment and scaling, and long-term
+		lifecycle maintenance for small and large teams and applications. It
+		provides a secure and multi-tenant configuration for Kubernetes allowing
+		you to safely host many different applications and workloads on a
+		unified cluster.
+	</longdescription>
+</pkgmetadata>
