@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<upstream>
+		<bugs-to>https://github.com/rubyworks/xdg/issues</bugs-to>
+		<remote-id type="github">rubyworks/xdg</remote-id>
+	</upstream>
+	<longdescription lang="en">
+		XDG provides an easy to use Ruby library for working with XDG
+		standards. Presently, it only supports the XDG Base Directory Standard.
+		If your program utilizes user or system-wide support files (e.g.
+		configuration files), you owe it to yourself to checkout the XDG base
+		directory standard.
+	</longdescription>
+</pkgmetadata>
