@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<longdescription lang="en">
+		A Python library for parsing and creating TOML. The module passes the
+		TOML test suite which is a fork of BurntSushi’s TOML test suite.
+	</longdescription>
+	<upstream>
+		<remote-id type="pypi">toml</remote-id>
+	</upstream>
+</pkgmetadata>
