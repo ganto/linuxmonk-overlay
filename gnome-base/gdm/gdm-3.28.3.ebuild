@@ -4,13 +4,13 @@
 EAPI=6
 GNOME2_LA_PUNT="yes"
 
-inherit autotools eutils gnome2 pam readme.gentoo-r1 systemd user
+inherit eutils gnome2 pam readme.gentoo-r1 systemd user
 
 DESCRIPTION="GNOME Display Manager for managing graphical display servers and user logins"
 HOMEPAGE="https://wiki.gnome.org/Projects/GDM"
 
 SRC_URI="${SRC_URI}
-	branding? ( http://www.mail-archive.com/tango-artists@lists.freedesktop.org/msg00043/tango-gentoo-v1.1.tar.gz )
+	branding? ( https://www.mail-archive.com/tango-artists@lists.freedesktop.org/msg00043/tango-gentoo-v1.1.tar.gz )
 "
 
 LICENSE="
@@ -52,7 +52,6 @@ COMMON_DEPEND="
 	>=x11-misc/xdg-utils-1.0.2-r3
 
 	virtual/pam
-
 	>=sys-apps/systemd-186:0=[pam]
 
 	sys-auth/pambase[systemd]
@@ -129,7 +128,6 @@ src_prepare() {
 	# Show logo when branding is enabled
 	use branding && eapply "${FILESDIR}/${PN}-3.8.4-logo.patch"
 
-	eautoreconf
 	gnome2_src_prepare
 }
 
@@ -153,7 +151,7 @@ src_configure() {
 		--with-xdmcp=yes \
 		--enable-authentication-scheme=pam \
 		--with-default-pam-config=exherbo \
-		--with-pam-dir=$(getpam_mod_dir) \
+		--with-pam-mod-dir=$(getpam_mod_dir) \
 		--with-at-spi-registryd-directory="${EPREFIX}"/usr/libexec \
 		--without-xevie \
 		--enable-systemd-journal \
@@ -205,6 +203,8 @@ pkg_postinst() {
 		[[ ! -e "${d}" ]] || chown -R gdm:gdm "${d}" || ret=1
 	done
 	eend ${ret}
+
+	systemd_reenable gdm.service
 
 	readme.gentoo_print_elog
 }
