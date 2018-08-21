@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<upstream>
+		<remote-id type="pypi">anyconfig</remote-id>
+		<remote-id type="github">ssato/python-anyconfig</remote-id>
+	</upstream>
+	<longdescription lang="en">
+		python-anyconfig is a python library providing common APIs to load and
+		dump configuration files in various formats with some useful features
+		such as contents merge, templates, query, schema validation and
+		generation support.
+	</longdescription>
+</pkgmetadata>
