@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<upstream>
+		<bugs-to>https://github.com/imjoey/terraform-provider-ovirt/issues</bugs-to>
+		<remote-id type="github">imjoey/terraform-provider-ovirt</remote-id>
+	</upstream>
+	<longdescription lang="en">
+		This plugin allows Terraform to work with the oVirt Virtual Machine management
+		platform. It requires oVirt 4.x.
+	</longdescription>
+</pkgmetadata>
