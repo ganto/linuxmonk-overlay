@@ -16,17 +16,18 @@ IUSE="djvu dvi gstreamer gnome gnome-keyring +introspection nautilus nsplugin +p
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ia64 ~mips ~ppc ~ppc64 ~sparc ~x86 ~x86-fbsd ~amd64-linux ~x86-linux ~x64-solaris"
 
 # atk used in libview
-# gdk-pixbuf used all over the place
+# bundles unarr
 COMMON_DEPEND="
 	dev-libs/atk
-	>=dev-libs/glib-2.53.4:2[dbus]
+	>=dev-libs/glib-2.36:2[dbus]
 	>=dev-libs/libxml2-2.5:2
 	sys-libs/zlib:=
-	x11-libs/gdk-pixbuf:2
+	>=x11-libs/gdk-pixbuf-2.36.5:2
 	>=x11-libs/gtk+-3.16.0:3[introspection?]
 	gnome-base/gsettings-desktop-schemas
 	>=x11-libs/cairo-1.10:=
 	>=app-text/poppler-0.33:=[cairo]
+	>=app-arch/libarchive-3.2.0
 	djvu? ( >=app-text/djvu-3.5.22:= )
 	dvi? (
 		virtual/tex-base
@@ -54,14 +55,14 @@ RDEPEND="${COMMON_DEPEND}
 DEPEND="${COMMON_DEPEND}
 	app-text/docbook-xml-dtd:4.3
 	app-text/yelp-tools
+	dev-util/gdbus-codegen
+	dev-util/glib-utils
 	>=dev-util/gtk-doc-am-1.13
 	>=dev-util/intltool-0.35
 	dev-util/itstool
 	sys-devel/gettext
 	virtual/pkgconfig
 "
-# eautoreconf needs:
-#  app-text/yelp-tools
 
 src_prepare() {
 	gnome2_src_prepare
