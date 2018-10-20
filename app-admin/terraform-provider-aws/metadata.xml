@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<upstream>
+		<bugs-to>https://github.com/terraform-providers/terraform-provider-aws/issues</bugs-to>
+		<remote-id type="github">terraform-providers/terraform-provider-aws</remote-id>
+	</upstream>
+	<longdescription lang="en">
+		The Amazon Web Services (AWS) provider is used to interact with the many
+		resources supported by AWS.
+	</longdescription>
+</pkgmetadata>
