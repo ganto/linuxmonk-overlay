@@ -21,8 +21,7 @@ RDEPEND="${DEPEND}"
 BDEPEND=""
 
 src_install() {
-	exeinto /usr/share/terraform/plugins
-	doexe "${PN}"
+	dobin "${PN}"
 
 	pushd src/${EGO_PN}
 	dodoc CHANGELOG.md README.md
