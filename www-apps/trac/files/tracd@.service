@@ -5,7 +5,7 @@ Documentation=man:tracd(1)
 [Service]
 Environment="PKG_RESOURCES_CACHE_ZIP_MANIFESTS=1"
 Environment="TRAC_ROOT_DIR=/var/lib/trac"
-ExecStart=/usr/bin/tracd --protocol=fcgi --hostname=/run/tracd/%i.sock --single-env ${TRAC_ROOT_DIR}/%i
+ExecStart=/usr/bin/tracd --protocol=fcgi --socket-path=/run/tracd/%i.sock --socket-umask=002 --single-env ${TRAC_ROOT_DIR}/%i
 User=tracd
 Group=tracd
 Restart=on-failure
