@@ -1,0 +1,77 @@
+commit 43bb260cb15751780580bc87bce67fbf17edeae9
+Author: Reto Gantenbein <reto.gantenbein@linuxmonk.ch>
+Date:   Sat Nov 3 22:01:36 2018 +0100
+
+    tracd: Add support for unix socket connections
+
+diff --git a/trac/web/standalone.py b/trac/web/standalone.py
+index f36d926b8..6a0ee676e 100755
+--- a/trac/web/standalone.py
++++ b/trac/web/standalone.py
+@@ -163,6 +163,11 @@ def main():
+                       dest='protocol', callback=_validate_callback,
+                       callback_args=(('http', 'scgi', 'ajp', 'fcgi'),),
+                       help='http|scgi|ajp|fcgi')
++    parser.add_option('--socket-path', action='store', dest='socket_path',
++                      help='unix socket path')
++    parser.add_option('--socket-umask', action='store', type='int',
++                      dest='socket_umask',
++                      help='socket creation mask to use, in octal notation')
+     parser.add_option('-q', '--unquote', action='store_true',
+                       dest='unquote',
+                       help='unquote PATH_INFO (may be needed when using ajp)')
+@@ -231,7 +236,7 @@ def main():
+ 
+     parser.set_defaults(port=None, hostname='', base_path='', daemonize=False,
+                         protocol='http', http11=True, umask=022, user=None,
+-                        group=None)
++                        group=None, socket_umask=022)
+     options, args = parser.parse_args()
+ 
+     if not args and not options.env_parent_dir:
+@@ -247,15 +252,22 @@ def main():
+     if options.daemonize and options.autoreload:
+         parser.error('the --auto-reload option cannot be used with '
+                      '--daemonize')
+-
+-    if options.port is None:
+-        options.port = {
+-            'http': 80,
+-            'scgi': 4000,
+-            'ajp': 8009,
+-            'fcgi': 8000,
+-        }[options.protocol]
+-    server_address = (options.hostname, options.port)
++    if options.hostname and options.socket_path:
++        parser.error('the --socket-path option cannot be used with '
++                     '--hostname')
++    if options.protocol == 'http' and options.socket_path:
++        parser.error('the --socket-path option can only be used with '
++                     '--protocol=scgi|ajp|fcgi')
++
++    if options.socket_path is None:
++        if options.port is None:
++            options.port = {
++                'http': 80,
++                'scgi': 4000,
++                'ajp': 8009,
++                'fcgi': 8000,
++            }[options.protocol]
++        server_address = (options.hostname, options.port)
+ 
+     # relative paths don't work when daemonized
+     args = [os.path.abspath(a) for a in args]
+@@ -313,7 +325,12 @@ def main():
+             if options.unquote:
+                 from trac.web.fcgi_frontend import FlupMiddleware
+                 flup_app = FlupMiddleware(flup_app)
+-            ret = server_cls(flup_app, bindAddress=server_address).run()
++            if options.socket_path:
++                bind_address = options.socket_path
++            else:
++                bind_address = options.server_address
++            ret = server_cls(flup_app, bindAddress=bind_address,
++                             umask=options.socket_umask).run()
+             sys.exit(42 if ret else 0) # if SIGHUP exit with status 42
+ 
+     try:

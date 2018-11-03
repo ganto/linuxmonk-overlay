@@ -1,0 +1,14 @@
+[Unit]
+Description=Trac Instance %i
+Documentation=man:tracd(1)
+
+[Service]
+Environment="PKG_RESOURCES_CACHE_ZIP_MANIFESTS=1"
+Environment="TRAC_ROOT_DIR=/var/lib/trac"
+ExecStart=/usr/bin/tracd --protocol=fcgi --hostname=/run/tracd/%i.sock --single-env ${TRAC_ROOT_DIR}/%i
+User=tracd
+Group=tracd
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
