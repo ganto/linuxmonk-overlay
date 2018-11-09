@@ -1,8 +1,8 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
-inherit user systemd golang-build golang-vcs-snapshot
+inherit golang-build golang-vcs-snapshot systemd user
 
 EGO_PN="code.gitea.io/gitea"
 KEYWORDS="~amd64 ~arm"
@@ -13,10 +13,15 @@ SRC_URI="https://github.com/go-gitea/gitea/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="MIT"
 SLOT="0"
-IUSE=""
 
-DEPEND="dev-go/go-bindata"
-RDEPEND="dev-vcs/git"
+DEPEND="
+	dev-go/go-bindata
+	sys-libs/pam
+"
+RDEPEND="
+	dev-vcs/git
+	sys-libs/pam
+"
 
 pkg_setup() {
 	enewgroup git
@@ -31,22 +36,20 @@ src_prepare() {
 
 src_compile() {
 	GOPATH="${WORKDIR}/${P}:$(get_golibdir_gopath)" emake -C src/${EGO_PN} generate
-	TAGS="bindata pam sqlite" LDFLAGS="" CGO_LDFLAGS="-fno-PIC" GOPATH="${WORKDIR}/${P}:$(get_golibdir_gopath)" emake -C src/${EGO_PN} build
+	TAGS="bindata pam sqlite" LDFLAGS="" CGO_LDFLAGS="" GOPATH="${WORKDIR}/${P}:$(get_golibdir_gopath)" emake -C src/${EGO_PN} build
 }
 
 src_install() {
-	pushd src/${EGO_PN} || die
+	diropts -m0750 -o git -g git
+	keepdir /var/log/gitea /var/lib/gitea /var/lib/gitea/data
+	pushd src/${EGO_PN} >/dev/null || die
 	dobin gitea
 	insinto /var/lib/gitea/conf
 	newins custom/conf/app.ini.sample app.ini.example
-	popd || die
+	popd >/dev/null || die
 	newinitd "${FILESDIR}"/gitea.initd-r1 gitea
 	newconfd "${FILESDIR}"/gitea.confd gitea
-	keepdir /var/log/gitea /var/lib/gitea/data
-	fowners -R git:git /var/log/gitea /var/lib/gitea/
 	systemd_dounit "${FILESDIR}/gitea.service"
-	insinto /etc/logrotate.d
-	newins "${FILESDIR}"/gitea.logrotated gitea
 }
 
 pkg_postinst() {
