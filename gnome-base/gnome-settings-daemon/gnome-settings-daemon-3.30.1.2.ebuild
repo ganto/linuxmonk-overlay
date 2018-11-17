@@ -3,7 +3,7 @@
 
 EAPI=6
 GNOME2_LA_PUNT="yes"
-PYTHON_COMPAT=( python{3_4,3_5,3_6} )
+PYTHON_COMPAT=( python{3_5,3_6,3_7} )
 
 inherit eutils gnome2 python-any-r1 systemd udev virtualx meson
 
@@ -20,7 +20,7 @@ COMMON_DEPEND="
 	>=dev-libs/glib-2.53.0:2[dbus]
 	>=x11-libs/gtk+-3.15.3:3
 	>=gnome-base/gnome-desktop-3.11.1
-	>=gnome-base/gsettings-desktop-schemas-3.23.3
+	>=gnome-base/gsettings-desktop-schemas-3.27.90
 	>=gnome-base/librsvg-2.36.2:2
 	media-fonts/cantarell
 	media-libs/alsa-lib
