@@ -2,7 +2,11 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
-VALA_MIN_API_VERSION="0.18"
+
+VALA_USE_DEPEND="vapigen"
+VALA_MIN_API_VERSION="0.39"
+# override because VALA_MAX_API_VERSION from eclass is < VALA_MIN_API_VERSION
+VALA_MAX_API_VERSION="0.40"
 
 inherit gnome2 bash-completion-r1 virtualx meson vala
 
@@ -21,16 +25,17 @@ RDEPEND="
 DEPEND="${RDEPEND}
 	app-text/docbook-xml-dtd:4.2
 	app-text/docbook-xsl-stylesheets
-	dev-lang/vala
 	dev-libs/libxslt
 	>=dev-util/gtk-doc-am-1.15
 	sys-devel/gettext
+	app-shells/bash-completion
 	virtual/pkgconfig
+	$(vala_depend)
 "
 
 src_prepare() {
-	default
 	vala_src_prepare
+	default
 }
 
 src_install() {
