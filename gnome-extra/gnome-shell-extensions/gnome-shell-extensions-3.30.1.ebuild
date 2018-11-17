@@ -50,7 +50,7 @@ enabled-extensions gsettings key from the command line or a script."
 src_configure() {
 	local emesonargs=(
 		-Dextension_set='all'
-		-Denabled_extensions="['alternate-tab', 'apps-menu', 'places-menu', 'launch-new-instance', 'window-list', 'drive-menu', 'screenshot-window-sizer', 'windowsNavigator', 'workspace-indicator', 'user-theme']"
+		-Denable_extensions="['alternate-tab', 'apps-menu', 'places-menu', 'launch-new-instance', 'window-list', 'drive-menu', 'screenshot-window-sizer', 'windowsNavigator', 'workspace-indicator', 'user-theme']"
 	)
 	meson_src_configure
 }
