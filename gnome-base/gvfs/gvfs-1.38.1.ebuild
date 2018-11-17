@@ -12,38 +12,40 @@ HOMEPAGE="https://wiki.gnome.org/Projects/gvfs"
 LICENSE="LGPL-2+"
 SLOT="0"
 
-IUSE="afp archive bluray cdda fuse google gnome-keyring gnome-online-accounts gphoto2 +http ios nfs policykit systemd test +udev udisks zeroconf samba +mtp"
+IUSE="afp archive bluray cdda elogind fuse google gnome-keyring gnome-online-accounts gphoto2 +http ios mtp nfs policykit samba systemd test +udev udisks zeroconf"
 REQUIRED_USE="
 	cdda? ( udev )
+	elogind? ( !systemd udisks )
 	google? ( gnome-online-accounts )
 	mtp? ( udev )
+	systemd? ( !elogind udisks )
 	udisks? ( udev )
-	systemd? ( udisks )
 "
 KEYWORDS="~amd64"
 
 RDEPEND="
 	app-crypt/gcr:=
-	>=dev-libs/glib-2.51.0:2
-	sys-apps/dbus
+	>=dev-libs/glib-2.57.2:2
 	dev-libs/libxml2:2
 	net-misc/openssh
 	afp? ( >=dev-libs/libgcrypt-1.2.2:0= )
 	archive? ( app-arch/libarchive:= )
-	bluray? ( media-libs/libbluray )
+	bluray? ( media-libs/libbluray:= )
+	elogind? ( >=sys-auth/elogind-229:0= )
 	fuse? ( >=sys-fs/fuse-2.8.0:0 )
 	gnome-keyring? ( app-crypt/libsecret )
 	gnome-online-accounts? ( >=net-libs/gnome-online-accounts-3.17.1:= )
 	google? (
-		>=dev-libs/libgdata-0.17.3:=[crypt,gnome-online-accounts]
+		>=dev-libs/libgdata-0.17.9:=[crypt,gnome-online-accounts]
 		>=net-libs/gnome-online-accounts-3.17.1:= )
 	gphoto2? ( >=media-libs/libgphoto2-2.5.0:= )
-	>=x11-libs/gtk+-3.0:3
 	http? ( >=net-libs/libsoup-2.42:2.4 )
 	ios? (
 		>=app-pda/libimobiledevice-1.2:=
 		>=app-pda/libplist-1:= )
-	mtp? ( >=media-libs/libmtp-1.1.12 )
+	mtp? (
+		>=dev-libs/libusb-1.0.21
+		>=media-libs/libmtp-1.1.12 )
 	nfs? ( >=net-fs/libnfs-1.9.8 )
 	policykit? (
 		>=sys-auth/polkit-0.114
@@ -52,11 +54,11 @@ RDEPEND="
 	systemd? ( >=sys-apps/systemd-206:0= )
 	udev? (
 		cdda? ( dev-libs/libcdio-paranoia )
-		virtual/libgudev:= )
+		>=virtual/libgudev-147:=
+		virtual/libudev:= )
 	udisks? ( >=sys-fs/udisks-1.97:2 )
 	zeroconf? ( >=net-dns/avahi-0.6 )
 "
-
 DEPEND="${RDEPEND}
 	app-text/docbook-xsl-stylesheets
 	dev-libs/libxslt
@@ -64,7 +66,7 @@ DEPEND="${RDEPEND}
 	virtual/pkgconfig
 	dev-util/gtk-doc-am
 	test? (
-		>=dev-python/twisted-core-12.3.0
+		>=dev-python/twisted-16
 		|| (
 			net-analyzer/netcat
 			net-analyzer/netcat6 ) )
@@ -87,25 +89,23 @@ src_prepare() {
 			-e 's/burn.mount.in/ /' \
 			-e 's/burn.mount/ /' \
 			-i daemon/Makefile.am || die
-
-		# Uncomment when eautoreconf stops being needed always
-		#eautoreconf
 	fi
 
 	gnome2_src_prepare
-	eautoreconf
 }
 
 src_configure() {
 	local emesonargs=(
 		-Dgdu=false
 		-Dgcr=true
+		-Dman=true
 		-Dsystemduserunitdir="$(systemd_get_userunitdir)"
 		$(meson_use mtp)
 		$(meson_use afp)
 		$(meson_use archive)
 		$(meson_use bluray)
 		$(meson_use cdda)
+		$(meson_use elogind logind)
 		$(meson_use fuse)
 		$(meson_use gnome-online-accounts goa)
 		$(meson_use gnome-keyring keyring)
