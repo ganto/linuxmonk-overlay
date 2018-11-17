@@ -61,9 +61,9 @@ src_configure() {
 
 	ECONF_SOURCE="${S}/js/src" \
 	econf \
-		--enable-jemalloc \
 		--enable-readline \
 		--with-system-nspr \
+		--disable-jemalloc \
 		--disable-optimize \
 		--with-intl-api \
 		$(use_with system-icu) \
