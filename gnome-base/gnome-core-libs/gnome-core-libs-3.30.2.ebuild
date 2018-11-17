@@ -16,23 +16,23 @@ KEYWORDS="~amd64"
 # Note to developers:
 # This is a wrapper for the core libraries used by GNOME 3
 RDEPEND="
-	>=dev-libs/glib-2.56.1:2
-	>=x11-libs/gdk-pixbuf-2.36.12:2
+	>=dev-libs/glib-2.58.1:2
+	>=x11-libs/gdk-pixbuf-2.38.0:2
 	>=x11-libs/pango-1.42.1
-	>=x11-libs/gtk+-3.22.30:3[cups?]
-	>=dev-libs/atk-2.28.1
-	>=gnome-base/librsvg-2.42.2
+	>=x11-libs/gtk+-3.24.1:3[cups?]
+	>=dev-libs/atk-2.30.0
+	>=gnome-base/librsvg-2.44.8
 	>=gnome-base/gnome-desktop-${PV}:3
 	>=x11-libs/startup-notification-0.12
 
-	>=gnome-base/gvfs-1.36.2
-	>=gnome-base/dconf-0.28
+	>=gnome-base/gvfs-1.38.1
+	>=gnome-base/dconf-0.30.1
 
 	>=media-libs/gstreamer-1.14.0:1.0
 	>=media-libs/gst-plugins-base-1.14.0:1.0
 	>=media-libs/gst-plugins-good-1.14.0:1.0
 
-	python? ( >=dev-python/pygobject-3.28.2:3 )
+	python? ( >=dev-python/pygobject-3.30.1:3 )
 "
 DEPEND=""
 
