@@ -3,7 +3,7 @@
 
 EAPI=6
 GNOME2_LA_PUNT="yes"
-PYTHON_COMPAT=( python3_{4,5,6} )
+PYTHON_COMPAT=( python3_{5,6,7} )
 VALA_USE_DEPEND="vapigen"
 
 inherit db-use flag-o-matic gnome2 python-any-r1 systemd vala virtualx cmake-utils
@@ -13,7 +13,7 @@ HOMEPAGE="https://wiki.gnome.org/Apps/Evolution"
 
 # Note: explicitly "|| ( LGPL-2 LGPL-3 )", not "LGPL-2+".
 LICENSE="|| ( LGPL-2 LGPL-3 ) BSD Sleepycat"
-SLOT="0/61" # subslot = libcamel-1.2 soname version
+SLOT="0/62" # subslot = libcamel-1.2 soname version
 
 IUSE="api-doc-extras berkdb +gnome-online-accounts +gtk google +introspection ipv6 ldap kerberos vala +weather"
 REQUIRED_USE="vala? ( introspection )"
@@ -86,6 +86,7 @@ src_prepare() {
 
 src_configure() {
 	local mycmakeargs=(
+		-DSYSCONF_INSTALL_DIR=/etc
 		-DENABLE_GOA=$(usex gnome-online-accounts)
 		-DENABLE_OAUTH2=ON
 		-DENABLE_GTK=$(usex gtk)
@@ -99,7 +100,6 @@ src_configure() {
 		-DWITH_OPENLDAP=$(usex ldap "ON" "OFF")
 		-DWITH_KRB5=$(usex kerberos "ON" "OFF")
 		-DWITH_KRB5_LIBS=$(usex kerberos "${EPREFIX}"/usr/$(get_libdir) "")
-		-DWITH_CFLAGS=$(usex berkdb "-I$(db_includedir)" "")
 		-DENABLE_LARGEFILE=ON
 		-DENABLE_SMIME=ON
 		-DWITH_SYSTEMDUSERUNITDIR="$(systemd_get_userunitdir)"
