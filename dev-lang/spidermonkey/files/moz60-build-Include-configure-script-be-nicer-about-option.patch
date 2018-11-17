@@ -1,0 +1,41 @@
+From: Philip Chimento <philip.chimento@gmail.com>
+Subject: build: Include configure script, be nicer about options
+
+A configure script is not included in the SpiderMonkey tarball by
+default. Also, we have to account for JHbuild passing extra unknown
+options like --disable-Werror.
+
+https://bugzilla.mozilla.org/show_bug.cgi?id=1379540
+
+MODIFIED by Ian Stakenvicius, to *not* attempt to overwrite the existing
+js/src/configure that 'make-source-package.sh' apparently adds to the
+tarball.
+
+diff -r 7154eb3601f3 python/mozbuild/mozbuild/configure/__init__.py
+--- a/python/mozbuild/mozbuild/configure/__init__.py	Fri Nov 16 12:03:51 2018 -0600
++++ b/python/mozbuild/mozbuild/configure/__init__.py	Sat Nov 17 12:03:56 2018 +0100
+@@ -446,7 +446,7 @@
+         # All options should have been removed (handled) by now.
+         for arg in self._helper:
+             without_value = arg.split('=', 1)[0]
+-            raise InvalidOptionError('Unknown option: %s' % without_value)
++            print('Ignoring', without_value, ': Unknown option')
+ 
+         # Run the execution queue
+         for func, args in self._execution_queue:
+diff -r 7154eb3601f3 python/mozbuild/mozbuild/configure/options.py
+--- a/python/mozbuild/mozbuild/configure/options.py	Fri Nov 16 12:03:51 2018 -0600
++++ b/python/mozbuild/mozbuild/configure/options.py	Sat Nov 17 12:03:56 2018 +0100
+@@ -420,7 +420,11 @@
+ 
+     def add(self, arg, origin='command-line', args=None):
+         assert origin != 'default'
+-        prefix, name, values = Option.split_option(arg)
++        try:
++            prefix, name, values = Option.split_option(arg)
++        except InvalidOptionError as e:
++            print('Ignoring', arg, ':', e)
++            return
+         if args is None:
+             args = self._extra_args
+         if args is self._extra_args and name in self._extra_args:
