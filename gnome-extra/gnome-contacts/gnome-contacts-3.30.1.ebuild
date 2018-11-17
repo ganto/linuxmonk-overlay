@@ -64,6 +64,5 @@ src_prepare() {
 
 src_configure() {
 	meson_src_configure \
-		-Dwith-manpage=true \
-		-Dcheese=$(usex v4l yes no)
+		-Dcheese=$(usex v4l true false)
 }
