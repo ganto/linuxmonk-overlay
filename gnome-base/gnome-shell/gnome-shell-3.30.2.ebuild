@@ -36,7 +36,7 @@ COMMON_DEPEND="
 	>=x11-libs/gtk+-3.15.0:3[introspection]
 	>=dev-libs/libcroco-0.6.8:0.6
 	>=gnome-base/gnome-desktop-3.7.90:3=[introspection]
-	>=gnome-base/gsettings-desktop-schemas-3.21.3
+	>=gnome-base/gsettings-desktop-schemas-3.27.90
 	>=gnome-extra/evolution-data-server-3.17.2:=
 	>=media-libs/gstreamer-0.11.92:1.0
 	>=net-im/telepathy-logger-0.2.4[introspection]
@@ -44,7 +44,7 @@ COMMON_DEPEND="
 	>=sys-auth/polkit-0.100[introspection]
 	>=x11-libs/libXfixes-5.0
 	x11-libs/libXtst
-	>=x11-wm/mutter-3.28.0[introspection]
+	>=x11-wm/mutter-3.30.1[introspection]
 	>=x11-libs/startup-notification-0.11
 	dev-lang/sassc
 
@@ -64,9 +64,9 @@ COMMON_DEPEND="
 
 	>=net-wireless/gnome-bluetooth-3.20[introspection]
 	networkmanager? (
-		app-crypt/libsecret
+		>=app-crypt/libsecret-0.18
 		>=gnome-extra/nm-applet-0.9.8
-		>=net-misc/networkmanager-0.9.8:=[introspection] )
+		>=net-misc/networkmanager-1.10.4:=[introspection] )
 	nsplugin? ( >=dev-libs/json-glib-0.13.2 )
 "
 # Runtime-only deps are probably incomplete and approximate.
