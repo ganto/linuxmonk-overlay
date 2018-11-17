@@ -30,7 +30,7 @@ KEYWORDS="~amd64"
 # We need either systemd or >=openrc-0.12 to restart gdm properly, bug #463784
 COMMON_DEPEND="
 	app-text/iso-codes
-	>=dev-libs/glib-2.53.4:2[dbus]
+	>=dev-libs/glib-2.44.0:2[dbus]
 	>=x11-libs/gtk+-2.91.1:3
 	>=gnome-base/dconf-0.20
 	>=gnome-base/gnome-settings-daemon-3.1.4
@@ -82,6 +82,8 @@ RDEPEND="${COMMON_DEPEND}
 "
 DEPEND="${COMMON_DEPEND}
 	app-text/docbook-xml-dtd:4.1.2
+	dev-util/gdbus-codegen
+	dev-util/glib-utils
 	>=dev-util/intltool-0.40.0
 	dev-util/itstool
 	virtual/pkgconfig
@@ -126,7 +128,7 @@ src_prepare() {
 	eapply "${FILESDIR}/${PN}-3.8.4-fingerprint-auth.patch"
 
 	# Show logo when branding is enabled
-	use branding && eapply "${FILESDIR}/${PN}-3.8.4-logo.patch"
+	use branding && eapply "${FILESDIR}/${PN}-3.30.2-logo.patch"
 
 	gnome2_src_prepare
 }
