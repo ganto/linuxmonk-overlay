@@ -18,30 +18,30 @@ KEYWORDS="~amd64"
 RDEPEND="
 	>=gnome-base/gnome-core-libs-${PV}[cups?]
 
-	>=gnome-base/gnome-session-3.28.1
-	>=gnome-base/gnome-settings-daemon-3.28.1
-	>=gnome-base/gnome-control-center-${PV}
+	>=gnome-base/gnome-session-3.30.1
+	>=gnome-base/gnome-settings-daemon-3.30.1.2
+	>=gnome-base/gnome-control-center-3.30.1
 
 	>=app-crypt/gcr-3.28.0
-	>=gnome-base/nautilus-3.28.1
-	>=gnome-base/gnome-keyring-${PV}
+	>=gnome-base/nautilus-${PV}
+	>=gnome-base/gnome-keyring-3.28.2
 	>=gnome-extra/evolution-data-server-${PV}
 
-	>=app-crypt/seahorse-3.20.0
-	>=app-editors/gedit-3.28.1
+	>=app-crypt/seahorse-3.30
+	>=app-editors/gedit-${PV}
 	>=app-text/evince-${PV}
-	>=gnome-extra/gnome-contacts-${PV}
-	>=media-gfx/eog-${PV}
+	>=gnome-extra/gnome-contacts-3.30.1
+	>=media-gfx/eog-3.28.4
 	>=media-video/totem-3.26.2
 	>=x11-terms/gnome-terminal-${PV}
 
 	>=gnome-extra/gnome-user-docs-${PV}
-	>=gnome-extra/yelp-3.28.1
+	>=gnome-extra/yelp-3.30.0
 
-	>=x11-themes/adwaita-icon-theme-3.28.0
+	>=x11-themes/adwaita-icon-theme-3.30.0
 	>=x11-themes/gnome-themes-extra-3.28
 
-	bluetooth? ( >=net-wireless/gnome-bluetooth-3.28.0 )
+	bluetooth? ( >=net-wireless/gnome-bluetooth-3.28.2 )
 	cdr? ( >=app-cdr/brasero-3.12.2 )
 
 	!gnome-base/gnome-applets
