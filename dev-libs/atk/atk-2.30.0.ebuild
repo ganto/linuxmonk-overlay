@@ -13,7 +13,7 @@ KEYWORDS="~amd64"
 IUSE="+introspection nls test"
 
 RDEPEND="
-	>=dev-libs/glib-2.31.2:2[${MULTILIB_USEDEP}]
+	>=dev-libs/glib-2.58.0:2[${MULTILIB_USEDEP}]
 	introspection? ( >=dev-libs/gobject-introspection-1.32:= )
 "
 DEPEND="${RDEPEND}
