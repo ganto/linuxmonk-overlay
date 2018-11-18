@@ -3,9 +3,8 @@
 
 EAPI=6
 VALA_USE_DEPEND="vapigen"
-PYTHON_COMPAT=( python{3_4,3_5,3_6} )
 
-inherit gnome2 python-any-r1 vala virtualx
+inherit gnome2 meson vala
 
 DESCRIPTION="Unicode character map viewer and library"
 HOMEPAGE="https://wiki.gnome.org/Design/Apps/CharacterMap"
@@ -13,7 +12,7 @@ HOMEPAGE="https://wiki.gnome.org/Design/Apps/CharacterMap"
 LICENSE="GPL-2 BSD"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE="test"
+IUSE="-test"
 
 RDEPEND="
 	>=dev-libs/gjs-1.43.3
@@ -30,33 +29,9 @@ DEPEND="${RDEPEND}
 	dev-libs/libxml2:2
 	>=sys-devel/gettext-0.19.8
 	virtual/pkgconfig
-	test? (
-		${PYTHON_DEPS}
-		$(python_gen_any_dep 'dev-util/dogtail[${PYTHON_USEDEP}]') )
 "
 
-# Tests are not maintained with code base
-RESTRICT="test"
-
-python_check_deps() {
-	use test && has_version "dev-util/dogtail[${PYTHON_USEDEP}]"
-}
-
-pkg_setup() {
-	use test && python-any-r1_pkg_setup
-}
-
 src_prepare() {
-	sed 's/print \(.*\)/print(\1)/' -i "${S}"/tests/smoke_test.py || die
-
 	gnome2_src_prepare
 	vala_src_prepare
-}
-
-src_configure() {
-	gnome2_src_configure $(use_enable test dogtail)
-}
-
-src_test() {
-	virtx emake check
 }
