@@ -21,14 +21,16 @@ COMMON_DEPEND="
 	>=app-crypt/libsecret-0.14
 	>=app-text/iso-codes-0.35
 	>=dev-libs/glib-2.52.0:2[dbus]
+	>=dev-libs/icu-4.6
 	>=dev-libs/json-glib-1.2.4:=
 	>=dev-libs/libxml2-2.6.12:2
 	>=dev-libs/libxslt-1.1.7
-	>=dev-libs/libdazzle-3.26.1
+	>=dev-libs/libdazzle-3.28.0
 	>=gnome-base/gsettings-desktop-schemas-0.0.1
 	>=net-dns/avahi-0.6.22[dbus]
-	>=net-libs/webkit-gtk-2.19.4:4=
+	>=net-libs/webkit-gtk-2.21.92:4=
 	>=net-libs/libsoup-2.48:2.4
+	>=x11-libs/cairo-1.2
 	>=x11-libs/gdk-pixbuf-2.36.5
 	>=x11-libs/gtk+-3.22.13:3
 	>=x11-libs/libnotify-0.5.1:=
