@@ -15,7 +15,7 @@ KEYWORDS="~amd64"
 IUSE=""
 
 RDEPEND="
-	>=app-misc/geoclue-2.3.1:2.0
+	>=app-misc/geoclue-2.4:2.0
 	>=dev-libs/glib-2.44:2
 	>=dev-libs/libgweather-3.27.2:2=[vala]
 	>=gnome-base/gnome-desktop-3.8:3=
