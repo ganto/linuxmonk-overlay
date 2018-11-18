@@ -21,6 +21,7 @@ RDEPEND="
 	>=app-arch/libarchive-3:=
 	>=dev-libs/glib-2.36:2
 	>=dev-libs/json-glib-0.14
+	>=gnome-base/nautilus-2.22.2
 	>=x11-libs/gtk+-3.13.2:3
 	sys-apps/file
 	x11-libs/cairo
