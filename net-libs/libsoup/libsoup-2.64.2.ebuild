@@ -3,7 +3,7 @@
 
 EAPI=6
 GNOME2_LA_PUNT="yes"
-PYTHON_COMPAT=( python{3_4,3_5,3_6} )
+PYTHON_COMPAT=( python{3_4,3_5,3_6,3_7} )
 VALA_USE_DEPEND="vapigen"
 
 inherit gnome2 multilib-minimal python-any-r1 vala
@@ -24,6 +24,7 @@ RDEPEND="
 	>=dev-libs/libxml2-2.9.1-r4:2[${MULTILIB_USEDEP}]
 	>=dev-db/sqlite-3.8.2:3[${MULTILIB_USEDEP}]
 	>=net-libs/glib-networking-2.38.2[ssl?,${MULTILIB_USEDEP}]
+	>=net-libs/libpsl-0.20.0[${MULTILIB_USEDEP}]
 	gssapi? ( virtual/krb5[${MULTILIB_USEDEP}] )
 	introspection? ( >=dev-libs/gobject-introspection-0.9.5:= )
 	samba? ( net-fs/samba )
@@ -37,12 +38,6 @@ DEPEND="${RDEPEND}
 	test? ( >=dev-libs/glib-2.40:2[${MULTILIB_USEDEP}] )
 	vala? ( $(vala_depend) )
 "
-#	test? (	www-servers/apache[ssl,apache2_modules_auth_digest,apache2_modules_alias,apache2_modules_auth_basic,
-#		apache2_modules_authn_file,apache2_modules_authz_host,apache2_modules_authz_user,apache2_modules_dir,
-#		apache2_modules_mime,apache2_modules_proxy,apache2_modules_proxy_http,apache2_modules_proxy_connect]
-#		dev-lang/php[apache2,xmlrpc]
-#		net-misc/curl
-#		net-libs/glib-networking[ssl])"
 
 src_prepare() {
 	if ! use test; then
