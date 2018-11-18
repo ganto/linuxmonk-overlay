@@ -2,7 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
-VALA_MIN_API_VERSION="0.36"
+VALA_MIN_API_VERSION="0.40"
+# override because VALA_MAX_API_VERSION from eclass is < VALA_MIN_API_VERSION
+VALA_MAX_API_VERSION="0.40"
 
 inherit gnome2 meson vala
 
