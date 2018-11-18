@@ -17,35 +17,35 @@ KEYWORDS="~amd64"
 RDEPEND="
 	>=gnome-base/gnome-core-libs-${PV}
 
-	>=sys-apps/baobab-3.28.0
-	>=media-video/cheese-3.28.0
-	>=www-client/epiphany-3.28.1.1
-	>=app-arch/file-roller-3.28.1
-	>=gnome-extra/gnome-calculator-${PV}
-	>=gnome-extra/gnome-calendar-${PV}
-	>=gnome-extra/gnome-characters-${PV}
-	>=gnome-extra/gnome-contacts-${PV}
+	>=sys-apps/baobab-3.30.0
+	>=media-video/cheese-3.30.0
+	>=www-client/epiphany-${PV}
+	>=app-arch/file-roller-3.30.1
+	>=gnome-extra/gnome-calculator-3.30.1
+	>=gnome-extra/gnome-calendar-3.30.0
+	>=gnome-extra/gnome-characters-3.30.0
+	>=gnome-extra/gnome-contacts-3.30.1
 	>=sys-apps/gnome-disk-utility-${PV}
-	>=media-gfx/gnome-font-viewer-3.28.0
-	>=media-gfx/gnome-screenshot-3.26.0
-	>=gnome-extra/gnome-system-monitor-${PV}
+	>=media-gfx/gnome-font-viewer-3.30.0
+	>=media-gfx/gnome-screenshot-3.30.0
+	>=gnome-extra/gnome-system-monitor-3.30.0
 	>=gnome-extra/gnome-weather-3.26.0
 	>=sci-geosciences/gnome-maps-${PV}
-	>=gnome-extra/sushi-3.28.3
+	>=gnome-extra/sushi-3.30.0
 	>=net-misc/vino-3.22.0
 
-	>=gnome-base/dconf-editor-3.28.0
+	>=gnome-base/dconf-editor-3.30.1
 	>=mail-client/evolution-${PV}
-	>=gnome-extra/gnome-tweaks-3.28.1
+	>=gnome-extra/gnome-tweaks-3.30.1
 
 	share? ( >=gnome-extra/gnome-user-share-3.28.0 )
-	shotwell? ( >=media-gfx/shotwell-0.24 )
-	systemd? ( >=gnome-extra/gnome-logs-${PV} )
+	shotwell? ( >=media-gfx/shotwell-0.30 )
+	systemd? ( >=gnome-extra/gnome-logs-3.30.0 )
 	tracker? (
-		>=app-misc/tracker-miners-2.0.4
-		>=gnome-extra/gnome-documents-3.28.1
-		>=media-gfx/gnome-photos-3.28.0
-		>=media-sound/gnome-music-3.28.2.1 )
+		>=app-misc/tracker-miners-2.1.5
+		>=gnome-extra/gnome-documents-3.30.0
+		>=media-gfx/gnome-photos-3.30.1
+		>=media-sound/gnome-music-${PV} )
 "
 DEPEND=""
 S=${WORKDIR}
