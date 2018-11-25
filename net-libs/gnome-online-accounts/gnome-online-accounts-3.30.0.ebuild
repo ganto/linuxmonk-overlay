@@ -12,7 +12,7 @@ HOMEPAGE="https://wiki.gnome.org/Projects/GnomeOnlineAccounts"
 
 LICENSE="LGPL-2+"
 SLOT="0/1"
-IUSE="debug gnome +introspection kerberos" # telepathy"
+IUSE="debug gnome +introspection kerberos vala"
 KEYWORDS="~amd64"
 
 # pango used in goaeditablelabel
@@ -27,7 +27,6 @@ RDEPEND="
 	dev-libs/libxml2:2
 	>=net-libs/libsoup-2.42:2.4
 	net-libs/rest:0.7
-	net-libs/telepathy-glib
 	>=net-libs/webkit-gtk-2.12:4
 	>=x11-libs/gtk+-3.19.12:3
 	x11-libs/pango
@@ -37,7 +36,6 @@ RDEPEND="
 		app-crypt/gcr:0=
 		app-crypt/mit-krb5 )
 "
-#	telepathy? ( net-libs/telepathy-glib )
 # goa-daemon can launch gnome-control-center
 PDEPEND="gnome? ( >=gnome-base/gnome-control-center-3.2[gnome-online-accounts(+)] )"
 
@@ -64,7 +62,6 @@ src_prepare() {
 
 src_configure() {
 	# TODO: Give users a way to set the G/FB/Windows Live secrets
-	# telepathy optional support is really a badly one, bug #494456
 	gnome2_src_configure \
 		--disable-static \
 		--enable-backend \
@@ -78,11 +75,8 @@ src_configure() {
 		--enable-media-server \
 		--enable-owncloud \
 		--enable-pocket \
-		--enable-telepathy \
 		--enable-windows-live \
 		$(usex debug --enable-debug=yes ' ') \
-		$(use_enable kerberos)
-		#$(use_enable telepathy)
-	# gudev & cheese from sub-configure is overriden
-	# by top level configure, and disabled so leave it like that
+		$(use_enable kerberos) \
+		$(use_enable vala)
 }
