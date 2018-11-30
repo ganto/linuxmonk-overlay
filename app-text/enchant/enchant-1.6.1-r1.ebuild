@@ -8,7 +8,7 @@ HOMEPAGE="https://abiword.github.io/enchant/"
 SRC_URI="https://github.com/AbiWord/enchant/releases/download/${P}/${P}.tar.gz"
 
 LICENSE="LGPL-2.1"
-SLOT="1"
+SLOT="0"
 KEYWORDS="~amd64"
 
 IUSE="aspell +hunspell static-libs test"
@@ -16,7 +16,6 @@ REQUIRED_USE="|| ( hunspell aspell )"
 
 # FIXME: depends on unittest++ but through pkgconfig which is a Debian hack, bug #629742
 COMMON_DEPENDS="
-	!app-text/enchant:0
 	>=dev-libs/glib-2.6:2
 	aspell? ( app-text/aspell )
 	hunspell? ( >=app-text/hunspell-1.2.1:0= )"
