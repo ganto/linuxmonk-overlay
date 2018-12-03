@@ -3,33 +3,68 @@
 
 EAPI=6
 
-inherit autotools cargo eutils
-
-LIBGLNX_TAG=97b5c08d2f93dc93ba296a84bbd2a5ab9bd8fc97
-LIBDNF_TAG=b3fcc53f6f3baf4f51f836f5e1eb54eb82d5df49
+LIBGLNX_TAG=470af8763ff7b99bec950a6ae0a957c1dcfc8edd
+LIBDNF_TAG=7ecb2f5ddc93ae6f819b95ef7940b1d4dd66eb4d
 
 CRATES="
-bitflags-1.0.3
+bitflags-1.0.4
+cc-1.0.25
+cfg-if-0.1.6
+cloudabi-0.0.3
+cstr-argument-0.0.2
+curl-0.4.14
+curl-sys-0.4.14
+c_utf8-0.1.0
 dtoa-0.4.2
+fuchsia-zircon-0.3.3
+fuchsia-zircon-sys-0.3.3
 gio-sys-0.6.0
 glib-0.5.0
 glib-sys-0.6.0
 gobject-sys-0.6.0
-itoa-0.4.1
-lazy_static-1.0.1
-libc-0.2.42
+itoa-0.4.3
+kernel32-sys-0.2.2
+lazy_static-1.2.0
+libc-0.2.43
+libsystemd-sys-0.2.2
+libz-sys-1.0.25
 linked-hash-map-0.5.1
-pkg-config-0.3.11
-proc-macro2-0.4.6
-quote-0.6.3
-serde-1.0.66
-serde_derive-1.0.66
+log-0.4.6
+memchr-1.0.2
+openat-0.1.15
+openssl-probe-0.1.2
+openssl-sys-0.9.39
+pkg-config-0.3.14
+proc-macro2-0.4.24
+quote-0.6.10
+rand-0.5.5
+rand_core-0.2.2
+rand_core-0.3.0
+redox_syscall-0.1.43
+remove_dir_all-0.5.1
+schannel-0.1.14
+semver-parser-0.7.0
+serde-1.0.78
+serde_derive-1.0.80
 serde_json-1.0.20
 serde_yaml-0.7.5
-syn-0.14.2
+socket2-0.3.8
+syn-0.15.22
+systemd-0.4.0
+tempfile-3.0.3
 unicode-xid-0.1.0
-yaml-rust-0.4.0
+utf8-cstr-0.1.6
+vcpkg-0.2.6
+version_check-0.1.5
+winapi-0.2.7
+winapi-0.3.6
+winapi-build-0.1.1
+winapi-i686-pc-windows-gnu-0.4.0
+winapi-x86_64-pc-windows-gnu-0.4.0
+yaml-rust-0.4.2
 "
+
+inherit autotools cargo
 
 DESCRIPTION="Hybrid image/package system"
 HOMEPAGE="https://github.com/projectatomic/rpm-ostree"
@@ -42,7 +77,7 @@ SRC_URI="https://github.com/projectatomic/rpm-ostree/archive/v${PV}.tar.gz -> ${
 LICENSE="LGPL-2+"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE="doc rust"
+IUSE="doc"
 
 COMMON_DEPEND="
 	app-arch/libarchive:=
@@ -53,7 +88,7 @@ COMMON_DEPEND="
 	>=dev-libs/json-glib-1.0:=
 	>=dev-libs/libsolv-0.6.21:=
 	dev-libs/libxslt:=
-	>=dev-util/ostree-2018.2:=
+	>=dev-util/ostree-2018.9:=
 	sys-apps/attr:=
 	sys-apps/systemd:=
 	sys-auth/polkit:=
@@ -61,26 +96,24 @@ COMMON_DEPEND="
 	sys-libs/librepo:=
 "
 DEPEND="${COMMON_DEPEND}
-	rust? (
-		dev-util/cargo
-		virtual/rust
-	)
 	dev-libs/check
+	dev-util/cargo
 	dev-util/cmake
 	dev-util/gperf
 	>=dev-util/gtk-doc-1.15
 	gnome-base/gnome-common
 	virtual/pkgconfig
+	virtual/rust
 "
 RDEPEND="${COMMON_DEPEND}
-	app-emulation/bubblewrap
+	sys-apps/bubblewrap
 	sys-fs/fuse:*
 "
 
 DOCS=( docs/CONTRIBUTING.md HACKING.md README.md )
 
 PATCHES=(
-	"${FILESDIR}"/${P}-build-sys-Link-with-ldl-for-rust-build.patch
+	"${FILESDIR}"/${P}-rust-Drop-crates-io-patch-and-use-0.4.0.patch
 )
 
 src_prepare() {
@@ -105,19 +138,14 @@ src_configure() {
 	econf \
 		--disable-silent-rules \
 		--enable-gtk-doc \
-		$(use_enable doc gtk-doc-html) \
-		$(use_enable rust)
+		$(use_enable doc gtk-doc-html)
 }
 
 src_compile() {
-	if use rust; then
-		export CARGO_HOME="${ECARGO_HOME}"
-	fi
-
+	export CARGO_HOME="${ECARGO_HOME}"
 	emake || die "Failed to compile"
 }
 
 src_install() {
-	default
-	prune_libtool_files
+	emake install DESTDIR=${D}
 }
