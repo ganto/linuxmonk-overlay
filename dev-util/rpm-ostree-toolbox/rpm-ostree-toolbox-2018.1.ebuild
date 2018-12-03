@@ -32,7 +32,7 @@ RDEPEND="${COMMON_DEPEND}
 	dev-python/iniparse[${PYTHON_USEDEP}]
 	dev-python/libvirt-python[${PYTHON_USEDEP}]
 	dev-python/pygobject:2[${PYTHON_USEDEP}]
-	dev-util/rpm-ostree
+	sys-apps/rpm-ostree
 "
 DEPEND="${COMMON_DEPEND}
 	>=dev-util/gtk-doc-1.15
