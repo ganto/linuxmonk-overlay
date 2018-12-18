@@ -6,7 +6,6 @@ inherit golang-build golang-vcs-snapshot bash-completion-r1
 
 EGO_PN="github.com/openshift/origin"
 ARCHIVE_URI="https://github.com/openshift/origin/archive/v${PV}.tar.gz -> openshift-origin-${PV}.tar.gz"
-
 KEYWORDS="~amd64"
 
 DESCRIPTION="CLI to run commands against OpenShift clusters"
@@ -24,17 +23,15 @@ RDEPEND="
 
 src_compile() {
 	export OS_ONLY_BUILD_PLATFORMS="linux/amd64"
-	export OS_GIT_COMMIT="dd10d172758d4d02f6d2e24869234fac6c7841a7"
-	export OS_GIT_VERSION="v${PV}-${OS_GIT_COMMIT:0:7}"
+	export OS_GIT_COMMIT="191fece9305a76f262baacc9de72c2c8cb4d5601"
+	export OS_GIT_VERSION="v${PV}"
 	export OS_GIT_MAJOR="${PV%%.*}"
 	export OS_GIT_MINOR="$(cut -d'.' -f2 <<< ${PV})"
 	export OS_GIT_TREE_STATE="clean"
 
 	# check Godeps/Godeps.json
-	export KUBE_GIT_COMMIT="b81c8f8e48a661f3cc94e2bd49760c7b6c424ee8"
-	export KUBE_GIT_VERSION="v1.10.0-${KUBE_GIT_COMMIT:0:7}"
-	export KUBE_GIT_MAJOR="1"
-	export KUBE_GIT_MINOR="10"
+	export KUBE_GIT_COMMIT="a0ce1bc657faa48c85731dcca6a613d91224dea0"
+	export KUBE_GIT_VERSION="v1.9.1-${KUBE_GIT_COMMIT:0:10}"
 
 	# don't restrict go version
 	export PERMISSIVE_GO=y
