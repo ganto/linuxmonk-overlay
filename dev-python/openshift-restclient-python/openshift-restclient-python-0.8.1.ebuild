@@ -22,7 +22,8 @@ DEPEND="dev-python/setuptools[${PYTHON_USEDEP}]"
 RDEPEND="
 	dev-python/dictdiffer[${PYTHON_USEDEP}]
 	dev-python/jinja[${PYTHON_USEDEP}]
-	>=dev-python/kubernetes-client-python-6.0.0[${PYTHON_USEDEP}]
+	>=dev-python/kubernetes-client-python-8.0.0[${PYTHON_USEDEP}]
+	<dev-python/kubernetes-client-python-9.0.0[${PYTHON_USEDEP}]
 	dev-python/python-string-utils[${PYTHON_USEDEP}]
 	>=dev-python/ruamel-yaml-0.15[${PYTHON_USEDEP}]
 	dev-python/six[${PYTHON_USEDEP}]
@@ -31,3 +32,11 @@ RDEPEND="
 PATCHES=( "${FILESDIR}/${MY_PN}-0.6.1-Fix-install_requires.patch" )
 
 S="${WORKDIR}/${MY_P}"
+
+python_install() {
+	distutils-r1_python_install
+	# cleanup inproper packaging (see python-openshift.spec)
+	rm -r "${ED}"$(python_get_sitedir)/scripts
+	rm -r "${ED}"usr/requirements.txt
+	rm -r "${ED}"usr/custom_objects_spec.json
+}
