@@ -1,0 +1,358 @@
+diff -up rpmlint-rpmlint-1.10/AbstractCheck.py.flake rpmlint-rpmlint-1.10/AbstractCheck.py
+--- rpmlint-rpmlint-1.10/AbstractCheck.py.flake	2017-09-05 02:40:05.000000000 -0400
++++ rpmlint-rpmlint-1.10/AbstractCheck.py	2018-04-17 12:22:20.681609697 -0400
+@@ -11,7 +11,7 @@ import contextlib
+ import re
+ try:
+     import urllib2
+-except:
++except ImportError:
+     import urllib.request as urllib2
+ 
+ import Config
+diff -up rpmlint-rpmlint-1.10/BinariesCheck.py.flake rpmlint-rpmlint-1.10/BinariesCheck.py
+--- rpmlint-rpmlint-1.10/BinariesCheck.py.flake	2017-09-05 02:40:05.000000000 -0400
++++ rpmlint-rpmlint-1.10/BinariesCheck.py	2018-04-17 12:22:52.688880629 -0400
+@@ -101,32 +101,32 @@ class BinaryInfo(object):
+             ('readelf', '-W', '-S', '-l', '-d', '-s', path))
+         if not res[0]:
+             lines = res[1].splitlines()
+-            for l in lines:
+-                r = BinaryInfo.needed_regex.search(l)
++            for line in lines:
++                r = BinaryInfo.needed_regex.search(line)
+                 if r:
+                     self.needed.append(r.group(1))
+                     continue
+ 
+-                r = BinaryInfo.rpath_regex.search(l)
++                r = BinaryInfo.rpath_regex.search(line)
+                 if r:
+                     for p in r.group(1).split(':'):
+                         self.rpath.append(p)
+                     continue
+ 
+-                if BinaryInfo.comment_regex.search(l):
++                if BinaryInfo.comment_regex.search(line):
+                     self.comment = True
+                     continue
+ 
+-                if BinaryInfo.pic_regex.search(l):
++                if BinaryInfo.pic_regex.search(line):
+                     self.non_pic = False
+                     continue
+ 
+-                r = BinaryInfo.soname_regex.search(l)
++                r = BinaryInfo.soname_regex.search(line)
+                 if r:
+                     self.soname = r.group(1)
+                     continue
+ 
+-                r = BinaryInfo.stack_regex.search(l)
++                r = BinaryInfo.stack_regex.search(line)
+                 if r:
+                     self.stack = True
+                     flags = r.group(1)
+@@ -134,45 +134,45 @@ class BinaryInfo(object):
+                         self.exec_stack = True
+                     continue
+ 
+-                if l.startswith("Symbol table"):
++                if line.startswith("Symbol table"):
+                     break
+ 
+-            for l in lines:
+-                r = BinaryInfo.call_regex.search(l)
++            for line in lines:
++                r = BinaryInfo.call_regex.search(line)
+                 if not r:
+                     continue
+-                l = r.group(1)
++                line = r.group(1)
+ 
+-                if BinaryInfo.mktemp_call_regex.search(l):
++                if BinaryInfo.mktemp_call_regex.search(line):
+                     self.mktemp = True
+ 
+-                if BinaryInfo.setgid_call_regex.search(l):
++                if BinaryInfo.setgid_call_regex.search(line):
+                     self.setgid = True
+ 
+-                if BinaryInfo.setuid_call_regex.search(l):
++                if BinaryInfo.setuid_call_regex.search(line):
+                     self.setuid = True
+ 
+-                if BinaryInfo.setgroups_call_regex.search(l):
++                if BinaryInfo.setgroups_call_regex.search(line):
+                     self.setgroups = True
+ 
+-                if BinaryInfo.chdir_call_regex.search(l):
++                if BinaryInfo.chdir_call_regex.search(line):
+                     self.chdir = True
+ 
+-                if BinaryInfo.chroot_call_regex.search(l):
++                if BinaryInfo.chroot_call_regex.search(line):
+                     self.chroot = True
+ 
+                 if BinaryInfo.forbidden_functions:
+                     for r_name, func in BinaryInfo.forbidden_functions.items():
+-                        ret = func['f_regex'].search(l)
++                        ret = func['f_regex'].search(line)
+                         if ret:
+                             self.forbidden_calls.append(r_name)
+ 
+                 if is_shlib:
+-                    r = BinaryInfo.exit_call_regex.search(l)
++                    r = BinaryInfo.exit_call_regex.search(line)
+                     if r:
+                         self.exit_calls.append(r.group(1))
+                         continue
+-                    r = BinaryInfo.fork_call_regex.search(l)
++                    r = BinaryInfo.fork_call_regex.search(line)
+                     if r:
+                         fork_called = True
+                         continue
+@@ -182,14 +182,14 @@ class BinaryInfo(object):
+             if self.forbidden_calls:
+                 res = Pkg.getstatusoutput(('strings', path))
+                 if not res[0]:
+-                    for l in res[1].splitlines():
++                    for line in res[1].splitlines():
+                         # as we need to remove elements, iterate backwards
+                         for i in range(len(self.forbidden_calls) - 1, -1, -1):
+                             func = self.forbidden_calls[i]
+                             f = BinaryInfo.forbidden_functions[func]
+                             if 'waiver_regex' not in f:
+                                 continue
+-                            r = f['waiver_regex'].search(l)
++                            r = f['waiver_regex'].search(line)
+                             if r:
+                                 del self.forbidden_calls[i]
+ 
+@@ -254,8 +254,8 @@ class BinaryInfo(object):
+             # We could do this with objdump, but it's _much_ simpler with ldd.
+             res = Pkg.getstatusoutput(('ldd', '-d', '-r', path))
+             if not res[0]:
+-                for l in res[1].splitlines():
+-                    undef = BinaryInfo.undef_regex.search(l)
++                for line in res[1].splitlines():
++                    undef = BinaryInfo.undef_regex.search(line)
+                     if undef:
+                         self.undef.append(undef.group(1))
+                 if self.undef:
+@@ -263,7 +263,7 @@ class BinaryInfo(object):
+                         res = Pkg.getstatusoutput(['c++filt'] + self.undef)
+                         if not res[0]:
+                             self.undef = res[1].splitlines()
+-                    except:
++                    except OSError:
+                         pass
+             else:
+                 printWarning(pkg, 'ldd-failed', file)
+@@ -272,13 +272,13 @@ class BinaryInfo(object):
+                 # Either ldd doesn't grok -u (added in glibc 2.3.4) or we have
+                 # unused direct dependencies
+                 in_unused = False
+-                for l in res[1].splitlines():
+-                    if not l.rstrip():
++                for line in res[1].splitlines():
++                    if not line.rstrip():
+                         pass
+-                    elif l.startswith('Unused direct dependencies'):
++                    elif line.startswith('Unused direct dependencies'):
+                         in_unused = True
+                     elif in_unused:
+-                        unused = BinaryInfo.unused_regex.search(l)
++                        unused = BinaryInfo.unused_regex.search(line)
+                         if unused:
+                             self.unused.append(unused.group(1))
+                         else:
+diff -up rpmlint-rpmlint-1.10/Config.py.flake rpmlint-rpmlint-1.10/Config.py
+--- rpmlint-rpmlint-1.10/Config.py.flake	2017-09-05 02:40:05.000000000 -0400
++++ rpmlint-rpmlint-1.10/Config.py	2018-04-17 12:22:20.684609629 -0400
+@@ -42,11 +41,11 @@ USEUTF8_DEFAULT = False
+ try:
+     if locale.getpreferredencoding() == 'UTF-8':
+         USEUTF8_DEFAULT = True
+-except:
++except UnicodeError:
+     try:
+         if re.match('utf', locale.getdefaultlocale()[1], re.I):
+             USEUTF8_DEFAULT = True
+-    except:
++    except UnicodeError:
+         pass
+ 
+ info = False
+@@ -105,10 +105,7 @@ def setOption(name, value):
+ 
+ 
+ def getOption(name, default=""):
+-    try:
+-        return _options[name]
+-    except:
+-        return default
++    return _options.get(name, default)
+ 
+ 
+ # List of filters
+@@ -128,7 +125,7 @@ def removeFilter(s):
+ 
+     try:
+         _filters.remove(s)
+-    except:
++    except ValueError:
+         pass
+     else:
+         _filters_re = None
+diff -up rpmlint-rpmlint-1.10/MenuXDGCheck.py.flake rpmlint-rpmlint-1.10/MenuXDGCheck.py
+--- rpmlint-rpmlint-1.10/MenuXDGCheck.py.flake	2017-09-05 02:40:05.000000000 -0400
++++ rpmlint-rpmlint-1.10/MenuXDGCheck.py	2018-04-17 12:22:20.681609697 -0400
+@@ -9,7 +9,7 @@
+ import os
+ try:
+     from ConfigParser import RawConfigParser
+-except:
++except ImportError:
+     from configparser import RawConfigParser
+ 
+ import AbstractCheck
+diff -up rpmlint-rpmlint-1.10/Pkg.py.flake rpmlint-rpmlint-1.10/Pkg.py
+--- rpmlint-rpmlint-1.10/Pkg.py.flake	2017-09-05 02:40:05.000000000 -0400
++++ rpmlint-rpmlint-1.10/Pkg.py	2018-04-17 12:22:20.681609697 -0400
+@@ -18,7 +18,7 @@ import sys
+ import tempfile
+ try:
+     from urlparse import urljoin
+-except:
++except ImportError:
+     from urllib.parse import urljoin
+ 
+ try:
+@@ -27,7 +27,7 @@ try:
+     _magic = magic.open(magic.MAGIC_NONE)
+     _ = _magic.descriptor  # magic >= 5.05 needed
+     _magic.load()
+-except:
++except ImportError:
+     _magic = None
+ import rpm
+ 
+@@ -52,7 +52,7 @@ else:
+ 
+ try:
+     from shlex import quote as shquote
+-except:
++except ImportError:
+     def shquote(s):
+         return '"%s"' % s
+ 
+@@ -166,7 +166,7 @@ def is_utf8(fname):
+ def is_utf8_bytestr(s):
+     try:
+         s.decode('UTF-8')
+-    except:
++    except UnicodeError:
+         return False
+     return True
+ 
+@@ -227,7 +227,7 @@ def get_default_valid_rpmgroups(filename
+                 groupsfiles = [x for x in p.files() if x.endswith('/GROUPS')]
+                 if groupsfiles:
+                     filename = groupsfiles[0]
+-        except:  # the rpm package might not be installed
++        except KeyError:  # the rpm package might not be installed
+             pass
+     if filename and os.path.exists(filename):
+         with open(filename) as fobj:
+@@ -532,7 +532,7 @@ class Pkg(AbstractPkg):
+     def __getitem__(self, key):
+         try:
+             val = self.header[key]
+-        except:
++        except KeyError:
+             val = []
+         if val == []:
+             return None
+@@ -680,7 +680,7 @@ class Pkg(AbstractPkg):
+         magics = [b2s(x) for x in self.header[rpm.RPMTAG_FILECLASS]]
+         try:  # rpm >= 4.7.0
+             filecaps = self.header[rpm.RPMTAG_FILECAPS]
+-        except:
++        except AttributeError:
+             filecaps = None
+ 
+         # rpm-python < 4.6 does not return a list for this (or FILEDEVICES,
+@@ -915,9 +915,11 @@ class Pkg(AbstractPkg):
+         Depending on rpm-python version, the string may or may not include
+         interpreter arguments, if any.
+         """
++        if which is None:
++            return ''
+         prog = self[which]
+         if prog is None:
+-            prog = ""
++            prog = ''
+         elif isinstance(prog, (list, tuple)):
+             # http://rpm.org/ticket/847#comment:2
+             prog = "".join(prog)
+diff -up rpmlint-rpmlint-1.10/rpmlint.flake rpmlint-rpmlint-1.10/rpmlint
+--- rpmlint-rpmlint-1.10/rpmlint.flake	2017-09-05 02:40:05.000000000 -0400
++++ rpmlint-rpmlint-1.10/rpmlint	2018-04-17 12:22:20.682609674 -0400
+@@ -20,7 +20,7 @@ import tempfile
+ 
+ try:
+     import importlib
+-except:  # Python < 2.7
++except ImportError:  # Python < 2.7
+     importlib = None
+     import imp
+ 
+diff -up rpmlint-rpmlint-1.10/SCLCheck.py.flake rpmlint-rpmlint-1.10/SCLCheck.py
+--- rpmlint-rpmlint-1.10/SCLCheck.py.flake	2017-09-05 02:40:05.000000000 -0400
++++ rpmlint-rpmlint-1.10/SCLCheck.py	2018-04-17 12:22:20.682609674 -0400
+@@ -50,7 +50,7 @@ def index_or_sub(source, word, sub=0):
+     """
+     try:
+         return source.index(word)
+-    except:
++    except ValueError:
+         return sub
+ 
+ 
+diff -up rpmlint-rpmlint-1.10/SpecCheck.py.flake rpmlint-rpmlint-1.10/SpecCheck.py
+--- rpmlint-rpmlint-1.10/SpecCheck.py.flake	2017-09-05 02:40:05.000000000 -0400
++++ rpmlint-rpmlint-1.10/SpecCheck.py	2018-04-17 12:22:20.682609674 -0400
+@@ -571,7 +571,7 @@ class SpecCheck(AbstractCheck.AbstractCh
+             try:
+                 ts = rpm.TransactionSet()
+                 spec_obj = ts.parseSpec(self._spec_file)
+-            except:
++            except rpm.error:
+                 # errors logged above already
+                 pass
+             if spec_obj:
+diff -up rpmlint-rpmlint-1.10/ZipCheck.py.flake rpmlint-rpmlint-1.10/ZipCheck.py
+--- rpmlint-rpmlint-1.10/ZipCheck.py.flake	2017-09-05 02:40:05.000000000 -0400
++++ rpmlint-rpmlint-1.10/ZipCheck.py	2018-04-17 12:22:20.682609674 -0400
+@@ -43,6 +43,10 @@ class ZipCheck(AbstractCheck.AbstractChe
+                     badcrc = z.testzip()
+                     if badcrc:
+                         printError(pkg, 'bad-crc-in-zip', badcrc, fname)
++                except zipfile.error:
++                    printWarning(pkg, 'unable-to-read-zip', '%s: %s' %
++                                 (fname, sys.exc_info()[1]))
++                else:
+                     compressed = False
+                     for zinfo in z.infolist():
+                         if zinfo.compress_type != zipfile.ZIP_STORED:
+@@ -70,9 +74,6 @@ class ZipCheck(AbstractCheck.AbstractChe
+                             if want_indexed_jars:
+                                 printWarning(pkg, 'jar-not-indexed', fname)
+                             pass
+-                except:
+-                    printWarning(pkg, 'unable-to-read-zip', '%s: %s' %
+-                                 (fname, sys.exc_info()[1]))
+ 
+                 z and z.close()
+ 

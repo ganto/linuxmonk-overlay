@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<upstream>
+		<remote-id type="github">rpm-software-management/rpmlint</remote-id>
+	</upstream>
+	<longdescription lang="en">
+		rpmlint is a tool for checking common errors in rpm packages. rpmlint
+		can be used to test individual packages before uploading or to check an
+		entire distribution.
+	</longdescription>
+</pkgmetadata>
