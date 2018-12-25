@@ -23,8 +23,8 @@ RDEPEND="
 	app-arch/rpm[python,${PYTHON_USEDEP}]
 	app-arch/xz-utils
 	dev-python/pyenchant[${PYTHON_USEDEP}]
-	dev-python/python-magic[${PYTHON_USEDEP}]
 	dev-util/desktop-file-utils
+	sys-apps/file[python,${PYTHON_USEDEP}]
 	sys-apps/groff
 	sys-devel/binutils:*
 "
