@@ -23,7 +23,7 @@ RDEPEND="
 	app-arch/createrepo_c
 	app-arch/pigz
 	app-arch/rpm[lua,python,${PYTHON_USEDEP}]
-	app-misc/distribution-gpg-keys
+	>=app-misc/distribution-gpg-keys-1.22
 	dev-python/distro[${PYTHON_USEDEP}]
 	$(python_gen_cond_dep 'dev-python/pyliblzma[${PYTHON_USEDEP}]' 'python2_7' )
 	dev-python/pyroute2[${PYTHON_USEDEP}]
