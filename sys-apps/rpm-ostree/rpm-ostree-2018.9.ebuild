@@ -97,11 +97,11 @@ COMMON_DEPEND="
 "
 DEPEND="${COMMON_DEPEND}
 	dev-libs/check
-	dev-util/cargo
 	dev-util/cmake
 	dev-util/gperf
 	>=dev-util/gtk-doc-1.15
 	gnome-base/gnome-common
+	virtual/cargo
 	virtual/pkgconfig
 	virtual/rust
 "
