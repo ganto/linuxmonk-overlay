@@ -1,0 +1,77 @@
+diff --git a/Makefile b/Makefile
+index 6e94fd6..221a7ac 100644
+--- a/Makefile
++++ b/Makefile
+@@ -53,17 +53,17 @@ install: fixupperms
+ 	mkdir -p ${PREFIX}/usr/share/bash-completion/completions
+ 	mkdir -p ${PREFIX}/etc/rinse
+ 	mkdir -p ${PREFIX}/usr/sbin
+-	mkdir -p ${PREFIX}/usr/lib/rinse
+-	mkdir -p ${PREFIX}/usr/lib/rinse/common
+-	cp -p ./scripts.common/* ${PREFIX}/usr/lib/rinse/common
+-	chmod 755 ${PREFIX}/usr/lib/rinse/common/*.sh
++	mkdir -p ${PREFIX}/usr/libexec/rinse
++	mkdir -p ${PREFIX}/usr/libexec/rinse/common
++	cp -p ./scripts.common/* ${PREFIX}/usr/libexec/rinse/common
++	chmod 755 ${PREFIX}/usr/libexec/rinse/common/*.sh
+ 	mkdir -p ${PREFIX}/var/cache/rinse
+ 	cp -p bin/rinse ${PREFIX}/usr/sbin/
+ 	perl -pi -e "s/XXUNRELEASEDXX/$(VERSION)/" $(PREFIX)/usr/sbin/rinse*
+ 	chmod 755 ${PREFIX}/usr/sbin/rinse*
+ 	cp -p etc/*.packages ${PREFIX}/etc/rinse
+ 	cp -p etc/*.conf     ${PREFIX}/etc/rinse
+-	for i in scripts/*/; do name=`basename $$i`; mkdir -p ${PREFIX}/usr/lib/rinse/$$name  ; cp $$i/*.sh ${PREFIX}/usr/lib/rinse/$$name ; done
++	for i in scripts/*/; do name=`basename $$i`; mkdir -p ${PREFIX}/usr/libexec/rinse/$$name  ; cp $$i/*.sh ${PREFIX}/usr/libexec/rinse/$$name ; done
+ 	cp -p misc/rinse ${PREFIX}/usr/share/bash-completion/completions
+ 	pod2man --release=${VERSION} --official --section=8 ./bin/rinse ./bin/rinse.8
+ 	gzip --force -9 bin/rinse.8
+@@ -110,6 +110,6 @@ uninstall:
+ 	rm -f  ${PREFIX}/etc/rinse/*.conf
+ 	rm -f  ${PREFIX}/etc/rinse/*.packages
+ 	rm -rf ${PREFIX}/var/cache/rinse
+-	rm -rf ${PREFIX}/usr/lib/rinse
++	rm -rf ${PREFIX}/usr/libexec/rinse
+ 	rm -f  ${PREFIX}/etc/bash_completion.d/rinse
+ 
+diff --git a/bin/rinse b/bin/rinse
+index d08666b..79a5995 100755
+--- a/bin/rinse
++++ b/bin/rinse
+@@ -31,7 +31,7 @@ rinse - RPM Installation Entity.
+    --before-post-install Additionally run the specified script before
+                          the post install script.
+    --post-install        Run the given post-install script instead of the
+-                         default files in /usr/lib/rinse/$distro
++                         default files in /usr/libexec/rinse/$distro
+ 
+   Misc Options:
+ 
+@@ -46,7 +46,7 @@ rinse - RPM Installation Entity.
+                          (Default is to read it from /etc/rinse/rinse.conf)
+    --list-distributions  Show installable distributions.
+    --print-uris          Only show the RPMs which should be downloaded.
+-                         default files in /usr/lib/rinse/$distro
++                         default files in /usr/libexec/rinse/$distro
+    --verbose             Enable verbose output.
+ 
+ =cut
+@@ -247,7 +247,7 @@ $CONFIG{ 'config' }    = "$configdir/rinse.conf";
+ 
+ my $scriptsdir = "$Bin/../scripts";
+ if ( !-d $scriptsdir ) {
+-  $scriptsdir = "/usr/lib/rinse";
++  $scriptsdir = "/usr/libexec/rinse";
+ }
+ $CONFIG{ 'scripts-dir' } = $scriptsdir;
+ 
+@@ -1280,8 +1280,8 @@ sub postInstallationCustomization {
+     # common files.
+     #
+     my @scripts;
+-    push( @scripts, "/usr/lib/rinse/common" );
+-    push( @scripts, "/usr/lib/rinse/" . lc ( $distribution ) );
++    push( @scripts, "/usr/libexec/rinse/common" );
++    push( @scripts, "/usr/libexec/rinse/" . lc ( $distribution ) );
+ 
+     #
+     #  For each one
