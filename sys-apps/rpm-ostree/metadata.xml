@@ -18,6 +18,5 @@
 	</longdescription>
 	<use>
 		<flag name="doc">Build HTML documentation</flag>
-		<flag name="rust">Compile rust features (e.g. compose tree --yaml)</flag>
 	</use>
 </pkgmetadata>
