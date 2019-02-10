@@ -5,7 +5,7 @@
 		<email>reto.gantenbein@linuxmonk.ch</email>
 		<name>Reto Gantenbein</name>
 	</maintainer>
-    <upstream>
+	<upstream>
 		<bugs-to>https://github.com/mozilla-services/tokenserver/issues</bugs-to>
 		<remote-id type="github">mozilla-services/tokenserver</remote-id>
 		<doc>https://docs.services.mozilla.com/token/index.html</doc>
