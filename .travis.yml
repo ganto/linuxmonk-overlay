@@ -6,7 +6,7 @@ language: python
 python:
     - pypy
 env:
-    - PORTAGE_VER="2.3.49"
+    - PORTAGE_VER="2.3.59"
 before_install:
     - sudo apt-get -qq update
     - pip install lxml pyyaml
@@ -25,8 +25,6 @@ before_script:
     - wget "https://www.gentoo.org/dtd/metadata.dtd" -O /usr/portage/distfiles/metadata.dtd
     - ln -s $TRAVIS_BUILD_DIR/portage-portage-${PORTAGE_VER}/cnf/repos.conf /etc/portage/repos.conf
     - ln -s /usr/portage/profiles/default/linux/amd64/17.0 /etc/portage/make.profile
-    - SIZE=$(stat -c %s .travis.yml.upstream)
-    - if ! cmp -n $SIZE -s .travis.yml .travis.yml.upstream; then echo -e "\e[31m !!! .travis.yml outdated! Update available https://github.com/mrueg/repoman-travis \e[0m" > /tmp/update ; fi
     - cd travis-overlay
 script:
     - ./../spinner.sh "python ../portage-portage-${PORTAGE_VER}/repoman/bin/repoman full -d --without-mask"
