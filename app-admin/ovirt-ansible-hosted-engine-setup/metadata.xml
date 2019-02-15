@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<upstream>
+		<bugs-to>https://github.com/oVirt/ovirt-ansible-hosted-engine-setup/issues</bugs-to>
+		<remote-id type="github">oVirt/ovirt-ansible-hosted-engine-setup</remote-id>
+	</upstream>
+	<longdescription lang="en">
+		Ansible role to install required packages for oVirt Engine deployment, generate
+		answerfile and run engine-setup with it.
+	</longdescription>
+</pkgmetadata>
