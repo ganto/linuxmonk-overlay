@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<upstream>
+		<bugs-to>https://github.com/oVirt/ovirt-ansible-engine-setup/issues</bugs-to>
+		<remote-id type="github">oVirt/ovirt-ansible-engine-setup</remote-id>
+	</upstream>
+	<longdescription lang="en">
+		This Ansible role installs required packages for oVirt Engine
+		deployment, generates answerfile and runs engine-setup with it.
+	</longdescription>
+</pkgmetadata>
