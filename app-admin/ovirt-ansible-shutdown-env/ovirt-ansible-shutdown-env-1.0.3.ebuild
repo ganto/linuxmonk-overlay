@@ -26,6 +26,8 @@ S=${WORKDIR}
 src_install() {
 	export PKG_DATA_DIR="${ED}/usr/share/ansible/roles/${ANSIBLE_ROLE_PREFIX}${ANSIBLE_ROLE_NAME}"
 	export PKG_DOC_DIR="${ED}/usr/share/doc/${PF}"
+	export ROLENAME_LEGACY="${ED}/usr/share/ansible/roles/ovirt-${ANSIBLE_ROLE_NAME}"
+	export ROLENAME_LEGACY_UPPERCASE="${ED}/usr/share/ansible/roles/oVirt.${ANSIBLE_ROLE_NAME}"
 	sh build.sh install
 	dodoc README.md
 	dodoc -r examples
