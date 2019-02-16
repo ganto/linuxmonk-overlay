@@ -6,7 +6,7 @@ EAPI=7
 ANSIBLE_ROLE_PREFIX=ovirt.
 ANSIBLE_ROLE_NAME=engine-setup
 
-DESCRIPTION="Ansible role to upgrade hosts in oVirt cluster"
+DESCRIPTION="Ansible role to install packages for oVirt Engine and run engine-setup"
 HOMEPAGE="https://www.ovirt.org https://github.com/oVirt/ovirt-ansible-engine-setup"
 SRC_URI="https://github.com/oVirt/${PN}/releases/download/${PV}/${P}.tar.gz"
 
@@ -16,10 +16,7 @@ KEYWORDS="~amd64"
 IUSE=""
 
 DEPEND=""
-RDEPEND="
-	>=app-admin/ansible-2.7.2
-	dev-python/ovirt-engine-sdk-python
-"
+RDEPEND=">=app-admin/ansible-2.7.2"
 
 S=${WORKDIR}
 
