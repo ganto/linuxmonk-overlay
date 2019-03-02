@@ -1,9 +1,9 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
-PYTHON_COMPAT=( python2_7 )
+PYTHON_COMPAT=( python2_7 python3_{5,6,7} )
 
 inherit distutils-r1
 
@@ -17,7 +17,7 @@ KEYWORDS="~amd64"
 IUSE="test"
 
 RDEPEND="
-	>=app-admin/ansible-lint-3.4.1[${PYTHON_USEDEP}]
+	>=app-admin/ansible-lint-3.4.20[${PYTHON_USEDEP}]
 	dev-python/appdirs[${PYTHON_USEDEP}]
 	dev-python/flake8[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
@@ -30,5 +30,5 @@ DEPEND="${RDEPEND}
 "
 
 python_test() {
-	nosetests
+	nosetests -v || die "Tests failed under ${EPYTHON}"
 }
