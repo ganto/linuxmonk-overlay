@@ -1,4 +1,4 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -14,7 +14,7 @@ IUSE="+introspection nls test"
 
 RDEPEND="
 	>=dev-libs/glib-2.31.2:2[${MULTILIB_USEDEP}]
-	introspection? ( >=dev-libs/gobject-introspection-1.32:= )
+	introspection? ( >=dev-libs/gobject-introspection-0.6.7:= )
 "
 DEPEND="${RDEPEND}
 	>=dev-lang/perl-5
