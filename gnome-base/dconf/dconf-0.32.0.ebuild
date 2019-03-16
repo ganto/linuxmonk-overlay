@@ -1,12 +1,10 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 
 VALA_USE_DEPEND="vapigen"
 VALA_MIN_API_VERSION="0.39"
-# override because VALA_MAX_API_VERSION from eclass is < VALA_MIN_API_VERSION
-VALA_MAX_API_VERSION="0.40"
 
 inherit gnome2 bash-completion-r1 virtualx meson vala
 
@@ -19,7 +17,7 @@ KEYWORDS="~amd64"
 IUSE=""
 
 RDEPEND="
-	>=dev-libs/glib-2.44.0:2
+	>=dev-libs/glib-2.53.4:2
 	sys-apps/dbus
 "
 DEPEND="${RDEPEND}
