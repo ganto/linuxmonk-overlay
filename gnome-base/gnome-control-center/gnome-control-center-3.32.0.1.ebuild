@@ -1,4 +1,4 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -18,12 +18,13 @@ KEYWORDS="~amd64"
 QA_CONFIGURE_OPTIONS=".*"
 
 COMMON_DEPEND="
-	>=dev-libs/glib-2.53.0:2[dbus]
+	>=dev-libs/glib-2.58.0:2[dbus]
+	dev-libs/libhandy
 	>=x11-libs/gdk-pixbuf-2.23.0:2
 	>=x11-libs/gtk+-3.22.0:3[X,wayland?]
-	>=gnome-base/gsettings-desktop-schemas-3.27.2
+	>=gnome-base/gsettings-desktop-schemas-3.28.0
 	>=gnome-base/gnome-desktop-3.27.90:3=
-	>=gnome-base/gnome-settings-daemon-3.25.90[policykit]
+	>=gnome-base/gnome-settings-daemon-3.25.2[policykit]
 	>=x11-misc/colord-0.1.34:0=
 
 	>=dev-libs/libpwquality-1.2.2
@@ -32,10 +33,11 @@ COMMON_DEPEND="
 	media-libs/fontconfig
 	>=sys-apps/accountsservice-0.6.39
 
+	>=media-libs/gsound-1.0.2
 	>=media-libs/libcanberra-0.13[gtk3]
 	>=media-sound/pulseaudio-2[glib]
-	>=sys-auth/polkit-0.103[introspection]
-	>=sys-power/upower-0.99.6:=
+	>=sys-auth/polkit-0.97
+	>=sys-power/upower-0.99:=
 
 	virtual/libgudev
 	x11-apps/xmodmap
@@ -48,7 +50,7 @@ COMMON_DEPEND="
 
 	media-video/cheese
 
-	>=net-wireless/gnome-bluetooth-3.18.2:=
+	>=net-wireless/gnome-bluetooth-3.31.1:=
 	net-libs/libsoup:2.4
 	>=x11-misc/colord-0.1.34:0=
 	>=x11-libs/colord-gtk-0.1.24
@@ -56,7 +58,7 @@ COMMON_DEPEND="
 	>=net-fs/samba-4.0.0[client]
 
 	>=media-libs/grilo-0.3.0:0.3=
-	>=net-libs/gnome-online-accounts-3.25.3:=
+	>=net-libs/gnome-online-accounts-3.27.92:=
 	i18n? ( >=app-i18n/ibus-1.5.2 )
 	app-crypt/mit-krb5
 	>=gnome-extra/nm-applet-1.2.0
