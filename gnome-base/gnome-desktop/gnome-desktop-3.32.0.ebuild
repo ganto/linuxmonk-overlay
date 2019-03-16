@@ -1,8 +1,8 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
-inherit gnome2 virtualx
+inherit gnome2 virtualx meson
 
 DESCRIPTION="Libraries for the gnome desktop that are not part of the UI"
 HOMEPAGE="https://git.gnome.org/browse/gnome-desktop"
@@ -15,13 +15,13 @@ KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~ppc ~ppc64 ~sh ~sparc ~x86 ~x86-fbsd ~
 # cairo[X] needed for gnome-bg
 COMMON_DEPEND="
 	app-text/iso-codes
-	>=dev-libs/glib-2.53.0:2[dbus]
+	>=dev-libs/glib-2.58.0:2[dbus]
 	>=x11-libs/gdk-pixbuf-2.36.5:2[introspection?]
-	>=x11-libs/gtk+-3.3.6:3[X,introspection?]
+	>=x11-libs/gtk+-3.24.0:3[X,introspection?]
 	x11-libs/cairo:=[X]
 	x11-libs/libX11
 	x11-misc/xkeyboard-config
-	>=gnome-base/gsettings-desktop-schemas-3.27.0
+	>=gnome-base/gsettings-desktop-schemas-3.28.0
 	introspection? ( >=dev-libs/gobject-introspection-0.9.7:= )
 	udev? (
 		sys-apps/hwids
@@ -40,19 +40,16 @@ DEPEND="${COMMON_DEPEND}
 	virtual/pkgconfig
 "
 
-# Includes X11/Xatom.h in libgnome-desktop/gnome-bg.c which comes from xproto
-
-src_configure() {
-	gnome2_src_configure \
-		--disable-static \
-		--with-gnome-distributor=Gentoo \
-		--enable-desktop-docs \
-		$(usex debug --enable-debug=yes ' ') \
-		$(use_enable debug debug-tools) \
-		$(use_enable introspection) \
-		$(use_enable udev)
+meson_use_enable() {
+	usex "$1" "-D${2-$1}=enabled" "-D${2-$1}=disabled"
 }
 
-src_test() {
-	virtx emake check
+src_configure() {
+	local emesonargs=(
+		-Dgnome_distributor=Gentoo
+		$(meson_use debug debug_tools)
+		$(meson_use_enable udev)
+	)
+
+	meson_src_configure
 }
