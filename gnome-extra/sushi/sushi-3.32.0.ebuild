@@ -1,8 +1,8 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
-inherit gnome2
+inherit gnome2 meson
 
 DESCRIPTION="A quick previewer for Nautilus, the GNOME file manager"
 HOMEPAGE="https://git.gnome.org/browse/sushi"
@@ -12,12 +12,9 @@ SLOT="0"
 KEYWORDS="~amd64"
 IUSE="office"
 
-# Optional app-office/unoconv support (OOo to pdf)
-# freetype needed for font loader
-# gtk+[X] optionally needed for sushi_create_foreign_window(); when wayland is more widespread, might want to not force it
 COMMON_DEPEND="
 	>=x11-libs/gdk-pixbuf-2.23[introspection]
-	>=dev-libs/gjs-1.40
+	>=dev-libs/gjs-1.38.0
 	>=dev-libs/glib-2.29.14:2
 	>=dev-libs/gobject-introspection-0.9.6:=
 	>=media-libs/clutter-1.11.4:1.0[introspection]
@@ -41,9 +38,5 @@ DEPEND="${RDEPEND}
 	virtual/pkgconfig
 "
 RDEPEND="${COMMON_DEPEND}
-	>=gnome-base/nautilus-3.1.90
+	>=gnome-base/nautilus-3.30.0
 "
-
-src_configure() {
-	gnome2_src_configure --disable-static
-}
