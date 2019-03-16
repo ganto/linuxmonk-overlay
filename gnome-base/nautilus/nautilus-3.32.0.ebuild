@@ -1,4 +1,4 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -25,13 +25,13 @@ RESTRICT="test"
 # Require {glib,gdbus-codegen}-2.30.0 due to GDBus API changes between 2.29.92
 # and 2.30.0
 COMMON_DEPEND="
-	>=dev-util/meson-0.40.0
+	>=dev-util/meson-0.47.0
 	>=app-arch/gnome-autoar-0.2.1
-	>=dev-libs/glib-2.55.1:2[dbus]
+	>=dev-libs/glib-2.58.1:2[dbus]
 	>=x11-libs/pango-1.28.3
 	>=x11-libs/gtk+-3.22.27:3[introspection]
 	>=dev-libs/libxml2-2.7.8:2
-	>=media-libs/gexiv2-0.10.0
+	>=media-libs/gexiv2-0.10.6
 	>=gnome-base/gnome-desktop-3.30:3=
 
 	gnome-base/dconf
@@ -43,7 +43,7 @@ COMMON_DEPEND="
 	exif? ( >=media-libs/libexif-0.6.20 )
 	introspection? ( >=dev-libs/gobject-introspection-0.6.4:= )
 	selinux? ( >=sys-libs/libselinux-2 )
-	>=app-misc/tracker-2.0:=
+	>=app-misc/tracker-2.1.7:=
 "
 DEPEND="${COMMON_DEPEND}
 	>=dev-lang/perl-5
