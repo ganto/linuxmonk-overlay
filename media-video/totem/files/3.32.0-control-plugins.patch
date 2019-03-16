@@ -1,0 +1,109 @@
+commit 92d5d090bcb9a9193325b0ba752910bc444c3973
+Author: Reto Gantenbein <reto.gantenbein@linuxmonk.ch>
+Date:   Sat Mar 16 21:32:45 2019 +0100
+
+    Allow full control over which plugins are built
+
+diff --git a/meson_options.txt b/meson_options.txt
+index e1c59096..81c27c8f 100644
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -1,5 +1,27 @@
+ option('enable-easy-codec-installation', type: 'combo', choices: ['yes', 'no', 'auto'], value: 'auto', description: 'Whether to enable easy codec installation support for GStreamer')
+ option('enable-python', type: 'combo', choices: ['yes', 'no', 'auto'], value: 'auto', description: 'Enable python support')
+-option('with-plugins', type: 'combo', choices: ['all', 'none', 'auto'], value: 'auto', description: 'Which Totem plugins to compile (default: auto; "all", "none" and "auto" are valid)')
++option('with-plugins', type: 'array', choices: [
++  'all',
++  'auto',
++  'apple-trailers',
++  'autoload-subtitles',
++  'brasero-disc-recorder',
++  'dbusservice',
++  'im-status',
++  'lirc',
++  'media-player-keys',
++  'opensubtitles',
++  'properties',
++  'pythonconsole',
++  'recent',
++  'rotation',
++  'samplepython',
++  'save-file',
++  'screensaver',
++  'screenshot',
++  'skipto',
++  'variable-rate',
++  'vimeo'
++], value: ['auto'], description: 'Which Totem plugins to compile (default: auto; "all", "none" and "auto" are valid)')
+ option('enable-gtk-doc', type: 'boolean', value: false, description: 'use gtk-doc to build documentation')
+ option('enable-introspection', type: 'combo', choices: ['yes', 'no', 'auto'], value: 'auto', description: 'Enable GObject Introspection (depends on GObject)')
+diff --git a/src/plugins/meson.build b/src/plugins/meson.build
+index 552cc223..3b1a40c6 100644
+--- a/src/plugins/meson.build
++++ b/src/plugins/meson.build
+@@ -38,7 +38,7 @@ plugins = []
+ 
+ plugins_option = get_option('with-plugins')
+ if plugins_option != 'none'
+-  plugins += [
++  foreach plugin: [
+     'apple-trailers',
+     'autoload-subtitles',
+     'im-status',
+@@ -53,15 +53,22 @@ if plugins_option != 'none'
+     'variable-rate',
+     'vimeo'
+   ]
++    if plugins_option.contains('all') or plugins_option.contains('auto') or plugins_option.contains(plugin)
++      plugins += plugin
++    endif
++  endforeach
+ 
+-  plugin_error = (plugins_option == 'all')
++  if plugins_option.contains('all') or plugins_option.contains('auto') or plugins_option.contains('lirc')
++    lirc_dep = dependency('lirc', required: false)
++  else
++    lirc_dep = disabler()
++  endif
+ 
+-  lirc_dep = dependency('lirc', required: false)
+   if lirc_dep.found() and cc.has_function('lirc_init', dependencies: lirc_dep) and cc.has_header('lirc/lirc_client.h')
+     plugins += 'lirc'
+   else
+     str = 'you need lirc_client installed for the lirc plugin'
+-    if plugin_error
++    if plugins_option.contains('all') or plugins_option.contains('lirc')
+       error(str)
+     endif
+     message(str)
+@@ -70,23 +77,27 @@ if plugins_option != 'none'
+   libxml_req_version = '>= 2.6.0'
+   libxml_dep = dependency('libxml-2.0', version: libxml_req_version, required: false)
+   gtk_x11_dep = dependency('gtk+-x11-3.0', version: gtk_req_version, required: false)
+-  if libxml_dep.found() and gtk_x11_dep.found()
++  if libxml_dep.found() and gtk_x11_dep.found() and (plugins_option.contains('all') or plugins_option.contains('auto') or plugins_option.contains('brasero-disc-recorder'))
+     plugins += 'brasero-disc-recorder'
+   else
+     str = 'you need libxml-2.0 ' + libxml_req_version + ' and gtk+-x11-3.0 to use the brasero-disc-recorder plugin'
+-    if plugin_error
++    if plugins_option.contains('all') or plugins_option.contains('brasero-disc-recorder')
+       error(str)
+     endif
+     message(str)
+   endif
+ 
+   if have_python
+-    plugins += [
++    foreach plugin: [
+       'dbusservice',
+       'opensubtitles',
+       'pythonconsole',
+       'samplepython'
+     ]
++      if plugins_option.contains('all') or plugins_option.contains('auto') or plugins_option.contains(plugin)
++        plugins += plugin
++      endif
++    endforeach
+   endif
+ endif
+ 
