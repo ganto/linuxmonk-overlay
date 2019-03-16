@@ -1,9 +1,9 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 GNOME2_LA_PUNT="yes"
-PYTHON_COMPAT=( python{3_4,3_5,3_6} )
+PYTHON_COMPAT=( python{3_5,3_6,3_7} )
 
 inherit eutils gnome2 python-any-r1 systemd udev virtualx meson
 
@@ -17,10 +17,10 @@ REQUIRED_USE="udev"
 KEYWORDS="~amd64"
 
 COMMON_DEPEND="
-	>=dev-libs/glib-2.53.0:2[dbus]
+	>=dev-libs/glib-2.56.0:2[dbus]
 	>=x11-libs/gtk+-3.15.3:3
 	>=gnome-base/gnome-desktop-3.11.1
-	>=gnome-base/gsettings-desktop-schemas-3.23.3
+	>=gnome-base/gsettings-desktop-schemas-3.27.90
 	>=gnome-base/librsvg-2.36.2:2
 	media-fonts/cantarell
 	media-libs/alsa-lib
