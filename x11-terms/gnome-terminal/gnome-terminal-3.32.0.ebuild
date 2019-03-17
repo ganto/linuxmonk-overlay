@@ -1,4 +1,4 @@
-# Copyright 1999-2018 Gentoo Authors
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI="6"
@@ -13,7 +13,7 @@ LICENSE="GPL-3+"
 SLOT="0"
 IUSE="debug +gnome-shell +nautilus vanilla"
 
-KEYWORDS="~amd64"
+KEYWORDS="~amd64 ~amd64-linux"
 
 # FIXME: automagic dependency on gtk+[X], just transitive but needs proper control, bug 624960
 RDEPEND="
@@ -31,8 +31,6 @@ RDEPEND="
 # xmllint required for glib-compile-resources, see bug #549304
 DEPEND="${RDEPEND}
 	dev-libs/libxml2:2
-	dev-util/gdbus-codegen
-	dev-util/glib-utils
 	>=dev-util/intltool-0.50
 	dev-util/itstool
 	sys-devel/gettext
