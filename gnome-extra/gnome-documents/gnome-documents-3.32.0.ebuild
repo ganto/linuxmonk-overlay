@@ -1,8 +1,8 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
-inherit gnome2 meson
+inherit gnome.org gnome2-utils meson
 
 DESCRIPTION="A document manager application for GNOME"
 HOMEPAGE="https://wiki.gnome.org/Apps/Documents"
@@ -22,7 +22,7 @@ COMMON_DEPEND="
 	>=x11-libs/gtk+-3.22.15:3[introspection]
 	>=net-libs/libsoup-2.41.3:2.4
 	gnome-base/gnome-desktop:3=[introspection]
-	>=app-misc/tracker-miners-2[miner-fs]
+	>=app-misc/tracker-miners-2
 	>=x11-libs/cairo-1.14
 	>=dev-libs/libgdata-0.13.3:=[crypt,gnome-online-accounts,introspection]
 	x11-libs/gdk-pixbuf:2[introspection]
