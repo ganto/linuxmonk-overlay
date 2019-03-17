@@ -1,4 +1,4 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -10,7 +10,7 @@ HOMEPAGE="https://git.gnome.org/browse/yelp-xsl"
 LICENSE="GPL-2+ LGPL-2.1+ MIT FDL-1.1+"
 SLOT="0"
 IUSE=""
-KEYWORDS="~amd64"
+KEYWORDS="~amd64 ~amd64-linux"
 
 RDEPEND="
 	>=dev-libs/libxml2-2.6.12:=
