@@ -1,4 +1,4 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -7,48 +7,44 @@ DESCRIPTION="Sub-meta package for the core applications integrated with GNOME 3"
 HOMEPAGE="https://www.gnome.org/"
 LICENSE="metapackage"
 SLOT="3.0"
-IUSE="+bluetooth +cdr cups"
+IUSE="+bluetooth cups"
 
 # when unmasking for an arch
 # double check none of the deps are still masked !
 KEYWORDS="~amd64"
 
-# Note to developers:
-# This is a wrapper for the core apps tightly integrated with GNOME 3
+# gnome-color-manager min version enforced here due to control-center pulling it in
 RDEPEND="
 	>=gnome-base/gnome-core-libs-${PV}[cups?]
 
-	>=gnome-base/gnome-session-3.28.1
-	>=gnome-base/gnome-settings-daemon-3.28.1
+	>=gnome-base/gnome-session-${PV}
+	>=gnome-base/gnome-settings-daemon-${PV}
 	>=gnome-base/gnome-control-center-${PV}
+	>=gnome-extra/gnome-color-manager-${PV}
 
 	>=app-crypt/gcr-3.28.0
-	>=gnome-base/nautilus-3.28.1
-	>=gnome-base/gnome-keyring-${PV}
+	>=gnome-base/nautilus-${PV}
+	>=gnome-base/gnome-keyring-3.28.2
 	>=gnome-extra/evolution-data-server-${PV}
 
-	>=app-crypt/seahorse-3.20.0
-	>=app-editors/gedit-3.28.1
+	>=app-crypt/seahorse-3.32
+	>=app-editors/gedit-${PV}
 	>=app-text/evince-${PV}
-	>=gnome-extra/gnome-contacts-${PV}
+	>=gnome-extra/gnome-contacts-3.32
 	>=media-gfx/eog-${PV}
-	>=media-video/totem-3.26.2
+	>=media-video/totem-${PV}
 	>=x11-terms/gnome-terminal-${PV}
 
 	>=gnome-extra/gnome-user-docs-${PV}
-	>=gnome-extra/yelp-3.28.1
+	>=gnome-extra/yelp-${PV}
 
-	>=x11-themes/adwaita-icon-theme-3.28.0
-	>=x11-themes/gnome-themes-extra-3.28
+	>=x11-themes/adwaita-icon-theme-3.30.1
 
-	bluetooth? ( >=net-wireless/gnome-bluetooth-3.28.0 )
-	cdr? ( >=app-cdr/brasero-3.12.2 )
-
-	!gnome-base/gnome-applets
-	!x11-themes/gnome-themes-standard
+	bluetooth? ( >=net-wireless/gnome-bluetooth-${PV} )
 "
 DEPEND=""
 
+# cdr? ( >=app-cdr/brasero-3.12.2 ) # not part of gnome releng release anymore
 # >=gnome-base/gnome-menus-3.13.3:3  # not used by core gnome anymore, just gnome-classic extensions
 # >=net-im/empathy-3.12.12 # not part of gnome releng core or apps suite anymore
 
