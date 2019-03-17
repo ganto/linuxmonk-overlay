@@ -1,16 +1,15 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
-inherit gnome2 readme.gentoo-r1 meson
+inherit gnome.org readme.gentoo-r1 meson xdg
 
 DESCRIPTION="JavaScript extensions for GNOME Shell"
 HOMEPAGE="https://wiki.gnome.org/Projects/GnomeShell/Extensions"
 
-LICENSE="GPL-2"
+LICENSE="GPL-2+"
 SLOT="0"
-IUSE=""
-
+IUSE="test"
 KEYWORDS="~amd64"
 
 COMMON_DEPEND="
@@ -23,7 +22,7 @@ RDEPEND="${COMMON_DEPEND}
 	dev-libs/gobject-introspection:=
 	dev-libs/atk[introspection]
 	gnome-base/gnome-menus:3[introspection]
-	>=gnome-base/gnome-shell-3.28.0
+	>=gnome-base/gnome-shell-3.14.2
 	media-libs/clutter:1.0[introspection]
 	net-libs/telepathy-glib[introspection]
 	x11-libs/gdk-pixbuf:2[introspection]
@@ -33,10 +32,13 @@ RDEPEND="${COMMON_DEPEND}
 	x11-wm/mutter[introspection]
 "
 DEPEND="${COMMON_DEPEND}
-	>=sys-devel/gettext-0.19.6
+	dev-lang/sassc
+	>=sys-devel/gettext-0.19.8
 	virtual/pkgconfig
+	test? ( dev-lang/spidermonkey:52 )
 "
-# eautoreconf needs gnome-base/gnome-common
+
+RESTRICT="!test? ( test )"
 
 DISABLE_AUTOFORMATTING="yes"
 DOC_CONTENTS="Installed extensions installed are initially disabled by default.
@@ -45,13 +47,26 @@ To change the system default and enable some extensions, you can use
 
 Alternatively, to enable/disable extensions on a per-user basis,
 you can use the https://extensions.gnome.org/ web interface, the
-gnome-extra/gnome-tweak-tool GUI, or modify the org.gnome.shell
+gnome-extra/gnome-tweaks GUI, or modify the org.gnome.shell
 enabled-extensions gsettings key from the command line or a script."
 
 src_configure() {
-	local emesonargs=(
-		-Dextension_set='all'
-		-Denabled_extensions="['alternate-tab', 'apps-menu', 'places-menu', 'launch-new-instance', 'window-list', 'drive-menu', 'screenshot-window-sizer', 'windowsNavigator', 'workspace-indicator', 'user-theme']"
-	)
-	meson_src_configure
+	meson_src_configure \
+		-Dextension_set=all \
+		-Dclassic_mode=true
+}
+
+src_install() {
+	meson_src_install
+	readme.gentoo_create_doc
+}
+
+pkg_postinst() {
+	xdg_pkg_postinst
+
+	ebegin "Updating list of installed extensions"
+	eselect gnome-shell-extensions update
+	eend $?
+
+	readme.gentoo_print_elog
 }
