@@ -1,18 +1,17 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
-GNOME2_LA_PUNT="yes"
 
-inherit eutils gnome2 readme.gentoo-r1 meson
+inherit gnome.org gnome2-utils meson readme.gentoo-r1 xdg
 
 DESCRIPTION="Archive manager for GNOME"
 HOMEPAGE="https://wiki.gnome.org/Apps/FileRoller"
 
 LICENSE="GPL-2+ CC-BY-SA-3.0"
 SLOT="0"
-IUSE="libnotify packagekit"
-KEYWORDS="~amd64"
+IUSE="libnotify nautilus packagekit"
+KEYWORDS="~amd64 ~amd64-linux"
 
 # gdk-pixbuf used extensively in the source
 # cairo used in eggtreemultidnd.c
@@ -21,19 +20,18 @@ RDEPEND="
 	>=app-arch/libarchive-3:=
 	>=dev-libs/glib-2.36:2
 	>=dev-libs/json-glib-0.14
-	>=gnome-base/nautilus-2.22.2
 	>=x11-libs/gtk+-3.13.2:3
-	sys-apps/file
 	x11-libs/cairo
 	x11-libs/gdk-pixbuf:2
 	x11-libs/pango
 	libnotify? ( >=x11-libs/libnotify-0.4.3:= )
+	nautilus? ( >=gnome-base/nautilus-2.22.2 )
 	packagekit? ( app-admin/packagekit-base )
 "
 DEPEND="${RDEPEND}
-	>=dev-util/intltool-0.50.1
+	dev-util/glib-utils
 	dev-util/itstool
-	sys-devel/gettext
+	>=sys-devel/gettext-0.19.8
 	virtual/pkgconfig
 "
 
@@ -51,6 +49,7 @@ iso     - app-cdr/cdrtools
 jar,zip - app-arch/zip and app-arch/unzip
 lha     - app-arch/lha
 lzop    - app-arch/lzop
+lz4     - app-arch/lz4
 rar     - app-arch/unrar or app-arch/unar
 rpm     - app-arch/rpm
 unstuff - app-arch/stuffit
@@ -58,15 +57,34 @@ zoo     - app-arch/zoo"
 
 src_prepare() {
 	# File providing Gentoo package names for various archivers
-	cp -f "${FILESDIR}"/3.6.0-packages.match data/packages.match || die
-	gnome2_src_prepare
+	cp -v "${FILESDIR}"/3.22-packages.match data/packages.match || die
+
+	xdg_src_prepare
 }
 
 src_configure() {
 	local emesonargs=(
+		-Drun-in-place=false
+		$(meson_use nautilus nautilus-actions)
 		$(meson_use libnotify notification)
 		$(meson_use packagekit)
+		-Dlibarchive=true
 	)
-
 	meson_src_configure
+}
+
+src_install() {
+	meson_src_install
+	readme.gentoo_create_doc
+}
+
+pkg_postinst() {
+	xdg_pkg_postinst
+	gnome2_schemas_update
+	readme.gentoo_print_elog
+}
+
+pkg_postrm() {
+	xdg_pkg_postrm
+	gnome2_schemas_update
 }
