@@ -53,6 +53,7 @@ DEPEND="${COMMON_DEPEND}
 	x11-base/xorg-proto
 "
 RDEPEND="${COMMON_DEPEND}
+	extensions? ( !<media-video/totem-3.32.0 )
 	packagekit? ( app-admin/packagekit-base )
 "
 
