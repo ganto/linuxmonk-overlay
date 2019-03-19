@@ -1,10 +1,10 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
-PYTHON_COMPAT=( python{3_4,3_5,3_6} )
+PYTHON_COMPAT=( python3_{4,5,6,7} )
 
-inherit gnome.org python-single-r1 meson
+inherit gnome.org gnome2-utils meson python-single-r1 xdg
 
 DESCRIPTION="Music management for Gnome"
 HOMEPAGE="https://wiki.gnome.org/Apps/Music"
@@ -16,24 +16,28 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 KEYWORDS="~amd64"
 
-COMMON_DEPEND="
-	${PYTHON_DEPS}
-	>=app-misc/tracker-miners-2
-	>=dev-python/pycairo-1.14.0[${PYTHON_USEDEP}]
-	>=dev-python/pygobject-3.21.1:3[cairo,${PYTHON_USEDEP}]
-	>=dev-libs/glib-2.28:2
-	>=dev-libs/gobject-introspection-1.35.9:=
-	>=media-libs/grilo-0.3.4:0.3[introspection]
+# At 3.30.2 libdazzle only used from .ui file, thus introspection not needed
+COMMON_DEPEND="${PYTHON_DEPS}
+	net-libs/gnome-online-accounts[introspection]
+	>=dev-libs/gobject-introspection-1.54:=
+	>=x11-libs/gtk+-3.23.1:3[introspection]
+	>=dev-libs/libdazzle-3.28.0
 	>=media-libs/libmediaart-1.9.1:2.0[introspection]
-	>=x11-libs/gtk+-3.19.3:3[introspection]
+	net-libs/libsoup:2.4[introspection]
+	>=app-misc/tracker-1.99.1:=[introspection(+)]
+	>=dev-python/pygobject-3.29.1:3[cairo,${PYTHON_USEDEP}]
+	>=dev-python/pycairo-1.14.0[${PYTHON_USEDEP}]
+	>=media-libs/grilo-0.3.4:0.3[introspection]
+	>=media-plugins/grilo-plugins-0.3.8:0.3
 "
 # xdg-user-dirs-update needs to be there to create needed dirs
 # https://bugzilla.gnome.org/show_bug.cgi?id=731613
 RDEPEND="${COMMON_DEPEND}
-	app-misc/tracker-miners[gstreamer,miner-fs]
+	|| (
+		>=app-misc/tracker-miners-1.99.1[gstreamer]
+		>=app-misc/tracker-miners-1.99.1[ffmpeg]
+	)
 	x11-libs/libnotify[introspection]
-	dev-python/dbus-python[${PYTHON_USEDEP}]
-	dev-python/requests[${PYTHON_USEDEP}]
 	media-libs/gstreamer:1.0[introspection]
 	media-libs/gst-plugins-base:1.0[introspection]
 	media-plugins/gst-plugins-meta:1.0
@@ -41,8 +45,9 @@ RDEPEND="${COMMON_DEPEND}
 	x11-misc/xdg-user-dirs
 "
 DEPEND="${COMMON_DEPEND}
-	app-text/yelp-tools
-	>=dev-util/intltool-0.26
+	dev-libs/libxml2:2
+	dev-util/itstool
+	>=sys-devel/gettext-0.19.8
 	virtual/pkgconfig
 "
 
@@ -51,11 +56,22 @@ pkg_setup() {
 }
 
 src_prepare() {
-	default
 	sed -e '/sys.path.insert/d' -i "${S}"/gnome-music.in || die "python fixup sed failed"
+	xdg_src_prepare
 }
 
 src_install() {
 	meson_src_install
 	python_fix_shebang "${D}"usr/bin/gnome-music
+	python_optimize
+}
+
+pkg_postinst() {
+	xdg_pkg_postinst
+	gnome2_schemas_update
+}
+
+pkg_postrm() {
+	xdg_pkg_postrm
+	gnome2_schemas_update
 }
