@@ -1,4 +1,4 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -17,35 +17,35 @@ KEYWORDS="~amd64"
 RDEPEND="
 	>=gnome-base/gnome-core-libs-${PV}
 
-	>=sys-apps/baobab-3.28.0
-	>=media-video/cheese-3.28.0
-	>=www-client/epiphany-3.28.1.1
-	>=app-arch/file-roller-3.28.1
+	>=sys-apps/baobab-${PV}
+	>=media-video/cheese-3.30.0
+	>=www-client/epiphany-${PV}
+	>=app-arch/file-roller-${PV}
 	>=gnome-extra/gnome-calculator-${PV}
 	>=gnome-extra/gnome-calendar-${PV}
 	>=gnome-extra/gnome-characters-${PV}
-	>=gnome-extra/gnome-contacts-${PV}
+	>=gnome-extra/gnome-contacts-3.32
 	>=sys-apps/gnome-disk-utility-${PV}
-	>=media-gfx/gnome-font-viewer-3.28.0
-	>=media-gfx/gnome-screenshot-3.26.0
+	>=media-gfx/gnome-font-viewer-${PV}
+	>=media-gfx/gnome-screenshot-${PV}
 	>=gnome-extra/gnome-system-monitor-${PV}
-	>=gnome-extra/gnome-weather-3.26.0
+	>=gnome-extra/gnome-weather-${PV}
 	>=sci-geosciences/gnome-maps-${PV}
-	>=gnome-extra/sushi-3.28.3
+	>=gnome-extra/sushi-${PV}
 	>=net-misc/vino-3.22.0
 
-	>=gnome-base/dconf-editor-3.28.0
+	>=gnome-base/dconf-editor-${PV}
 	>=mail-client/evolution-${PV}
-	>=gnome-extra/gnome-tweaks-3.28.1
+	>=gnome-extra/gnome-tweaks-${PV}
 
-	share? ( >=gnome-extra/gnome-user-share-3.28.0 )
-	shotwell? ( >=media-gfx/shotwell-0.24 )
+	share? ( >=gnome-extra/gnome-user-share-${PV} )
+	shotwell? ( >=media-gfx/shotwell-0.30.2 )
 	systemd? ( >=gnome-extra/gnome-logs-${PV} )
 	tracker? (
-		>=app-misc/tracker-miners-2.0.4
-		>=gnome-extra/gnome-documents-3.28.1
-		>=media-gfx/gnome-photos-3.28.0
-		>=media-sound/gnome-music-3.28.2.1 )
+		>=app-misc/tracker-miners-2.1.5
+		>=gnome-extra/gnome-documents-${PV}
+		>=media-gfx/gnome-photos-${PV}
+		>=media-sound/gnome-music-${PV} )
 "
 DEPEND=""
 S=${WORKDIR}
