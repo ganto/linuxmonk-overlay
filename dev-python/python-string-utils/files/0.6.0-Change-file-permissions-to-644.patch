@@ -1,0 +1,26 @@
+From b40ce7971b323ad1d2f084326160652b9056115f Mon Sep 17 00:00:00 2001
+From: Daniel Mellado <dmellado@redhat.com>
+Date: Wed, 19 Dec 2018 10:02:40 +0100
+Subject: [PATCH] Change files permissions to 644
+
+As the affected files are not executable binaries, it's better to have
+them with proper permissions. This commit changes it so they won't be
+recognized as executables anymore.
+---
+ README.md       | 0
+ setup.py        | 0
+ string_utils.py | 0
+ 3 files changed, 0 insertions(+), 0 deletions(-)
+ mode change 100755 => 100644 README.md
+ mode change 100755 => 100644 setup.py
+ mode change 100755 => 100644 string_utils.py
+
+diff --git a/README.md b/README.md
+old mode 100755
+new mode 100644
+diff --git a/setup.py b/setup.py
+old mode 100755
+new mode 100644
+diff --git a/string_utils.py b/string_utils.py
+old mode 100755
+new mode 100644
