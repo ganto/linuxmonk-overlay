@@ -19,7 +19,7 @@ KEYWORDS="~amd64 ~amd64-linux"
 RDEPEND="
 	>=dev-libs/glib-2.42:2
 	>=x11-libs/gtk+-3.20:3
-	>=x11-libs/vte-0.54.1:2.91[!vanilla?]
+	>=x11-libs/vte-0.56.1:2.91[!vanilla?]
 	>=dev-libs/libpcre2-10
 	>=gnome-base/dconf-0.14
 	>=gnome-base/gsettings-desktop-schemas-0.1.0
@@ -52,7 +52,7 @@ src_prepare() {
 		# Restore "Set title" support
 		# http://pkgs.fedoraproject.org/cgit/rpms/gnome-terminal.git/plain/gnome-terminal-notify-open-title-transparency.patch
 		# Depends on vte[-vanilla] for OSC 777 patch in VTE
-		eapply "${FILESDIR}"/${P}-notify-open-title-transparency.patch
+		eapply "${FILESDIR}"/${PN}-3.32.0-notify-open-title-transparency.patch
 	fi
 	gnome2_src_prepare
 }
