@@ -52,8 +52,10 @@ src_install() {
 	systemd_dounit "${FILESDIR}"/node_exporter-smartmon.timer
 	insinto /etc/sysconfig
 	newins examples/systemd/sysconfig.node_exporter node_exporter
+	exeinto /usr/share/node_exporter
+	doexe text_collector_examples/*
 	insinto /usr/share/node_exporter
-	doins text_collector_examples/*
+	doins text_collector_examples/README.md
 	popd || die
 	keepdir /var/lib/node_exporter/textfile_collector
 	fowners -R ${PN}:${PN} /var/lib/node_exporter
