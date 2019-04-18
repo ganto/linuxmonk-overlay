@@ -1,0 +1,36 @@
+From 7c960fd68365e9bbdb14cf140fc1d26d4c27333a Mon Sep 17 00:00:00 2001
+From: dhewg <a.heider@gmail.com>
+Date: Thu, 13 Dec 2018 16:11:23 +0100
+Subject: [PATCH] smartmon.sh: add metric for active/low-power mode (#1192)
+
+Add this new metric (where sda is active and sdb is in standby mode):
+smartmon_device_active{disk="/dev/sda",type="sat"} 1
+smartmon_device_active{disk="/dev/sdb",type="sat"} 0
+
+Also skip further metrics if the drive is in a low-power mode. This
+prevents spinning up disks just to get the metrics (which matches e.g.
+debian's default behavior for smartd).
+
+Signed-off-by: Andre Heider <a.heider@gmail.com>
+---
+ text_collector_examples/smartmon.sh | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/text_collector_examples/smartmon.sh b/text_collector_examples/smartmon.sh
+index 7b873facb..d6c55c427 100755
+--- a/text_collector_examples/smartmon.sh
++++ b/text_collector_examples/smartmon.sh
+@@ -167,7 +167,13 @@ device_list="$(/usr/sbin/smartctl --scan-open | awk '/^\/dev/{print $1 "|" $3}')
+ for device in ${device_list}; do
+   disk="$(echo ${device} | cut -f1 -d'|')"
+   type="$(echo ${device} | cut -f2 -d'|')"
++  active=1
+   echo "smartctl_run{disk=\"${disk}\",type=\"${type}\"}" "$(TZ=UTC date '+%s')"
++  # Check if the device is in a low-power mode
++  /usr/sbin/smartctl -n standby -d "${type}" "${disk}" > /dev/null || active=0
++  echo "device_active{disk=\"${disk}\",type=\"${type}\"}" "${active}"
++  # Skip further metrics to prevent the disk from spinning up
++  test ${active} -eq 0 && continue
+   # Get the SMART information and health
+   /usr/sbin/smartctl -i -H -d "${type}" "${disk}" | parse_smartctl_info "${disk}" "${type}"
+   # Get the SMART attributes

@@ -29,8 +29,11 @@ pkg_setup() {
 }
 
 src_prepare() {
+	pushd src/${EGO_PN} || die
+	eapply "${FILESDIR}"/${PV}-smartmon.sh-add-metric-for-active-low-power-mode.patch
+	sed -i -e "s/{{.Revision}}/${NODE_EXPORTER_COMMIT}/" .promu.yml || die
+	popd || die
 	default
-	sed -i -e "s/{{.Revision}}/${NODE_EXPORTER_COMMIT}/" src/${EGO_PN}/.promu.yml || die
 }
 
 src_compile() {
