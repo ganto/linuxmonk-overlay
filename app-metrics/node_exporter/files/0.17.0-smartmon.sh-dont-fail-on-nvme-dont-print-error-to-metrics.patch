@@ -1,0 +1,31 @@
+From 88ba8820a93f72f094ba35d34bcff0ae557f3c42 Mon Sep 17 00:00:00 2001
+From: Jan Fajerski <jfajerski@suse.com>
+Date: Wed, 10 Apr 2019 09:56:14 +0200
+Subject: [PATCH] smartmon.sh: don't fail on nvme, don't print error to
+ metrics.
+
+smartctl can deal with NVMes (at least in newer versions) and return
+some data. When encountering an unknown disk type, don't print to
+stdout, as this will break the node exporter. Print the error message to
+stderr.
+
+Signed-off-by: Jan Fajerski <jfajerski@suse.com>
+---
+ text_collector_examples/smartmon.sh | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/text_collector_examples/smartmon.sh b/text_collector_examples/smartmon.sh
+index 25ad7ed71..56cdd06b3 100644
+--- a/text_collector_examples/smartmon.sh
++++ b/text_collector_examples/smartmon.sh
+@@ -184,8 +184,9 @@ for device in ${device_list}; do
+   sat+megaraid*) /usr/sbin/smartctl -A -d "${type}" "${disk}" | parse_smartctl_attributes "${disk}" "${type}" ;;
+   scsi) /usr/sbin/smartctl -A -d "${type}" "${disk}" | parse_smartctl_scsi_attributes "${disk}" "${type}" ;;
+   megaraid*) /usr/sbin/smartctl -A -d "${type}" "${disk}" | parse_smartctl_scsi_attributes "${disk}" "${type}" ;;
++  nvme*) /usr/sbin/smartctl -A -d "${type}" "${disk}" | parse_smartctl_scsi_attributes "${disk}" "${type}" ;;
+   *)
+-    echo "disk type is not sat, scsi or megaraid but ${type}"
++      (>&2 echo "disk type is not sat, scsi, nvme or megaraid but ${type}")
+     exit
+     ;;
+   esac
