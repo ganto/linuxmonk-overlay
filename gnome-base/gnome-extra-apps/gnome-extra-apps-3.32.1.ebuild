@@ -17,34 +17,34 @@ KEYWORDS="~amd64"
 RDEPEND="
 	>=gnome-base/gnome-core-libs-${PV}
 
-	>=sys-apps/baobab-${PV}
-	>=media-video/cheese-3.30.0
-	>=www-client/epiphany-${PV}
+	>=sys-apps/baobab-3.32.0
+	>=media-video/cheese-${PV}
+	>=www-client/epiphany-${PV}.2
 	>=app-arch/file-roller-${PV}
 	>=gnome-extra/gnome-calculator-${PV}
-	>=gnome-extra/gnome-calendar-${PV}
+	>=gnome-extra/gnome-calendar-3.32.0
 	>=gnome-extra/gnome-characters-${PV}
 	>=gnome-extra/gnome-contacts-3.32
 	>=sys-apps/gnome-disk-utility-${PV}
-	>=media-gfx/gnome-font-viewer-${PV}
-	>=media-gfx/gnome-screenshot-${PV}
+	>=media-gfx/gnome-font-viewer-3.32.0
+	>=media-gfx/gnome-screenshot-3.32.0
 	>=gnome-extra/gnome-system-monitor-${PV}
 	>=gnome-extra/gnome-weather-${PV}
 	>=sci-geosciences/gnome-maps-${PV}
-	>=gnome-extra/sushi-${PV}
+	>=gnome-extra/sushi-3.32.0
 	>=net-misc/vino-3.22.0
 
-	>=gnome-base/dconf-editor-${PV}
+	>=gnome-base/dconf-editor-3.32.0
 	>=mail-client/evolution-${PV}
-	>=gnome-extra/gnome-tweaks-${PV}
+	>=gnome-extra/gnome-tweaks-3.32.0
 
-	share? ( >=gnome-extra/gnome-user-share-${PV} )
+	share? ( >=gnome-extra/gnome-user-share-3.32.0.1 )
 	shotwell? ( >=media-gfx/shotwell-0.30.2 )
 	systemd? ( >=gnome-extra/gnome-logs-${PV} )
 	tracker? (
 		>=app-misc/tracker-miners-2.1.5
-		>=gnome-extra/gnome-documents-${PV}
-		>=media-gfx/gnome-photos-${PV}
+		>=gnome-extra/gnome-documents-3.32.0
+		>=media-gfx/gnome-photos-3.32.0
 		>=media-sound/gnome-music-${PV} )
 "
 DEPEND=""
