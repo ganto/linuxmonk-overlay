@@ -21,21 +21,21 @@ RDEPEND="
 	>=gnome-base/gnome-core-libs-${PV}[cups?]
 	>=gnome-base/gnome-core-apps-${PV}[cups?,bluetooth?]
 
-	>=gnome-base/gdm-${PV}
+	>=gnome-base/gdm-3.32.0
 
-	>=x11-wm/mutter-${PV}
-	>=gnome-base/gnome-shell-${PV}[bluetooth?]
+	>=x11-wm/mutter-3.32.0
+	>=gnome-base/gnome-shell-3.32.0[bluetooth?]
 
-	>=x11-themes/gnome-backgrounds-3.30.0
+	>=x11-themes/gnome-backgrounds-3.32.0
 	x11-themes/sound-theme-freedesktop
 
-	classic? ( >=gnome-extra/gnome-shell-extensions-${PV} )
+	classic? ( >=gnome-extra/gnome-shell-extensions-3.32.0 )
 	extras? ( >=gnome-base/gnome-extra-apps-${PV} )
 "
 
 DEPEND=""
 
-PDEPEND=">=gnome-base/gvfs-1.40.0[udisks]"
+PDEPEND=">=gnome-base/gvfs-1.40.1[udisks]"
 
 pkg_postinst() {
 	# Remember people where to find our project information
