@@ -12,7 +12,7 @@ HOMEPAGE="https://wiki.gnome.org/Projects/gvfs"
 LICENSE="LGPL-2+"
 SLOT="0"
 
-IUSE="afp archive bluray cdda fuse google gnome-keyring gnome-online-accounts gphoto2 +http ios nfs policykit +sftp systemd test +udev udisks zeroconf samba +mtp"
+IUSE="afp archive bluray cdda fuse google gnome-keyring gnome-online-accounts gphoto2 +http ios nfs policykit systemd test +udev udisks zeroconf samba +mtp"
 REQUIRED_USE="
 	cdda? ( udev )
 	google? ( gnome-online-accounts )
@@ -27,10 +27,11 @@ RDEPEND="
 	>=dev-libs/glib-2.57.2:2
 	sys-apps/dbus
 	dev-libs/libxml2:2
+	net-misc/openssh
 	afp? ( >=dev-libs/libgcrypt-1.2.2:0= )
 	archive? ( app-arch/libarchive:= )
 	bluray? ( media-libs/libbluray )
-	fuse? ( >=sys-fs/fuse-2.8.0 )
+	fuse? ( >=sys-fs/fuse-2.8.0:0 )
 	gnome-keyring? ( app-crypt/libsecret )
 	gnome-online-accounts? ( >=net-libs/gnome-online-accounts-3.17.1:= )
 	google? (
@@ -47,7 +48,6 @@ RDEPEND="
 		>=sys-auth/polkit-0.114
 		sys-libs/libcap )
 	samba? ( >=net-fs/samba-4.5.10[client] )
-	sftp? ( net-misc/openssh )
 	systemd? ( >=sys-apps/systemd-206:0= )
 	udev? (
 		cdda? ( dev-libs/libcdio-paranoia )
@@ -63,11 +63,6 @@ DEPEND="${RDEPEND}
 	>=sys-devel/gettext-0.19.4
 	virtual/pkgconfig
 	dev-util/gtk-doc-am
-	test? (
-		>=dev-python/twisted-core-12.3.0
-		|| (
-			net-analyzer/netcat
-			net-analyzer/netcat6 ) )
 "
 RESTRICT="test"
 
@@ -89,6 +84,7 @@ src_prepare() {
 src_configure() {
 	local emesonargs=(
 		-Dgcr=true
+		-Dsftp=true
 		-Dsystemduserunitdir="$(usex systemd $(systemd_get_userunitdir) no)"
 		$(usex systemd "" -Dtmpfilesdir=no)
 		$(meson_use mtp)
@@ -109,7 +105,6 @@ src_configure() {
 		$(meson_use udev gudev)
 		$(meson_use udisks udisks2)
 		$(meson_use samba smb)
-		$(meson_use sftp)
 		$(meson_use zeroconf dnssd)
 	)
 
