@@ -1,4 +1,4 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -23,16 +23,17 @@ RDEPEND="
 	app-arch/createrepo_c
 	app-arch/pigz
 	app-arch/rpm[lua,python,${PYTHON_USEDEP}]
-	>=app-misc/distribution-gpg-keys-1.22
+	>=app-misc/distribution-gpg-keys-1.29
 	dev-python/distro[${PYTHON_USEDEP}]
+	dev-python/jinja[${PYTHON_USEDEP}]
 	$(python_gen_cond_dep 'dev-python/pyliblzma[${PYTHON_USEDEP}]' 'python2_7' )
 	dev-python/pyroute2[${PYTHON_USEDEP}]
 	dev-python/requests[${PYTHON_USEDEP}]
 	>=dev-python/six-1.4.0[${PYTHON_USEDEP}]
 	sys-apps/iproute2
 	sys-apps/usermode
-	|| ( ( sys-apps/dnf sys-libs/dnf-plugins-core ) sys-apps/yum )
-
+	sys-apps/dnf
+	sys-libs/dnf-plugins-core
 "
 
 PATCHES=(
