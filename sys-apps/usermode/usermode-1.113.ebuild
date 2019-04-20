@@ -1,4 +1,4 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -26,14 +26,16 @@ CDEPEND="
 DEPEND="${CDEPEND}
 	dev-util/desktop-file-utils
 	dev-util/intltool
+	sys-apps/util-linux
 	virtual/pkgconfig
 "
 RDEPEND="${CDEPEND}
 	sys-apps/shadow
-	sys-apps/util-linux
 "
 
 DOCS=( AUTHORS ChangeLog NEWS README )
+
+PATCHES=( "${FILESDIR}"/${PN}-1.112-Add-sys-sysmacros-include.patch )
 
 src_prepare() {
 	default_src_prepare
@@ -56,6 +58,7 @@ src_install() {
 		chmod 4711 "${D}"/usr/sbin/userhelper
 	fi
 
+	# make userformat symlink to usermount
 	dosym usermount /usr/bin/userformat
 	dosym usermount.1.bz2 /usr/share/man/man1/userformat.1.bz2
 
