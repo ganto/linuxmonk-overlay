@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<longdescription lang="en">
+		PylibLZMA provides a python interface for the liblzma library to read and
+		write data that has been compressed or can be decompressed by Lasse
+		Collin’s xz/lzma utils.
+	</longdescription>
+	<upstream>
+		<remote-id type="pypi">pyliblzma</remote-id>
+		<remote-id type="launchpad">pyliblzma</remote-id>
+	</upstream>
+</pkgmetadata>
