@@ -23,6 +23,10 @@ ruby_add_rdepend "
 	>=dev-ruby/xdg-2.2.3
 "
 
+PATCHES=(
+	"${FILESDIR}"/${PV}-add-tmux-2.9-support.patch
+)
+
 all_ruby_install() {
 	all_fakegem_install
 

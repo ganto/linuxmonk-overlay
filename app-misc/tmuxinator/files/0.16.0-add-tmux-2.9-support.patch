@@ -1,0 +1,25 @@
+From 02626018f38bd2ff3fc37ca4766e66005f02f11e Mon Sep 17 00:00:00 2001
+From: Teddy Hwang <teddy.hwang@shopify.com>
+Date: Thu, 25 Apr 2019 22:44:49 -0400
+Subject: [PATCH] add tmux 2.9 support (#692)
+
+* add 2.9 support
+
+---
+ lib/tmuxinator/tmux_version.rb | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/lib/tmuxinator/tmux_version.rb b/lib/tmuxinator/tmux_version.rb
+index 862f9dfa..612b1253 100644
+--- a/lib/tmuxinator/tmux_version.rb
++++ b/lib/tmuxinator/tmux_version.rb
+@@ -14,7 +14,8 @@ module TmuxVersion
+       2.5,
+       2.6,
+       2.7,
+-      2.8
++      2.8,
++      2.9
+     ].freeze
+     UNSUPPORTED_VERSION_MSG = <<-MSG.freeze
+     WARNING: You are running tmuxinator with an unsupported version of tmux.
