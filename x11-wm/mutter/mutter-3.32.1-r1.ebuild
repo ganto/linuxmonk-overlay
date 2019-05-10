@@ -1,19 +1,19 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
-inherit gnome2 virtualx meson
+EAPI=7
+inherit gnome.org gnome2-utils meson virtualx
 
 DESCRIPTION="GNOME 3 compositing window manager based on Clutter"
 HOMEPAGE="https://gitlab.gnome.org/GNOME/mutter/"
 
 LICENSE="GPL-2+"
-SLOT="0/2" # 0/libmutter_api_version - ONLY gnome-shell (or anything using mutter-clutter-<api_version>.pc) should use the subslot
+SLOT="0/3" # 0/libmutter_api_version - ONLY gnome-shell (or anything using mutter-clutter-<api_version>.pc) should use the subslot
 
-IUSE="+gles2 input_devices_wacom +introspection udev wayland"
+IUSE="debug elogind gles2 input_devices_wacom +introspection systemd test udev wayland"
 # native backend requires gles3 for hybrid graphics blitting support and a logind provider
-# gles2 may be avoidable, but probably not worth the effort before switching to meson; without it, it seems it'll have subtle lost features as well that isn't explained to user atm.
-REQUIRED_USE="wayland? ( gles2 )"
+REQUIRED_USE="
+	wayland? ( ^^ ( elogind systemd ) )"
 
 KEYWORDS="~amd64"
 
@@ -27,13 +27,12 @@ RDEPEND="
 	>=x11-libs/pango-1.30[introspection?]
 	>=x11-libs/cairo-1.14[X]
 	>=x11-libs/gtk+-3.19.8:3[X,introspection?]
-	>=dev-libs/glib-2.60.0:2[dbus]
+	>=dev-libs/glib-2.60.0:2
 	>=media-libs/libcanberra-0.26[gtk3]
 	>=x11-libs/startup-notification-0.7
 	>=x11-libs/libXcomposite-0.2
 	>=gnome-base/gsettings-desktop-schemas-3.21.4[introspection?]
 	gnome-base/gnome-desktop:3=
-	>sys-power/upower-0.99:=
 
 	x11-libs/libICE
 	x11-libs/libSM
@@ -62,9 +61,11 @@ RDEPEND="
 		>=dev-libs/libinput-1.4
 		>=dev-libs/wayland-1.13.0
 		>=dev-libs/wayland-protocols-1.16
-		>=media-libs/mesa-10.3[egl,gbm,wayland]
-		sys-apps/systemd
-		>=virtual/libudev-232:=
+		>=media-libs/mesa-10.3[egl,gbm,wayland,gles2]
+		systemd? ( sys-apps/systemd )
+		elogind? ( sys-auth/elogind )
+		>=virtual/libgudev-232:=
+		>=virtual/libudev-136:=
 		x11-base/xorg-server[wayland]
 		x11-libs/libdrm:=
 	)
@@ -79,24 +80,41 @@ DEPEND="${RDEPEND}
 	wayland? ( >=sys-kernel/linux-headers-4.4 )
 "
 
-meson_use_enable() {
-	usex "$1" "-D${2-$1}=enabled" "-D${2-$1}=disabled"
-}
-
 src_configure() {
 	sed -i "/'-Werror=redundant-decls',/d" "${S}"/meson.build || die "sed failed"
 
 	local emesonargs=(
 		-Dopengl=true
 		-Degl=true
+		-Degl_device=true
 		-Dglx=true
 		-Dsm=true
+		$(meson_use debug verbose)
 		$(meson_use gles2)
 		$(meson_use gles2 native_backend)
+		$(meson_use introspection)
 		$(meson_use wayland)
 		$(meson_use udev)
 		$(meson_use input_devices_wacom libwacom)
+		$(meson_use test tests)
+		$(meson_use test clutter_tests)
+		$(meson_use test cogl_tests)
+		-Dinstalled_tests=false
 	)
 
 	meson_src_configure
+}
+
+src_test() {
+	virtx meson_src_test
+}
+
+pkg_postinst() {
+	xdg_pkg_postinst
+	gnome2_schemas_update
+}
+
+pkg_postrm() {
+	xdg_pkg_postrm
+	gnome2_schemas_update
 }
