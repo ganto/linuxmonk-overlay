@@ -28,7 +28,7 @@ KEYWORDS="~amd64"
 # this ebuild does not do that anyway) (bug #599586)
 
 RDEPEND="
-	!<dev-util/gdbus-codegen-${PV}
+	!<dev-util/gdbus-codegen-2.60.0
 	>=dev-libs/libpcre-8.31:3[${MULTILIB_USEDEP},static-libs?]
 	>=virtual/libiconv-0-r1[${MULTILIB_USEDEP}]
 	>=virtual/libffi-3.0.13-r1:=[${MULTILIB_USEDEP}]
@@ -38,7 +38,6 @@ RDEPEND="
 	selinux? ( >=sys-libs/libselinux-2.2.2-r5[${MULTILIB_USEDEP}] )
 	xattr? ( >=sys-apps/attr-2.4.47-r1[${MULTILIB_USEDEP}] )
 	fam? ( >=virtual/fam-0-r1[${MULTILIB_USEDEP}] )
-	~dev-util/gdbus-codegen-2.60.0
 	virtual/libelf:0=
 "
 DEPEND="${RDEPEND}
@@ -51,7 +50,6 @@ DEPEND="${RDEPEND}
 	${PYTHON_DEPS}
 	test? (
 		sys-devel/gdb
-		~dev-util/gdbus-codegen-2.60.0
 		>=sys-apps/dbus-1.2.14 )
 "
 
@@ -60,7 +58,7 @@ DEPEND="${RDEPEND}
 # need these tools, without pulling in python at runtime.
 RDEPEND="${RDEPEND}
 	${PYTHON_DEPS}
-	~dev-util/glib-utils-2.60.0"
+	!<dev-util/glib-utils-2.60.0"
 PDEPEND="
 	dbus? ( gnome-base/dconf )
 	mime? ( x11-misc/shared-mime-info )
