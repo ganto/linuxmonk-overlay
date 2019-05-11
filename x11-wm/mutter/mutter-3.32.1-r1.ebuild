@@ -80,6 +80,13 @@ DEPEND="${RDEPEND}
 	wayland? ( >=sys-kernel/linux-headers-4.4 )
 "
 
+src_prepare() {
+	default
+	# Work-around build-failure with >=gcc-8.3.0
+	sed -e '/-Werror=empty-body/d' \
+		-i meson.build || die
+}
+
 src_configure() {
 	sed -i "/'-Werror=redundant-decls',/d" "${S}"/meson.build || die "sed failed"
 
