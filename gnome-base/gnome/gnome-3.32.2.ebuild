@@ -23,13 +23,13 @@ RDEPEND="
 
 	>=gnome-base/gdm-3.32.0
 
-	>=x11-wm/mutter-3.32.0
-	>=gnome-base/gnome-shell-3.32.0[bluetooth?]
+	>=x11-wm/mutter-3.32.1
+	>=gnome-base/gnome-shell-3.32.1[bluetooth?]
 
 	>=x11-themes/gnome-backgrounds-3.32.0
 	x11-themes/sound-theme-freedesktop
 
-	classic? ( >=gnome-extra/gnome-shell-extensions-3.32.0 )
+	classic? ( >=gnome-extra/gnome-shell-extensions-3.32.1 )
 	extras? ( >=gnome-base/gnome-extra-apps-${PV} )
 "
 
