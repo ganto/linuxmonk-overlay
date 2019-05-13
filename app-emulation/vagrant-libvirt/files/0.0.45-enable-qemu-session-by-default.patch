@@ -1,0 +1,23 @@
+From a6d5d4df918b040a0a1906b26abf20fc3bab1690 Mon Sep 17 00:00:00 2001
+From: Pavel Valena <pvalena@redhat.com>
+Date: Wed, 6 Feb 2019 13:29:01 +0100
+Subject: [PATCH] Enable QEMU Session by default
+
+sets default for `@qemu_use_session` to true.
+---
+ lib/vagrant-libvirt/config.rb | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/vagrant-libvirt/config.rb b/lib/vagrant-libvirt/config.rb
+index 2aa1bce..1bc8411 100644
+--- a/lib/vagrant-libvirt/config.rb
++++ b/lib/vagrant-libvirt/config.rb
+@@ -651,7 +651,7 @@ def finalize!
+         @management_network_pci_slot = nil if @management_network_pci_slot == UNSET_VALUE
+         @system_uri      = 'qemu:///system' if @system_uri == UNSET_VALUE
+ 
+-        @qemu_use_session = false if @qemu_use_session == UNSET_VALUE
++        @qemu_use_session = true if @qemu_use_session == UNSET_VALUE
+ 
+         # generate a URI if none is supplied
+         @uri = _generate_uri if @uri == UNSET_VALUE
