@@ -34,6 +34,9 @@ all_ruby_prepare() {
 	# remove bundler support
 	sed -i '/[Bb]undler/d' Rakefile || die
 	rm Gemfile || die
+
+	# loosen dependencies
+	sed -e '/fog-core/s/~>/>=/' -i ${PN}.gemspec || die
 }
 
 all_ruby_install() {
