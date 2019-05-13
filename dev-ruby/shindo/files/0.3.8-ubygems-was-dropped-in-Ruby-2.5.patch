@@ -1,0 +1,25 @@
+From ff9435b1a402100384451a55c2d507bf19038a8b Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?V=C3=ADt=20Ondruch?= <vondruch@redhat.com>
+Date: Mon, 8 Jan 2018 16:49:29 +0100
+Subject: [PATCH] 'ubygems' was dropped in Ruby 2.5.
+
+---
+ tests/tests_helper.rb | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tests/tests_helper.rb b/tests/tests_helper.rb
+index 5a1605f..ab251de 100644
+--- a/tests/tests_helper.rb
++++ b/tests/tests_helper.rb
+@@ -3,7 +3,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'lib', 'shindo'
+ BIN = File.join(File.dirname(__FILE__), '..', 'bin', 'shindo')
+ 
+ def bin(arguments)
+-  `RUBYOPT="-rubygems" #{BIN} #{arguments}`
++  `RUBYOPT="-rrubygems" #{BIN} #{arguments}`
+ end
+ 
+ def path(name)
+-- 
+2.15.1
+
