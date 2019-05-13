@@ -4,7 +4,7 @@
 EAPI="5"
 
 PYTHON_COMPAT=( python{2_7,3_4,3_5,3_6} )
-USE_RUBY=( ruby23 ruby24 ruby25 )
+USE_RUBY=( ruby24 ruby25 ruby26 )
 RUBY_OPTIONAL=yes
 
 inherit cmake-utils python-r1 ruby-ng perl-module multilib
@@ -29,13 +29,15 @@ RDEPEND="
 	python? ( ${PYTHON_DEPS} )
 	rpm? ( app-arch/rpm )
 	ruby? ( $(ruby_implementations_depend) )
-	tcl? ( dev-lang/tcl:0= )"
+	tcl? ( dev-lang/tcl:0= )
+"
 DEPEND="${RDEPEND}
 	perl? ( dev-lang/swig:0 )
 	python? ( dev-lang/swig:0 )
 	ruby? ( dev-lang/swig:0 )
 	tcl? ( dev-lang/swig:0 )
-	sys-devel/gettext"
+	sys-devel/gettext
+"
 
 # The ruby-ng eclass is stupid and breaks this for no good reason.
 S="${WORKDIR}/${P}"
