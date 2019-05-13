@@ -1,0 +1,887 @@
+From d486b29ba1de8834005087e2097592169e5c70d7 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?V=C3=ADt=20Ondruch?= <vondruch@redhat.com>
+Date: Thu, 1 Nov 2018 15:03:34 +0100
+Subject: [PATCH] Follow fog-core best practices.
+
+Following fog/fog-core#229, this gem needs to be namespaced.
+---
+ lib/fog/bin/libvirt.rb                           |  2 +-
+ lib/fog/libvirt.rb                               |  4 +---
+ lib/fog/libvirt/compute.rb                       |  8 ++++----
+ lib/fog/libvirt/models/compute/interface.rb      |  4 ++--
+ lib/fog/libvirt/models/compute/interfaces.rb     |  6 +++---
+ lib/fog/libvirt/models/compute/network.rb        |  6 +++---
+ lib/fog/libvirt/models/compute/networks.rb       |  6 +++---
+ lib/fog/libvirt/models/compute/nic.rb            |  4 ++--
+ lib/fog/libvirt/models/compute/nics.rb           |  6 +++---
+ lib/fog/libvirt/models/compute/node.rb           |  4 ++--
+ lib/fog/libvirt/models/compute/nodes.rb          |  6 +++---
+ lib/fog/libvirt/models/compute/pool.rb           |  4 ++--
+ lib/fog/libvirt/models/compute/pools.rb          |  6 +++---
+ lib/fog/libvirt/models/compute/server.rb         |  6 +++---
+ lib/fog/libvirt/models/compute/servers.rb        |  6 +++---
+ lib/fog/libvirt/models/compute/util/uri.rb       |  4 ++--
+ lib/fog/libvirt/models/compute/util/util.rb      |  4 ++--
+ lib/fog/libvirt/models/compute/volume.rb         |  6 +++---
+ lib/fog/libvirt/models/compute/volumes.rb        |  6 +++---
+ lib/fog/libvirt/requests/compute/clone_volume.rb |  6 +++---
+ .../libvirt/requests/compute/create_domain.rb    |  4 ++--
+ .../libvirt/requests/compute/create_volume.rb    |  4 ++--
+ .../libvirt/requests/compute/define_domain.rb    |  4 ++--
+ lib/fog/libvirt/requests/compute/define_pool.rb  |  4 ++--
+ .../requests/compute/destroy_interface.rb        |  4 ++--
+ .../libvirt/requests/compute/destroy_network.rb  |  4 ++--
+ lib/fog/libvirt/requests/compute/dhcp_leases.rb  |  4 ++--
+ .../libvirt/requests/compute/get_node_info.rb    |  4 ++--
+ lib/fog/libvirt/requests/compute/libversion.rb   |  4 ++--
+ lib/fog/libvirt/requests/compute/list_domains.rb |  4 ++--
+ .../libvirt/requests/compute/list_interfaces.rb  |  4 ++--
+ .../libvirt/requests/compute/list_networks.rb    |  4 ++--
+ .../requests/compute/list_pool_volumes.rb        |  4 ++--
+ lib/fog/libvirt/requests/compute/list_pools.rb   |  4 ++--
+ lib/fog/libvirt/requests/compute/list_volumes.rb |  4 ++--
+ lib/fog/libvirt/requests/compute/pool_action.rb  |  4 ++--
+ .../libvirt/requests/compute/update_display.rb   |  4 ++--
+ .../libvirt/requests/compute/upload_volume.rb    |  4 ++--
+ lib/fog/libvirt/requests/compute/vm_action.rb    |  4 ++--
+ .../libvirt/requests/compute/volume_action.rb    |  4 ++--
+ minitests/server/server_test.rb                  |  2 +-
+ minitests/server/user_data_iso_test.rb           | 16 ++++++++--------
+ tests/libvirt/models/compute/interface_tests.rb  |  2 +-
+ tests/libvirt/models/compute/interfaces_tests.rb |  2 +-
+ tests/libvirt/models/compute/network_tests.rb    |  2 +-
+ tests/libvirt/models/compute/networks_tests.rb   |  2 +-
+ tests/libvirt/models/compute/nic_tests.rb        |  2 +-
+ tests/libvirt/models/compute/pool_tests.rb       |  2 +-
+ tests/libvirt/models/compute/pools_tests.rb      |  2 +-
+ tests/libvirt/models/compute/server_tests.rb     |  2 +-
+ tests/libvirt/models/compute/servers_tests.rb    |  2 +-
+ tests/libvirt/models/compute/volume_tests.rb     |  2 +-
+ tests/libvirt/models/compute/volumes_tests.rb    |  2 +-
+ 53 files changed, 111 insertions(+), 113 deletions(-)
+
+diff --git a/lib/fog/bin/libvirt.rb b/lib/fog/bin/libvirt.rb
+index fd5474a..20110e7 100644
+--- a/lib/fog/bin/libvirt.rb
++++ b/lib/fog/bin/libvirt.rb
+@@ -3,7 +3,7 @@ module Libvirt # deviates from other bin stuff to accommodate gem
+     def class_for(key)
+       case key
+       when :compute
+-        Fog::Compute::Libvirt
++        Fog::Libvirt::Compute
+       else
+         raise ArgumentError, "Unrecognized service: #{key}"
+       end
+diff --git a/lib/fog/libvirt.rb b/lib/fog/libvirt.rb
+index 013b845..230223b 100644
+--- a/lib/fog/libvirt.rb
++++ b/lib/fog/libvirt.rb
+@@ -9,9 +9,7 @@ module Fog
+   module Libvirt
+     extend Fog::Provider
+ 
+-    module Compute
+-      autoload :Libvirt, File.expand_path('../libvirt/compute', __FILE__)
+-    end
++    autoload :Compute, File.expand_path('../libvirt/compute', __FILE__)
+ 
+     service(:compute, 'Compute')
+   end
+diff --git a/lib/fog/libvirt/compute.rb b/lib/fog/libvirt/compute.rb
+index 4e0efc9..7832eef 100644
+--- a/lib/fog/libvirt/compute.rb
++++ b/lib/fog/libvirt/compute.rb
+@@ -2,8 +2,8 @@ require 'fog/libvirt/models/compute/util/util'
+ require 'fog/libvirt/models/compute/util/uri'
+ 
+ module Fog
+-  module Compute
+-    class Libvirt < Fog::Service
++  module Libvirt
++    class Compute < Fog::Service
+       requires   :libvirt_uri
+       recognizes :libvirt_username, :libvirt_password
+       recognizes :libvirt_ip_command
+@@ -48,7 +48,7 @@ module Fog
+       request :libversion
+ 
+       module Shared
+-        include Fog::Compute::LibvirtUtil
++        include Fog::Libvirt::Util
+       end
+ 
+       class Mock
+@@ -78,7 +78,7 @@ module Fog
+         attr_reader :ip_command
+ 
+         def initialize(options={})
+-          @uri = ::Fog::Compute::LibvirtUtil::URI.new(enhance_uri(options[:libvirt_uri]))
++          @uri = ::Fog::Libvirt::Util::URI.new(enhance_uri(options[:libvirt_uri]))
+           @ip_command = options[:libvirt_ip_command]
+ 
+           # libvirt is part of the gem => ruby-libvirt
+diff --git a/lib/fog/libvirt/models/compute/interface.rb b/lib/fog/libvirt/models/compute/interface.rb
+index a7ebde6..212cedb 100644
+--- a/lib/fog/libvirt/models/compute/interface.rb
++++ b/lib/fog/libvirt/models/compute/interface.rb
+@@ -1,8 +1,8 @@
+ require 'fog/core/model'
+ 
+ module Fog
+-  module Compute
+-    class Libvirt
++  module Libvirt
++    class Compute
+       class Interface < Fog::Model
+         identity :name
+         attribute :mac
+diff --git a/lib/fog/libvirt/models/compute/interfaces.rb b/lib/fog/libvirt/models/compute/interfaces.rb
+index 48f696d..67bff2d 100644
+--- a/lib/fog/libvirt/models/compute/interfaces.rb
++++ b/lib/fog/libvirt/models/compute/interfaces.rb
+@@ -2,10 +2,10 @@ require 'fog/core/collection'
+ require 'fog/libvirt/models/compute/interface'
+ 
+ module Fog
+-  module Compute
+-    class Libvirt
++  module Libvirt
++    class Compute
+       class Interfaces < Fog::Collection
+-        model Fog::Compute::Libvirt::Interface
++        model Fog::Libvirt::Compute::Interface
+ 
+         def all(filter={})
+           load(service.list_interfaces(filter))
+diff --git a/lib/fog/libvirt/models/compute/network.rb b/lib/fog/libvirt/models/compute/network.rb
+index e241b69..ee2799a 100644
+--- a/lib/fog/libvirt/models/compute/network.rb
++++ b/lib/fog/libvirt/models/compute/network.rb
+@@ -2,10 +2,10 @@ require 'fog/core/model'
+ require 'fog/libvirt/models/compute/util/util'
+ 
+ module Fog
+-  module Compute
+-    class Libvirt
++  module Libvirt
++    class Compute
+       class Network < Fog::Model
+-        include Fog::Compute::LibvirtUtil
++        include Fog::Libvirt::Util
+ 
+         identity :uuid
+         attribute :name
+diff --git a/lib/fog/libvirt/models/compute/networks.rb b/lib/fog/libvirt/models/compute/networks.rb
+index 760ccf2..7554733 100644
+--- a/lib/fog/libvirt/models/compute/networks.rb
++++ b/lib/fog/libvirt/models/compute/networks.rb
+@@ -2,10 +2,10 @@ require 'fog/core/collection'
+ require 'fog/libvirt/models/compute/network'
+ 
+ module Fog
+-  module Compute
+-    class Libvirt
++  module Libvirt
++    class Compute
+       class Networks < Fog::Collection
+-        model Fog::Compute::Libvirt::Network
++        model Fog::Libvirt::Compute::Network
+ 
+         def all(filter={})
+           load(service.list_networks(filter))
+diff --git a/lib/fog/libvirt/models/compute/nic.rb b/lib/fog/libvirt/models/compute/nic.rb
+index 485b417..baffa74 100644
+--- a/lib/fog/libvirt/models/compute/nic.rb
++++ b/lib/fog/libvirt/models/compute/nic.rb
+@@ -1,8 +1,8 @@
+ require 'fog/core/model'
+ 
+ module Fog
+-  module Compute
+-    class Libvirt
++  module Libvirt
++    class Compute
+       class Nic < Fog::Model
+         identity :mac
+         attribute :id
+diff --git a/lib/fog/libvirt/models/compute/nics.rb b/lib/fog/libvirt/models/compute/nics.rb
+index 7a326f3..9145b57 100644
+--- a/lib/fog/libvirt/models/compute/nics.rb
++++ b/lib/fog/libvirt/models/compute/nics.rb
+@@ -2,10 +2,10 @@ require 'fog/core/collection'
+ require 'fog/libvirt/models/compute/nic'
+ 
+ module Fog
+-  module Compute
+-    class Libvirt
++  module Libvirt
++    class Compute
+       class Nics < Fog::Collection
+-        model Fog::Compute::Libvirt::Nic
++        model Fog::Libvirt::Compute::Nic
+       end
+     end
+   end
+diff --git a/lib/fog/libvirt/models/compute/node.rb b/lib/fog/libvirt/models/compute/node.rb
+index 02d3fc7..641cb38 100644
+--- a/lib/fog/libvirt/models/compute/node.rb
++++ b/lib/fog/libvirt/models/compute/node.rb
+@@ -1,8 +1,8 @@
+ require 'fog/core/model'
+ 
+ module Fog
+-  module Compute
+-    class Libvirt
++  module Libvirt
++    class Compute
+       class Node < Fog::Model
+         identity :uuid
+ 
+diff --git a/lib/fog/libvirt/models/compute/nodes.rb b/lib/fog/libvirt/models/compute/nodes.rb
+index 72d6d7b..04d7c74 100644
+--- a/lib/fog/libvirt/models/compute/nodes.rb
++++ b/lib/fog/libvirt/models/compute/nodes.rb
+@@ -2,10 +2,10 @@ require 'fog/core/collection'
+ require 'fog/libvirt/models/compute/node'
+ 
+ module Fog
+-  module Compute
+-    class Libvirt
++  module Libvirt
++    class Compute
+       class Nodes < Fog::Collection
+-        model Fog::Compute::Libvirt::Node
++        model Fog::Libvirt::Compute::Node
+ 
+         def all(filter={ })
+           load(service.get_node_info)
+diff --git a/lib/fog/libvirt/models/compute/pool.rb b/lib/fog/libvirt/models/compute/pool.rb
+index d186b86..34d8b81 100644
+--- a/lib/fog/libvirt/models/compute/pool.rb
++++ b/lib/fog/libvirt/models/compute/pool.rb
+@@ -1,8 +1,8 @@
+ require 'fog/core/model'
+ 
+ module Fog
+-  module Compute
+-    class Libvirt
++  module Libvirt
++    class Compute
+       class Pool < Fog::Model
+         attr_reader :xml
+ 
+diff --git a/lib/fog/libvirt/models/compute/pools.rb b/lib/fog/libvirt/models/compute/pools.rb
+index 2f3f73f..6aa674c 100644
+--- a/lib/fog/libvirt/models/compute/pools.rb
++++ b/lib/fog/libvirt/models/compute/pools.rb
+@@ -2,10 +2,10 @@ require 'fog/core/collection'
+ require 'fog/libvirt/models/compute/pool'
+ 
+ module Fog
+-  module Compute
+-    class Libvirt
++  module Libvirt
++    class Compute
+       class Pools < Fog::Collection
+-        model Fog::Compute::Libvirt::Pool
++        model Fog::Libvirt::Compute::Pool
+ 
+         def all(filter = {})
+           load(service.list_pools(filter))
+diff --git a/lib/fog/libvirt/models/compute/server.rb b/lib/fog/libvirt/models/compute/server.rb
+index a276335..4cd3437 100644
+--- a/lib/fog/libvirt/models/compute/server.rb
++++ b/lib/fog/libvirt/models/compute/server.rb
+@@ -3,10 +3,10 @@ require 'fog/libvirt/models/compute/util/util'
+ require 'fileutils'
+ 
+ module Fog
+-  module Compute
+-    class Libvirt
++  module Libvirt
++    class Compute
+       class Server < Fog::Compute::Server
+-        include Fog::Compute::LibvirtUtil
++        include Fog::Libvirt::Util
+         attr_reader :xml
+ 
+         identity :id, :aliases => 'uuid'
+diff --git a/lib/fog/libvirt/models/compute/servers.rb b/lib/fog/libvirt/models/compute/servers.rb
+index a28db2f..6aed7bd 100644
+--- a/lib/fog/libvirt/models/compute/servers.rb
++++ b/lib/fog/libvirt/models/compute/servers.rb
+@@ -2,10 +2,10 @@ require 'fog/core/collection'
+ require 'fog/libvirt/models/compute/server'
+ 
+ module Fog
+-  module Compute
+-    class Libvirt
++  module Libvirt
++    class Compute
+       class Servers < Fog::Collection
+-        model Fog::Compute::Libvirt::Server
++        model Fog::Libvirt::Compute::Server
+ 
+         def all(filter={})
+           load(service.list_domains(filter))
+diff --git a/lib/fog/libvirt/models/compute/util/uri.rb b/lib/fog/libvirt/models/compute/util/uri.rb
+index cbb2e86..614be94 100644
+--- a/lib/fog/libvirt/models/compute/util/uri.rb
++++ b/lib/fog/libvirt/models/compute/util/uri.rb
+@@ -2,8 +2,8 @@ require 'uri'
+ require 'cgi'
+ 
+ module Fog
+-  module Compute
+-    module LibvirtUtil
++  module Libvirt
++    module Util
+       class URI
+         attr_reader :uri
+ 
+diff --git a/lib/fog/libvirt/models/compute/util/util.rb b/lib/fog/libvirt/models/compute/util/util.rb
+index 28aadf7..d118d36 100644
+--- a/lib/fog/libvirt/models/compute/util/util.rb
++++ b/lib/fog/libvirt/models/compute/util/util.rb
+@@ -4,8 +4,8 @@ require 'ostruct'
+ require 'securerandom'
+ 
+ module Fog
+-  module Compute
+-    module LibvirtUtil
++  module Libvirt
++    module Util
+       def xml_element(xml, path, attribute=nil)
+         xml = Nokogiri::XML(xml)
+         attribute.nil? ? (xml/path).first.text : (xml/path).first[attribute.to_sym]
+diff --git a/lib/fog/libvirt/models/compute/volume.rb b/lib/fog/libvirt/models/compute/volume.rb
+index a59fa1b..0d73c19 100644
+--- a/lib/fog/libvirt/models/compute/volume.rb
++++ b/lib/fog/libvirt/models/compute/volume.rb
+@@ -2,11 +2,11 @@ require 'fog/core/model'
+ require 'fog/libvirt/models/compute/util/util'
+ 
+ module Fog
+-  module Compute
+-    class Libvirt
++  module Libvirt
++    class Compute
+       class Volume < Fog::Model
+         attr_reader :xml
+-        include Fog::Compute::LibvirtUtil
++        include Fog::Libvirt::Util
+ 
+         identity :id, :aliases => 'key'
+ 
+diff --git a/lib/fog/libvirt/models/compute/volumes.rb b/lib/fog/libvirt/models/compute/volumes.rb
+index a29a0b4..f9a2b36 100644
+--- a/lib/fog/libvirt/models/compute/volumes.rb
++++ b/lib/fog/libvirt/models/compute/volumes.rb
+@@ -2,10 +2,10 @@ require 'fog/core/collection'
+ require 'fog/libvirt/models/compute/volume'
+ 
+ module Fog
+-  module Compute
+-    class Libvirt
++  module Libvirt
++    class Compute
+       class Volumes < Fog::Collection
+-        model Fog::Compute::Libvirt::Volume
++        model Fog::Libvirt::Compute::Volume
+ 
+         def all(filter = {})
+           load(service.list_volumes(filter))
+diff --git a/lib/fog/libvirt/requests/compute/clone_volume.rb b/lib/fog/libvirt/requests/compute/clone_volume.rb
+index fe0bc71..eb452a5 100644
+--- a/lib/fog/libvirt/requests/compute/clone_volume.rb
++++ b/lib/fog/libvirt/requests/compute/clone_volume.rb
+@@ -1,6 +1,6 @@
+ module Fog
+-  module Compute
+-    class Libvirt
++  module Libvirt
++    class Compute
+       class Real
+         def clone_volume (pool_name, xml, name)
+           vol = client.lookup_storage_pool_by_name(pool_name).lookup_volume_by_name(name)
+@@ -10,7 +10,7 @@ module Fog
+ 
+       class Mock
+         def clone_volume(pool_name, xml, name)
+-          Fog::Compute::Libvirt::Volume.new({:pool_name => pool_name, :xml => xml})
++          Fog::Libvirt::Compute::Volume.new({:pool_name => pool_name, :xml => xml})
+         end
+       end
+     end
+diff --git a/lib/fog/libvirt/requests/compute/create_domain.rb b/lib/fog/libvirt/requests/compute/create_domain.rb
+index 8bcb733..ec9cab6 100644
+--- a/lib/fog/libvirt/requests/compute/create_domain.rb
++++ b/lib/fog/libvirt/requests/compute/create_domain.rb
+@@ -1,6 +1,6 @@
+ module Fog
+-  module Compute
+-    class Libvirt
++  module Libvirt
++    class Compute
+       class Real
+         def create_domain(xml)
+           client.create_domain_xml(xml)
+diff --git a/lib/fog/libvirt/requests/compute/create_volume.rb b/lib/fog/libvirt/requests/compute/create_volume.rb
+index f1f90d8..90dd908 100644
+--- a/lib/fog/libvirt/requests/compute/create_volume.rb
++++ b/lib/fog/libvirt/requests/compute/create_volume.rb
+@@ -1,6 +1,6 @@
+ module Fog
+-  module Compute
+-    class Libvirt
++  module Libvirt
++    class Compute
+       class Real
+         def create_volume(pool_name, xml)
+           client.lookup_storage_pool_by_name(pool_name).create_vol_xml(xml)
+diff --git a/lib/fog/libvirt/requests/compute/define_domain.rb b/lib/fog/libvirt/requests/compute/define_domain.rb
+index 53b8fae..34ec45c 100644
+--- a/lib/fog/libvirt/requests/compute/define_domain.rb
++++ b/lib/fog/libvirt/requests/compute/define_domain.rb
+@@ -1,6 +1,6 @@
+ module Fog
+-  module Compute
+-    class Libvirt
++  module Libvirt
++    class Compute
+       class Real
+         def define_domain(xml)
+           client.define_domain_xml(xml)
+diff --git a/lib/fog/libvirt/requests/compute/define_pool.rb b/lib/fog/libvirt/requests/compute/define_pool.rb
+index 8874bf4..034527e 100644
+--- a/lib/fog/libvirt/requests/compute/define_pool.rb
++++ b/lib/fog/libvirt/requests/compute/define_pool.rb
+@@ -1,6 +1,6 @@
+ module Fog
+-  module Compute
+-    class Libvirt
++  module Libvirt
++    class Compute
+       class Real
+         def define_pool(xml)
+           client.define_storage_pool_xml(xml)
+diff --git a/lib/fog/libvirt/requests/compute/destroy_interface.rb b/lib/fog/libvirt/requests/compute/destroy_interface.rb
+index 5e7bfc5..a3f5f7d 100644
+--- a/lib/fog/libvirt/requests/compute/destroy_interface.rb
++++ b/lib/fog/libvirt/requests/compute/destroy_interface.rb
+@@ -1,6 +1,6 @@
+ module Fog
+-  module Compute
+-    class Libvirt
++  module Libvirt
++    class Compute
+       class Real
+         #shutdown the interface
+         def destroy_interface(uuid)
+diff --git a/lib/fog/libvirt/requests/compute/destroy_network.rb b/lib/fog/libvirt/requests/compute/destroy_network.rb
+index b2c4e0e..94cb96d 100644
+--- a/lib/fog/libvirt/requests/compute/destroy_network.rb
++++ b/lib/fog/libvirt/requests/compute/destroy_network.rb
+@@ -1,6 +1,6 @@
+ module Fog
+-  module Compute
+-    class Libvirt
++  module Libvirt
++    class Compute
+       class Real
+         def destroy_network(uuid)
+           client.lookup_network_by_uuid(uuid).destroy
+diff --git a/lib/fog/libvirt/requests/compute/dhcp_leases.rb b/lib/fog/libvirt/requests/compute/dhcp_leases.rb
+index 539c853..5ba5352 100644
+--- a/lib/fog/libvirt/requests/compute/dhcp_leases.rb
++++ b/lib/fog/libvirt/requests/compute/dhcp_leases.rb
+@@ -1,8 +1,8 @@
+ require 'socket'
+ 
+ module Fog
+-  module Compute
+-    class Libvirt
++  module Libvirt
++    class Compute
+       class Real
+         def dhcp_leases(uuid, mac, flags = 0)
+           client.lookup_network_by_uuid(uuid).dhcp_leases(mac, flags)
+diff --git a/lib/fog/libvirt/requests/compute/get_node_info.rb b/lib/fog/libvirt/requests/compute/get_node_info.rb
+index 9d5aa67..740fe96 100644
+--- a/lib/fog/libvirt/requests/compute/get_node_info.rb
++++ b/lib/fog/libvirt/requests/compute/get_node_info.rb
+@@ -1,6 +1,6 @@
+ module Fog
+-  module Compute
+-    class Libvirt
++  module Libvirt
++    class Compute
+       class Real
+         def get_node_info
+           node_hash = Hash.new
+diff --git a/lib/fog/libvirt/requests/compute/libversion.rb b/lib/fog/libvirt/requests/compute/libversion.rb
+index 6bda9f9..a43a4a3 100644
+--- a/lib/fog/libvirt/requests/compute/libversion.rb
++++ b/lib/fog/libvirt/requests/compute/libversion.rb
+@@ -1,7 +1,7 @@
+ 
+ module Fog
+-  module Compute
+-    class Libvirt
++  module Libvirt
++    class Compute
+       class Real
+         def libversion()
+           client.libversion
+diff --git a/lib/fog/libvirt/requests/compute/list_domains.rb b/lib/fog/libvirt/requests/compute/list_domains.rb
+index 974af40..5e13e5f 100644
+--- a/lib/fog/libvirt/requests/compute/list_domains.rb
++++ b/lib/fog/libvirt/requests/compute/list_domains.rb
+@@ -1,6 +1,6 @@
+ module Fog
+-  module Compute
+-    class Libvirt
++  module Libvirt
++    class Compute
+       class Real
+         def list_domains(filter = { })
+           data=[]
+diff --git a/lib/fog/libvirt/requests/compute/list_interfaces.rb b/lib/fog/libvirt/requests/compute/list_interfaces.rb
+index d938437..9c4fc18 100644
+--- a/lib/fog/libvirt/requests/compute/list_interfaces.rb
++++ b/lib/fog/libvirt/requests/compute/list_interfaces.rb
+@@ -1,6 +1,6 @@
+ module Fog
+-  module Compute
+-    class Libvirt
++  module Libvirt
++    class Compute
+       class Real
+         def list_interfaces(filter = { })
+           data=[]
+diff --git a/lib/fog/libvirt/requests/compute/list_networks.rb b/lib/fog/libvirt/requests/compute/list_networks.rb
+index d2669b4..1938e28 100644
+--- a/lib/fog/libvirt/requests/compute/list_networks.rb
++++ b/lib/fog/libvirt/requests/compute/list_networks.rb
+@@ -1,6 +1,6 @@
+ module Fog
+-  module Compute
+-    class Libvirt
++  module Libvirt
++    class Compute
+       class Real
+         def list_networks(filter = { })
+           data=[]
+diff --git a/lib/fog/libvirt/requests/compute/list_pool_volumes.rb b/lib/fog/libvirt/requests/compute/list_pool_volumes.rb
+index 6faba30..d21c7d1 100644
+--- a/lib/fog/libvirt/requests/compute/list_pool_volumes.rb
++++ b/lib/fog/libvirt/requests/compute/list_pool_volumes.rb
+@@ -1,6 +1,6 @@
+ module Fog
+-  module Compute
+-    class Libvirt
++  module Libvirt
++    class Compute
+       class Real
+         def list_pool_volumes(uuid)
+           pool = client.lookup_storage_pool_by_uuid uuid
+diff --git a/lib/fog/libvirt/requests/compute/list_pools.rb b/lib/fog/libvirt/requests/compute/list_pools.rb
+index 8113b6a..3673022 100644
+--- a/lib/fog/libvirt/requests/compute/list_pools.rb
++++ b/lib/fog/libvirt/requests/compute/list_pools.rb
+@@ -1,6 +1,6 @@
+ module Fog
+-  module Compute
+-    class Libvirt
++  module Libvirt
++    class Compute
+       class Real
+         def list_pools(filter = { })
+           data=[]
+diff --git a/lib/fog/libvirt/requests/compute/list_volumes.rb b/lib/fog/libvirt/requests/compute/list_volumes.rb
+index edc1ba2..9670f0a 100644
+--- a/lib/fog/libvirt/requests/compute/list_volumes.rb
++++ b/lib/fog/libvirt/requests/compute/list_volumes.rb
+@@ -1,6 +1,6 @@
+ module Fog
+-  module Compute
+-    class Libvirt
++  module Libvirt
++    class Compute
+       class Real
+         def list_volumes(filter = { })
+           data = []
+diff --git a/lib/fog/libvirt/requests/compute/pool_action.rb b/lib/fog/libvirt/requests/compute/pool_action.rb
+index 942efd0..0ee9b59 100644
+--- a/lib/fog/libvirt/requests/compute/pool_action.rb
++++ b/lib/fog/libvirt/requests/compute/pool_action.rb
+@@ -1,6 +1,6 @@
+ module Fog
+-  module Compute
+-    class Libvirt
++  module Libvirt
++    class Compute
+       class Real
+         def pool_action(uuid, action)
+           pool = client.lookup_storage_pool_by_uuid uuid
+diff --git a/lib/fog/libvirt/requests/compute/update_display.rb b/lib/fog/libvirt/requests/compute/update_display.rb
+index 0b91262..5fed3c5 100644
+--- a/lib/fog/libvirt/requests/compute/update_display.rb
++++ b/lib/fog/libvirt/requests/compute/update_display.rb
+@@ -1,6 +1,6 @@
+ module Fog
+-  module Compute
+-    class Libvirt
++  module Libvirt
++    class Compute
+       class Real
+         def update_display(options = { })
+           raise ArgumentError, "uuid is a required parameter" unless options.key? :uuid
+diff --git a/lib/fog/libvirt/requests/compute/upload_volume.rb b/lib/fog/libvirt/requests/compute/upload_volume.rb
+index 383cced..78385cd 100644
+--- a/lib/fog/libvirt/requests/compute/upload_volume.rb
++++ b/lib/fog/libvirt/requests/compute/upload_volume.rb
+@@ -1,6 +1,6 @@
+ module Fog
+-  module Compute
+-    class Libvirt
++  module Libvirt
++    class Compute
+       class Real
+         def upload_volume(pool_name, volume_name, file_path)
+           volume = client.lookup_storage_pool_by_name(pool_name).lookup_volume_by_name(volume_name)
+diff --git a/lib/fog/libvirt/requests/compute/vm_action.rb b/lib/fog/libvirt/requests/compute/vm_action.rb
+index 3078028..e7f60c9 100644
+--- a/lib/fog/libvirt/requests/compute/vm_action.rb
++++ b/lib/fog/libvirt/requests/compute/vm_action.rb
+@@ -1,6 +1,6 @@
+ module Fog
+-  module Compute
+-    class Libvirt
++  module Libvirt
++    class Compute
+       class Real
+         def vm_action(uuid, action)
+           domain = client.lookup_domain_by_uuid(uuid)
+diff --git a/lib/fog/libvirt/requests/compute/volume_action.rb b/lib/fog/libvirt/requests/compute/volume_action.rb
+index 1a3f849..5927dd2 100644
+--- a/lib/fog/libvirt/requests/compute/volume_action.rb
++++ b/lib/fog/libvirt/requests/compute/volume_action.rb
+@@ -1,6 +1,6 @@
+ module Fog
+-  module Compute
+-    class Libvirt
++  module Libvirt
++    class Compute
+       class Real
+         def volume_action(key, action, options={})
+           get_volume({:key => key}, true).send(action)
+diff --git a/minitests/server/server_test.rb b/minitests/server/server_test.rb
+index 32ef300..6ed647e 100644
+--- a/minitests/server/server_test.rb
++++ b/minitests/server/server_test.rb
+@@ -41,7 +41,7 @@ class ServerTest < Minitest::Test
+     result.expect(:status, 0)
+     result.expect(:stdout, "any_ip")
+     fog_ssh.expect(:run, [result], [String])
+-    uri = ::Fog::Compute::LibvirtUtil::URI.new('qemu+ssh://localhost:22?keyfile=nofile')
++    uri = ::Fog::Libvirt::Util::URI.new('qemu+ssh://localhost:22?keyfile=nofile')
+     Fog::SSH.stub(:new, fog_ssh) do
+       @server.send(:ssh_ip_command, "test command", uri)
+     end
+diff --git a/minitests/server/user_data_iso_test.rb b/minitests/server/user_data_iso_test.rb
+index b07eb50..9baf4a5 100644
+--- a/minitests/server/user_data_iso_test.rb
++++ b/minitests/server/user_data_iso_test.rb
+@@ -34,10 +34,10 @@ class UserDataIsoTest < Minitest::Test
+   def test_volume_is_created_during_user_data_iso_generation
+     iso_path = "iso_file_path"
+     @server.stubs(:system).returns(true)
+-    Fog::Compute::Libvirt::Volumes.any_instance.expects(:create).
++    Fog::Libvirt::Compute::Volumes.any_instance.expects(:create).
+         with(has_entries(:name => @server.cloud_init_volume_name)).
+         returns(@compute.volumes.new)
+-    Fog::Compute::Libvirt::Volume.any_instance.stubs(:upload_image)
++    Fog::Libvirt::Compute::Volume.any_instance.stubs(:upload_image)
+ 
+     @server.create_user_data_iso
+   end
+@@ -45,8 +45,8 @@ class UserDataIsoTest < Minitest::Test
+   def test_volume_is_uploaded_during_user_data_iso_generation
+     iso_path = "iso_file_path"
+     @server.stubs(:system).returns(true)
+-    Fog::Compute::Libvirt::Volumes.any_instance.stubs(:create).returns(@compute.volumes.new)
+-    Fog::Compute::Libvirt::Volume.any_instance.expects(:upload_image).returns(true)
++    Fog::Libvirt::Compute::Volumes.any_instance.stubs(:create).returns(@compute.volumes.new)
++    Fog::Libvirt::Compute::Volume.any_instance.expects(:upload_image).returns(true)
+ 
+     @server.create_user_data_iso
+   end
+@@ -54,8 +54,8 @@ class UserDataIsoTest < Minitest::Test
+   def test_iso_file_is_set_during_user_data_iso_generation
+     iso_path = "iso_file_path"
+     @server.stubs(:system).returns(true)
+-    Fog::Compute::Libvirt::Volumes.any_instance.stubs(:create).returns(@compute.volumes.new)
+-    Fog::Compute::Libvirt::Volume.any_instance.stubs(:upload_image)
++    Fog::Libvirt::Compute::Volumes.any_instance.stubs(:create).returns(@compute.volumes.new)
++    Fog::Libvirt::Compute::Volume.any_instance.stubs(:upload_image)
+ 
+     @server.create_user_data_iso
+     assert_equal @server.cloud_init_volume_name, @server.iso_file
+@@ -65,8 +65,8 @@ class UserDataIsoTest < Minitest::Test
+     @server.stubs(:system).returns(true)
+     volume = @compute.volumes.new
+     volume.stubs(:path).returns("/srv/libvirt/#{@server.cloud_init_volume_name}")
+-    Fog::Compute::Libvirt::Volumes.any_instance.stubs(:create).returns(volume)
+-    Fog::Compute::Libvirt::Volume.any_instance.stubs(:upload_image)
++    Fog::Libvirt::Compute::Volumes.any_instance.stubs(:create).returns(volume)
++    Fog::Libvirt::Compute::Volume.any_instance.stubs(:upload_image)
+ 
+     @server.create_user_data_iso
+     assert_equal '/srv/libvirt', @server.iso_dir
+diff --git a/tests/libvirt/models/compute/interface_tests.rb b/tests/libvirt/models/compute/interface_tests.rb
+index 7de6917..1f3174f 100644
+--- a/tests/libvirt/models/compute/interface_tests.rb
++++ b/tests/libvirt/models/compute/interface_tests.rb
+@@ -21,7 +21,7 @@ Shindo.tests('Fog::Compute[:libvirt] | interface model', ['libvirt']) do
+         end
+       end
+     end
+-    test('be a kind of Fog::Compute::Libvirt::Interface') { interface.kind_of? Fog::Compute::Libvirt::Interface }
++    test('be a kind of Fog::Libvirt::Compute::Interface') { interface.kind_of? Fog::Libvirt::Compute::Interface }
+   end
+ 
+ end
+diff --git a/tests/libvirt/models/compute/interfaces_tests.rb b/tests/libvirt/models/compute/interfaces_tests.rb
+index a5f7f4b..e37e2ec 100644
+--- a/tests/libvirt/models/compute/interfaces_tests.rb
++++ b/tests/libvirt/models/compute/interfaces_tests.rb
+@@ -4,7 +4,7 @@ Shindo.tests('Fog::Compute[:libvirt] | interfaces collection', ['libvirt']) do
+ 
+   tests('The interfaces collection') do
+     test('should not be empty') { not interfaces.empty? }
+-    test('should be a kind of Fog::Compute::Libvirt::Interfaces') { interfaces.kind_of? Fog::Compute::Libvirt::Interfaces }
++    test('should be a kind of Fog::Libvirt::Compute::Interfaces') { interfaces.kind_of? Fog::Libvirt::Compute::Interfaces }
+     tests('should be able to reload itself').succeeds { interfaces.reload }
+     tests('should be able to get a model') do
+       tests('by instance name').succeeds { interfaces.get interfaces.first.name }
+diff --git a/tests/libvirt/models/compute/network_tests.rb b/tests/libvirt/models/compute/network_tests.rb
+index ec4633f..9516b19 100644
+--- a/tests/libvirt/models/compute/network_tests.rb
++++ b/tests/libvirt/models/compute/network_tests.rb
+@@ -25,7 +25,7 @@ Shindo.tests('Fog::Compute[:libvirt] | network model', ['libvirt']) do
+         end
+       end
+     end
+-    test('be a kind of Fog::Compute::Libvirt::Network') { network.kind_of? Fog::Compute::Libvirt::Network }
++    test('be a kind of Fog::Libvirt::Compute::Network') { network.kind_of? Fog::Libvirt::Compute::Network }
+   end
+ 
+ end
+diff --git a/tests/libvirt/models/compute/networks_tests.rb b/tests/libvirt/models/compute/networks_tests.rb
+index 6edeb81..e01226e 100644
+--- a/tests/libvirt/models/compute/networks_tests.rb
++++ b/tests/libvirt/models/compute/networks_tests.rb
+@@ -3,7 +3,7 @@ Shindo.tests('Fog::Compute[:libvirt] | networks collection', ['libvirt']) do
+   networks = Fog::Compute[:libvirt].networks
+ 
+   tests('The networks collection') do
+-    test('should be a kind of Fog::Compute::Libvirt::Networks') { networks.kind_of? Fog::Compute::Libvirt::Networks }
++    test('should be a kind of Fog::Libvirt::Compute::Networks') { networks.kind_of? Fog::Libvirt::Compute::Networks }
+     tests('should be able to reload itself').succeeds { networks.reload }
+     tests('should be able to get a model') do
+       tests('by instance id').succeeds { networks.get networks.first.uuid }
+diff --git a/tests/libvirt/models/compute/nic_tests.rb b/tests/libvirt/models/compute/nic_tests.rb
+index 290bec2..b6c8909 100644
+--- a/tests/libvirt/models/compute/nic_tests.rb
++++ b/tests/libvirt/models/compute/nic_tests.rb
+@@ -25,7 +25,7 @@ Shindo.tests('Fog::Compute[:libvirt] | nic model', ['libvirt']) do
+         end
+       end
+     end
+-    test('be a kind of Fog::Compute::Libvirt::Nic') { nic.kind_of? Fog::Compute::Libvirt::Nic }
++    test('be a kind of Fog::Libvirt::Compute::Nic') { nic.kind_of? Fog::Libvirt::Compute::Nic }
+   end
+ 
+ end
+diff --git a/tests/libvirt/models/compute/pool_tests.rb b/tests/libvirt/models/compute/pool_tests.rb
+index 03946ab..848d397 100644
+--- a/tests/libvirt/models/compute/pool_tests.rb
++++ b/tests/libvirt/models/compute/pool_tests.rb
+@@ -21,7 +21,7 @@ Shindo.tests('Fog::Compute[:libvirt] | interface model', ['libvirt']) do
+         end
+       end
+     end
+-    test('be a kind of Fog::Compute::Libvirt::Pool') { pool.kind_of? Fog::Compute::Libvirt::Pool }
++    test('be a kind of Fog::Libvirt::Compute::Pool') { pool.kind_of? Fog::Libvirt::Compute::Pool }
+   end
+ 
+ end
+diff --git a/tests/libvirt/models/compute/pools_tests.rb b/tests/libvirt/models/compute/pools_tests.rb
+index 6fe3fb8..c1dad90 100644
+--- a/tests/libvirt/models/compute/pools_tests.rb
++++ b/tests/libvirt/models/compute/pools_tests.rb
+@@ -4,7 +4,7 @@ Shindo.tests('Fog::Compute[:libvirt] | pools request', ['libvirt']) do
+ 
+   tests('The pools collection') do
+       test('should not be empty') { not pools.empty? }
+-      test('should be a kind of Fog::Compute::Libvirt::Pools') { pools.kind_of? Fog::Compute::Libvirt::Pools }
++      test('should be a kind of Fog::Libvirt::Compute::Pools') { pools.kind_of? Fog::Libvirt::Compute::Pools }
+       tests('should be able to reload itself').succeeds { pools.reload }
+       tests('should be able to get a model') do
+         tests('by instance id').succeeds { pools.get pools.first.uuid }
+diff --git a/tests/libvirt/models/compute/server_tests.rb b/tests/libvirt/models/compute/server_tests.rb
+index 8b9b41a..626a058 100644
+--- a/tests/libvirt/models/compute/server_tests.rb
++++ b/tests/libvirt/models/compute/server_tests.rb
+@@ -55,6 +55,6 @@ Shindo.tests('Fog::Compute[:libvirt] | server model', ['libvirt']) do
+         end
+       end
+     end
+-    test('be a kind of Fog::Compute::Libvirt::Server') { server.kind_of? Fog::Compute::Libvirt::Server }
++    test('be a kind of Fog::Libvirt::Compute::Server') { server.kind_of? Fog::Libvirt::Compute::Server }
+   end
+ end
+diff --git a/tests/libvirt/models/compute/servers_tests.rb b/tests/libvirt/models/compute/servers_tests.rb
+index 905aa75..138b7e5 100644
+--- a/tests/libvirt/models/compute/servers_tests.rb
++++ b/tests/libvirt/models/compute/servers_tests.rb
+@@ -4,7 +4,7 @@ Shindo.tests('Fog::Compute[:libvirt] | servers collection', ['libvirt']) do
+ 
+   tests('The servers collection') do
+     test('should not be empty') { not servers.empty? }
+-    test('should be a kind of Fog::Compute::Libvirt::Servers') { servers.kind_of? Fog::Compute::Libvirt::Servers }
++    test('should be a kind of Fog::Libvirt::Compute::Servers') { servers.kind_of? Fog::Libvirt::Compute::Servers }
+     tests('should be able to reload itself').succeeds { servers.reload }
+     tests('should be able to get a model') do
+       tests('by instance uuid').succeeds { servers.get servers.first.id }
+diff --git a/tests/libvirt/models/compute/volume_tests.rb b/tests/libvirt/models/compute/volume_tests.rb
+index 735a5f3..2f66cdf 100644
+--- a/tests/libvirt/models/compute/volume_tests.rb
++++ b/tests/libvirt/models/compute/volume_tests.rb
+@@ -24,7 +24,7 @@ Shindo.tests('Fog::Compute[:libvirt] | volume model', ['libvirt']) do
+         end
+       end
+     end
+-    test('be a kind of Fog::Compute::Libvirt::Volume') { volume.kind_of? Fog::Compute::Libvirt::Volume }
++    test('be a kind of Fog::Libvirt::Compute::Volume') { volume.kind_of? Fog::Libvirt::Compute::Volume }
+   end
+ 
+   tests('Cloning volumes should') do
+diff --git a/tests/libvirt/models/compute/volumes_tests.rb b/tests/libvirt/models/compute/volumes_tests.rb
+index 6f29786..1f42d57 100644
+--- a/tests/libvirt/models/compute/volumes_tests.rb
++++ b/tests/libvirt/models/compute/volumes_tests.rb
+@@ -4,7 +4,7 @@ Shindo.tests('Fog::Compute[:libvirt] | volumes collection', ['libvirt']) do
+ 
+   tests('The volumes collection') do
+     test('should not be empty') { not volumes.empty? }
+-    test('should be a kind of Fog::Compute::Libvirt::Volumes') { volumes.kind_of? Fog::Compute::Libvirt::Volumes }
++    test('should be a kind of Fog::Libvirt::Compute::Volumes') { volumes.kind_of? Fog::Libvirt::Compute::Volumes }
+     tests('should be able to reload itself').succeeds { volumes.reload }
+     tests('should be able to get a model') do
+       tests('by instance uuid').succeeds { volumes.get volumes.first.id }
+-- 
+2.19.1
+

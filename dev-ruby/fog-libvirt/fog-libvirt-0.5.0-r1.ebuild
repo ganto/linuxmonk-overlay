@@ -1,8 +1,8 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=5
-USE_RUBY="ruby22 ruby23"
+EAPI=6
+USE_RUBY="ruby24 ruby25 ruby26"
 
 RUBY_FAKEGEM_RECIPE_DOC="yard"
 RUBY_FAKEGEM_EXTRADOC="README.md"
@@ -17,6 +17,8 @@ SLOT="0"
 KEYWORDS="~amd64"
 IUSE=""
 
+PATCHES=( "${FILESDIR}"/${PV}-Follow-fog-core-best-practices.patch )
+
 ruby_add_bdepend "
 	test? ( dev-ruby/minitest
 			>=dev-ruby/shindo-0.3.4 )
@@ -26,6 +28,7 @@ ruby_add_rdepend "
 	>=dev-ruby/fog-core-1.27.4
 	dev-ruby/fog-json
 	>=dev-ruby/fog-xml-0.1.1
+	dev-ruby/json:*
 	>=dev-ruby/ruby-libvirt-0.7.0
 "
 
