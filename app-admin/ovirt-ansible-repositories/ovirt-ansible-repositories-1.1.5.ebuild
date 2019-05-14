@@ -19,8 +19,6 @@ IUSE=""
 DEPEND=""
 RDEPEND=">=app-admin/ansible-2.7.2"
 
-PATCHES=( "${FILESDIR}"/${P}-Add-4.3-repositories.patch )
-
 S=${WORKDIR}
 
 src_install() {
