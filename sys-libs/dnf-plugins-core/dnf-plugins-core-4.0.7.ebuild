@@ -76,6 +76,7 @@ src_install() {
 	python_setup
 	local python_major=$( cut -d'.' -f1 <<< "${EPYTHON/python/}" )
 
+	dosym ../../usr/libexec/dnf-utils-${python_major} /usr/bin/dnf-utils-${python_major}
 	dosym dnf-utils-${python_major} /usr/bin/dnf-utils
 	for util in debuginfo-install find-repos-of-install repo-graph \
 			package-cleanup repoclosure repomanage repoquery reposync repotrack \
