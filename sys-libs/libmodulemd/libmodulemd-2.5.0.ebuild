@@ -27,12 +27,13 @@ DEPEND="${CDEPEND}
 "
 BDEPEND=""
 
-#PATCHES=(
-#	"${FILESDIR}"/${PN}-1.7.0-Remove-spec-file-and-srpm-targets.patch
-#)
-
 S="${WORKDIR}"/modulemd-${PV}
 
 src_configure() {
-	meson_src_configure -Ddeveloper_build=false
+	local emesonargs=(
+		-Ddeveloper_build=false
+		-Dbuild_api_v1=true
+		-Dbuild_api_v2=true
+	)
+	meson_src_configure
 }
