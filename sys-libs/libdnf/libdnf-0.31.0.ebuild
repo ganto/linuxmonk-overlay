@@ -1,9 +1,9 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
-PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
+PYTHON_COMPAT=( python2_7 python3_{5,6} )
 
 inherit cmake-utils python-r1
 
@@ -18,15 +18,20 @@ IUSE="test"
 
 CDEPEND="
 	>=app-arch/rpm-4.11.0
-	dev-libs/glib
+	dev-db/sqlite
+	>=dev-libs/glib-2.46.0
 	dev-libs/gobject-introspection
-	sys-libs/librepo
-	sys-libs/libmodulemd
-	>=dev-libs/libsolv-0.6.30[python]
+	dev-libs/json-c
+	sys-apps/util-linux
+	>=sys-libs/libmodulemd-1.6.1:0
+	>=sys-libs/librepo-1.9.5
+	>=dev-libs/libsolv-0.7.4[python,${PYTHON_USEDEP}]
 "
 DEPEND="${CDEPEND}
+	>=dev-lang/swig-3.0.12
 	dev-libs/check
 	>=dev-util/gtk-doc-1.9
+	sys-devel/gettext
 	virtual/pkgconfig
 	test? ( dev-python/nose )
 "
@@ -34,6 +39,12 @@ RDEPEND="${PYTHON_DEPS}
 	${CDEPEND}
 	!sys-libs/hawkey
 "
+PATCHES=(
+	"${FILESDIR}"/${PV}-0001-Revert-9309e92332241ff1113433057c969cebf127734e.patch
+	"${FILESDIR}"/${PV}-0002-Reintroduce-hawkeyRepo-deprecated-for-compatibility.patch
+	"${FILESDIR}"/${PV}-0003-hawkeyRepo-add-deprecation-message.patch
+	"${FILESDIR}"/${PV}-0004-Unit-tests-for-reintroduced-hawkeyRepo.patch
+)
 
 src_prepare() {
 	eapply_user
