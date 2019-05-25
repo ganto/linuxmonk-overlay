@@ -76,13 +76,14 @@ src_install() {
 	python_setup
 	local python_major=$( cut -d'.' -f1 <<< "${EPYTHON/python/}" )
 
-	dosym ../../usr/libexec/dnf-utils-${python_major} /usr/bin/dnf-utils-${python_major}
-	dosym dnf-utils-${python_major} /usr/bin/dnf-utils
-	for util in debuginfo-install find-repos-of-install repo-graph \
+	mv "${ED}"/usr/libexec/dnf-utils-${python_major} "${ED}"/usr/libexec/dnf-utils
+	sed -i "1c#!/usr/bin/${EPYTHON}" "${ED}"/usr/libexec/dnf-utils
+
+	for util in debuginfo-install dnf-utils find-repos-of-install repo-graph \
 			package-cleanup repoclosure repomanage repoquery reposync repotrack \
 			yum-builddep yum-config-manager yum-debug-dump yum-debug-restore \
 			yumdownloader; do
-		dosym dnf-utils /usr/bin/${util}
+		dosym ../libexec/dnf-utils /usr/bin/${util}
 	done
 
 	# cleanup leaked build files
