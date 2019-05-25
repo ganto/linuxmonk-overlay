@@ -15,5 +15,6 @@
 	</longdescription>
 	<use>
 		<flag name="doc">Build HTML documentation</flag>
+		<flag name="zchunk">Build with zchunk support through <pkg>app-arch/zchunk</pkg></flag>
 	</use>
 </pkgmetadata>
