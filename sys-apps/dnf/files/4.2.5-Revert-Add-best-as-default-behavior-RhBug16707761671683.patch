@@ -1,0 +1,35 @@
+From 9f9392c81dc493898dfab072cf0c7b1ae99df186 Mon Sep 17 00:00:00 2001
+From: Pavla Kratochvilova <pkratoch@redhat.com>
+Date: Wed, 13 Feb 2019 13:02:20 +0100
+Subject: [PATCH] Revert "Add best as default behavior (RhBug:1670776,1671683)"
+
+---
+ doc/api_conf.rst | 2 +-
+ etc/dnf/dnf.conf | 1 -
+ 2 files changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/doc/api_conf.rst b/doc/api_conf.rst
+index 9dd6a6a..f86e443 100644
+--- a/doc/api_conf.rst
++++ b/doc/api_conf.rst
+@@ -30,7 +30,7 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
+   
+   .. attribute:: best
+ 
+-    Boolean option, ``True`` instructs the solver to either use a package with the highest available version or fail. On ``False``, do not fail if the latest version can not be installed. Default is ``True``.
++    Boolean option, ``True`` instructs the solver to either use a package with the highest available version or fail. On ``False``, do not fail if the latest version can not be installed. Default is ``False``.
+ 
+   .. attribute:: cachedir
+ 
+diff --git a/etc/dnf/dnf.conf b/etc/dnf/dnf.conf
+index 812c189..81b3e44 100644
+--- a/etc/dnf/dnf.conf
++++ b/etc/dnf/dnf.conf
+@@ -2,4 +2,3 @@
+ gpgcheck=1
+ installonly_limit=3
+ clean_requirements_on_remove=True
+-best=True
+--
+libgit2 0.27.7
+
