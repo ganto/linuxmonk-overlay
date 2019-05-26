@@ -21,3 +21,24 @@ DEPEND="
 "
 RDEPEND="${DEPEND}"
 BDEPEND=""
+
+src_prepare() {
+	default
+
+	# Remove bundled sha libraries
+	rm -rf src/lib/hash/sha*
+}
+
+src_configure() {
+	local emesonargs=(
+		-Dwith-openssl=enabled
+		-Dwith-zstd=enabled
+	)
+	meson_src_configure
+}
+
+src_install() {
+	meson_src_install
+	insinto /usr/libexec
+	doins contrib/gen_xml_dictionary
+}
