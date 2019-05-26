@@ -1,0 +1,29 @@
+From 6c9ffb5938ed81c35df04f1c7ab4082a65e39173 Mon Sep 17 00:00:00 2001
+From: Igor Gnatenko <i.gnatenko.brain@gmail.com>
+Date: Tue, 2 Apr 2019 14:22:08 +0200
+Subject: [PATCH] solver: Free favorq when running solver_solve()
+
+Otherwise, favorq leaks from previous executions.
+
+Fixes: https://github.com/openSUSE/libsolv/issues/312
+Fixes: 2645bc64b322460ac77d0d051de63434d4a90a0a
+Signed-off-by: Igor Gnatenko <i.gnatenko.brain@gmail.com>
+---
+ src/solver.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/solver.c b/src/solver.c
+index b335e6af..7957373e 100644
+--- a/src/solver.c
++++ b/src/solver.c
+@@ -3389,6 +3389,7 @@ solver_solve(Solver *solv, Queue *job)
+   map_zerosize(&solv->cleandepsmap);
+   map_zerosize(&solv->weakrulemap);
+   solv->favormap = solv_free(solv->favormap);
++  queuep_free(&solv->favorq);
+   queue_empty(&solv->weakruleq);
+   solv->watches = solv_free(solv->watches);
+   queue_empty(&solv->ruletojob);
+-- 
+2.21.0
+

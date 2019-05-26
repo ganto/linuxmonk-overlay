@@ -14,5 +14,7 @@
 	</longdescription>
 	<use>
 		<flag name="rpm">Enable support for RPM files</flag>
+		<flag name="zchunk">Build with zchunk compression support</flag>
+		<flag name="zstd">Build with zstd compression support</flag>
 	</use>
 </pkgmetadata>

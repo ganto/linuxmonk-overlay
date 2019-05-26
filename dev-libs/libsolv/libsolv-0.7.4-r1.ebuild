@@ -1,9 +1,9 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="5"
+EAPI="6"
 
-PYTHON_COMPAT=( python{2_7,3_4,3_5,3_6} )
+PYTHON_COMPAT=( python2_7 python3_{5,6,7} )
 USE_RUBY=( ruby24 ruby25 ruby26 )
 RUBY_OPTIONAL=yes
 
@@ -16,7 +16,7 @@ SRC_URI="https://github.com/openSUSE/libsolv/archive/${PV}.tar.gz -> ${P}.tar.gz
 LICENSE="BSD"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE="bzip2 lzma perl python rpm ruby tcl"
+IUSE="bzip2 lzma perl python rpm ruby tcl zstd zchunk"
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
 RDEPEND="
@@ -30,6 +30,8 @@ RDEPEND="
 	rpm? ( app-arch/rpm )
 	ruby? ( $(ruby_implementations_depend) )
 	tcl? ( dev-lang/tcl:0= )
+	zchunk? ( app-arch/zchunk )
+	zstd? ( app-arch/zstd )
 "
 DEPEND="${RDEPEND}
 	perl? ( dev-lang/swig:0 )
@@ -39,8 +41,12 @@ DEPEND="${RDEPEND}
 	sys-devel/gettext
 "
 
+PATCHES=(
+	"${FILESDIR}"/${PV}-solver-Free-favorq-when-running-solver_solve.patch
+)
+
 # The ruby-ng eclass is stupid and breaks this for no good reason.
-S="${WORKDIR}/${P}"
+S="${WORKDIR}/all/${P}"
 
 pkg_setup() {
 	use perl && perl_set_version
@@ -59,24 +65,31 @@ src_prepare() {
 src_configure() {
 	local mycmakeargs=(
 		-DENABLE_APPDATA=1
+		-DENABLE_ARCHREPO=ON
+		-DENABLE_BZIP2_COMPRESSION=$(usex bzip2)
 		-DENABLE_COMPLEX_DEPS=1
+		-DENABLE_COMPS=1
+		-DENABLE_DEBIAN=ON
+		-DENABLE_HELIXREPO=ON
+		-DENABLE_LZMA_COMPRESSION=$(usex lzma)
+		-DENABLE_PERL=$(usex perl)
 		-DENABLE_PYTHON=0
+		-DENABLE_RPMDB=$(usex rpm)
+		-DENABLE_RPMDB_BYRPMHEADER=$(usex rpm)
+		-DENABLE_RPMDB_LIBRPM=$(usex rpm)
+		-DENABLE_RPMPKG_LIBRPM=$(usex rpm)
+		-DENABLE_RPMMD=$(usex rpm)
+		-DENABLE_RUBY=$(usex ruby)
+		-DENABLE_SUSEREPO=ON
+		-DENABLE_TCL=$(usex tcl)
+		-DENABLE_ZCHUNK_COMPRESSION=$(usex zchunk)
+		-DENABLE_ZSTD_COMPRESSION=$(usex zstd)
 		-DLIB="$(get_libdir)"
 		-DMULTI_SEMANTICS=ON
-		-DUSE_VENDORDIRS=1
+		-DUSE_VENDORDIRS=ON
 		-DWITH_LIBXML2=ON
-		$(cmake-utils_use_enable bzip2 BZIP2_COMPRESSION)
-		$(cmake-utils_use_enable lzma LZMA_COMPRESSION)
-		$(cmake-utils_use_enable perl PERL)
-		$(cmake-utils_use_enable rpm RPMDB)
-		$(cmake-utils_use_enable rpm RPMDB_BYRPMHEADER)
-		$(cmake-utils_use_enable rpm RPMDB_LIBRPM)
-		$(cmake-utils_use_enable rpm RPMPKG_LIBRPM)
-		$(cmake-utils_use_enable rpm RPMMD)
-		$(cmake-utils_use_enable ruby RUBY)
-		$(cmake-utils_use_enable tcl TCL)
+		-DWITH_SYSTEM_ZCHUNK=$(usex zchunk)
 	)
-
 	cmake-utils_src_configure
 
 	if use python ; then
