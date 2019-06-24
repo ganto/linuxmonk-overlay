@@ -1,12 +1,12 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
-PYTHON_COMPAT=( python2_7 python3_{5,6} )
+PYTHON_COMPAT=( python2_7 python3_{5,6,7} )
 inherit distutils-r1
 
-DEBOPS_GIT_COMMIT="f76fd2691c682a4b004029ba0b96f573addac916"
+DEBOPS_GIT_COMMIT="07d8b6112bfd3d869fe0db52b6ba8ee68abcbc18"
 
 DESCRIPTION="Your Debian-based data center in a box"
 HOMEPAGE="https://debops.org/"
@@ -19,7 +19,6 @@ IUSE="doc test"
 
 RDEPEND="
 	app-admin/ansible[${PYTHON_USEDEP}]
-	!!app-admin/debops-tools
 	dev-python/dnspython[${PYTHON_USEDEP}]
 	dev-python/future[${PYTHON_USEDEP}]
 	dev-python/netaddr[${PYTHON_USEDEP}]
