@@ -2,8 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
-PYTHON_COMPAT=( python2_7 python3_{4,5,6} pypy )
+PYTHON_COMPAT=( python2_7 python3_{5,6} pypy )
 VALA_USE_DEPEND="vapigen"
+VALA_MAX_API_VERSION="0.44"
 
 inherit cmake-utils db-use flag-o-matic gnome2 python-any-r1 systemd vala virtualx
 
