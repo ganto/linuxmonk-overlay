@@ -27,8 +27,8 @@ RDEPEND="
 	>=dev-libs/folks-0.11.4:=[eds,telepathy?]
 	>=dev-libs/glib-2.44:2
 	>=dev-libs/libgee-0.10:0.8
-	>=dev-libs/libhandy-0.0.9
 	>=gnome-base/gnome-desktop-3.0:3=
+	>=gui-libs/libhandy-0.0.9
 	net-libs/gnome-online-accounts:=
 	>=x11-libs/gtk+-3.23.1:3
 	v4l? ( >=media-video/cheese-3.5.91:= )
