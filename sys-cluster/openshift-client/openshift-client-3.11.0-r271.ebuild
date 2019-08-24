@@ -1,11 +1,13 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 inherit golang-build golang-vcs-snapshot bash-completion-r1
 
 EGO_PN="github.com/openshift/origin"
-ARCHIVE_URI="https://github.com/openshift/origin/archive/v${PV}.tar.gz -> openshift-origin-${PV}.tar.gz"
+OS_GIT_COMMIT="f6b4661ff60ce28254aaa2a2552479f5e32b1474"
+OS_GIT_VERSION="v${PV}+${OS_GIT_COMMIT:0:7}-${PR#r}"
+ARCHIVE_URI="https://github.com/openshift/origin/archive/${OS_GIT_COMMIT}.tar.gz -> openshift-origin-${OS_GIT_VERSION}.tar.gz"
 
 KEYWORDS="~amd64"
 
@@ -24,17 +26,17 @@ RDEPEND="
 
 src_compile() {
 	export OS_ONLY_BUILD_PLATFORMS="linux/amd64"
-	export OS_GIT_COMMIT="dd10d172758d4d02f6d2e24869234fac6c7841a7"
-	export OS_GIT_VERSION="v${PV}"
+	export OS_GIT_COMMIT
+	export OS_GIT_VERSION
 	export OS_GIT_MAJOR="${PV%%.*}"
 	export OS_GIT_MINOR="$(cut -d'.' -f2 <<< ${PV})"
 	export OS_GIT_TREE_STATE="clean"
 
 	# check Godeps/Godeps.json
-	export KUBE_GIT_COMMIT="b81c8f8e48a661f3cc94e2bd49760c7b6c424ee8"
-	export KUBE_GIT_VERSION="v1.10.0-${KUBE_GIT_COMMIT:0:7}"
+	export KUBE_GIT_COMMIT="d4cacc043ac762235e16cb7361d527cb4189393c"
+	export KUBE_GIT_VERSION="v1.11.0+${KUBE_GIT_COMMIT:0:7}"
 	export KUBE_GIT_MAJOR="1"
-	export KUBE_GIT_MINOR="10"
+	export KUBE_GIT_MINOR="11"
 
 	# don't restrict go version
 	export PERMISSIVE_GO=y
