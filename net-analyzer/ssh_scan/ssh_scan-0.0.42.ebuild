@@ -1,9 +1,9 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
-USE_RUBY="ruby22 ruby23"
+USE_RUBY="ruby24 ruby25 ruby26"
 
 RUBY_FAKEGEM_RECIPE_TEST="rspec3"
 RUBY_FAKEGEM_RECIPE_DOC=""
@@ -12,7 +12,7 @@ RUBY_FAKEGEM_EXTRAINSTALL="config data"
 
 inherit ruby-fakegem
 
-SSH_BADKEYS_COMMIT=5f935f0e0ef28d26eca775140fcef493ca7a2cc6
+SSH_BADKEYS_COMMIT=c7e6506e29fb167c9036f5a7dd5721bbe993b7ec
 
 DESCRIPTION="A prototype SSH configuration and policy scanner"
 HOMEPAGE="https://mozilla.github.io/ssh_scan/"
