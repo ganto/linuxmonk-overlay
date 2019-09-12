@@ -4,5 +4,8 @@
 # required by mail-client/evolution
 >=app-text/enchant-2.2.1
 
+# required by dev-lang/vala
+>=dev-libs/vala-common-0.46.0
+
 # required by x11-wm/mutter
 x11-wm/pipewire
