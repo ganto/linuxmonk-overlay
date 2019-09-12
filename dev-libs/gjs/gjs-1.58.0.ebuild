@@ -9,13 +9,14 @@ HOMEPAGE="https://wiki.gnome.org/Projects/Gjs"
 
 LICENSE="MIT || ( MPL-1.1 LGPL-2+ GPL-2+ )"
 SLOT="0"
-IUSE="+cairo examples gtk readline test"
+IUSE="+cairo elibc_glibc examples gtk readline test"
 KEYWORDS="~amd64"
 
 RDEPEND="
-	>=dev-libs/glib-2.54.0
-	>=dev-libs/gobject-introspection-1.53.4:=
+	>=dev-libs/glib-2.58.0
+	>=dev-libs/gobject-introspection-1.57.2:=
 
+	elibc_glibc? ( >=dev-util/sysprof-3.34.0 )
 	readline? ( sys-libs/readline:0= )
 	dev-lang/spidermonkey:60
 	virtual/libffi:=
@@ -38,13 +39,13 @@ src_configure() {
 	gnome2_src_configure \
 		--disable-systemtap \
 		--disable-dtrace \
-		--enable-profiler \
 		--disable-code-coverage \
+		$(use_enable elibc_glibc profiler) \
 		$(use_with cairo cairo) \
-		$(use_with gtk) \
 		$(use_enable readline) \
 		$(use_with test dbus-tests) \
-		$(use_with test xvfb-tests)
+		$(use_with test gtk-tests) \
+		--disable-installed-tests
 }
 
 src_install() {
@@ -61,5 +62,5 @@ src_install() {
 }
 
 src_test() {
-	virtx default
+	virtx dbus-run-session emake check || die
 }
