@@ -1,7 +1,7 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
 inherit gnome.org meson xdg vala virtualx
 
@@ -21,11 +21,13 @@ RDEPEND="
 	>=x11-libs/gtk+-3.24.0:3[introspection?]
 	introspection? ( dev-libs/gobject-introspection:= )
 "
+DEPEND="${RDEPEND}"
 # libxml2 required for glib-compile-resources; glib-utils for glib-mkenums
-DEPEND="${RDEPEND}
+BDEPEND="
+	>=dev-util/meson-0.49.0
 	vala? ( $(vala_depend) )
 	dev-libs/libxml2:2
-	|| ( <dev-util/glib-utils-2.60.0 >=dev-libs/glib-2.60.0 )
+	dev-util/glib-utils
 	virtual/pkgconfig
 	gtk-doc? ( dev-util/gtk-doc )
 "
@@ -39,7 +41,10 @@ src_configure() {
 	local emesonargs=(
 		-Denable_tracing=false # extra trace debugging that would make things slower
 		-Denable_profiling=false # -pg passing
-		# -Denable_rdtscp=false # TODO: CPU_FLAGS_X86 for it?
+		# On linux it'll always use a vdso based implementation that is even faster
+		# than rdtscp insn, thus never build with rdtscp until we don't support non-linux
+		# as the rdtscp using function will never get called anyways.
+		-Denable_rdtscp=false
 		-Denable_tools=true # /usr/bin/dazzle-list-counters
 		$(meson_use introspection with_introspection)
 		$(meson_use vala with_vapi)
