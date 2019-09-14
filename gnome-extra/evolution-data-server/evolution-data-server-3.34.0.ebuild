@@ -4,7 +4,6 @@
 EAPI=6
 PYTHON_COMPAT=( python2_7 python3_{5,6} pypy )
 VALA_USE_DEPEND="vapigen"
-VALA_MAX_API_VERSION="0.44"
 
 inherit cmake-utils db-use flag-o-matic gnome2 python-any-r1 systemd vala virtualx
 
@@ -13,12 +12,12 @@ HOMEPAGE="https://wiki.gnome.org/Apps/Evolution"
 
 # Note: explicitly "|| ( LGPL-2 LGPL-3 )", not "LGPL-2+".
 LICENSE="|| ( LGPL-2 LGPL-3 ) BSD Sleepycat"
-SLOT="0/62" # subslot = libcamel-1.2 soname version
+SLOT="0/62-24" # subslot = libcamel-1.2/libedataserver-1.2 soname version
 
 IUSE="berkdb +gnome-online-accounts +gtk gtk-doc +introspection ipv6 ldap kerberos oauth vala +weather"
 REQUIRED_USE="vala? ( introspection )"
 
-KEYWORDS="~amd64"
+KEYWORDS="~amd64 ~amd64-linux"
 
 # gdata-0.17.7 soft required for new gdata_feed_get_next_page_token API to handle more than 100 google tasks
 # berkdb needed only for migrating old addressbook data from <3.13 versions, bug #519512
@@ -28,8 +27,8 @@ RDEPEND="
 	>=app-crypt/gcr-3.4
 	>=app-crypt/libsecret-0.5[crypt]
 	>=dev-db/sqlite-3.7.17:=
-	>=dev-libs/glib-2.46:2
-	>=dev-libs/libical-3.0.2:=
+	>=dev-libs/glib-2.53.4:2
+	>=dev-libs/libical-3.0.5:=[introspection,glib,vala?]
 	>=dev-libs/libxml2-2
 	>=dev-libs/nspr-4.4:=
 	>=dev-libs/nss-3.9:=
@@ -63,7 +62,8 @@ DEPEND="${RDEPEND}
 	dev-util/gdbus-codegen
 	dev-util/glib-utils
 	dev-util/gperf
-	gtk-doc? ( >=dev-util/gtk-doc-1.14 )
+	gtk-doc? ( >=dev-util/gtk-doc-1.14
+		app-text/docbook-xml-dtd:4.1.2 )
 	>=dev-util/intltool-0.35.5
 	>=sys-devel/gettext-0.18.3
 	virtual/pkgconfig
@@ -121,7 +121,6 @@ src_configure() {
 		-DENABLE_OAUTH2=$(usex oauth)
 		-DENABLE_EXAMPLES=OFF
 		-DENABLE_GOA=$(usex gnome-online-accounts)
-		-DENABLE_UOA=OFF
 		-DWITH_LIBDB=$(usex berkdb "${EPREFIX}"/usr OFF)
 		# ENABLE_BACKTRACES requires libdwarf ?
 		-DENABLE_IPV6=$(usex ipv6)
