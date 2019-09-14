@@ -1,0 +1,53 @@
+commit 76c47ffa234052e95500f3c9bb54f2409f385567
+Author: Reto Gantenbein <reto.gantenbein@linuxmonk.ch>
+Date:   Sat Sep 14 18:29:11 2019 +0200
+
+    Make spell optional
+
+diff --git a/meson.build b/meson.build
+index 40801e5a7..0c8c98f53 100644
+--- a/meson.build
++++ b/meson.build
+@@ -86,7 +86,8 @@ libxml_dep = dependency('libxml-2.0', version: libxml_req)
+ libgd_dep = libgd_sp.get_variable('libgd_dep')
+ 
+ libsoup_dep = dependency('libsoup-2.4', version: libsoup_req, required: true)
+-gspell_dep = dependency('gspell-1', version: gspell_req, required: true)
++with_gspell = get_option('spell')
++gspell_dep = dependency('gspell-1', version: gspell_req, required: false)
+ x11_dep = dependency('x11', required: false)
+ 
+ introspection_dep = dependency('gobject-introspection-1.0', version: introspection_req, required: false)
+@@ -197,6 +198,7 @@ summary = [
+   '  Introspection: @0@'.format(generate_gir),
+   '        Plugins: @0@'.format(build_plugins),
+   '       Vala API: @0@'.format(generate_vapi),
++  '          Spell: @0@'.format(with_gspell),
+   '  Gvfs metadata: @0@'.format(enable_gvfs_metadata),
+   '',
+   'Directories:',
+diff --git a/meson_options.txt b/meson_options.txt
+index 90803fae7..d266f2252 100644
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -16,3 +16,7 @@ option('documentation',
+ option('enable-gvfs-metadata',
+         type: 'combo', choices : ['yes', 'no', 'auto'], value : 'auto',
+         description: 'Enable using gvfs to store metadata')
++
++option('spell',
++        type:'boolean', value: true,
++        description: 'Build spell support')
+diff --git a/plugins/meson.build b/plugins/meson.build
+index af94ab775..abeeac5b5 100644
+--- a/plugins/meson.build
++++ b/plugins/meson.build
+@@ -21,5 +21,7 @@ subdir('quickhighlight')
+ subdir('quickopen')
+ subdir('snippets')
+ subdir('sort')
+-subdir('spell')
++if with_gspell
++  subdir('spell')
++endif
+ subdir('time')
