@@ -1,7 +1,7 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
 inherit gnome.org meson multilib-minimal virtualx xdg
 
@@ -14,10 +14,10 @@ KEYWORDS="~amd64 ~amd64-linux"
 IUSE="test"
 
 RDEPEND="
-	>=sys-apps/dbus-1.5[${MULTILIB_USEDEP}]
+	>=app-accessibility/at-spi2-core-${PV}[${MULTILIB_USEDEP}]
 	>=dev-libs/glib-2.32:2[${MULTILIB_USEDEP}]
-	>=dev-libs/atk-2.32.0[${MULTILIB_USEDEP}]
-	>=app-accessibility/at-spi2-core-2.32.0[${MULTILIB_USEDEP}]
+	>=dev-libs/atk-2.34.0[${MULTILIB_USEDEP}]
+	>=sys-apps/dbus-1.5[${MULTILIB_USEDEP}]
 "
 DEPEND="${RDEPEND}
 	virtual/pkgconfig[${MULTILIB_USEDEP}]
