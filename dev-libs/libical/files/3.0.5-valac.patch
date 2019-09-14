@@ -1,0 +1,105 @@
+commit 2b586972c9f0645a96618581d93f6ad4bfe92564
+Author: Reto Gantenbein <reto.gantenbein@linuxmonk.ch>
+Date:   Sat Sep 14 15:25:27 2019 +0200
+
+    Allow to set VALA_EXECUTABLE
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 2b26fbe1..767486fc 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -334,21 +334,8 @@ if(ICAL_GLIB_VAPI)
+     )
+   endif()
+ 
+-  find_program(VALAC valac DOC "the Vala compiler")
+-  if(NOT VALAC)
+-    message(FATAL_ERROR
+-      "valac, the Vala compiler was not found. "
+-      "Install it or disable Vala bindings with -DICAL_GLIB_VAPI=False"
+-    )
+-  endif()
+-
+-  find_program(VAPIGEN vapigen DOC "tool to generate the Vala API")
+-  if(NOT VAPIGEN)
+-    message(FATAL_ERROR
+-      "vapigen, the tool for generating the Vala API was not found. "
+-      "Install it or disable Vala bindings with -DICAL_GLIB_VAPI=False"
+-    )
+-  endif()
++  find_package(Vala REQUIRED)
++  string(REPLACE valac vapigen VAPIGEN ${VALA_EXECUTABLE})
+ endif()
+ 
+ set(MIN_GLIB "2.32")
+diff --git a/cmake/modules/FindVala.cmake b/cmake/modules/FindVala.cmake
+new file mode 100644
+index 00000000..aa3a6e7d
+--- /dev/null
++++ b/cmake/modules/FindVala.cmake
+@@ -0,0 +1,65 @@
++##
++# Copyright 2009-2010 Jakob Westhoff. All rights reserved.
++# 
++# Redistribution and use in source and binary forms, with or without
++# modification, are permitted provided that the following conditions are met:
++# 
++#    1. Redistributions of source code must retain the above copyright notice,
++#       this list of conditions and the following disclaimer.
++# 
++#    2. Redistributions in binary form must reproduce the above copyright notice,
++#       this list of conditions and the following disclaimer in the documentation
++#       and/or other materials provided with the distribution.
++# 
++# THIS SOFTWARE IS PROVIDED BY JAKOB WESTHOFF ``AS IS'' AND ANY EXPRESS OR
++# IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
++# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
++# EVENT SHALL JAKOB WESTHOFF OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
++# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
++# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
++# PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
++# LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
++# OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
++# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++# 
++# The views and conclusions contained in the software and documentation are those
++# of the authors and should not be interpreted as representing official policies,
++# either expressed or implied, of Jakob Westhoff
++##
++
++##
++# Find module for the Vala compiler (valac)
++#
++# This module determines wheter a Vala compiler is installed on the current
++# system and where its executable is.
++#
++# Call the module using "find_package(Vala) from within your CMakeLists.txt.
++#
++# The following variables will be set after an invocation:
++#
++#  VALA_FOUND       Whether the vala compiler has been found or not
++#  VALA_EXECUTABLE  Full path to the valac executable if it has been found
++#  VALA_VERSION     Version number of the available valac
++##
++
++
++# Search for the valac executable in the usual system paths.
++find_program(VALA_EXECUTABLE
++  NAMES valac)
++
++# Handle the QUIETLY and REQUIRED arguments, which may be given to the find call.
++# Furthermore set VALA_FOUND to TRUE if Vala has been found (aka.
++# VALA_EXECUTABLE is set)
++
++include(FindPackageHandleStandardArgs)
++find_package_handle_standard_args(Vala DEFAULT_MSG VALA_EXECUTABLE)
++
++mark_as_advanced(VALA_EXECUTABLE)
++
++# Determine the valac version
++if(VALA_FOUND)
++    execute_process(COMMAND ${VALA_EXECUTABLE} "--version" 
++                    OUTPUT_VARIABLE "VALA_VERSION")
++    string(REPLACE "Vala" "" "VALA_VERSION" ${VALA_VERSION})
++    string(STRIP ${VALA_VERSION} "VALA_VERSION")
++endif(VALA_FOUND)
