@@ -3,7 +3,7 @@
 
 EAPI=7
 
-inherit gnome2-utils meson
+inherit gnome2-utils meson xdg
 
 DESCRIPTION="Graphical utility to query and update firmware on devices"
 HOMEPAGE="https://gitlab.gnome.org/hughsie/gnome-firmware-updater"
