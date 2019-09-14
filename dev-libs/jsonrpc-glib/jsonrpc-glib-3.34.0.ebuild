@@ -1,7 +1,7 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
 inherit gnome.org meson xdg vala
 
@@ -21,7 +21,8 @@ RDEPEND="
 	dev-libs/json-glib[introspection?]
 	introspection? ( dev-libs/gobject-introspection:= )
 "
-DEPEND="${RDEPEND}
+DEPEND="${RDEPEND}"
+BDEPEND="
 	vala? ( $(vala_depend) )
 	virtual/pkgconfig
 	gtk-doc? ( dev-util/gtk-doc )
