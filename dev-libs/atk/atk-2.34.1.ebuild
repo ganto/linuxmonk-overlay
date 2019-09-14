@@ -1,8 +1,8 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
-inherit gnome2 meson multilib-minimal
+EAPI=7
+inherit gnome.org meson multilib-minimal
 
 DESCRIPTION="GTK+ & GNOME Accessibility Toolkit"
 HOMEPAGE="https://wiki.gnome.org/Accessibility"
@@ -13,7 +13,7 @@ KEYWORDS="~amd64"
 IUSE="+introspection nls test"
 
 RDEPEND="
-	>=dev-libs/glib-2.31.2:2[${MULTILIB_USEDEP}]
+	>=dev-libs/glib-2.38.0:2[${MULTILIB_USEDEP}]
 	introspection? ( >=dev-libs/gobject-introspection-0.6.7:= )
 "
 DEPEND="${RDEPEND}
