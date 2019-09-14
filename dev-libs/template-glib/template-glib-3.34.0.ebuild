@@ -1,7 +1,7 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
 inherit gnome.org meson xdg vala
 
@@ -18,13 +18,14 @@ REQUIRED_USE="vala? ( introspection )"
 RDEPEND="
 	dev-libs/glib:2
 	dev-libs/gobject-introspection:=
-" # 3.28.0 depends on go-i unconditionally, USE flag controls GIR/typelib generation
-DEPEND="${RDEPEND}
+" # depends on go-i unconditionally for own functionality, USE flag controls GIR/typelib generation
+DEPEND="${RDEPEND}"
+BDEPEND="
 	vala? ( $(vala_depend) )
 	dev-util/glib-utils
 	sys-devel/bison
 	sys-devel/flex
-	sys-devel/gettext
+	>=sys-devel/gettext-0.19.8
 	virtual/pkgconfig
 	gtk-doc? ( dev-util/gtk-doc )
 "
