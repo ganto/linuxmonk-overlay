@@ -26,7 +26,6 @@ RDEPEND="
 	systemd? ( >=sys-apps/systemd-211 )
 "
 DEPEND="${RDEPEND}
-	sys-apps/help2man
 	sys-devel/gettext
 "
 
@@ -37,7 +36,7 @@ src_configure() {
 		$(meson_use consolekit)
 		$(meson_use elogind)
 		$(meson_use systemd)
-		-Dman=true
+		-Dman=false
 	)
 	meson_src_configure
 }
