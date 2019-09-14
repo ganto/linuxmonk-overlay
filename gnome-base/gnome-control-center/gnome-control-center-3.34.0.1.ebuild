@@ -21,8 +21,8 @@ COMMON_DEPEND="
 	>=dev-libs/glib-2.58.0:2[dbus]
 	gui-libs/libhandy
 	>=x11-libs/gdk-pixbuf-2.23.0:2
-	>=x11-libs/gtk+-3.22.0:3[X,wayland?]
-	>=gnome-base/gsettings-desktop-schemas-3.28.0
+	>=x11-libs/gtk+-3.22.20:3[X,wayland?]
+	>=gnome-base/gsettings-desktop-schemas-3.31.0
 	>=gnome-base/gnome-desktop-3.27.90:3=
 	>=gnome-base/gnome-settings-daemon-3.32.0
 	>=x11-misc/colord-0.1.34:0=
@@ -48,7 +48,7 @@ COMMON_DEPEND="
 	>=media-libs/clutter-1.11.3[gtk]
 	media-libs/clutter-gtk[gtk]
 
-	media-video/cheese
+	>=media-video/cheese-3.28.0
 
 	>=net-wireless/gnome-bluetooth-3.31.1:=
 	net-libs/libsoup:2.4
@@ -62,7 +62,7 @@ COMMON_DEPEND="
 	i18n? ( >=app-i18n/ibus-1.5.2 )
 	app-crypt/mit-krb5
 	>=gnome-extra/nm-applet-1.2.0
-	>=net-misc/networkmanager-1.2.0:=[modemmanager]
+	>=net-misc/networkmanager-1.12.0:=[modemmanager]
 	>=net-misc/modemmanager-0.7.990
 	v4l? (
 		>=media-video/cheese-3.5.91 )
