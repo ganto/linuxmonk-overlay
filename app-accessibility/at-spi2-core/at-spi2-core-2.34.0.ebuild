@@ -14,13 +14,14 @@ IUSE="X gtk-doc +introspection"
 KEYWORDS="~amd64 ~amd64-linux"
 
 RDEPEND="
-	>=sys-apps/dbus-1.5[${MULTILIB_USEDEP}]
 	>=dev-libs/glib-2.36:2[${MULTILIB_USEDEP}]
+	>=sys-apps/dbus-1.5[${MULTILIB_USEDEP}]
 	introspection? ( >=dev-libs/gobject-introspection-1.54.0:= )
+	x11-libs/libSM[${MULTILIB_USEDEP}]
+	x11-libs/libXi[${MULTILIB_USEDEP}]
+	x11-libs/libXtst[${MULTILIB_USEDEP}]
 	X? (
 		x11-libs/libX11[${MULTILIB_USEDEP}]
-		x11-libs/libXtst[${MULTILIB_USEDEP}]
-		x11-libs/libXi[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND="${RDEPEND}
@@ -39,6 +40,7 @@ PATCHES=(
 
 multilib_src_configure() {
 	local emesonargs=(
+		-Denable-xevie=false
 		-Denable_docs=$(multilib_native_usex gtk-doc true false)
 		-Denable-introspection=$(multilib_native_usex introspection)
 		-Denable-x11=$(usex X)
