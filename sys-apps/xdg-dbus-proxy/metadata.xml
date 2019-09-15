@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<upstream>
+		<bugs-to>https://github.com/flatpak/xdg-dbus-proxy/issues</bugs-to>
+		<remote-id type="github">flatpak/xdg-dbus-proxy</remote-id>
+	</upstream>
+	<longdescription lang="en">
+		xdg-dbus-proxy is a filtering proxy for D-Bus connections. It was originally
+		part of the flatpak project, but it has been broken out as a standalone
+		module to facilitate using it in other contexts.
+	</longdescription>
+</pkgmetadata>
