@@ -11,7 +11,7 @@ HOMEPAGE="https://wiki.gnome.org/Projects/GnomeShell"
 
 LICENSE="GPL-2+ LGPL-2+"
 SLOT="0"
-IUSE="+bluetooth +browser-extension elogind gtk-doc +ibus +networkmanager nsplugin systemd telepathy"
+IUSE="+bluetooth +browser-extension elogind gtk-doc +ibus +networkmanager systemd telepathy"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	?? ( elogind systemd )"
 
@@ -22,21 +22,21 @@ KEYWORDS="~amd64"
 #  * gstreamer support is currently automagic
 DEPEND="
 	>=dev-libs/libcroco-0.6.8:0.6
-	>=gnome-extra/evolution-data-server-3.17.2:=
+	>=gnome-extra/evolution-data-server-3.33.1:=
 	>=app-crypt/gcr-3.7.5[introspection]
 	>=gnome-base/gnome-desktop-3.7.90:3=[introspection]
-	>=dev-libs/glib-2.58.0:2
-	>=dev-libs/gobject-introspection-1.58.0:=
-	>=dev-libs/gjs-1.55.92
+	>=dev-libs/glib-2.57.2:2
+	>=dev-libs/gobject-introspection-1.49.1:=
+	>=dev-libs/gjs-1.57.0
 	>=x11-libs/gtk+-3.15.0:3[introspection]
-	nsplugin? ( >=dev-libs/json-glib-0.13.2 )
-	>=x11-wm/mutter-3.32.1:0/3[introspection]
+	>=x11-wm/mutter-3.34.0:0/5[introspection]
 	>=sys-auth/polkit-0.100[introspection]
-	>=gnome-base/gsettings-desktop-schemas-3.27.90
+	>=gnome-base/gsettings-desktop-schemas-3.33.1
 	>=x11-libs/startup-notification-0.11
 	>=app-i18n/ibus-1.5.2
-	bluetooth? ( >=net-wireless/gnome-bluetooth-3.20[introspection] )
+	bluetooth? ( >=net-wireless/gnome-bluetooth-3.9[introspection] )
 	>=media-libs/gstreamer-0.11.92:1.0
+	media-libs/gst-plugins-base:1.0
 	networkmanager? (
 		>=net-misc/networkmanager-1.10.4:=[introspection]
 		>=app-crypt/libsecret-0.18
@@ -45,7 +45,6 @@ DEPEND="
 	elogind? ( >=sys-auth/elogind-237 )
 
 	>=app-accessibility/at-spi2-atk-2.5.3
-	media-libs/libcanberra[gtk3]
 	x11-libs/gdk-pixbuf:2[introspection]
 	dev-libs/libxml2:2
 	x11-libs/libX11
@@ -57,7 +56,7 @@ DEPEND="
 
 	${PYTHON_DEPS}
 	dev-python/pygobject:3[${PYTHON_USEDEP}]
-	media-libs/mesa
+	media-libs/mesa[X(+)]
 "
 # Runtime-only deps are probably incomplete and approximate.
 # Introspection deps generated using:
@@ -83,17 +82,17 @@ RDEPEND="${DEPEND}
 	x11-libs/pango[introspection]
 	gnome-base/librsvg:2[introspection]
 
-	>=gnome-base/gnome-session-3.30.0
-	>=gnome-base/gnome-settings-daemon-3.30.0
+	>=gnome-base/gnome-session-2.91.91
+	>=gnome-base/gnome-settings-daemon-3.8.3
 
 	x11-misc/xdg-utils
 
-	>=x11-themes/adwaita-icon-theme-3.30.0
+	>=x11-themes/adwaita-icon-theme-3.26
 
 	networkmanager? (
 		net-misc/mobile-broadband-provider-info
 		sys-libs/timezone-data )
-	ibus? ( >=app-i18n/ibus-1.5.2[dconf(+),gtk,introspection] )
+	ibus? ( >=app-i18n/ibus-1.4.99[dconf(+),gtk,introspection] )
 	telepathy? (
 		>=net-im/telepathy-logger-0.2.4[introspection]
 		>=net-libs/telepathy-glib-0.19[introspection] )
@@ -102,7 +101,7 @@ RDEPEND="${DEPEND}
 # avoid circular dependency, see bug #546134
 PDEPEND="
 	>=gnome-base/gdm-3.5[introspection]
-	>=gnome-base/gnome-control-center-3.30.0[bluetooth(+)?,networkmanager(+)?]
+	>=gnome-base/gnome-control-center-3.26[bluetooth(+)?,networkmanager(+)?]
 	browser-extension? ( gnome-extra/chrome-gnome-shell )
 "
 BDEPEND="
@@ -110,20 +109,21 @@ BDEPEND="
 	dev-libs/libxslt
 	>=dev-util/gdbus-codegen-2.45.3
 	dev-util/glib-utils
-	gtk-doc? ( >=dev-util/gtk-doc-1.17 )
+	gtk-doc? ( >=dev-util/gtk-doc-1.17
+		app-text/docbook-xml-dtd:4.3 )
 	>=sys-devel/gettext-0.19.8
 	virtual/pkgconfig
 "
 
 PATCHES=(
+	# Fix automagic gnome-bluetooth dep, bug #398145
+	"${FILESDIR}"/3.34-optional-bluetooth.patch
 	# Change favorites defaults, bug #479918
 	"${FILESDIR}"/3.28.3-defaults.patch
 )
 
 src_prepare() {
 	xdg_src_prepare
-	# We want nsplugins in /usr/$(get_libdir)/nsbrowser/plugins not .../mozilla/plugins
-	sed -e 's/mozilla/nsbrowser/' -i meson.build || die
 	# Hack in correct python shebang
 	sed -e "s:python\.path():'/usr/bin/env ${EPYTHON}':" -i src/meson.build || die
 }
@@ -131,7 +131,6 @@ src_prepare() {
 src_configure() {
 	local emesonargs=(
 		$(meson_use bluetooth)
-		$(meson_use nsplugin browser_plugin)
 		$(meson_use gtk-doc gtk_doc)
 		-Dman=true
 		$(meson_use networkmanager)
@@ -168,6 +167,13 @@ pkg_postinst() {
 		elog "llvmpipe is used as fallback when no 3D acceleration"
 		elog "is available. You will need to enable llvm USE for"
 		elog "media-libs/mesa if you do not have hardware 3D setup."
+	fi
+
+	# https://bugs.gentoo.org/show_bug.cgi?id=563084
+	# TODO: Is this still the case after various fixed in 3.28 for detecting non-working KMS for wayland (to fall back to X)?
+	if has_version "x11-drivers/nvidia-drivers[-kms]"; then
+		ewarn "You will need to enable kms support in x11-drivers/nvidia-drivers,"
+		ewarn "otherwise Gnome will fail to start"
 	fi
 }
 
