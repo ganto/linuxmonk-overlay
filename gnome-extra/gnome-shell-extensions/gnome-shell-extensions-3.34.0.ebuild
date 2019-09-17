@@ -22,20 +22,20 @@ RDEPEND="${COMMON_DEPEND}
 	dev-libs/gobject-introspection:=
 	dev-libs/atk[introspection]
 	gnome-base/gnome-menus:3[introspection]
-	>=gnome-base/gnome-shell-3.14.2
+	>=gnome-base/gnome-shell-3.34
 	media-libs/clutter:1.0[introspection]
 	net-libs/telepathy-glib[introspection]
 	x11-libs/gdk-pixbuf:2[introspection]
 	x11-libs/gtk+:3[introspection]
 	x11-libs/pango[introspection]
 	x11-themes/adwaita-icon-theme
-	x11-wm/mutter[introspection]
+	>=x11-wm/mutter-3.32[introspection]
 "
 DEPEND="${COMMON_DEPEND}
 	dev-lang/sassc
 	>=sys-devel/gettext-0.19.8
 	virtual/pkgconfig
-	test? ( dev-lang/spidermonkey:52 )
+	test? ( dev-lang/spidermonkey:60 )
 "
 
 RESTRICT="!test? ( test )"
