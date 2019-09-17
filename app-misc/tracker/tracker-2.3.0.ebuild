@@ -1,10 +1,10 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
-PYTHON_COMPAT=( python3_{4,5,6,7} )
+EAPI=7
+PYTHON_COMPAT=( python3_{5,6,7} )
 
-inherit bash-completion-r1 eapi7-ver gnome.org linux-info meson python-any-r1 systemd vala xdg
+inherit bash-completion-r1 gnome.org linux-info meson python-any-r1 systemd vala xdg
 
 DESCRIPTION="A tagging metadata database, search tool and indexer"
 HOMEPAGE="https://wiki.gnome.org/Projects/Tracker"
@@ -14,12 +14,14 @@ SLOT="0/2.0"
 IUSE="gtk-doc +miners networkmanager stemmer"
 
 KEYWORDS="~amd64"
+#RESTRICT="!test? ( test )"
 
 PV_SERIES=$(ver_cut 1-2)
 
 # In 2.2.0 util-linux should only be necessary if glib is older than 2.52 at compile-time
+# But build still needs it - https://gitlab.gnome.org/GNOME/tracker/issues/131
 RDEPEND="
-	>=dev-libs/glib-2.59.3:2
+	>=dev-libs/glib-2.46:2
 	>=sys-apps/dbus-1.3.2
 	>=dev-libs/gobject-introspection-1.54:=
 	>=dev-libs/icu-4.8.1.2:=
@@ -31,17 +33,17 @@ RDEPEND="
 	stemmer? ( dev-libs/snowball-stemmer )
 	sys-apps/util-linux
 "
-DEPEND="${RDEPEND}
+DEPEND="${RDEPEND}"
+BDEPEND="
 	dev-util/glib-utils
-	>=dev-util/intltool-0.40.0
 	$(vala_depend)
 	gtk-doc? ( >=dev-util/gtk-doc-1.8
-		app-text/docbook-xml-dtd:4.1.2 )
+		app-text/docbook-xml-dtd:4.1.2
+		app-text/docbook-xml-dtd:4.5 )
 	>=sys-devel/gettext-0.19.8
 	virtual/pkgconfig
 	${PYTHON_DEPS}
-" # g-ir-merge needs py3; functional tests need py2, so disabled for now due to mixup
-# intltool-merge manually called in meson.build in 2.1.7; properly gone by 2.2.0
+"
 PDEPEND="miners? ( >=app-misc/tracker-miners-${PV_SERIES} )"
 
 function inotify_enabled() {
@@ -71,12 +73,13 @@ src_prepare() {
 
 src_configure() {
 	local emesonargs=(
+		$(meson_use gtk-doc docs)
 		-Dfts=true
-		-Dfunctional_tests=false # python2, but g-ir-merge needs py3; https://gitlab.gnome.org/GNOME/tracker/merge_requests/40
-		$(meson_use gtk-doc)
+		-Dfunctional_tests=false # many fail in 2.2; retry with 2.3
+		#$(meson_use test functional_tests)
 		-Dman=true
-		-Dnetwork_manager=$(usex networkmanager enabled disabled)
-		-Dstemmer=$(usex stemmer enabled disabled)
+		$(meson_feature networkmanager network_manager)
+		$(meson_feature stemmer)
 		-Dunicode_support=icu
 		-Dbash_completion="$(get_bashcompdir)"
 		-Dsystemd_user_services="$(systemd_get_userunitdir)"
