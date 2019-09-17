@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
-PYTHON_COMPAT=( python{2_7,3_4,3_5,3_6,3_7} )
+PYTHON_COMPAT=( python{2_7,3_5,3_6,3_7} )
 
 inherit gnome.org gnome2-utils meson python-any-r1 systemd xdg
 
@@ -11,19 +11,21 @@ HOMEPAGE="https://wiki.gnome.org/Projects/Tracker"
 
 LICENSE="GPL-2+ LGPL-2.1+"
 SLOT="0"
-IUSE="cue exif ffmpeg flac gif gsf +gstreamer iptc +iso +jpeg libav +pdf +playlist raw +rss seccomp test +taglib +tiff upower +vorbis +xml xmp xps"
+IUSE="cue exif ffmpeg gif gsf +gstreamer iptc +iso +jpeg libav +pdf +playlist raw +rss seccomp test +taglib +tiff upower +xml xmp xps"
 
 REQUIRED_USE="cue? ( gstreamer )" # cue is currently only supported via gstreamer, not ffmpeg/libav
+RESTRICT="!test? ( test )"
 
 KEYWORDS="~amd64"
 
 # tracker-2.1.7 currently always depends on ICU (theoretically could be libunistring instead); so choose ICU over enca always here for the time being (ICU is preferred)
 RDEPEND="
 	>=dev-libs/glib-2.46:2
-	>=app-misc/tracker-2.2.1:=
+	>=app-misc/tracker-2.2.0:=
 	gstreamer? (
 		media-libs/gstreamer:1.0
-		media-libs/gst-plugins-base:1.0 )
+		media-libs/gst-plugins-base:1.0
+		media-plugins/gst-plugins-meta:1.0 )
 	!gstreamer? (
 		ffmpeg? (
 			libav? ( media-video/libav:0= )
@@ -31,7 +33,6 @@ RDEPEND="
 
 	>=sys-apps/dbus-1.3.1
 	xmp? ( >=media-libs/exempi-2.1.0:= )
-	flac? ( >=media-libs/flac-1.2.1 )
 	raw? ( media-libs/gexiv2 )
 	>=dev-libs/icu-4.8.1.2:=
 	cue? ( media-libs/libcue )
@@ -45,7 +46,6 @@ RDEPEND="
 	seccomp? ( >=sys-libs/libseccomp-2.0 )
 	tiff? ( media-libs/tiff:0 )
 	xml? ( >=dev-libs/libxml2-2.6 )
-	vorbis? ( >=media-libs/libvorbis-0.22 )
 	pdf? ( >=app-text/poppler-0.16.0[cairo] )
 	taglib? ( >=media-libs/taglib-1.6 )
 	playlist? ( >=dev-libs/totem-pl-parser-3:= )
@@ -66,7 +66,6 @@ DEPEND="${RDEPEND}
 		gstreamer? ( || ( media-plugins/gst-plugins-libav:1.0
 			media-plugins/gst-plugins-openh264:1.0 ) ) )
 "
-# intltool-merge manually called in meson.build in 2.1.5; might be properly gone by 2.2.0 (MR !29)
 
 pkg_setup() {
 	use test && python-any-r1_pkg_setup
@@ -96,8 +95,8 @@ src_configure() {
 
 		-Ddocs=true
 		-Dextract=true
-		$(meson_use test functional_tests)
-		-Dminer_apps=true
+		-Dfunctional_tests=false # currently broken, may fare better in 2.2.3 or 2.3; if re-enabled re-add dconf test dep
+		#$(meson_use test functional_tests)
 		-Dminer_fs=true
 		$(meson_use rss miner_rss)
 		-Dwriteback=true
@@ -109,24 +108,24 @@ src_configure() {
 		-Dtext=true
 		-Dunzip_ps_gz_files=true # spawns gunzip
 
-		-Dcue=$(usex cue enabled disabled)
-		-Dexif=$(usex exif enabled disabled)
-		-Dflac=$(usex flac enabled disabled)
-		-Dgif=$(usex gif enabled disabled)
-		-Dgsf=$(usex gsf enabled disabled)
-		-Diptc=$(usex iptc enabled disabled)
-		-Diso=$(usex iso enabled disabled)
-		-Djpeg=$(usex jpeg enabled disabled)
-		-Dpdf=$(usex pdf enabled disabled)
-		-Dplaylist=$(usex playlist enabled disabled)
+		$(meson_feature cue)
+		$(meson_feature exif)
+		-Dflac=disabled # never use external flac extractor - gst-plugins-flac is for that; ffmpeg one is maybe worse, but that's non-default
+		$(meson_feature gif)
+		$(meson_feature gsf)
+		$(meson_feature iptc)
+		$(meson_feature iso)
+		$(meson_feature jpeg)
+		$(meson_feature pdf)
+		$(meson_feature playlist)
 		-Dpng=enabled
-		-Draw=$(usex raw enabled disabled)
-		-Dtaglib=$(usex taglib enabled disabled)
-		-Dtiff=$(usex tiff enabled disabled)
-		-Dvorbis=$(usex vorbis enabled disabled)
-		-Dxml=$(usex xml enabled disabled)
-		-Dxmp=$(usex xmp enabled disabled)
-		-Dxps=$(usex xps enabled disabled)
+		$(meson_feature raw)
+		$(meson_feature taglib)
+		$(meson_feature tiff)
+		-Dvorbis=disabled # never use external vorbis extractor - gst-plugins-base[vorbis] is for that; ffmpeg one is maybe worse, but that's non-default
+		$(meson_feature xml)
+		$(meson_feature xmp)
+		$(meson_feature xps)
 
 		-Dbattery_detection=$(usex upower upower none)
 		-Dcharset_detection=icu # enca is a possibility, but right now we have tracker core always dep on icu and icu is preferred over enca
@@ -138,5 +137,6 @@ src_configure() {
 }
 
 src_test() {
+	export GSETTINGS_BACKEND="dconf" # Tests require dconf and explicitly check for it (env_reset set it to "memory")
 	dbus-run-session meson test -C "${BUILD_DIR}" || die 'tests failed'
 }
