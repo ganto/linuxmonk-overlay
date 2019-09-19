@@ -1,0 +1,42 @@
+d3ba37faac294a432bc9a3abce2ed161891dc49f
+From d3ba37faac294a432bc9a3abce2ed161891dc49f Mon Sep 17 00:00:00 2001
+From: "carlosgc@webkit.org"
+ <carlosgc@webkit.org@268f45cc-cd09-0410-ab3c-d52691b4dbfc>
+Date: Tue, 17 Sep 2019 10:12:26 +0000
+Subject: [PATCH] [GTK] Cannot create EGL window surface: EGL_BAD_ALLOC
+ https://bugs.webkit.org/show_bug.cgi?id=201505
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Reviewed by Žan Doberšek.
+
+This happens because eglCreateWindowSurface() is called twice for the same window when not using the WPE
+renderer. New versions of Mesa fail the second time with a EGL_BAD_ALLOC.
+
+* platform/graphics/egl/GLContextEGL.cpp:
+(WebCore::GLContextEGL::createWindowContext): Check surface is nullptr before falling back to use
+eglCreateWindowSurface().
+
+git-svn-id: http://svn.webkit.org/repository/webkit/trunk@249951 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+---
+ Source/WebCore/platform/graphics/egl/GLContextEGL.cpp | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/Source/WebCore/platform/graphics/egl/GLContextEGL.cpp b/Source/WebCore/platform/graphics/egl/GLContextEGL.cpp
+index 14a7b4c97f6..a8a82d7097a 100644
+--- a/Source/WebCore/platform/graphics/egl/GLContextEGL.cpp
++++ b/Source/WebCore/platform/graphics/egl/GLContextEGL.cpp
+@@ -188,7 +188,8 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createWindowContext(GLNativeWindowTy
+     if (platformDisplay.type() == PlatformDisplay::Type::WPE)
+         surface = createWindowSurfaceWPE(display, config, window);
+ #else
+-    surface = eglCreateWindowSurface(display, config, static_cast<EGLNativeWindowType>(window), nullptr);
++    if (surface == EGL_NO_SURFACE)
++        surface = eglCreateWindowSurface(display, config, static_cast<EGLNativeWindowType>(window), nullptr);
+ #endif
+     if (surface == EGL_NO_SURFACE) {
+         WTFLogAlways("Cannot create EGL window surface: %s\n", lastErrorString());
+-- 
+2.21.0
+
