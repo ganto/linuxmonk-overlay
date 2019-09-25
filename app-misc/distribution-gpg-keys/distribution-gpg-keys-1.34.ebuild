@@ -1,7 +1,7 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
 DESCRIPTION="Collection of GPG keys used in Linux distributions"
 HOMEPAGE="https://github.com/xsuchy/distribution-gpg-keys"
@@ -23,6 +23,6 @@ src_install() {
 	if use copr ; then
 		doins -r keys/*
 	else
-		doins -r keys/{centos,epel,fedora,mageia,redhat,rpmfusion}
+		doins -r keys/{adobe,brave,calcforge,centos,dell,dropbox,epel,fedora,google,jpackage,mageia,microsoft,openmandriva,opensuse,postgresql,redhat,remi,rpmfusion,scientific-linux,skype,unitedrpms,virtualbox,zimbra}
 	fi
 }
