@@ -9,9 +9,12 @@ PYTHON_COMPAT=( python2_7 python3_{5,6} )
 
 inherit distutils-r1 user bash-completion-r1
 
+CORE_CONFIGS_VERSION=31.5-1
+
 DESCRIPTION="Builds RPM packages inside chroots"
 HOMEPAGE="https://github.com/rpm-software-management/mock"
-SRC_URI="https://github.com/rpm-software-management/${PN}/archive/${P}-1.tar.gz"
+SRC_URI="https://github.com/rpm-software-management/${PN}/archive/${P}-1.tar.gz
+	https://github.com/rpm-software-management/${PN}/archive/${PN}-core-configs-${CORE_CONFIGS_VERSION}.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
@@ -35,6 +38,10 @@ RDEPEND="
 	sys-apps/dnf
 	sys-libs/dnf-plugins-core
 "
+
+PATCHES=(
+	"${FILESDIR}"/${PV}-Fix-path.patch
+)
 
 S="${WORKDIR}/mock-${P}-1"
 
@@ -97,7 +104,7 @@ src_install() {
 	bashcomp_alias mock mock-parse-buildlog
 	popd
 
-	pushd mock-core-configs
+	pushd ../mock-mock-core-configs-${CORE_CONFIGS_VERSION}/mock-core-configs
 	insinto /etc/mock
 	doins etc/mock/*
 	popd

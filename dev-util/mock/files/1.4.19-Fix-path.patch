@@ -1,0 +1,19 @@
+commit 5b6e78ba4a0601bf3e2fd6238dd6524cd64fa185
+Author: Reto Gantenbein <reto.gantenbein@linuxmonk.ch>
+Date:   Sat Sep 28 03:41:07 2019 +0200
+
+    Fix 'free' path
+
+diff --git a/mock/py/mockbuild/plugins/hw_info.py b/mock/py/mockbuild/plugins/hw_info.py
+index 97093bc1..41f59dbb 100644
+--- a/mock/py/mockbuild/plugins/hw_info.py
++++ b/mock/py/mockbuild/plugins/hw_info.py
+@@ -42,7 +42,7 @@ class HwInfo(object):
+         out.write("CPU info:\n")
+         out.write(output)
+ 
+-        cmd = ["/bin/free"]
++        cmd = ["/usr/bin/free"]
+         output = mockbuild.util.do(cmd, shell=False, returnOutput=True, raiseExc=False)
+         out.write("\n\nMemory:\n")
+         out.write(output)
