@@ -7,7 +7,7 @@ DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_IN_SOURCE_BUILD=1
 PYTHON_COMPAT=( python2_7 python3_{5,6} )
 
-inherit distutils-r1 user bash-completion-r1
+inherit distutils-r1 bash-completion-r1
 
 CORE_CONFIGS_VERSION=31.5-1
 
@@ -23,6 +23,7 @@ IUSE=""
 
 DEPEND=""
 RDEPEND="
+	acct-group/mock acct-user/mock
 	app-arch/createrepo_c
 	app-arch/pigz
 	app-arch/rpm[lua,python,${PYTHON_USEDEP}]
@@ -47,13 +48,13 @@ S="${WORKDIR}/mock-${P}-1"
 
 src_compile() {
 	pushd mock
-	for i in py/mock.py py/mockchain.py; do
+	for i in py/mock.py py/mockchain.py py/mock-parse-buildlog.py; do
 		sed -i -e "s|^__VERSION__\s*=.*|__VERSION__=\"${PV}\"|" ${i}
 		sed -i -e "s|^SYSCONFDIR\s*=.*|SYSCONFDIR=\"/etc\"|" ${i}
 		sed -i -e "s|^PYTHONDIR\s*=.*|PYTHONDIR=\"$(python_get_sitedir)\"|" ${i}
 		sed -i -e "s|^PKGPYTHONDIR\s*=.*|PKGPYTHONDIR=\"$(python_get_sitedir)/mockbuild\"|" ${i}
 	done
-	for i in docs/mock.1 docs/mockchain.1; do
+	for i in docs/mock.1 docs/mockchain.1 docs/mock-parse-buildlog.1; do
 		sed -i -e "s|@VERSION@|${PV}\"|" ${i}
 	done
 
@@ -95,7 +96,9 @@ src_install() {
 	insinto /usr/share/cheat
 	newins docs/mock.cheat mock
 
-	keepdir /var/lib/mock
+	install -d -m 2775 -g mock "${EROOT%/}/var/lib/mock"
+	install -d -m 2775 -g mock "${EROOT%/}/var/cache/mock"
+	keepdir /var/lib/mock /var/cache/mock
 
 	dobashcomp etc/bash_completion.d/mock
 	bashcomp_alias mock mock.py
@@ -106,13 +109,11 @@ src_install() {
 
 	pushd ../mock-mock-core-configs-${CORE_CONFIGS_VERSION}/mock-core-configs
 	insinto /etc/mock
-	doins etc/mock/*
+	doins -r etc/mock/*
 	popd
 }
 
 pkg_postinst() {
-	enewgroup mock
-
 	elog
 	elog "Mock includes a number of plugins which might need additional runtime"
 	elog "dependencies:"
