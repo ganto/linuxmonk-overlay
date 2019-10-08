@@ -1,7 +1,7 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
 inherit gnome.org gnome2-utils meson xdg
 
@@ -35,7 +35,8 @@ RDEPEND="
 
 	x11-libs/libX11
 "
-DEPEND="${RDEPEND}
+DEPEND="${RDEPEND}"
+BDEPEND="
 	gtk-doc? ( >=dev-util/gtk-doc-1.16
 		app-text/docbook-xml-dtd:4.1.2 )
 	dev-util/glib-utils
