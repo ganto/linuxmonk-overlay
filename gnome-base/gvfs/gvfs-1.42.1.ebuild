@@ -21,7 +21,7 @@ REQUIRED_USE="
 	mtp? ( udev )
 	udisks? ( udev )
 "
-KEYWORDS="~amd64 ~amd64-linux"
+KEYWORDS="~amd64"
 
 RDEPEND="
 	>=dev-libs/glib-2.57.2:2
