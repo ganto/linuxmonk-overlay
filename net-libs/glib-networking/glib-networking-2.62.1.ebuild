@@ -11,7 +11,7 @@ HOMEPAGE="https://git.gnome.org/browse/glib-networking/"
 LICENSE="LGPL-2.1+"
 SLOT="0"
 IUSE="+gnome +libproxy +ssl test"
-KEYWORDS="~amd64 ~amd64-linux"
+KEYWORDS="~amd64"
 
 RDEPEND="
 	>=dev-libs/glib-2.60.0:2[${MULTILIB_USEDEP}]
