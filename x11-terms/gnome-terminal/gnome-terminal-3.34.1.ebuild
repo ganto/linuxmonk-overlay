@@ -13,13 +13,13 @@ LICENSE="GPL-3+"
 SLOT="0"
 IUSE="debug +gnome-shell +nautilus vanilla"
 
-KEYWORDS="~amd64 ~amd64-linux"
+KEYWORDS="~amd64"
 
 # FIXME: automagic dependency on gtk+[X], just transitive but needs proper control, bug 624960
 RDEPEND="
 	>=dev-libs/glib-2.42:2
 	>=x11-libs/gtk+-3.20:3
-	>=x11-libs/vte-0.58.0:2.91[!vanilla?]
+	>=x11-libs/vte-0.58.1:2.91[!vanilla?]
 	>=dev-libs/libpcre2-10
 	>=gnome-base/dconf-0.14
 	>=gnome-base/gsettings-desktop-schemas-0.1.0
