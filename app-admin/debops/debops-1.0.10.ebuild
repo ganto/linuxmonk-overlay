@@ -19,6 +19,7 @@ IUSE="doc test"
 
 RDEPEND="
 	app-admin/ansible[${PYTHON_USEDEP}]
+	dev-python/distro[${PYTHON_USEDEP}]
 	dev-python/dnspython[${PYTHON_USEDEP}]
 	dev-python/future[${PYTHON_USEDEP}]
 	dev-python/netaddr[${PYTHON_USEDEP}]
