@@ -2,21 +2,20 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
-PYTHON_COMPAT=( python{3_4,3_5,3_6} )
+PYTHON_COMPAT=( python{3_5,3_6} )
 PYTHON_REQ_USE="threads"
 
-inherit gnome.org gnome2-utils meson vala xdg python-single-r1
+inherit gnome.org gnome2-utils meson xdg python-single-r1
 
 DESCRIPTION="Media player for GNOME"
 HOMEPAGE="https://wiki.gnome.org/Apps/Videos"
 
 LICENSE="GPL-2+ LGPL-2+"
 SLOT="0"
-IUSE="cdr gtk-doc +introspection lirc nautilus +python test vala"
+IUSE="gtk-doc +introspection lirc nautilus +python test"
 # see bug #359379
 REQUIRED_USE="
 	python? ( introspection ${PYTHON_REQUIRED_USE} )
-	vala? ( introspection )
 "
 
 KEYWORDS="~amd64"
@@ -42,7 +41,6 @@ COMMON_DEPEND="
 	x11-libs/gdk-pixbuf:2
 	introspection? ( >=dev-libs/gobject-introspection-1.54:= )
 
-	cdr? ( >=dev-libs/libxml2-2.6:2 )
 	lirc? ( app-misc/lirc )
 	nautilus? ( >=gnome-base/nautilus-2.91.3 )
 	python? (
@@ -67,15 +65,13 @@ DEPEND="${COMMON_DEPEND}
 	>=sys-devel/gettext-0.19.8
 	virtual/pkgconfig
 	x11-base/xorg-proto
-	vala? ( $(vala_depend) )
 "
 # perl for pod2man
 # docbook-xml-dtd is needed for user doc
 # Prevent dev-python/pylint dep, bug #482538
 
 PATCHES=(
-	"${FILESDIR}"/${PV}-control-plugins.patch # Do not force all plugins
-	"${FILESDIR}"/3.26-gst-inspect-sandbox.patch # Allow disabling calls to gst-inspect (sandbox issue)
+	"${FILESDIR}"/3.34.0-control-plugins.patch # Do not force all plugins
 )
 
 pkg_setup() {
@@ -83,23 +79,18 @@ pkg_setup() {
 }
 
 src_prepare() {
-#	use vala && vala_src_prepare
 	xdg_src_prepare
 }
 
 src_configure() {
-	# Disabled: sample-python, sample-vala, zeitgeist-dp
-	# brasero-disc-recorder and gromit require gtk+[X], but totem itself does
-	# for now still too, so no point in optionality based on that yet.
+	# Disabled: sample-python, zeitgeist-dp
 	local plugins="apple-trailers,autoload-subtitles"
 	plugins+=",im-status,media-player-keys"
 	plugins+=",properties,recent,screensaver,screenshot"
-	plugins+=",skipto,variable-rate,vimeo"
-	use cdr && plugins+=",brasero-disc-recorder"
+	plugins+=",skipto,variable-rate,vimeo,rotation"
 	use lirc && plugins+=",lirc"
 	use nautilus && plugins+=",save-file"
 	use python && plugins+=",dbusservice,pythonconsole,opensubtitles"
-	use vala && plugins+=",rotation"
 
 	local emesonargs=(
 		-Denable-easy-codec-installation=yes
@@ -107,7 +98,6 @@ src_configure() {
 		-Dwith-plugins=${plugins}
 		$(meson_use gtk-doc enable-gtk-doc)
 		-Denable-introspection=$(usex introspection yes no)
-		-Dgst-inspect=false
 	)
 	meson_src_configure
 }
