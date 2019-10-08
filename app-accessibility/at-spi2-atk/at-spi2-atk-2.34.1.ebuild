@@ -10,11 +10,11 @@ HOMEPAGE="https://wiki.gnome.org/Accessibility"
 
 LICENSE="LGPL-2+"
 SLOT="2"
-KEYWORDS="~amd64 ~amd64-linux"
+KEYWORDS="~amd64"
 IUSE="test"
 
 RDEPEND="
-	>=app-accessibility/at-spi2-core-${PV}[${MULTILIB_USEDEP}]
+	>=app-accessibility/at-spi2-core-2.34.0[${MULTILIB_USEDEP}]
 	>=dev-libs/glib-2.32:2[${MULTILIB_USEDEP}]
 	>=dev-libs/atk-2.34.0[${MULTILIB_USEDEP}]
 	>=sys-apps/dbus-1.5[${MULTILIB_USEDEP}]
