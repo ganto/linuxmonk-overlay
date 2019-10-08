@@ -20,11 +20,11 @@ KEYWORDS="~amd64"
 # bundles unarr
 COMMON_DEPEND="
 	dev-libs/atk
-	>=dev-libs/glib-2.53.4:2[dbus]
+	>=dev-libs/glib-2.38:2[dbus]
 	>=dev-libs/libxml2-2.5:2
 	sys-libs/zlib:=
 	>=x11-libs/gdk-pixbuf-2.36.5:2
-	>=x11-libs/gtk+-3.16.0:3[introspection?]
+	>=x11-libs/gtk+-3.22.0:3[introspection?]
 	gnome-base/gsettings-desktop-schemas
 	>=x11-libs/cairo-1.10:=
 	>=app-text/poppler-0.33[cairo]
@@ -56,12 +56,14 @@ RDEPEND="${COMMON_DEPEND}
 "
 DEPEND="${COMMON_DEPEND}
 	app-text/docbook-xml-dtd:4.3
-	app-text/yelp-tools
+	dev-util/gdbus-codegen
+	dev-util/glib-utils
 	>=dev-util/gtk-doc-am-1.13
 	>=dev-util/intltool-0.35
 	dev-util/itstool
 	sys-devel/gettext
 	virtual/pkgconfig
+	app-text/yelp-tools
 "
 # eautoreconf needs:
 #  app-text/yelp-tools
