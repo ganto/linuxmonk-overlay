@@ -1,8 +1,8 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
-PYTHON_COMPAT=( python3_{4,5,6} )
+EAPI=7
+PYTHON_COMPAT=( python3_{5,6,7} )
 
 inherit gnome.org meson python-single-r1 xdg
 
@@ -20,24 +20,24 @@ KEYWORDS="~amd64"
 COMMON_DEPEND="
 	${PYTHON_DEPS}
 "
-# g-s-d, gnome-desktop, gnome-shell etc. needed at runtime for the gsettings schemas
+# See README.md for list of deps
 RDEPEND="${COMMON_DEPEND}
 	>=dev-python/pygobject-3.10.2:3[${PYTHON_USEDEP}]
 	>=gnome-base/gnome-settings-daemon-3
+	x11-themes/sound-theme-freedesktop
 
-	dev-libs/glib:2
+	>=dev-libs/glib-2.58:2
 	>=x11-libs/gtk+-3.12:3[introspection]
-	>=gnome-base/gnome-desktop-3.6.0.1:3[introspection]
+	>=gnome-base/gnome-desktop-3.30:3[introspection]
 	net-libs/libsoup:2.4[introspection]
 	x11-libs/libnotify[introspection]
 
-	>=gnome-base/gsettings-desktop-schemas-3.27.90
+	>=gnome-base/gsettings-desktop-schemas-3.28
 	>=gnome-base/gnome-shell-3.24
 	x11-wm/mutter
 "
-DEPEND="${COMMON_DEPEND}
-	>=sys-devel/gettext-0.19.8
-"
+DEPEND="${COMMON_DEPEND}"
+BDEPEND=">=sys-devel/gettext-0.19.8"
 
 PATCHES=(
 	"${FILESDIR}"/3.28.1-gentoo-cursor-themes.patch # Add contents of Gentoo's cursor theme directory to cursor theme list
