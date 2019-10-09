@@ -96,7 +96,7 @@ PATCHES=(
 	# Allow building USE=wayland without cogl-gles2 from USE=gles2
 	"${FILESDIR}"/3.32.2-no-cogl-gles2.patch
 	# Fix OpenJDK windows
-	"${FILESDIR}"/${PV}-window-actor-Special-case-shaped-Java-windows.patch
+	"${FILESDIR}"/3.34.0-window-actor-Special-case-shaped-Java-windows.patch
 )
 
 src_configure() {
