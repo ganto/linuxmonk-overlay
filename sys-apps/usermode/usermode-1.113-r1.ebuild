@@ -1,7 +1,7 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
 inherit autotools
 
@@ -19,9 +19,9 @@ CDEPEND="
 	dev-perl/XML-Parser
 	selinux? ( sys-libs/libselinux )
 	sys-libs/libuser
+	sys-libs/pam
 	>=x11-libs/gtk+-2.23:2
 	x11-libs/startup-notification
-	virtual/pam
 "
 DEPEND="${CDEPEND}
 	dev-util/desktop-file-utils
