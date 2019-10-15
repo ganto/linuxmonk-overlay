@@ -1,11 +1,9 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
-#AUTOTOOLS_AUTORECONF=1
-#AUTOTOOLS_PRUNE_LIBTOOL_FILES=all
-PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
+PYTHON_COMPAT=( python2_7 python3_{5,6,7} )
 
 inherit autotools python-r1
 
@@ -27,7 +25,7 @@ CDEPEND="
 	selinux? ( sys-libs/libselinux )
 	>=sys-devel/gettext-0.18.2
 	sys-libs/glibc[nscd]
-	virtual/pam
+	sys-libs/pam
 "
 DEPEND="${CDEPEND}
 	doc? ( dev-util/gtk-doc )
