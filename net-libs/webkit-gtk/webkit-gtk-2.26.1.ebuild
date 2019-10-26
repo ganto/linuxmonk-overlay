@@ -15,7 +15,7 @@ SRC_URI="https://www.webkitgtk.org/releases/${MY_P}.tar.xz"
 
 LICENSE="LGPL-2+ BSD"
 SLOT="4/37" # soname version of libwebkit2gtk-4.0
-KEYWORDS="~amd64 ~amd64-linux"
+KEYWORDS="~amd64"
 
 IUSE="aqua coverage doc +egl +geolocation gles2 gnome-keyring +gstreamer +introspection +jpeg2k libnotify +opengl spell wayland +webgl +X"
 
@@ -126,10 +126,10 @@ S="${WORKDIR}/${MY_P}"
 CHECKREQS_DISK_BUILD="18G" # and even this might not be enough, bug #417307
 
 PATCHES=(
-	# https://trac.webkit.org/changeset/249947/webkit
-	"${FILESDIR}"/${PV}-hw-accl-close-crash.patch
-	# https://trac.webkit.org/changeset/249951/webkit
-	"${FILESDIR}"/${PV}-egl-bad-alloc.patch
+	# https://bugs.webkit.org/show_bug.cgi?id=201979
+	"${FILESDIR}"/${PV}-201979.patch
+	# https://mail.gnome.org/archives/distributor-list/2019-October/msg00000.html
+	"${FILESDIR}"/${PV}-process.patch
 )
 
 pkg_pretend() {
