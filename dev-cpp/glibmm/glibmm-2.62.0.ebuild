@@ -9,12 +9,12 @@ HOMEPAGE="https://www.gtkmm.org"
 
 LICENSE="LGPL-2.1+ GPL-2+" # GPL-2+ applies only to the build system
 SLOT="2"
-KEYWORDS="~amd64 ~amd64-linux"
+KEYWORDS="~amd64"
 IUSE="doc debug test"
 
 RDEPEND="
 	>=dev-libs/libsigc++-2.9.1:2[${MULTILIB_USEDEP}]
-	>=dev-libs/glib-2.55.1:2[${MULTILIB_USEDEP}]
+	>=dev-libs/glib-2.59.2:2[${MULTILIB_USEDEP}]
 "
 DEPEND="${RDEPEND}
 	virtual/pkgconfig
