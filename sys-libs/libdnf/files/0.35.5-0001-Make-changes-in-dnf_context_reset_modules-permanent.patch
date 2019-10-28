@@ -1,0 +1,27 @@
+From c80f871a0f99e1f9f9df0b162e46bc103020a10d Mon Sep 17 00:00:00 2001
+From: Jaroslav Mracek <jmracek@redhat.com>
+Date: Thu, 24 Oct 2019 09:06:59 +0200
+Subject: [PATCH] Make changes in dnf_context_reset_modules permanent
+
+It saves modular changes and updates failsafe data. The function now
+does not require successful transaction after calling.
+---
+ libdnf/dnf-context.cpp | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/libdnf/dnf-context.cpp b/libdnf/dnf-context.cpp
+index 534d7a28..8f660bc5 100644
+--- a/libdnf/dnf-context.cpp
++++ b/libdnf/dnf-context.cpp
+@@ -2515,6 +2515,8 @@ dnf_context_reset_modules(DnfContext * context, DnfSack * sack, const char ** mo
+     for (const char ** names = module_names; *names != NULL; ++names) {
+         container->reset(*names);
+     }
++    container->save();
++    container->updateFailSafeData();
+     if (sack != nullptr) {
+         std::vector<const char *> hotfixRepos;
+         // don't filter RPMs from repos with the 'module_hotfixes' flag set
+-- 
+2.23.0
+

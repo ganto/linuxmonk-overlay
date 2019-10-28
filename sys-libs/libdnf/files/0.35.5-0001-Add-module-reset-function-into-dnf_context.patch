@@ -1,0 +1,72 @@
+From b143947822c7c7a438dd844aa3c8ccd485c47aa6 Mon Sep 17 00:00:00 2001
+From: Jaroslav Mracek <jmracek@redhat.com>
+Date: Tue, 22 Oct 2019 07:51:58 +0200
+Subject: [PATCH] Add module reset function into dnf_context
+
+The function was created for PackageKit
+---
+ libdnf/dnf-context.cpp | 35 +++++++++++++++++++++++++++++++++++
+ libdnf/dnf-context.h   |  4 ++++
+ 2 files changed, 39 insertions(+)
+
+diff --git a/libdnf/dnf-context.cpp b/libdnf/dnf-context.cpp
+index bd18d8fe..979bf077 100644
+--- a/libdnf/dnf-context.cpp
++++ b/libdnf/dnf-context.cpp
+@@ -2500,3 +2500,38 @@ pluginGetContext(DnfPluginInitData * data)
+     }
+     return (static_cast<PluginHookContextInitData *>(data)->context);
+ }
++
++gboolean
++dnf_context_reset_modules(DnfContext * context, DnfSack * sack, const char ** module_names, GError ** error)
++{
++    assert(sack);
++    assert(module_names);
++
++    DnfContextPrivate * priv = GET_PRIVATE(context);
++    auto container = dnf_sack_get_module_container(sack);
++    if (!container) {
++        return TRUE;
++    }
++    for (const char ** names = module_names; *names != NULL; ++names) {
++        container->reset(*names);
++    }
++    if (sack != nullptr) {
++        std::vector<const char *> hotfixRepos;
++        // don't filter RPMs from repos with the 'module_hotfixes' flag set
++        for (unsigned int i = 0; i < priv->repos->len; i++) {
++            auto repo = static_cast<DnfRepo *>(g_ptr_array_index(priv->repos, i));
++            if (dnf_repo_get_module_hotfixes(repo)) {
++                hotfixRepos.push_back(dnf_repo_get_id(repo));
++            }
++        }
++        hotfixRepos.push_back(nullptr);
++        try {
++            dnf_sack_filter_modules_v2(sack, nullptr, hotfixRepos.data(), priv->install_root,
++                priv->platform_module, false, false);
++        } catch (libdnf::ModuleDefaultsContainer::ConflictException & exception) {
++            g_set_error(error, DNF_ERROR, DNF_ERROR_FAILED, "%s", exception.what());
++            return FALSE;
++        }
++    }
++    return TRUE;
++}
+diff --git a/libdnf/dnf-context.h b/libdnf/dnf-context.h
+index f7c47780..92eb386b 100644
+--- a/libdnf/dnf-context.h
++++ b/libdnf/dnf-context.h
+@@ -254,6 +254,10 @@ bool             dnf_context_plugin_hook                (DnfContext     *context
+                                                          PluginHookId    id,
+                                                          DnfPluginHookData *hookData,
+                                                          DnfPluginError *error);
++gboolean         dnf_context_reset_modules              (DnfContext * context,
++                                                         DnfSack * sack,
++                                                         const char ** module_names,
++                                                         GError ** error);
+ 
+ G_END_DECLS
+ 
+-- 
+2.23.0
+
