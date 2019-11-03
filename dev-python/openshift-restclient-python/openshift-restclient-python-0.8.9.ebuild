@@ -1,9 +1,9 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 
-PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
+PYTHON_COMPAT=( python2_7 python3_{5,6} )
 inherit distutils-r1
 
 MY_PN="${PN%%-restclient-python}"
@@ -27,6 +27,7 @@ RDEPEND="
 	dev-python/python-string-utils[${PYTHON_USEDEP}]
 	>=dev-python/ruamel-yaml-0.15[${PYTHON_USEDEP}]
 	dev-python/six[${PYTHON_USEDEP}]
+	<dev-python/urllib3-1.25
 "
 
 PATCHES=( "${FILESDIR}/${MY_PN}-0.6.1-Fix-install_requires.patch" )
