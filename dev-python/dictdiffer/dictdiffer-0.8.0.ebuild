@@ -22,6 +22,8 @@ DEPEND="
 		>=dev-python/sphinx_rtd_theme-0.1.9 )
 "
 
+PATCHES=( "${FILESDIR}"/${PV}-Remove-setup_requires.patch )
+
 DOCS=( AUTHORS CHANGES CONTRIBUTING.rst MAINTAINERS README.rst )
 
 python_compile_all() {

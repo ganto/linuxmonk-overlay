@@ -1,0 +1,30 @@
+commit 371219547f62ec563ef7041023bf89993e4e15e2
+Author: Reto Gantenbein <reto.gantenbein@linuxmonk.ch>
+Date:   Wed Nov 6 07:29:05 2019 +0100
+
+    Remove setup_requires
+
+diff --git a/setup.py b/setup.py
+index ac84f50..577434e 100644
+--- a/setup.py
++++ b/setup.py
+@@ -49,11 +49,6 @@ for key, reqs in extras_require.items():
+         continue
+     extras_require['all'].extend(reqs)
+ 
+-setup_requires = [
+-    'pytest-runner>=2.7',
+-    'setuptools_scm>=3.1.0',
+-]
+-
+ packages = find_packages()
+ 
+ version_template = """\
+@@ -87,7 +82,6 @@ setup(
+     packages=['dictdiffer'],
+     zip_safe=False,
+     extras_require=extras_require,
+-    setup_requires=setup_requires,
+     tests_require=tests_require,
+     classifiers=[
+         'Programming Language :: Python :: 2',
