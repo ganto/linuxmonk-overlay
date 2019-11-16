@@ -17,7 +17,7 @@ REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 	test? ( cairo )
 "
-KEYWORDS="~amd64 ~amd64-linux"
+KEYWORDS="~amd64"
 
 # virtual/pkgconfig needed at runtime, bug #505408
 RDEPEND="
