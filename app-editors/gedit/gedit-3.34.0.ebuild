@@ -18,7 +18,7 @@ SLOT="0"
 IUSE="+introspection +python gtk-doc spell vala"
 REQUIRED_USE="python? ( introspection ${PYTHON_REQUIRED_USE} ) spell? ( python )"
 
-KEYWORDS="~amd64 ~amd64-linux"
+KEYWORDS="~amd64"
 
 # X libs are not needed for OSX (aqua)
 COMMON_DEPEND="
