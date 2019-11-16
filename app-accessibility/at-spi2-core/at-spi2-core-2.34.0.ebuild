@@ -11,7 +11,7 @@ HOMEPAGE="https://wiki.gnome.org/Accessibility"
 LICENSE="LGPL-2+"
 SLOT="2"
 IUSE="X gtk-doc +introspection"
-KEYWORDS="~amd64 ~amd64-linux"
+KEYWORDS="~amd64"
 
 RDEPEND="
 	>=dev-libs/glib-2.36:2[${MULTILIB_USEDEP}]
