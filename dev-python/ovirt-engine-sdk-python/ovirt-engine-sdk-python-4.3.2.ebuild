@@ -2,13 +2,16 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-PYTHON_COMPAT=( python2_7 python3_{4,5,6,7} )
+PYTHON_COMPAT=( python2_7 python3_{5,6,7} )
 
 inherit distutils-r1
 
+MY_PN="${PN%%-python}"
+MY_P="${MY_PN}-${PV}"
+
 DESCRIPTION="Python SDK for oVirt Engine API"
 HOMEPAGE="https://www.ovirt.org/ https://github.com/oVirt/ovirt-engine-sdk"
-SRC_URI="mirror://pypi/${PN:0:1}/${PN}/${P}.tar.gz"
+SRC_URI="https://github.com/oVirt/${MY_PN}/archive/${PV}.tar.gz -> ${MY_P}.tar.gz"
 
 LICENSE="Apache-2.0"
 SLOT="0"
@@ -22,6 +25,15 @@ DEPEND="
 	virtual/python-enum34[${PYTHON_USEDEP}]
 "
 RDEPEND="${DEPEND}"
+
+DOCS=( README.adoc CHANGES.adoc )
+
+S="${WORKDIR}/${MY_P}/sdk"
+
+src_prepare() {
+	cp "${FILESDIR}"/${PV}-version.py lib/ovirtsdk4/version.py || die
+	default
+}
 
 python_install_all() {
 	distutils-r1_python_install_all
