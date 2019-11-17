@@ -9,7 +9,7 @@ HOMEPAGE="https://wiki.gnome.org/Projects/Zenity"
 
 LICENSE="LGPL-2+"
 SLOT="0"
-KEYWORDS="~amd64 ~amd64-linux"
+KEYWORDS="~amd64"
 IUSE="debug libnotify webkit"
 
 # TODO: X11 dependency is automagically enabled
