@@ -1,7 +1,7 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 inherit gnome.org gnome2-utils meson readme.gentoo-r1 xdg
 
 DESCRIPTION="Screenshot utility for GNOME"
@@ -10,20 +10,20 @@ HOMEPAGE="https://gitlab.gnome.org/GNOME/gnome-screenshot"
 LICENSE="GPL-2+"
 SLOT="0"
 IUSE=""
-KEYWORDS="~amd64 ~amd64-linux"
+KEYWORDS="~amd64"
 
 # libcanberra 0.26-r2 is needed for gtk+:3 fixes
-COMMON_DEPEND="
+DEPEND="
 	x11-libs/libX11
 	x11-libs/libXext
 	>=dev-libs/glib-2.35.1:2[dbus]
 	>=x11-libs/gtk+-3.12.0:3
 	>=media-libs/libcanberra-0.26-r2[gtk3]
 "
-RDEPEND="${COMMON_DEPEND}
+RDEPEND="${DEPEND}
 	>=gnome-base/gsettings-desktop-schemas-0.1.0
 "
-DEPEND="${COMMON_DEPEND}
+BDEPEND="
 	dev-libs/appstream-glib
 	dev-libs/libxml2:2
 	>=sys-devel/gettext-0.19.8
