@@ -10,7 +10,7 @@ HOMEPAGE="https://git.gnome.org/browse/gnome-font-viewer"
 LICENSE="GPL-2+ LGPL-2.1+"
 SLOT="0"
 IUSE=""
-KEYWORDS="~amd64 ~amd64-linux"
+KEYWORDS="~amd64"
 
 RDEPEND="
 	>=dev-libs/glib-2.35.1:2
