@@ -12,7 +12,7 @@ HOMEPAGE="https://wiki.gnome.org/Apps/Yelp"
 LICENSE="GPL-2+"
 SLOT="0"
 IUSE=""
-KEYWORDS="~amd64 ~amd64-linux"
+KEYWORDS="~amd64"
 
 RDEPEND="
 	app-arch/bzip2:=
@@ -29,10 +29,9 @@ RDEPEND="
 DEPEND="${RDEPEND}
 	dev-libs/appstream-glib
 	>=dev-util/gtk-doc-am-1.13
-	>=dev-util/intltool-0.41.0
 	dev-util/glib-utils
 	dev-util/itstool
-	>=sys-devel/gettext-0.17
+	>=sys-devel/gettext-0.19.8
 	virtual/pkgconfig
 "
 
