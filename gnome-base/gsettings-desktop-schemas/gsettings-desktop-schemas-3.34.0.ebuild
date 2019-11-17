@@ -10,7 +10,7 @@ HOMEPAGE="https://git.gnome.org/browse/gsettings-desktop-schemas"
 LICENSE="LGPL-2.1+"
 SLOT="0"
 IUSE="+introspection"
-KEYWORDS="~amd64 ~amd64-linux"
+KEYWORDS="~amd64"
 
 DEPEND="
 	introspection? ( >=dev-libs/gobject-introspection-1.54:= )
