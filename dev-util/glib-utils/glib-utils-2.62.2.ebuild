@@ -15,7 +15,7 @@ SLOT="0" # /usr/bin utilities that can't be parallel installed by their nature
 IUSE=""
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
-KEYWORDS="~amd64 ~amd64-linux"
+KEYWORDS="~amd64"
 
 RDEPEND="${PYTHON_DEPS}
 	!<dev-libs/glib-2.56.2:2
