@@ -11,7 +11,7 @@ HOMEPAGE="https://developer.gnome.org/libpeas/stable/"
 
 LICENSE="LGPL-2+"
 SLOT="0"
-KEYWORDS="~amd64 ~amd64-linux"
+KEYWORDS="~amd64"
 
 IUSE="+gtk glade lua luajit +python vala"
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
