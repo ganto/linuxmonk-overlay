@@ -12,28 +12,36 @@ SRC_URI="https://github.com/fedora-modularity/${PN}/releases/download/${P}/modul
 LICENSE="MIT"
 SLOT="2"
 KEYWORDS="~amd64"
-IUSE=""
+IUSE="introspection gtk-doc"
+REQUIRED_USE="gtk-doc? ( introspection )"
 RESTRICT="test"
 
 CDEPEND="
-	dev-libs/glib
+	dev-libs/glib[gtk-doc?]
 	dev-libs/libyaml
 "
 RDEPEND="${CDEPEND}"
 DEPEND="${CDEPEND}
 	virtual/pkgconfig
-	dev-libs/gobject-introspection
-	dev-util/gtk-doc
+	introspection? ( dev-libs/gobject-introspection )
+	gtk-doc? ( dev-util/gtk-doc )
 "
 BDEPEND=""
 
 S="${WORKDIR}"/modulemd-${PV}
 
+src_prepare() {
+	default
+
+	sed -i 's|/usr/bin/sh|/bin/sh|g' modulemd/clang_simple_version.sh || die
+}
+
 src_configure() {
 	local emesonargs=(
 		-Ddeveloper_build=false
-		-Dbuild_api_v1=true
-		-Dbuild_api_v2=true
+		$(meson_use !introspection skip_introspection)
+		-Dskip_formatters=true
+		$(meson_use gtk-doc with_docs)
 	)
 	meson_src_configure
 }
