@@ -14,19 +14,19 @@ LICENSE="LGPL-2"
 SLOT="2"
 KEYWORDS="~amd64"
 
-IUSE="+introspection vala"
+IUSE="gtk-doc +introspection tools vala"
 REQUIRED_USE="vala? ( introspection )"
 
 RDEPEND="
 	|| ( >=dev-lang/rust-1.34.0[${MULTILIB_USEDEP}] >=dev-lang/rust-bin-1.34.0[${MULTILIB_USEDEP}] )
 	>=dev-libs/glib-2.52.0:2[${MULTILIB_USEDEP}]
-	>=dev-libs/libcroco-0.6.1[${MULTILIB_USEDEP}]
-	>=dev-libs/libxml2-2.9.0:2[${MULTILIB_USEDEP}]
+	>=dev-libs/libcroco-0.6.8-r1[${MULTILIB_USEDEP}]
+	>=dev-libs/libxml2-2.9.1-r4:2[${MULTILIB_USEDEP}]
 	>=x11-libs/cairo-1.16.0[${MULTILIB_USEDEP}]
-	>=x11-libs/gdk-pixbuf-2.20:2[introspection?,${MULTILIB_USEDEP}]
-	>=x11-libs/gtk+-3.10:3[${MULTILIB_USEDEP}]
+	>=x11-libs/gdk-pixbuf-2.30.7:2[introspection?,${MULTILIB_USEDEP}]
 	>=x11-libs/pango-1.38.0[${MULTILIB_USEDEP}]
 	introspection? ( >=dev-libs/gobject-introspection-0.10.8:= )
+	tools? ( >=x11-libs/gtk+-3.10.0:3 )
 "
 DEPEND="${RDEPEND}
 	dev-libs/gobject-introspection-common
@@ -34,6 +34,7 @@ DEPEND="${RDEPEND}
 	>=dev-util/gtk-doc-am-1.13
 	>=virtual/pkgconfig-0-r1[${MULTILIB_USEDEP}]
 	virtual/cargo
+	gtk-doc? ( >=dev-util/gtk-doc-1.13 )
 	vala? ( $(vala_depend) )
 "
 # >=gtk-doc-am-1.13, gobject-introspection-common, vala-common needed by eautoreconf
@@ -46,10 +47,7 @@ CHOST_arm64=aarch64-unknown-linux-gnu
 src_prepare() {
 	local build_dir
 
-	eautoreconf
-
 	use vala && vala_src_prepare
-	gnome2_src_prepare
 
 	# Work around issue where vala file is expected in local
 	# directory instead of source directory.
@@ -58,6 +56,11 @@ src_prepare() {
 		mkdir -p "${build_dir}"
 		cp -p "${S}/Rsvg-2.0-custom.vala" "${build_dir}"|| die
 	done
+
+	gnome2_src_prepare
+
+	# important to do it after patches
+	eautoreconf
 }
 
 multilib_src_configure() {
@@ -76,6 +79,7 @@ multilib_src_configure() {
 		--build=${CHOST_default} \
 		--disable-static \
 		--disable-tools \
+		$(multilib_native_use_enable gtk-doc) \
 		$(multilib_native_use_enable introspection) \
 		$(multilib_native_use_enable vala) \
 		--enable-pixbuf-loader \
