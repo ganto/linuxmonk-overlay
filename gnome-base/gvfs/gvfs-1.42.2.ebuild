@@ -34,8 +34,8 @@ RDEPEND="
 	http? (
 		dev-libs/libxml2:2
 		>=net-libs/libsoup-2.58.0:2.4 )
-	zeroconf? ( >=net-dns/avahi-0.6 )
-	udev? ( >=virtual/libgudev-147:= )
+	zeroconf? ( >=net-dns/avahi-0.6[dbus] )
+	udev? ( >=dev-libs/libgudev-147:= )
 	fuse? ( sys-fs/fuse:3 )
 	udisks? ( >=sys-fs/udisks-1.97:2 )
 	systemd? ( >=sys-apps/systemd-206:0= )
@@ -47,7 +47,7 @@ RDEPEND="
 	gnome-keyring? ( app-crypt/libsecret )
 	bluray? ( media-libs/libbluray:= )
 	mtp? (
-		>=dev-libs/libusb-1.0.21
+		>=virtual/libusb-1-r2
 		>=media-libs/libmtp-1.1.15 )
 	samba? ( >=net-fs/samba-4[client] )
 	archive? ( app-arch/libarchive:= )
