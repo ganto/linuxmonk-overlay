@@ -1,0 +1,33 @@
+diff --git a/modules/options/options.go b/modules/options/options.go
+index 62e8c041b..723dd5458 100644
+--- a/modules/options/options.go
++++ b/modules/options/options.go
+@@ -5,6 +5,7 @@
+ package options
+ 
+ //go:generate go run -mod=vendor main.go
++//go:generate go fmt bindata.go
+ 
+ type directorySet map[string][]string
+ 
+diff --git a/modules/public/public.go b/modules/public/public.go
+index c16c8e000..f06db68b4 100644
+--- a/modules/public/public.go
++++ b/modules/public/public.go
+@@ -19,6 +19,7 @@ import (
+ )
+ 
+ //go:generate go run -mod=vendor main.go
++//go:generate go fmt bindata.go
+ 
+ // Options represents the available options to configure the macaron handler.
+ type Options struct {
+diff --git a/modules/templates/templates.go b/modules/templates/templates.go
+index af6bf010c..e7fe3b2bf 100644
+--- a/modules/templates/templates.go
++++ b/modules/templates/templates.go
+@@ -5,3 +5,4 @@
+ package templates
+ 
+ //go:generate go run -mod=vendor main.go
++//go:generate go fmt bindata.go
