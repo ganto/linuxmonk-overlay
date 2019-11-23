@@ -1,7 +1,7 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="7"
+EAPI=7
 VALA_USE_DEPEND="vapigen"
 VALA_MIN_API_VERSION="0.32"
 
@@ -32,12 +32,14 @@ RDEPEND="
 DEPEND="${RDEPEND}
 	dev-libs/libxml2:2
 	dev-util/glib-utils
-	>=dev-util/gtk-doc-am-1.13
-	>=dev-util/intltool-0.35
 	sys-devel/gettext
-	virtual/pkgconfig
 
 	vala? ( $(vala_depend) )
+"
+BDEPEND="
+	>=dev-util/gtk-doc-am-1.13
+	>=dev-util/intltool-0.35
+	virtual/pkgconfig
 "
 
 src_prepare() {
