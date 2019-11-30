@@ -54,7 +54,7 @@ DEPEND="${COMMON_DEPEND}
 	>=sys-devel/gettext-0.18
 	virtual/pkgconfig
 "
-PATCHES=( "${FILESDIR}/${PV}-make-spell-optional.patch" )
+PATCHES=( "${FILESDIR}/3.34.0-make-spell-optional.patch" )
 
 pkg_setup() {
 	use python && python-single-r1_pkg_setup
