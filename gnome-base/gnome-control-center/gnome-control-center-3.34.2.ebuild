@@ -19,7 +19,7 @@ QA_CONFIGURE_OPTIONS=".*"
 
 COMMON_DEPEND="
 	>=dev-libs/glib-2.58.0:2[dbus]
-	gui-libs/libhandy
+	>=gui-libs/libhandy-0.0.10:0.0=
 	>=x11-libs/gdk-pixbuf-2.23.0:2
 	>=x11-libs/gtk+-3.22.20:3[X,wayland?]
 	>=gnome-base/gsettings-desktop-schemas-3.31.0
