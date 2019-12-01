@@ -11,7 +11,7 @@ HOMEPAGE="https://www.pango.org/"
 
 LICENSE="LGPL-2+ FTL"
 SLOT="0"
-KEYWORDS="~amd64 ~amd64-linux"
+KEYWORDS="~amd64"
 
 IUSE="X +introspection test"
 
