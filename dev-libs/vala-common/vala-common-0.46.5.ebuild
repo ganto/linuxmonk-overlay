@@ -11,7 +11,7 @@ HOMEPAGE="https://wiki.gnome.org/Projects/Vala"
 
 LICENSE="LGPL-2.1+"
 SLOT="0"
-KEYWORDS="~amd64 ~amd64-linux"
+KEYWORDS="~amd64"
 IUSE=""
 
 RDEPEND=""
