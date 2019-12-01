@@ -1,7 +1,7 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
 DESCRIPTION="Sub-meta package for the core applications integrated with GNOME 3"
 HOMEPAGE="https://www.gnome.org/"
@@ -17,31 +17,32 @@ KEYWORDS="~amd64"
 RDEPEND="
 	>=gnome-base/gnome-core-libs-${PV}[cups?]
 
-	>=gnome-base/gnome-session-3.32.0
-	>=gnome-base/gnome-settings-daemon-3.32.0
-	>=gnome-base/gnome-control-center-3.32.1
+	>=gnome-base/gnome-session-3.34.1
+	>=gnome-base/gnome-settings-daemon-3.34.1
+	>=gnome-base/gnome-control-center-${PV}
 	>=gnome-extra/gnome-color-manager-3.32.0
 
-	>=app-crypt/gcr-3.28.1
-	>=gnome-base/nautilus-3.32.1
-	>=gnome-base/gnome-keyring-3.28.2
+	>=app-crypt/gcr-3.34.0
+	>=gnome-base/nautilus-${PV}
+	>=gnome-base/gnome-keyring-3.34.0
 	>=gnome-extra/evolution-data-server-${PV}
 
-	>=app-crypt/seahorse-3.32
-	>=app-editors/gedit-3.32.0
-	>=app-text/evince-3.32.0
-	>=gnome-extra/gnome-contacts-3.32.1
-	>=media-gfx/eog-3.32.1
-	>=media-video/totem-3.32.0
+	>=app-crypt/seahorse-3.32.2
+	>=app-editors/gedit-3.34.1
+	>=app-text/evince-${PV}
+	>=gnome-extra/gnome-contacts-3.34
+	>=media-gfx/eog-3.34.1
+	>=media-video/totem-3.34.1
 	>=x11-terms/gnome-terminal-${PV}
 
-	>=gnome-extra/gnome-user-docs-${PV}
-	>=gnome-extra/yelp-${PV}
+	>=gnome-extra/gnome-user-docs-3.34.1
+	>=gnome-extra/yelp-3.34.0
 
-	>=x11-themes/adwaita-icon-theme-3.32.0
+	>=x11-themes/adwaita-icon-theme-3.34.3
 
-	bluetooth? ( >=net-wireless/gnome-bluetooth-3.32.1 )
+	bluetooth? ( >=net-wireless/gnome-bluetooth-3.34.0 )
 "
 DEPEND=""
+BDEPEND=""
 
 S="${WORKDIR}"
