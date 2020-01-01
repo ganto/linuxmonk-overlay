@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -97,6 +97,8 @@ PATCHES=(
 	"${FILESDIR}"/3.32.2-no-cogl-gles2.patch
 	# Fix OpenJDK windows
 	"${FILESDIR}"/3.34.0-window-actor-Special-case-shaped-Java-windows.patch
+	# Fix race-condition
+	"${FILESDIR}"/3.34.2-compositor-Guard-against-untimely-calls.patch
 )
 
 src_configure() {
