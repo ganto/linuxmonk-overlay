@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -20,7 +20,7 @@ IUSE="test"
 # python implementation, don't restrict ourselves and support multiple python
 # implementations in case rpm will ever switch to python-r1 eclass
 CDEPEND="
-	>=app-arch/rpm-4.14.0[python,python_targets_python2_7?,python_targets_python3_5?,python_targets_python3_6?]
+	>=app-arch/rpm-4.14.0[python,${PYTHON_USEDEP}]
 	>=app-crypt/gpgme-1.10.0[python,${PYTHON_USEDEP}]
 	dev-db/sqlite
 	>=dev-libs/libcomps-0.1.8[${PYTHON_USEDEP}]
