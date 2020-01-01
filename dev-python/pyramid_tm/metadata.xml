@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<longdescription lang="en">
+		pyramid_tm is a package which allows Pyramid requests to join the active
+		transaction as provided by the transaction package.
+	</longdescription>
+	<upstream>
+		<bugs-to>https://github.com/Pylons/pyramid_tm/issues</bugs-to>
+		<remote-id type="github">Pylons/pyramid_tm</remote-id>
+	</upstream>
+</pkgmetadata>
