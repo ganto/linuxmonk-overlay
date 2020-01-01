@@ -1,9 +1,9 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
-PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
+PYTHON_COMPAT=( python3_6 )
 inherit distutils-r1
 
 DESCRIPTION="Restful services for Pyramid"
@@ -14,6 +14,7 @@ LICENSE="MPL-2.0"
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE="doc examples test"
+RESTRICT="!test? ( test )"
 
 RDEPEND="
 	>=dev-python/pyramid-1.7[${PYTHON_USEDEP}]
@@ -25,7 +26,7 @@ DEPEND="${RDEPEND}
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	doc? ( dev-python/sphinx[${PYTHON_USEDEP}]
 		dev-python/mozilla-sphinx-theme[${PYTHON_USEDEP}]
-		)
+	)
 	test? ( dev-python/colander[${PYTHON_USEDEP}]
 		dev-python/iso8601[${PYTHON_USEDEP}]
 		dev-python/mock[${PYTHON_USEDEP}]
@@ -33,7 +34,7 @@ DEPEND="${RDEPEND}
 		dev-python/rxjson[${PYTHON_USEDEP}]
 		dev-python/unittest2[${PYTHON_USEDEP}]
 		dev-python/webtest[${PYTHON_USEDEP}]
-		)
+	)
 "
 
 DOCS=( CHANGES.txt CONTRIBUTORS.txt README.rst )
