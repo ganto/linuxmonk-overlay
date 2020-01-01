@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<upstream>
+		<bugs-to>https://github.com/imsnif/bandwhich/issues</bugs-to>
+		<remote-id type="github">imsnif/bandwhich</remote-id>
+	</upstream>
+	<longdescription lang="en">
+		bandwhich sniffs a given network interface and records IP packet size, cross
+		referencing it with the /proc filesystem. It is responsive to the terminal
+		window size, displaying less info if there is no room for it. It will also
+		attempt to resolve IPs to their host name in the background using reverse DNS
+		on a best effort basis.
+	</longdescription>
+</pkgmetadata>
