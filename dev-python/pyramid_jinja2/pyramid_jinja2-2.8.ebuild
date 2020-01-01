@@ -1,9 +1,10 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
-PYTHON_COMPAT=( python{2_7,3_{3,4}} )
+PYTHON_COMPAT=( python3_6 )
+
 inherit distutils-r1
 
 DESCRIPTION="Jinja2 templating system bindings for the Pyramid web framework"
@@ -14,6 +15,7 @@ LICENSE="BSD-4"
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE="doc test"
+RESTRICT="!test? ( test )"
 
 RDEPEND="
 	>=dev-python/jinja-2.5[${PYTHON_USEDEP}]
@@ -21,13 +23,16 @@ RDEPEND="
 	>=dev-python/pyramid-1.3.0[${PYTHON_USEDEP}]
 	dev-python/zope-deprecation[${PYTHON_USEDEP}]
 "
-DEPEND="
+BDEPEND="
 	dev-python/setuptools[${PYTHON_USEDEP}]
-	doc? ( dev-python/sphinx[${PYTHON_USEDEP}] )
+	doc? (
+		dev-python/sphinx[${PYTHON_USEDEP}]
+		>=dev-python/pylons-sphinx-themes-0.3[${PYTHON_USEDEP}]
+	)
 	test? ( ${RDEPEND}
 		>=dev-python/nose-1.2.0[${PYTHON_USEDEP}]
 		dev-python/webtest[${PYTHON_USEDEP}]
-		)
+	)
 "
 
 DOCS=( CHANGES.txt CONTRIBUTORS.txt rtd.txt )
