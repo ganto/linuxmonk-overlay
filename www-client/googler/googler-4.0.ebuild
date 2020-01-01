@@ -1,9 +1,9 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
-PYTHON_COMPAT=( python3_{4,5} )
+PYTHON_COMPAT=( python3_{5,6,7,8} )
 
 inherit distutils-r1 bash-completion-r1
 
@@ -16,10 +16,7 @@ SLOT="0"
 KEYWORDS="~amd64"
 IUSE=""
 
-DEPEND=""
-RDEPEND="
-	dev-python/setproctitle[${PYTHON_USEDEP}]
-"
+RDEPEND="dev-python/setproctitle[${PYTHON_USEDEP}]"
 
 DOCS=( CHANGELOG README.md )
 
