@@ -1,9 +1,9 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
-PYTHON_COMPAT=( python2_7 python3_{5,6} )
+PYTHON_COMPAT=( python2_7 python3_{6,7} )
 
 inherit cmake-utils python-r1
 
@@ -39,10 +39,6 @@ DEPEND="${CDEPEND}
 	test? ( dev-python/nose[${PYTHON_USEDEP}] )"
 
 RDEPEND="${CDEPEND}"
-
-PATCHES=(
-	"${FILESDIR}"/${PV}-Clean-up-target-curl_handle-rather-than-target-handle.patch
-)
 
 src_prepare() {
 	eapply_user
@@ -90,6 +86,7 @@ src_test() {
 
 librepo_src_install_internal() {
 	cmake-utils_src_install
+	python_optimize "${D}"/$(python_get_sitedir)/${PN}
 	if use doc ; then
 		dohtml -r -p python "${BUILD_DIR}"/doc/python/*
 		dohtml -r -p c "${BUILD_DIR}"/doc/c/html/*
