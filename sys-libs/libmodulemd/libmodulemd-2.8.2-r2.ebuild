@@ -1,4 +1,4 @@
-# Copyright 2019 Gentoo Authors
+# Copyright 2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -11,7 +11,7 @@ HOMEPAGE="https://github.com/fedora-modularity/libmodulemd"
 SRC_URI="https://github.com/fedora-modularity/${PN}/releases/download/${P}/modulemd-${PV}.tar.xz"
 
 LICENSE="MIT"
-SLOT="2"
+SLOT="0"
 KEYWORDS="~amd64"
 IUSE="introspection"
 
@@ -21,18 +21,16 @@ RDEPEND="
 	dev-libs/libyaml
 	sys-apps/file
 
+	${PYTHON_DEPS}
 	>=dev-python/pygobject-3[${PYTHON_USEDEP}]
 	dev-python/six[${PYTHON_USEDEP}]
 
 	introspection? ( dev-libs/gobject-introspection )
 "
 DEPEND="${RDEPEND}
-	!<sys-libs/libmodulemd-1.8.16
+	!!sys-libs/libmodulemd:2
 "
-BDEPEND="
-	virtual/pkgconfig
-	${PYTHON_DEPS}
-"
+BDEPEND="virtual/pkgconfig"
 
 S="${WORKDIR}"/modulemd-${PV}
 
@@ -80,9 +78,6 @@ libmodulemd_src_compile_internal() {
 
 libmodulemd_src_install_internal() {
 	meson_src_install
-	# Remove generic library symlink to allow slotted installation
-	rm "${D}"/usr/lib64/libmodulemd.so
-
 	if ! python_is_python3; then
 		python_fix_shebang --force "${D}"$(python_get_sitedir)
 	fi
