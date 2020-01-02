@@ -1,10 +1,10 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="6"
+EAPI=6
 
-PYTHON_COMPAT=( python2_7 python3_{5,6,7} )
-USE_RUBY=( ruby24 ruby25 ruby26 )
+PYTHON_COMPAT=( python2_7 python3_{5,6,7,8} )
+USE_RUBY=( ruby24 ruby25 ruby26 ruby27 )
 RUBY_OPTIONAL=yes
 
 inherit cmake-utils python-r1 ruby-ng perl-module multilib
@@ -39,11 +39,8 @@ DEPEND="${RDEPEND}
 	ruby? ( dev-lang/swig:0 )
 	tcl? ( dev-lang/swig:0 )
 	sys-devel/gettext
+	virtual/pkgconfig
 "
-
-PATCHES=(
-	"${FILESDIR}"/${PV}-solver-Free-favorq-when-running-solver_solve.patch
-)
 
 # The ruby-ng eclass is stupid and breaks this for no good reason.
 S="${WORKDIR}/all/${P}"
@@ -84,7 +81,6 @@ src_configure() {
 		-DENABLE_TCL=$(usex tcl)
 		-DENABLE_ZCHUNK_COMPRESSION=$(usex zchunk)
 		-DENABLE_ZSTD_COMPRESSION=$(usex zstd)
-		-DLIB="$(get_libdir)"
 		-DMULTI_SEMANTICS=ON
 		-DUSE_VENDORDIRS=ON
 		-DWITH_LIBXML2=ON
@@ -110,6 +106,9 @@ src_configure() {
 pysolv_phase_func() {
 	BUILD_DIR="${BUILD_DIR}/bindings/python" \
 	cmake-utils_${EBUILD_PHASE_FUNC}
+	if [[ "${EBUILD_PHASE_FUNC}" == "install" ]]; then
+		python_optimize "${D}${PYTHON_SITEDIR}"
+	fi
 }
 
 src_compile() {
