@@ -20,7 +20,7 @@ IUSE="test"
 # python implementation, don't restrict ourselves and support multiple python
 # implementations in case rpm will ever switch to python-r1 eclass
 CDEPEND="
-	>=app-arch/rpm-4.14.0[python,${PYTHON_USEDEP}]
+	$(python_gen_any_dep '>=app-arch/rpm-4.14.0[python,${PYTHON_USEDEP}]')
 	>=app-crypt/gpgme-1.10.0[python,${PYTHON_USEDEP}]
 	dev-db/sqlite
 	>=dev-libs/libcomps-0.1.8[${PYTHON_USEDEP}]
