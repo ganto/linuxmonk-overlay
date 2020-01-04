@@ -13,7 +13,7 @@ HOMEPAGE="https://wiki.gnome.org/Apps/Boxes"
 LICENSE="LGPL-2+ CC-BY-2.0"
 SLOT="0"
 
-IUSE="bindist rdp"
+IUSE="rdp"
 KEYWORDS="~amd64"
 
 # FIXME: ovirt is not available in tree; though it seems the gnome-boxes ovirt broker is too buggy atm anyways (would need rest[vala] as well)
@@ -37,7 +37,6 @@ COMMON_DEPEND="
 	app-misc/tracker:0/2.0
 	net-libs/webkit-gtk:4
 	>=virtual/libgudev-165:=
-	!bindist? ( gnome-extra/gnome-boxes-nonfree )
 	rdp? ( net-misc/freerdp:= )
 "
 DEPEND="${COMMON_DEPEND}
