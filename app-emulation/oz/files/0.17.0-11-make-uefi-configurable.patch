@@ -1,0 +1,180 @@
+From 00047d25ca9b4afbcc692f36617c38e82b375591 Mon Sep 17 00:00:00 2001
+From: Peter Robinson <pbrobinson@gmail.com>
+Date: Thu, 14 Mar 2019 13:02:47 +0000
+Subject: [PATCH 11/13] Make whether we use UEFI configurable on devices that
+ have legacy options
+
+This allows us to specifiy whether a OS version supports/defaults to
+UEFI or legacy BIOS on x86.
+
+Signed-off-by: Peter Robinson <pbrobinson@gmail.com>
+---
+ oz/Fedora.py | 15 ++++++++++++---
+ oz/Guest.py  | 15 ++++++++++-----
+ oz/Linux.py  |  4 ++--
+ oz/RedHat.py | 12 ++++++------
+ 4 files changed, 30 insertions(+), 16 deletions(-)
+
+diff --git a/oz/Fedora.py b/oz/Fedora.py
+--- a/oz/Fedora.py
++++ b/oz/Fedora.py
+@@ -32,7 +32,7 @@ class FedoraConfiguration(object):
+     """
+     def __init__(self, has_virtio_channel, use_yum, use_dev_cdrom_device,
+                  createpart, directkernel, default_netdev, default_diskbus,
+-                 brokenisomethod, haverepo):
++                 brokenisomethod, haverepo, useuefi=False):
+         self._has_virtio_channel = has_virtio_channel
+         self._use_yum = use_yum
+         self._use_dev_cdrom_device = use_dev_cdrom_device
+@@ -42,6 +42,7 @@ class FedoraConfiguration(object):
+         self._default_diskbus = default_diskbus
+         self._brokenisomethod = brokenisomethod
+         self._haverepo = haverepo
++        self._useuefi = useuefi
+ 
+     @property
+     def has_virtio_channel(self):
+@@ -107,6 +108,13 @@ class FedoraConfiguration(object):
+         """
+         return self._haverepo
+ 
++    @property
++    def useuefi(self):
++        """
++        Property method for whether to default to using UEFI as firmware or legacy method.
++        """
++        return self._useuefi
++
+ 
+ version_to_config = {
+     '29': FedoraConfiguration(has_virtio_channel=True, use_yum=False,
+@@ -235,7 +243,7 @@ class FedoraGuest(oz.RedHat.RedHatLinuxC
+     # ignored now; we leave it in place for backwards API compatibility.
+     def __init__(self, tdl, config, auto, nicmodel, haverepo, diskbus,  # pylint: disable=unused-argument
+                  brokenisomethod, output_disk=None, macaddress=None,    # pylint: disable=unused-argument
+-                 assumed_update=None):
++                 assumed_update=None, useuefi=False):
+         self.config = version_to_config[tdl.update]
+         if nicmodel is None:
+             nicmodel = self.config.default_netdev
+@@ -247,7 +255,8 @@ class FedoraGuest(oz.RedHat.RedHatLinuxC
+         oz.RedHat.RedHatLinuxCDYumGuest.__init__(self, tdl, config, auto,
+                                                  output_disk, nicmodel, diskbus,
+                                                  True, True, self.config.directkernel,
+-                                                 macaddress, self.config.use_yum)
++                                                 macaddress, self.config.use_yum,
++                                                 self.config.useuefi)
+ 
+         if self.assumed_update is not None:
+             self.log.warning("==== WARN: TDL contains Fedora update %s, which is newer than Oz knows about; pretending this is Fedora %s, but this may fail ====", tdl.update, assumed_update)
+diff --git a/oz/Guest.py b/oz/Guest.py
+--- a/oz/Guest.py
++++ b/oz/Guest.py
+@@ -129,7 +129,7 @@ class Guest(object):
+         self._discover_libvirt_type()
+ 
+     def __init__(self, tdl, config, auto, output_disk, nicmodel, clockoffset,
+-                 mousetype, diskbus, iso_allowed, url_allowed, macaddress):
++                 mousetype, diskbus, iso_allowed, url_allowed, macaddress, useuefi):
+         self.tdl = tdl
+ 
+         # for backwards compatibility
+@@ -488,6 +488,11 @@ class Guest(object):
+             loader, nvram = oz.ozutil.find_uefi_firmware(self.tdl.arch)
+             oz.ozutil.lxml_subelement(osNode, "loader", loader, {'readonly': 'yes', 'type': 'pflash'})
+             oz.ozutil.lxml_subelement(osNode, "nvram", None, {'template': nvram})
++        # x86_64 has legacy requirements so we check for defaults as well as for edk2
++        if self.tdl.arch in ["x86_64"] and self.config.useuefi == True:
++            loader, nvram = oz.ozutil.find_uefi_firmware(self.tdl.arch)
++            oz.ozutil.lxml_subelement(osNode, "loader", loader, {'readonly': 'yes', 'type': 'pflash'})
++            oz.ozutil.lxml_subelement(osNode, "nvram", None, {'template': nvram})
+         # poweroff, reboot, crash
+         oz.ozutil.lxml_subelement(domain, "on_poweroff", "destroy")
+         oz.ozutil.lxml_subelement(domain, "on_reboot", "destroy")
+@@ -1309,10 +1314,10 @@ class CDGuest(Guest):
+             self.seqnum = seqnum
+ 
+     def __init__(self, tdl, config, auto, output_disk, nicmodel, clockoffset,
+-                 mousetype, diskbus, iso_allowed, url_allowed, macaddress):
++                 mousetype, diskbus, iso_allowed, url_allowed, macaddress, useuefi):
+         Guest.__init__(self, tdl, config, auto, output_disk, nicmodel,
+                        clockoffset, mousetype, diskbus, iso_allowed,
+-                       url_allowed, macaddress)
++                       url_allowed, macaddress, useuefi)
+ 
+         self.orig_iso = os.path.join(self.data_dir, "isos",
+                                      self.tdl.distro + self.tdl.update + self.tdl.arch + "-" + self.tdl.installtype + ".iso")
+@@ -1777,9 +1782,9 @@ class FDGuest(Guest):
+     Class for guest installation via floppy disk.
+     """
+     def __init__(self, tdl, config, auto, output_disk, nicmodel, clockoffset,
+-                 mousetype, diskbus, macaddress):
++                 mousetype, diskbus, macaddress, useuefi):
+         Guest.__init__(self, tdl, config, auto, output_disk, nicmodel,
+-                       clockoffset, mousetype, diskbus, False, True, macaddress)
++                       clockoffset, mousetype, diskbus, False, True, macaddress, useuefi)
+         self.orig_floppy = os.path.join(self.data_dir, "floppies",
+                                         self.tdl.distro + self.tdl.update + self.tdl.arch + ".img")
+         self.modified_floppy_cache = os.path.join(self.data_dir, "floppies",
+diff --git a/oz/Linux.py b/oz/Linux.py
+--- a/oz/Linux.py
++++ b/oz/Linux.py
+@@ -33,10 +33,10 @@ class LinuxCDGuest(oz.Guest.CDGuest):
+     Class for Linux installation.
+     """
+     def __init__(self, tdl, config, auto, output_disk, nicmodel, diskbus,
+-                 iso_allowed, url_allowed, macaddress):
++                 iso_allowed, url_allowed, macaddress, useuefi):
+         oz.Guest.CDGuest.__init__(self, tdl, config, auto, output_disk,
+                                   nicmodel, None, None, diskbus, iso_allowed,
+-                                  url_allowed, macaddress)
++                                  url_allowed, macaddress, useuefi)
+ 
+     def _test_ssh_connection(self, guestaddr):
+         """
+diff --git a/oz/RedHat.py b/oz/RedHat.py
+--- a/oz/RedHat.py
++++ b/oz/RedHat.py
+@@ -40,10 +40,10 @@ class RedHatLinuxCDGuest(oz.Linux.LinuxC
+     Class for RedHat-based CD guests.
+     """
+     def __init__(self, tdl, config, auto, output_disk, nicmodel, diskbus,
+-                 iso_allowed, url_allowed, initrdtype, macaddress):
++                 iso_allowed, url_allowed, initrdtype, macaddress, useuefi):
+         oz.Linux.LinuxCDGuest.__init__(self, tdl, config, auto, output_disk,
+                                        nicmodel, diskbus, iso_allowed,
+-                                       url_allowed, macaddress)
++                                       url_allowed, macaddress, useuefi)
+         self.crond_was_active = False
+         self.sshd_was_active = False
+         self.sshd_config = """\
+@@ -722,11 +722,11 @@ class RedHatLinuxCDYumGuest(RedHatLinuxC
+     Class for RedHat-based CD guests with yum support.
+     """
+     def __init__(self, tdl, config, auto, output_disk, nicmodel, diskbus,
+-                 iso_allowed, url_allowed, initrdtype, macaddress, use_yum):
++                 iso_allowed, url_allowed, initrdtype, macaddress, use_yum, useuefi):
+         oz.RedHat.RedHatLinuxCDGuest.__init__(self, tdl, config, auto,
+                                               output_disk, nicmodel, diskbus,
+                                               iso_allowed, url_allowed,
+-                                              initrdtype, macaddress)
++                                              initrdtype, macaddress, useuefi)
+ 
+         self.use_yum = use_yum
+ 
+@@ -845,9 +845,9 @@ class RedHatFDGuest(oz.Guest.FDGuest):
+     Class for RedHat-based floppy guests.
+     """
+     def __init__(self, tdl, config, auto, output_disk, nicmodel, diskbus,
+-                 macaddress):
++                 macaddress, useuefi):
+         oz.Guest.FDGuest.__init__(self, tdl, config, auto, output_disk,
+-                                  nicmodel, None, None, diskbus, macaddress)
++                                  nicmodel, None, None, diskbus, macaddress, useuefi)
+ 
+         if self.tdl.arch != "i386":
+             raise oz.OzException.OzException("Invalid arch " + self.tdl.arch + "for " + self.tdl.distro + " guest")
+-- 
+2.20.1
+

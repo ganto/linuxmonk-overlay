@@ -1,0 +1,35 @@
+From fb257ff2fbb66a732a1369445b8c580a4ec61339 Mon Sep 17 00:00:00 2001
+From: Peter Robinson <pbrobinson@gmail.com>
+Date: Wed, 27 Feb 2019 12:30:07 +0000
+Subject: [PATCH 07/13] Default to using 2Gb on all architectures
+
+The original 1Gb should be enough but RAM is cheap and sometimes things
+like the initrd unexpectently bloat so 2Gb gives us room to move.
+
+Signed-off-by: Peter Robinson <pbrobinson@gmail.com>
+---
+ oz/Guest.py | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
+
+diff --git a/oz/Guest.py b/oz/Guest.py
+index dfb63e4..3bb144e 100644
+--- a/oz/Guest.py
++++ b/oz/Guest.py
+@@ -178,13 +178,8 @@ class Guest(object):
+                                                      1)
+         # the memory in the configuration file is specified in megabytes, but
+         # libvirt expects kilobytes, so multiply by 1024
+-        if self.tdl.arch in ["ppc64", "ppc64le"]:
+-            # ppc64 needs at least 2Gb RAM
+-            self.install_memory = int(oz.ozutil.config_get_key(config, 'libvirt',
++        self.install_memory = int(oz.ozutil.config_get_key(config, 'libvirt',
+                                                                'memory', 2048)) * 1024
+-        else:
+-            self.install_memory = int(oz.ozutil.config_get_key(config, 'libvirt',
+-                                                               'memory', 1024)) * 1024
+         self.image_type = oz.ozutil.config_get_key(config, 'libvirt',
+                                                    'image_type', 'raw')
+ 
+-- 
+2.20.1
+

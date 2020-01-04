@@ -1,0 +1,31 @@
+From c24fa91acae23bdce21595654db002521f49fef2 Mon Sep 17 00:00:00 2001
+From: Peter Robinson <pbrobinson@gmail.com>
+Date: Wed, 23 Jan 2019 03:12:50 +0000
+Subject: [PATCH 09/13] Add check for TianoCore EDK2 firmware for ARMv7
+
+There's now TianoCore EDK2 firmwares for ARMv7 so add a check to
+see if they're available in preparation of building UEFI enabled
+ARMv7 images.
+
+Signed-off-by: Peter Robinson <pbrobinson@gmail.com>
+---
+ oz/ozutil.py | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/oz/ozutil.py b/oz/ozutil.py
+index 989c9d4..d6a4a28 100644
+--- a/oz/ozutil.py
++++ b/oz/ozutil.py
+@@ -1061,6 +1061,9 @@ def find_uefi_firmware(arch):
+                           '/usr/share/edk2/aarch64/vars-template-pflash.raw'),
+                      UEFI('/usr/share/edk2.git/aarch64/QEMU_EFI-pflash.raw',
+                           '/usr/share/edk2.git/aarch64/vars-template-pflash.raw')]
++    elif arch in ['armv7l']:
++        uefi_list = [UEFI('/usr/share/edk2/arm/QEMU_EFI-pflash.raw',
++                          '/usr/share/edk2/arm/vars-template-pflash.raw')]
+     else:
+         raise Exception("Invalid arch for UEFI firmware")
+ 
+-- 
+2.20.1
+

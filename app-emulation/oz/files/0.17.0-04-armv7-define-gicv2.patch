@@ -1,0 +1,29 @@
+From 1048f98e3606781696f1a81704235960f426519d Mon Sep 17 00:00:00 2001
+From: Peter Robinson <pbrobinson@gmail.com>
+Date: Wed, 27 Feb 2019 10:56:36 +0000
+Subject: [PATCH 04/13] ARMv7 only supports GICv2 so we need to explicitly
+ define it
+
+Add the GIC version to the cpu features list to ensure we get the right GIC
+
+Signed-off-by: Peter Robinson <pbrobinson@gmail.com>
+---
+ oz/Guest.py | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/oz/Guest.py b/oz/Guest.py
+index e3a5da5..4e74fe1 100644
+--- a/oz/Guest.py
++++ b/oz/Guest.py
+@@ -465,6 +465,8 @@ class Guest(object):
+         if self.tdl.arch in ["x86_64"]:
+             oz.ozutil.lxml_subelement(features, "apic")
+             oz.ozutil.lxml_subelement(features, "pae")
++        if self.tdl.arch in ["armv7l"]:
++            oz.ozutil.lxml_subelement(features, "gic", attributes={'version': '2'})
+         # CPU
+         if self.tdl.arch in ["aarch64", "armv7l"] and self.libvirt_type == "kvm":
+             # Possibly related to RHBZ 1171501 - need host passthrough for aarch64 and arm with kvm
+-- 
+2.20.1
+

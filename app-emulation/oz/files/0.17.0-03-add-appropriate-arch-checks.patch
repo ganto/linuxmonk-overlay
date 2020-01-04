@@ -1,0 +1,37 @@
+From 0b32e08e5ddfd7088297d267aed71950219dad79 Mon Sep 17 00:00:00 2001
+From: Peter Robinson <pbrobinson@gmail.com>
+Date: Wed, 27 Feb 2019 10:54:43 +0000
+Subject: [PATCH 03/13] Add appropriate arch checks for architecture specific
+ features
+
+In a lot of cases qemu just ignores incorrect cmd line options when run
+against a different architecture but sometimes it causes issues so lets
+add the appropriate checks to ensure no issues.
+
+Signed-off-by: Peter Robinson <pbrobinson@gmail.com>
+---
+ oz/Guest.py | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/oz/Guest.py b/oz/Guest.py
+index e346904..e3a5da5 100644
+--- a/oz/Guest.py
++++ b/oz/Guest.py
+@@ -460,9 +460,11 @@ class Guest(object):
+         oz.ozutil.lxml_subelement(domain, "vcpu", str(self.install_cpus))
+         # features
+         features = oz.ozutil.lxml_subelement(domain, "features")
+-        oz.ozutil.lxml_subelement(features, "acpi")
+-        oz.ozutil.lxml_subelement(features, "apic")
+-        oz.ozutil.lxml_subelement(features, "pae")
++        if self.tdl.arch in ["aarch64", "x86_64"]:
++            oz.ozutil.lxml_subelement(features, "acpi")
++        if self.tdl.arch in ["x86_64"]:
++            oz.ozutil.lxml_subelement(features, "apic")
++            oz.ozutil.lxml_subelement(features, "pae")
+         # CPU
+         if self.tdl.arch in ["aarch64", "armv7l"] and self.libvirt_type == "kvm":
+             # Possibly related to RHBZ 1171501 - need host passthrough for aarch64 and arm with kvm
+-- 
+2.20.1
+
