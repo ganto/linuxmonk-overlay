@@ -1,0 +1,8 @@
+/var/log/matrix-synapse/homeserver.log {
+    rotate 7
+    daily
+    missingok
+    notifempty
+    delaycompress
+    compress
+}
