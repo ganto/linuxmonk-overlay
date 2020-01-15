@@ -1,0 +1,48 @@
+
+version: 1
+
+formatters:
+  precise:
+   format: '%(asctime)s - %(name)s - %(lineno)d - %(levelname)s - %(request)s- %(message)s'
+  journal_fmt:
+   format: '%(name)s: [%(request)s] %(message)s'
+
+filters:
+  context:
+    (): synapse.util.logcontext.LoggingContextFilter
+    request: ""
+
+handlers:
+  file:
+    class: logging.handlers.WatchedFileHandler
+    formatter: precise
+    filename: /var/log/matrix-synapse/homeserver.log
+    filters: [context]
+    level: DEBUG
+    encoding: utf8
+  console:
+    class: logging.StreamHandler
+    formatter: precise
+    level: WARN
+  journal:
+    class: systemd.journal.JournalHandler
+    formatter: journal_fmt
+    filters: [context]
+    SYSLOG_IDENTIFIER: synapse
+
+loggers:
+    twisted:
+        level: WARN
+
+    synapse:
+        level: WARN
+
+    synapse.storage.SQL:
+        level: INFO
+
+    synapse.http.matrixfederationclient:
+        level: ERROR
+
+root:
+    level: INFO
+    handlers: [file, journal]
