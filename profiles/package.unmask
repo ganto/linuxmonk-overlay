@@ -1,5 +1,5 @@
-# required by app-editors/gedit
->=app-text/gspell-1.8.1
+# required by net-im/fractal
+>=app-text/gspell-1.8
 
 # required by mail-client/evolution
 >=app-text/enchant-2.2.1
