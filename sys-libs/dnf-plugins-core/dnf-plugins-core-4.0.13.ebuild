@@ -1,9 +1,9 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
-PYTHON_COMPAT=( python2_7 python3_{5,6} )
+PYTHON_COMPAT=( python2_7 python3_{6,7} )
 
 inherit cmake-utils python-r1
 
@@ -27,7 +27,7 @@ DEPEND="${CDEPEND}
 	test? ( dev-python/nose )
 "
 
-LANGS=( ca cs da de es eu fi fr hu it ja pl ru sq sr sv uk )
+LANGS=( ca cs da de es eu fi fr hu it id ja ko nl pa pl pt ru sq sr sv tr uk )
 
 for X in "${LANGS[@]}" ; do
 	IUSE+=" l10n_${X}"
@@ -79,9 +79,10 @@ src_install() {
 	mv "${ED}"/usr/libexec/dnf-utils-${python_major} "${ED}"/usr/libexec/dnf-utils
 	sed -i "1c#!/usr/bin/${EPYTHON}" "${ED}"/usr/libexec/dnf-utils
 
-	for util in debuginfo-install dnf-utils find-repos-of-install repo-graph \
-			package-cleanup repoclosure repomanage repoquery reposync repotrack \
-			yum-builddep yum-config-manager yum-debug-dump yum-debug-restore \
+	for util in debuginfo-install dnf-utils find-repos-of-install \
+			needs-restarting package-cleanup repo-graph repoclosure \
+			repodiff repomanage repoquery reposync repotrack yum-builddep \
+			yum-config-manager yum-debug-dump yum-debug-restore \
 			yumdownloader; do
 		dosym ../libexec/dnf-utils /usr/bin/${util}
 	done
@@ -97,7 +98,7 @@ src_install() {
 		}
 		rm -Rf "${ED}"/usr/share/locale/${lang} || die
 	done
-	rm -Rf "${ED}"/usr/share/locale/{pt_BR,zh_CN,zh_TW}
+	rm -Rf "${ED}"/usr/share/locale/{fur,pt_BR,zh_CN,zh_TW}
 
 	# remove locale directory when empty
 	rmdir "${ED}"/usr/share/locale 2>/dev/null
