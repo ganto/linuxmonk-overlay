@@ -3,7 +3,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python2_7 python3_{5,6} )
+PYTHON_COMPAT=( python2_7 python3_{6,7} )
 
 inherit cmake-utils python-r1 bash-completion-r1
 
@@ -20,7 +20,7 @@ IUSE="test"
 # python implementation, don't restrict ourselves and support multiple python
 # implementations in case rpm will ever switch to python-r1 eclass
 CDEPEND="
-	>=app-arch/rpm-4.14.0[python,${PYTHON_USEDEP}]
+	$(python_gen_any_dep '>=app-arch/rpm-4.14.0[python,${PYTHON_USEDEP}]')
 	>=app-crypt/gpgme-1.10.0[python,${PYTHON_USEDEP}]
 	dev-db/sqlite
 	>=dev-libs/libcomps-0.1.8[${PYTHON_USEDEP}]
@@ -40,14 +40,11 @@ DEPEND="${CDEPEND}
 	test? ( dev-python/nose )
 "
 
-PATCHES=(
-	"${FILESDIR}"/${PV}-Revert-Add-best-as-default-behavior-RhBug16707761671683.patch
-	"${FILESDIR}"/4.2.6-Always-use-sphinx-build.patch
-)
+PATCHES=( "${FILESDIR}"/4.2.6-Always-use-sphinx-build.patch )
 
 LANGS=(
-	ar bg ca cs da de el es eu fi fr gu he hi hr hu id it ja ka kk ko
-	lt ml mr ms nb nl pa pl pt ru sk sq sr sv th tr uk
+	ar bg ca cs da de el eo es eu fa fi fil fr gd gu he hi hr hu id it ja ka kk ko
+	lt ml mr ms nb nl or pa pl pt ru sk sq sr sv th tr uk
 )
 
 for X in "${LANGS[@]}" ; do
@@ -90,7 +87,7 @@ src_compile() {
 
 src_test() {
 	dnf_src_test_internal() {
-		cmake-utils_src_make DESTDIR="${WORKDIR}-test-${EPYTHON}" install
+		DESTDIR="${WORKDIR}-test-${EPYTHON}" cmake-utils_src_make install
 		PYTHONPATH="${WORKDIR}-test-${EPYTHON}"/$(python_get_sitedir) nosetests -s tests || die "tests failed with ${EPYTHON}"
 	}
 	python_foreach_impl dnf_src_test_internal
@@ -115,7 +112,7 @@ src_install() {
 
 	dosym dnf /usr/bin/yum
 
-	dodir /var/lib/dnf/{history,yumdb}
+	keepdir /var/lib/dnf/{history,yumdb}
 	dodir /var/log/dnf
 	touch "${ED}"/var/log/dnf/dnf.log
 	touch "${ED}"/var/log/{hawkey.log,dnf.librepo.log,dnf.rpm.log,dnf.plugin.log}
