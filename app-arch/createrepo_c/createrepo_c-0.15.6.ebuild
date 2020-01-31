@@ -1,9 +1,8 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-
-PYTHON_COMPAT=( python2_7 python3_{5,6,7} )
+PYTHON_COMPAT=( python2_7 python3_{6,7,8} )
 
 inherit cmake-utils python-r1 bash-completion-r1
 
@@ -15,9 +14,11 @@ LICENSE="GPL-2+"
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE="doc test"
+RESTRICT="!test? ( test )"
 
 CDEPEND="
 	app-arch/bzip2
+	app-arch/drpm
 	>=app-arch/rpm-4.9.0
 	app-arch/xz-utils
 	app-arch/zchunk
@@ -28,6 +29,7 @@ CDEPEND="
 	dev-libs/openssl:0
 	net-misc/curl
 	sys-apps/file
+	>=sys-libs/libmodulemd-2.3:2
 	sys-libs/zlib
 "
 RDEPEND="
@@ -95,6 +97,7 @@ src_install() {
 	# reset BUILD_DIR/CMAKE_BUILD_DIR, bug(?)
 	createrepo_c_src_install_internal() {
 		CMAKE_BUILD_DIR="${BUILD_DIR}" cmake-utils_src_install
+		python_optimize "${D}$(python_get_sitedir)/${PN}"
 	}
 	BUILD_DIR="${S}" python_foreach_impl createrepo_c_src_install_internal
 
