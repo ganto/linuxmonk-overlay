@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -21,7 +21,7 @@ KEYWORDS="~amd64"
 # FIXME: Check over libvirt USE=libvirtd,qemu and the smartcard/usbredir requirements
 # Technically vala itself still ships a libsoup vapi, but that may change, and it should be better to use the .vapi from the same libsoup version
 # gtk-vnc raised due to missing vala bindings in earlier ebuilds
-COMMON_DEPEND="
+DEPEND="
 	>=app-arch/libarchive-3:=
 	>=dev-libs/glib-2.52:2
 	>=dev-libs/gobject-introspection-1.54:=
@@ -39,7 +39,7 @@ COMMON_DEPEND="
 	>=virtual/libgudev-165:=
 	rdp? ( net-misc/freerdp:= )
 "
-DEPEND="${COMMON_DEPEND}
+BDEPEND="
 	$(vala_depend)
 	dev-libs/appstream-glib
 	dev-util/itstool
@@ -54,7 +54,7 @@ DEPEND="${COMMON_DEPEND}
 # app-emulation/libvirt virsh used for various checks (and we need the library anyways)
 # sys-auth/polkit used for making all libvirt system disks readable via "pkexec chmod a+r" that aren't already readable to the user (libvirt system importer)
 # app-emulation/qemu qemu-img used to convert image to QCOW2 format during copy
-RDEPEND="${COMMON_DEPEND}
+RDEPEND="${DEPEND}
 	>=app-misc/tracker-miners-2[iso]
 	app-emulation/spice[smartcard]
 	>=app-emulation/libvirt-0.9.3[libvirtd,qemu]
