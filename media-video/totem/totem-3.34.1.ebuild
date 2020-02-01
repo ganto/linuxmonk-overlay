@@ -1,45 +1,45 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
-PYTHON_COMPAT=( python{3_5,3_6} )
-PYTHON_REQ_USE="threads"
+EAPI=7
+PYTHON_COMPAT=( python3_{6,7,8} )
+PYTHON_REQ_USE="threads(+)"
 
-inherit gnome.org gnome2-utils meson xdg python-single-r1
+inherit gnome.org gnome2-utils meson virtualx xdg python-single-r1
 
 DESCRIPTION="Media player for GNOME"
 HOMEPAGE="https://wiki.gnome.org/Apps/Videos"
 
 LICENSE="GPL-2+ LGPL-2+"
 SLOT="0"
-IUSE="gtk-doc +introspection lirc nautilus +python test"
+IUSE="gtk-doc lirc nautilus +python test"
 # see bug #359379
 REQUIRED_USE="
-	python? ( introspection ${PYTHON_REQUIRED_USE} )
+	python? ( ${PYTHON_REQUIRED_USE} )
 "
+RESTRICT="!test? ( test )"
 
 KEYWORDS="~amd64"
 
 # FIXME:
 # Runtime dependency on gnome-session-2.91
-COMMON_DEPEND="
+DEPEND="
 	>=dev-libs/glib-2.43.4:2
-	>=x11-libs/gtk+-3.19.4:3[X,introspection?]
+	>=dev-libs/gobject-introspection-1.54:=
+	>=x11-libs/gtk+-3.19.4:3[introspection]
 	>=media-libs/gstreamer-1.6.0:1.0
-	>=media-libs/gst-plugins-base-1.6.0:1.0[X,pango]
+	>=media-libs/gst-plugins-base-1.6.0:1.0[pango]
 	>=media-libs/gst-plugins-good-1.6.0:1.0
 	>=media-libs/grilo-0.3.0:0.3[playlist]
 	>=dev-libs/libpeas-1.1.0[gtk]
-	>=dev-libs/totem-pl-parser-3.10.1:0=[introspection?]
+	>=dev-libs/totem-pl-parser-3.10.1:0=[introspection]
 	>=media-libs/clutter-1.17.3:1.0[gtk]
 	>=media-libs/clutter-gst-2.99.2:3.0
 	>=media-libs/clutter-gtk-1.8.1:1.0
 	gnome-base/gnome-desktop:3=
 	gnome-base/gsettings-desktop-schemas
-	x11-libs/libX11
 	>=x11-libs/cairo-1.14
 	x11-libs/gdk-pixbuf:2
-	introspection? ( >=dev-libs/gobject-introspection-1.54:= )
 
 	lirc? ( app-misc/lirc )
 	nautilus? ( >=gnome-base/nautilus-2.91.3 )
@@ -47,7 +47,7 @@ COMMON_DEPEND="
 		${PYTHON_DEPS}
 		>=dev-python/pygobject-2.90.3:3[${PYTHON_USEDEP}] )
 "
-RDEPEND="${COMMON_DEPEND}
+RDEPEND="${DEPEND}
 	media-plugins/grilo-plugins:0.3
 	media-plugins/gst-plugins-meta:1.0
 	media-plugins/gst-plugins-taglib:1.0
@@ -56,10 +56,10 @@ RDEPEND="${COMMON_DEPEND}
 		>=dev-libs/libpeas-1.1.0[python,${PYTHON_USEDEP}]
 		dev-python/dbus-python[${PYTHON_USEDEP}] )
 "
-DEPEND="${COMMON_DEPEND}
+BDEPEND="
 	dev-lang/perl
-	app-text/docbook-xml-dtd:4.5
-	gtk-doc? ( >=dev-util/gtk-doc-1.14 )
+	gtk-doc? ( >=dev-util/gtk-doc-1.14
+		app-text/docbook-xml-dtd:4.5 )
 	dev-util/glib-utils
 	dev-util/itstool
 	>=sys-devel/gettext-0.19.8
@@ -67,7 +67,6 @@ DEPEND="${COMMON_DEPEND}
 	x11-base/xorg-proto
 "
 # perl for pod2man
-# docbook-xml-dtd is needed for user doc
 # Prevent dev-python/pylint dep, bug #482538
 
 PATCHES=(
@@ -78,16 +77,12 @@ pkg_setup() {
 	use python && python-single-r1_pkg_setup
 }
 
-src_prepare() {
-	xdg_src_prepare
-}
-
 src_configure() {
-	# Disabled: sample-python, zeitgeist-dp
+	# Disabled: samplepython
 	local plugins="apple-trailers,autoload-subtitles"
-	plugins+=",im-status,media-player-keys"
-	plugins+=",properties,recent,screensaver,screenshot"
-	plugins+=",skipto,variable-rate,vimeo,rotation"
+	plugins+=",im-status,media-player-keys,properties"
+	plugins+=",recent,rotation,screensaver,screenshot"
+	plugins+=",skipto,variable-rate,vimeo"
 	use lirc && plugins+=",lirc"
 	use nautilus && plugins+=",save-file"
 	use python && plugins+=",dbusservice,pythonconsole,opensubtitles"
@@ -97,7 +92,6 @@ src_configure() {
 		-Denable-python=$(usex python yes no)
 		-Dwith-plugins=${plugins}
 		$(meson_use gtk-doc enable-gtk-doc)
-		-Denable-introspection=$(usex introspection yes no)
 	)
 	meson_src_configure
 }
@@ -105,18 +99,20 @@ src_configure() {
 src_install() {
 	meson_src_install
 	if use python ; then
-		python_optimize "${ED}"usr/$(get_libdir)/totem/plugins/
+		python_optimize "${ED}"/usr/$(get_libdir)/totem/plugins/
 	fi
 }
 
 pkg_postinst() {
 	xdg_pkg_postinst
-	gnome2_icon_cache_update
 	gnome2_schemas_update
 }
 
 pkg_postrm() {
 	xdg_pkg_postrm
-	gnome2_icon_cache_update
 	gnome2_schemas_update
+}
+
+src_test() {
+	virtx meson_src_test
 }
