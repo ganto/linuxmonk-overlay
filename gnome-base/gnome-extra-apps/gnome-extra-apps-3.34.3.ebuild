@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -19,13 +19,13 @@ RDEPEND="
 
 	>=sys-apps/baobab-3.34.0
 	>=media-video/cheese-3.34.0
-	>=www-client/epiphany-${PV}
+	>=www-client/epiphany-${PV}.1
 	>=app-arch/file-roller-3.32.3
 	>=gnome-extra/gnome-calculator-3.34.1
-	>=gnome-extra/gnome-calendar-${PV}
+	>=gnome-extra/gnome-calendar-3.34.2
 	>=gnome-extra/gnome-characters-3.32.1
 	>=gnome-extra/gnome-clocks-3.34.0
-	>=gnome-extra/gnome-contacts-3.34
+	>=gnome-extra/gnome-contacts-3.34.1
 	>=sys-apps/gnome-disk-utility-3.34.0
 	>=media-gfx/gnome-font-viewer-3.34.0
 	>=media-gfx/gnome-screenshot-3.34.0
@@ -34,7 +34,7 @@ RDEPEND="
 	>=sci-geosciences/gnome-maps-${PV}
 	>=gnome-extra/sushi-3.34.0
 
-	>=gnome-base/dconf-editor-${PV}
+	>=gnome-base/dconf-editor-3.34.2
 	>=mail-client/evolution-${PV}
 	>=gnome-extra/gnome-tweaks-3.34.0
 
@@ -44,7 +44,7 @@ RDEPEND="
 		>=app-misc/tracker-2.3.1
 		>=app-misc/tracker-miners-2.3.1
 		>=media-gfx/gnome-photos-3.34.0
-		>=media-sound/gnome-music-3.34.2 )
+		>=media-sound/gnome-music-${PV} )
 "
 DEPEND=""
 BDEPEND=""
