@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -12,12 +12,12 @@ SLOT="0"
 IUSE="test"
 KEYWORDS="~amd64"
 
-COMMON_DEPEND="
+DEPEND="
 	>=dev-libs/glib-2.26:2
 	>=gnome-base/libgtop-2.28.3[introspection]
 	>=app-eselect/eselect-gnome-shell-extensions-20111211
 "
-RDEPEND="${COMMON_DEPEND}
+RDEPEND="${DEPEND}
 	>=dev-libs/gjs-1.29
 	dev-libs/gobject-introspection:=
 	dev-libs/atk[introspection]
@@ -31,7 +31,7 @@ RDEPEND="${COMMON_DEPEND}
 	x11-themes/adwaita-icon-theme
 	>=x11-wm/mutter-3.32[introspection]
 "
-DEPEND="${COMMON_DEPEND}
+BDEPEND="
 	dev-lang/sassc
 	>=sys-devel/gettext-0.19.8
 	virtual/pkgconfig
