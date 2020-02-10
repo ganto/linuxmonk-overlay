@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -17,23 +17,23 @@ KEYWORDS="~amd64"
 RDEPEND="
 	>=gnome-base/gnome-core-libs-${PV}[cups?]
 
-	>=gnome-base/gnome-session-3.34.1
-	>=gnome-base/gnome-settings-daemon-3.34.1
-	>=gnome-base/gnome-control-center-${PV}
+	>=gnome-base/gnome-session-3.34.2
+	>=gnome-base/gnome-settings-daemon-3.34.2
+	>=gnome-base/gnome-control-center-3.34.2
 	>=gnome-extra/gnome-color-manager-3.32.0
 
 	>=app-crypt/gcr-3.34.0
-	>=gnome-base/nautilus-${PV}
+	>=gnome-base/nautilus-3.34.2
 	>=gnome-base/gnome-keyring-3.34.0
 	>=gnome-extra/evolution-data-server-${PV}
 
 	>=app-crypt/seahorse-3.32.2
 	>=app-editors/gedit-3.34.1
-	>=app-text/evince-${PV}
-	>=gnome-extra/gnome-contacts-3.34
-	>=media-gfx/eog-3.34.1
+	>=app-text/evince-3.34.2
+	>=gnome-extra/gnome-contacts-3.34.1
+	>=media-gfx/eog-3.34.2
 	>=media-video/totem-3.34.1
-	>=x11-terms/gnome-terminal-${PV}
+	>=x11-terms/gnome-terminal-3.34.2
 
 	>=gnome-extra/gnome-user-docs-3.34.1
 	>=gnome-extra/yelp-3.34.0
