@@ -1,7 +1,7 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 inherit gnome.org gnome2-utils meson virtualx xdg
 
 DESCRIPTION="Library with common API for various GNOME modules"
@@ -13,7 +13,7 @@ IUSE="debug doc +introspection gtk-doc seccomp udev"
 KEYWORDS="~amd64"
 
 # cairo[X] needed for gnome-bg
-COMMON_DEPEND="
+DEPEND="
 	app-text/iso-codes
 	>=dev-libs/glib-2.53.0:2
 	>=x11-libs/gdk-pixbuf-2.36.5:2[introspection?]
@@ -28,11 +28,11 @@ COMMON_DEPEND="
 		sys-apps/hwids
 		virtual/libudev:= )
 "
-RDEPEND="${COMMON_DEPEND}
+RDEPEND="${DEPEND}
 	!<gnome-base/gnome-desktop-2.32.1-r1:2[doc]
 	seccomp? ( sys-apps/bubblewrap )
 "
-DEPEND="${COMMON_DEPEND}
+BDEPEND="
 	app-text/docbook-xml-dtd:4.1.2
 	dev-util/gdbus-codegen
 	dev-util/itstool
@@ -43,7 +43,7 @@ DEPEND="${COMMON_DEPEND}
 	app-text/yelp-tools
 "
 PATCHES=(
-	"${FILESDIR}/3.34.0-make-seccomp-optional.patch"
+	"${FILESDIR}/3.34.3-make-seccomp-optional.patch"
 )
 src_configure() {
 	local emesonargs=(

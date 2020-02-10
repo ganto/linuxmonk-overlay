@@ -15,7 +15,7 @@ index 6781ca7..9361f26 100644
 @@ -57,7 +57,7 @@ host_os = host_machine.system()
  host_cpu = host_machine.cpu()
  supported_os = ['linux']
- unsupported_cpus = ['alpha', 'ia64', 'm68k', 'sh4', 'sparc', 'sparc64']
+ unsupported_cpus = ['alpha', 'ia64', 'm68k', 'riscv64', 'sh4', 'sparc', 'sparc64']
 -if supported_os.contains(host_os) and not unsupported_cpus.contains(host_cpu)
 +if supported_os.contains(host_os) and not unsupported_cpus.contains(host_cpu) and get_option('seccomp')
    seccomp_dep = dependency('libseccomp')
