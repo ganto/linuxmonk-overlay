@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -23,14 +23,14 @@ RDEPEND="
 
 	>=gnome-base/gdm-3.34.1
 
-	>=x11-wm/mutter-3.34.1
-	>=gnome-base/gnome-shell-3.34.1[bluetooth?]
+	>=x11-wm/mutter-${PV}
+	>=gnome-base/gnome-shell-${PV}[bluetooth?]
 	>=media-fonts/cantarell-0.111
 
 	>=x11-themes/gnome-backgrounds-3.34.0
 	x11-themes/sound-theme-freedesktop
 
-	classic? ( >=gnome-extra/gnome-shell-extensions-3.34.1 )
+	classic? ( >=gnome-extra/gnome-shell-extensions-3.34.2 )
 	extras? ( >=gnome-base/gnome-extra-apps-${PV} )
 "
 PDEPEND=">=gnome-base/gvfs-1.42.2[udisks]"
