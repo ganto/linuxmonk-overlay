@@ -1,17 +1,2 @@
-# required by net-im/fractal
->=app-text/gspell-1.8
-
-# required by mail-client/evolution
->=app-text/enchant-2.2.1
-
-# latest upstream stable
-=dev-lang/vala-0.46*
-
-# required by dev-lang/vala
-=dev-libs/vala-common-0.46*
-
-# required by gvfs
-sys-fs/fuse
-
-# required by gnome-core-apps
-=media-video/totem-3.34*
+# required by >=gnome-core-libs-3.34.0
+>=x11-libs/pango-1.44.7
