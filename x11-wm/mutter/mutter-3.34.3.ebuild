@@ -65,8 +65,8 @@ DEPEND="
 		elogind? ( sys-auth/elogind )
 		x11-base/xorg-server[wayland]
 	)
-	udev? ( >=virtual/libudev-228:=
-		>=virtual/libgudev-232:= )
+	udev? ( >=dev-libs/libgudev-232:=
+		>=virtual/libudev-232-r1:= )
 	x11-libs/libSM
 	input_devices_wacom? ( >=dev-libs/libwacom-0.13 )
 	>=x11-libs/startup-notification-0.7
@@ -95,10 +95,14 @@ BDEPEND="
 PATCHES=(
 	# Allow building USE=wayland without cogl-gles2 from USE=gles2
 	"${FILESDIR}"/3.32.2-no-cogl-gles2.patch
+	# Fix build with >=mesa-19.3
+	"${FILESDIR}"/3.32-eglmesaext-include.patch
 	# Fix OpenJDK windows
 	"${FILESDIR}"/3.34.0-window-actor-Special-case-shaped-Java-windows.patch
 	# Fix race-condition
 	"${FILESDIR}"/3.34.2-compositor-Guard-against-untimely-calls.patch
+	"${FILESDIR}"/3.34.3-get-texture-crash-fix.patch
+	"${FILESDIR}"/3.34.3-kms-race-crash-fix.patch
 )
 
 src_configure() {
