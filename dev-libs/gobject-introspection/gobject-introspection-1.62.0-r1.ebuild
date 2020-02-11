@@ -1,10 +1,10 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
-PYTHON_COMPAT=( python3_{5,6,7} )
-PYTHON_REQ_USE="xml"
 
+PYTHON_COMPAT=( python3_{6,7,8} )
+PYTHON_REQ_USE="xml"
 inherit gnome.org meson python-single-r1 toolchain-funcs
 
 DESCRIPTION="Introspection system for GObject-based libraries"
@@ -13,6 +13,7 @@ HOMEPAGE="https://wiki.gnome.org/Projects/GObjectIntrospection"
 LICENSE="LGPL-2+ GPL-2+"
 SLOT="0"
 IUSE="cairo doctool test"
+RESTRICT="!test? ( test )"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 	test? ( cairo )
@@ -23,9 +24,14 @@ KEYWORDS="~amd64"
 RDEPEND="
 	>=dev-libs/gobject-introspection-common-${PV}
 	>=dev-libs/glib-2.58.0:2
-	doctool? ( dev-python/mako[${PYTHON_USEDEP}]
-		dev-python/markdown[${PYTHON_USEDEP}] )
+	doctool? (
+		$(python_gen_cond_dep '
+			dev-python/mako[${PYTHON_MULTI_USEDEP}]
+			dev-python/markdown[${PYTHON_MULTI_USEDEP}]
+		')
+	)
 	virtual/libffi:=
+	virtual/pkgconfig
 	!<dev-lang/vala-0.20.0
 	${PYTHON_DEPS}
 "
@@ -34,8 +40,12 @@ DEPEND="${RDEPEND}
 	>=dev-util/gtk-doc-am-1.19
 	sys-devel/bison
 	sys-devel/flex
-	virtual/pkgconfig
-	test? ( x11-libs/cairo[glib] )
+	test? (
+		x11-libs/cairo[glib]
+		$(python_gen_cond_dep '
+			dev-python/markdown[${PYTHON_MULTI_USEDEP}]
+		')
+	)
 " # autoreconf needs autoconf-archive
 # PDEPEND to avoid circular dependencies, bug #391213; but needed for tests, thus test DEPEND as well
 PDEPEND="cairo? ( x11-libs/cairo[glib] )"
