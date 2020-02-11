@@ -24,13 +24,15 @@ RDEPEND="
 	acct-group/mock acct-user/mock
 	app-arch/createrepo_c
 	app-arch/pigz
-	app-arch/rpm[lua,python,${PYTHON_USEDEP}]
+	app-arch/rpm[lua,python,${PYTHON_SINGLE_USEDEP},zstd]
 	>=app-misc/distribution-gpg-keys-1.29
-	dev-python/distro[${PYTHON_USEDEP}]
-	dev-python/jinja[${PYTHON_USEDEP}]
-	dev-python/pyroute2[${PYTHON_USEDEP}]
-	dev-python/requests[${PYTHON_USEDEP}]
-	>=dev-python/six-1.4.0[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		dev-python/distro[${PYTHON_MULTI_USEDEP}]
+		dev-python/jinja[${PYTHON_MULTI_USEDEP}]
+		dev-python/pyroute2[${PYTHON_MULTI_USEDEP}]
+		dev-python/requests[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/six-1.4.0[${PYTHON_MULTI_USEDEP}]
+	')
 	sys-apps/iproute2
 	sys-apps/usermode
 	sys-apps/dnf
