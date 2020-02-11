@@ -4,7 +4,7 @@
 EAPI=7
 PYTHON_COMPAT=( python{3_6,3_7,3_8} )
 
-inherit gnome.org gnome2-utils meson python-single-r1 vala virtualx
+inherit gnome.org meson python-single-r1 vala virtualx
 
 DESCRIPTION="A GObject plugins library"
 HOMEPAGE="https://developer.gnome.org/libpeas/stable/"
@@ -16,7 +16,7 @@ KEYWORDS="~amd64"
 IUSE="+gtk glade lua luajit +python vala"
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
-RDEPEND="
+DEPEND="
 	>=dev-libs/glib-2.38:2
 	>=dev-libs/gobject-introspection-1.39:=
 	glade? ( >=dev-util/glade-3.9.1:3.10 )
@@ -27,9 +27,12 @@ RDEPEND="
 		!luajit? ( =dev-lang/lua-5.1*:0 ) )
 	python? (
 		${PYTHON_DEPS}
-		>=dev-python/pygobject-3.2:3[${PYTHON_USEDEP}] )
+		$(python_gen_cond_dep '
+			>=dev-python/pygobject-3.2:3[${PYTHON_MULTI_USEDEP}]
+		')
+	)
 "
-DEPEND="${RDEPEND}
+BDEPEND="
 	sys-devel/gettext
 	virtual/pkgconfig
 "
