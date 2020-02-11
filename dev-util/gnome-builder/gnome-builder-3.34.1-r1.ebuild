@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-PYTHON_COMPAT=( python3_{6,7} )
+PYTHON_COMPAT=( python3_{6,7,8} )
 VALA_MIN_API_VERSION="0.36"
 DISABLE_AUTOFORMATTING=1
 FORCE_PRINT_ELOG=1
@@ -39,22 +39,25 @@ RDEPEND="
 	>=dev-libs/json-glib-1.2.0
 	>=dev-libs/jsonrpc-glib-3.30.1[vala?]
 	>=x11-libs/pango-1.38.0
-	$(python_gen_cond_dep '>=dev-libs/libpeas-1.22.0[python,${PYTHON_SINGLE_USEDEP}]')
+	>=dev-libs/libpeas-1.22.0[python,${PYTHON_SINGLE_USEDEP}]
 	>=dev-libs/template-glib-3.28.0[introspection,vala?]
 	>=x11-libs/vte-0.40.2:2.91[introspection,vala?]
+	>=net-libs/webkit-gtk-2.22.0:4=[introspection]
 	>=dev-libs/libxml2-2.9.0
 	dev-libs/libgit2[ssh,threads]
 	>=dev-libs/libgit2-glib-0.28.0.1[ssh]
 	dev-libs/libpcre:3
-	>=net-libs/webkit-gtk-2.22.0:4=[introspection]
-	>=dev-libs/gobject-introspection-1.54.0:=
-	>=dev-python/pygobject-3.22.0:3[${PYTHON_USEDEP}]
-	${PYTHON_DEPS}
 
+	>=dev-libs/gobject-introspection-1.54.0:=
+	$(python_gen_cond_dep '
+		>=dev-python/pygobject-3.22.0:3[${PYTHON_MULTI_USEDEP}]
+	')
+	${PYTHON_DEPS}
 	clang? ( sys-devel/clang:= )
 	devhelp? ( >=dev-util/devhelp-3.27.4:= )
 	glade? ( >=dev-util/glade-3.22.0:3.10 )
-	spell? ( >=app-text/enchant-2:= )
+	spell? ( >=app-text/gspell-1.8:0=
+		app-text/enchant:2 )
 	sysprof? ( >=dev-util/sysprof-3.33.1[gtk] )
 	vala? (
 		dev-lang/vala:=
@@ -72,6 +75,8 @@ DEPEND="${RDEPEND}"
 # appstream-glib needed for validation with appstream-util with FEATURES=test
 BDEPEND="
 	doc? ( dev-python/sphinx )
+	gtk-doc? ( dev-util/gtk-doc
+		app-text/docbook-xml-dtd:4.3 )
 	test? (
 		dev-libs/appstream-glib
 		sys-apps/dbus )
