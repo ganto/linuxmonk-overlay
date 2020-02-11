@@ -1,14 +1,14 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=4
+EAPI=7
 
-inherit git-2
+inherit git-r3
 
 DESCRIPTION="Grub2 theme for Gentoo systems"
 HOMEPAGE="https://github.com/CMoH/grub2-theme-gentoo"
 
-EGIT_REPO_URI="git://github.com/CMoH/grub2-theme-gentoo.git"
+EGIT_REPO_URI="https://github.com/CMoH/grub2-theme-gentoo.git"
 
 if [[ ${PV} != 9999* ]] ; then
 	EGIT_COMMIT="v${PV}"
