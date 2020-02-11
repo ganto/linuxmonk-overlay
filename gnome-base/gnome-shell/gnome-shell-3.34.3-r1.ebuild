@@ -55,7 +55,9 @@ DEPEND="
 	>=x11-libs/libXfixes-5.0
 
 	${PYTHON_DEPS}
-	dev-python/pygobject:3[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		dev-python/pygobject:3[${PYTHON_MULTI_USEDEP}]
+	')
 	media-libs/mesa[X(+)]
 "
 # Runtime-only deps are probably incomplete and approximate.
