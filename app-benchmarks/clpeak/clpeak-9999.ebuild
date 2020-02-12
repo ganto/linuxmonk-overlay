@@ -1,9 +1,9 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=5
 
-inherit git-2 cmake-utils eutils
+inherit git-r3 cmake-utils eutils
 
 DESCRIPTION="A tool which profiles OpenCL devices to find their peak capacities"
 HOMEPAGE="https://github.com/krrishnarraj/clpeak"
@@ -28,7 +28,7 @@ RDEPEND="${DEPEND}"
 
 src_install() {
 	dobin "${BUILD_DIR}"/clpeak
-	dodoc README.md STATUS
+	dodoc README.md
 
 	if use results; then
 		docinto results/
