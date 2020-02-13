@@ -55,63 +55,35 @@ for X in "${LANGS[@]}" ; do
 done
 unset X
 
-src_prepare() {
-	cmake-utils_src_prepare
-	python_copy_sources
-}
-
 src_configure() {
-	dnf_src_configure_internal() {
-		local python_major=$( cut -d'.' -f1 <<< "${EPYTHON/python/}" )
-		mycmakeargs=( -DPYTHON_DESIRED:str=${python_major} )
-
-		cmake-utils_src_configure
-	}
-	python_foreach_impl dnf_src_configure_internal
+	mycmakeargs=( -DPYTHON_DESIRED:str=3 )
+	cmake-utils_src_configure
 }
 
 src_compile() {
-	dnf_src_compile_internal() {
-		# make sure we get a processed const.py
-		cp -p "${S}"/dnf/const.py "${BUILD_DIR}"/dnf
+	# make sure we get a processed const.py
+	cp -p "${S}"/dnf/const.py "${BUILD_DIR}"/dnf
 
-		cmake-utils_src_compile
-		cmake-utils_src_compile doc-man
+	cmake-utils_src_compile
+	cmake-utils_src_compile doc-man
 
-		# fix shebang of temporary build python path
-		if python_is_python3 ; then
-			sed -i '1 s|^.*$|#!/usr/bin/python3|' "${S}"/bin/*-3
-		else
-			sed -i '1 s|^.*$|#!/usr/bin/python2|' "${S}"/bin/*-2
-		fi
-	}
-	python_foreach_impl dnf_src_compile_internal
+	# fix shebang of temporary build python path
+	python_setup
+	sed -i "1 s|^.*$|#!${PYTHON}|" "${S}"/bin/*-3
 }
 
 src_test() {
-	dnf_src_test_internal() {
-		DESTDIR="${WORKDIR}-test-${EPYTHON}" cmake-utils_src_make install
-		PYTHONPATH="${WORKDIR}-test-${EPYTHON}"/$(python_get_sitedir) nosetests -s tests || die "tests failed with ${EPYTHON}"
-	}
-	python_foreach_impl dnf_src_test_internal
+	python_setup
+	DESTDIR="${WORKDIR}-test-${EPYTHON}" cmake-utils_src_make install
+	PYTHONPATH="${WORKDIR}-test-${EPYTHON}"/$(python_get_sitedir) nosetests -s tests || die "tests failed with ${EPYTHON}"
 }
 
 src_install() {
-	python_foreach_impl cmake-utils_src_install
+	cmake-utils_src_install
+	python_optimize "${ED}"/$(python_get_sitedir)
 
-	dnf_src_install_optimize() {
-		python_optimize "${ED}"/$(python_get_sitedir)
-	}
-	python_foreach_impl dnf_src_install_optimize
-
-	bashcomp_alias dnf dnf-2 dnf-3
-
-	python_setup
-	local python_major=$( cut -d'.' -f1 <<< "${EPYTHON/python/}" )
-
-	dosym dnf-${python_major} /usr/bin/dnf
-	mv "${ED}"/usr/bin/dnf-automatic-${python_major} "${ED}"/usr/bin/dnf-automatic
-	rm -f "${ED}"/usr/bin/dnf-automatic-*
+	mv "${ED}"/usr/bin/dnf-3 "${ED}"/usr/bin/dnf
+	mv "${ED}"/usr/bin/dnf-automatic-3 "${ED}"/usr/bin/dnf-automatic
 
 	dosym dnf /usr/bin/yum
 
