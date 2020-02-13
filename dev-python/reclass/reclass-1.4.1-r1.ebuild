@@ -1,7 +1,7 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
 PYTHON_COMPAT=( python2_7 )
 DISTUTILS_SINGLE_IMPL=1
@@ -17,13 +17,19 @@ SLOT="0"
 KEYWORDS="~amd64"
 IUSE="doc test"
 
-RDEPEND="dev-python/pyyaml[${PYTHON_USEDEP}]"
-DEPEND="${RDEPEND}
-	dev-python/setuptools[${PYTHON_USEDEP}]
+DEPEND="
+	$(python_gen_cond_dep '
+		dev-python/pyyaml[${PYTHON_MULTI_USEDEP}]
+	')
+	"
+RDEPEND="${DEPEND}"
+BDEPEND="
 	doc? ( dev-python/sphinx )
 	test? (
-		dev-python/mock[${PYTHON_USEDEP}]
-		dev-python/unittest2[${PYTHON_USEDEP}]
+		$(python_gen_cond_dep '
+			dev-python/mock[${PYTHON_MULTI_USEDEP}]
+			dev-python/unittest2[${PYTHON_MULTI_USEDEP}]
+		')
 	)
 "
 
