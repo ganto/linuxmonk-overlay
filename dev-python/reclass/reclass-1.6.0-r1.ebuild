@@ -4,7 +4,6 @@
 EAPI=7
 
 PYTHON_COMPAT=( python2_7 python3_{6,7} )
-#DISTUTILS_SINGLE_IMPL=1
 
 inherit distutils-r1
 
@@ -17,32 +16,31 @@ SLOT="0"
 KEYWORDS="~amd64"
 IUSE="doc test"
 
-DEPEND="
+RDEPEND="
+	dev-python/ddt[${PYTHON_USEDEP}]
 	dev-python/pyparsing[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
 	dev-python/six[${PYTHON_USEDEP}]
 "
-RDEPEND="${DEPEND}"
-BDEPEND="
+DEPEND="
+	dev-python/setuptools[${PYTHON_USEDEP}]
 	doc? ( dev-python/sphinx )
 	test? (
-		dev-python/ddt[${PYTHON_USEDEP}]
+		${RDEPEND}
 		dev-python/mock[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/unittest2[${PYTHON_USEDEP}]
 	)
 "
 
-PATCHES=( "${FILESDIR}/${PV}-Fix-class_mappings-regression.patch" )
+PATCHES=(
+	"${FILESDIR}/${PV}-Avoid-verbose-argument.patch"
+	"${FILESDIR}/${PV}-Fix-class_mappings-regression.patch"
+)
 
 python_compile_all() {
-	default
-
-	if use doc; then
-		pushd doc
-		emake man html
-		popd
-	fi
+	distutils-r1_python_compile
+	use doc && emake docs
 }
 
 python_install_all() {
