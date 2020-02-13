@@ -14,7 +14,7 @@ SRC_URI="https://github.com/salt-formulas/${PN}/archive/${PV}.tar.gz -> ${P}.tar
 LICENSE="Artistic-2"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE="doc test"
+IUSE="test"
 
 RDEPEND="
 	dev-python/ddt[${PYTHON_USEDEP}]
@@ -24,7 +24,6 @@ RDEPEND="
 "
 DEPEND="
 	dev-python/setuptools[${PYTHON_USEDEP}]
-	doc? ( dev-python/sphinx )
 	test? (
 		${RDEPEND}
 		dev-python/mock[${PYTHON_USEDEP}]
@@ -34,7 +33,8 @@ DEPEND="
 "
 
 PATCHES=(
-	"${FILESDIR}/${PV}-Avoid-verbose-argument.patch"
+	"${FILESDIR}/${PV}-namedtuple-Avoid-verbose-argument.patch"
+	"${FILESDIR}/${PV}-setup-py-Avoid-enum34-dependency.patch"
 	"${FILESDIR}/${PV}-Fix-class_mappings-regression.patch"
 )
 

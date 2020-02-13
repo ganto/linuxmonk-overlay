@@ -1,0 +1,20 @@
+commit 4a509f173fbea33d0e775be487ac0a826b7aa8ff
+Author: Reto Gantenbein <reto.gantenbein@linuxmonk.ch>
+Date:   Thu Feb 13 17:46:43 2020 +0100
+
+    setup.py: Avoid enum34 dependency with Python >=3.5
+
+diff --git a/setup.py b/setup.py
+index ab23207..c79a875 100644
+--- a/setup.py
++++ b/setup.py
+@@ -42,7 +42,8 @@ setup(
+     url = URL,
+     packages = find_packages(exclude=['*tests']), #FIXME validate this
+     entry_points = { 'console_scripts': console_scripts },
+-    install_requires = ['pyparsing', 'pyyaml', 'six', 'enum34', 'ddt'], #FIXME pygit2 (require libffi-dev, libgit2-dev 0.26.x )
++    install_requires = ['pyparsing', 'pyyaml', 'six', 'ddt'], #FIXME pygit2 (require libffi-dev, libgit2-dev 0.26.x )
++    extras_require = { ':python_version<"3.4"': ['enum34'] },
+ 
+     classifiers=[
+         'Development Status :: 4 - Beta',
