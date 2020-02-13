@@ -39,46 +39,29 @@ unset X
 src_prepare() {
 	cmake-utils_src_prepare
 	sed -i 's/sphinx-build-3/sphinx-build/' doc/CMakeLists.txt
-	python_copy_sources
 }
 
 src_configure() {
-	dnf_plugins_core_src_configure_internal() {
-		local python_major=$( cut -d'.' -f1 <<< "${EPYTHON/python/}" )
-		mycmakeargs=( -DPYTHON_DESIRED:str=${python_major} )
-
-		cmake-utils_src_configure
-	}
-	python_foreach_impl dnf_plugins_core_src_configure_internal
+	mycmakeargs=( -DPYTHON_DESIRED:str=3 )
+	cmake-utils_src_configure
 }
 
 src_compile() {
-	dnf_plugins_core_src_compile_internal() {
-		cmake-utils_src_compile
-		cmake-utils_src_compile doc-man
-	}
-	python_foreach_impl dnf_plugins_core_src_compile_internal
+	cmake-utils_src_compile
+	cmake-utils_src_compile doc-man
 }
 
 src_test() {
-	dnf_plugins_core_src_test() {
-		PYTHONPATH="${BUILD_DIR}/plugins" nosetests -s tests || die "tests failed with ${EPYTHON}"
-	}
-	python_foreach_impl dnf_plugins_core_src_test
+	PYTHONPATH="${BUILD_DIR}/plugins" nosetests -s tests || die "tests failed"
 }
 
 src_install() {
-	python_foreach_impl cmake-utils_src_install
+	cmake-utils_src_install
 
-	dnf_plugins_core_src_install_optimize() {
-		python_optimize "${ED}"/$(python_get_sitedir)
-	}
-	python_foreach_impl dnf_plugins_core_src_install_optimize
+	mv "${ED}"/usr/libexec/dnf-utils-3 "${ED}"/usr/libexec/dnf-utils
 
 	python_setup
-	local python_major=$( cut -d'.' -f1 <<< "${EPYTHON/python/}" )
-
-	mv "${ED}"/usr/libexec/dnf-utils-${python_major} "${ED}"/usr/libexec/dnf-utils
+	python_optimize "${ED}"/$(python_get_sitedir)
 	sed -i "1c#!/usr/bin/${EPYTHON}" "${ED}"/usr/libexec/dnf-utils
 
 	for util in debuginfo-install dnf-utils find-repos-of-install \
