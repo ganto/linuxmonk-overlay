@@ -3,9 +3,9 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python2_7 python3_{5,6} )
+PYTHON_COMPAT=( python3_{6,7} )
 
-inherit cmake-utils python-r1 bash-completion-r1
+inherit cmake-utils python-single-r1 bash-completion-r1
 
 DESCRIPTION="DNF is a package manager based on yum and libsolv"
 HOMEPAGE="https://github.com/rpm-software-management/dnf"
@@ -20,15 +20,18 @@ IUSE="test"
 # python implementation, don't restrict ourselves and support multiple python
 # implementations in case rpm will ever switch to python-r1 eclass
 CDEPEND="
-	$(python_gen_any_dep '>=app-arch/rpm-4.14.0[python,${PYTHON_USEDEP}]')
-	>=app-crypt/gpgme-1.10.0[python,${PYTHON_USEDEP}]
+	>=app-arch/rpm-4.14.0[python,${PYTHON_SINGLE_USEDEP}]
 	dev-db/sqlite
-	>=dev-libs/libcomps-0.1.8[${PYTHON_USEDEP}]
-	dev-python/iniparse[${PYTHON_USEDEP}]
-	$(python_gen_cond_dep 'dev-python/pyliblzma[${PYTHON_USEDEP}]' python2_7)
-	>=sys-libs/libdnf-0.31.0[${PYTHON_USEDEP}]
 	>=sys-libs/libmodulemd-1.4.0:0
-	>=sys-libs/librepo-1.7.19[${PYTHON_USEDEP}]
+
+	$(python_gen_cond_dep '
+		>=app-crypt/gpgme-1.10.0[python,${PYTHON_MULTI_USEDEP}]
+		>=dev-libs/libcomps-0.1.8[${PYTHON_MULTI_USEDEP}]
+		dev-python/iniparse[${PYTHON_MULTI_USEDEP}]
+		>=sys-libs/libdnf-0.31.0[${PYTHON_MULTI_USEDEP}]
+		>=sys-libs/librepo-1.7.19[${PYTHON_MULTI_USEDEP}]
+	')
+	$(python_gen_cond_dep 'dev-python/pyliblzma[${PYTHON_MULTI_USEDEP}]' python2_7)
 "
 RDEPEND="${CDEPEND}
 	!!sys-apps/yum
@@ -43,8 +46,8 @@ DEPEND="${CDEPEND}
 PATCHES=( "${FILESDIR}"/4.2.6-Always-use-sphinx-build.patch )
 
 LANGS=(
-	ar bg ca cs da de el es eu fi fr gu he hi hr hu id it ja ka kk ko
-	lt ml mr ms nb nl pa pl pt ru sk sq sr sv th tr uk
+	ar bg ca cs da de el eo es eu fa fi fil fr gd gu he hi hr hu id it ja ka kk ko
+	lt ml mr ms nb nl or pa pl pt ru sk sq sr sv th tr uk
 )
 
 for X in "${LANGS[@]}" ; do
