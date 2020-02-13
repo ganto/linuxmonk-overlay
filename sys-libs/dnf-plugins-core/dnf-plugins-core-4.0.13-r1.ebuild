@@ -3,9 +3,9 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python2_7 python3_{6,7} )
+PYTHON_COMPAT=( python3_{6,7} )
 
-inherit cmake-utils python-r1
+inherit cmake-utils python-single-r1
 
 DESCRIPTION="Core DNF plugins"
 HOMEPAGE="https://github.com/rpm-software-management/dnf-plugins-core"
@@ -18,8 +18,10 @@ IUSE="test"
 
 CDEPEND="${PYTHON_DEPS}"
 RDEPEND="${CDEPEND}
-	>=sys-apps/dnf-4.2.1[${PYTHON_USEDEP}]
-	sys-libs/libdnf[${PYTHON_USEDEP}]
+	>=sys-apps/dnf-4.2.1[${PYTHON_SINGLE_USEDEP}]
+	$(python_gen_cond_dep '
+		sys-libs/libdnf[${PYTHON_MULTI_USEDEP}]
+	')
 "
 DEPEND="${CDEPEND}
 	dev-python/sphinx
