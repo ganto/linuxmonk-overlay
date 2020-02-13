@@ -14,7 +14,7 @@ SRC_URI="https://github.com/madduck/${PN}/archive/${P}.tar.gz"
 LICENSE="Artistic-2"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE="doc test"
+IUSE="test"
 
 RDEPEND="dev-python/pyyaml[${PYTHON_USEDEP}]"
 DEPEND="
