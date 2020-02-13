@@ -1,10 +1,9 @@
-# Copyright 2019 Gentoo Authors
+# Copyright 2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
-PYTHON_COMPAT=( python2_7 python3_{5,6,7} )
-
+PYTHON_COMPAT=( python2_7 python3_{6,7} )
 inherit python-single-r1
 
 DESCRIPTION="Tool for checking common errors in RPM packages"
@@ -20,20 +19,24 @@ RDEPEND="
 	app-arch/bzip2
 	app-arch/cpio
 	app-arch/gzip
-	app-arch/rpm[python,${PYTHON_USEDEP}]
+	app-arch/rpm[python,${PYTHON_SINGLE_USEDEP}]
 	app-arch/xz-utils
-	dev-python/pyenchant[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		dev-python/pyenchant[${PYTHON_MULTI_USEDEP}]
+		sys-apps/file[python,${PYTHON_MULTI_USEDEP}]
+	')
 	dev-util/desktop-file-utils
-	sys-apps/file[python,${PYTHON_USEDEP}]
 	sys-apps/groff
 	sys-devel/binutils:*
 "
-DEPEND="${RDEPEND}
-	dev-python/setuptools[${PYTHON_USEDEP}]
+DEPEND="${RDEPEND}"
+BDEPEND="
 	sys-apps/sed
 	test? (
-		dev-python/flake8[${PYTHON_USEDEP}]
-		dev-python/pytest[${PYTHON_USEDEP}]
+		$(python_gen_cond_dep '
+			dev-python/flake8[${PYTHON_MULTI_USEDEP}]
+			dev-python/pytest[${PYTHON_MULTI_USEDEP}]
+		')
 	)
 "
 
