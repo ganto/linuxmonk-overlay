@@ -1,9 +1,9 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
-PYTHON_COMPAT=( python2_7 python3_{5,6} )
+PYTHON_COMPAT=( python3_{6,7} )
 inherit distutils-r1
 
 DESCRIPTION="Common APIs to load and dump configuration files in various formats"
@@ -14,9 +14,9 @@ LICENSE="MIT"
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE="test"
+RESTRICT="!test? ( test )"
 
 RDEPEND="
-	dev-python/configobj[${PYTHON_USEDEP}]
 	dev-python/jinja[${PYTHON_USEDEP}]
 	dev-python/jmespath[${PYTHON_USEDEP}]
 	dev-python/jsonschema[${PYTHON_USEDEP}]
@@ -24,9 +24,13 @@ RDEPEND="
 	dev-python/ruamel-yaml[${PYTHON_USEDEP}]
 	dev-python/toml[${PYTHON_USEDEP}]
 "
-DEPEND="${RDEPEND}
+DEPEND="${RDEPEND}"
+BDEPEND="
 	dev-python/setuptools[${PYTHON_USEDEP}]
-	test? ( dev-python/nose[${PYTHON_USEDEP}] )
+	test? (
+		dev-python/mock[${PYTHON_USEDEP}]
+		dev-python/nose[${PYTHON_USEDEP}]
+	)
 "
 
 DOCS=( AUTHORS.txt NEWS README.rst )
@@ -34,5 +38,5 @@ DOCS=( AUTHORS.txt NEWS README.rst )
 S="${WORKDIR}/python-${PN}-RELEASE_${PV}"
 
 python_test() {
-	./pkg/runtest.sh || die "Tests failed with ${EPYTHON}"
+	${PYTHON} -m nose -v --all-modules --where tests || die "Tests failed with ${EPYTHON}"
 }
