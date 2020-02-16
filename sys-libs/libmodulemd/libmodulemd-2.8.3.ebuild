@@ -28,7 +28,10 @@ RDEPEND="
 	introspection? ( dev-libs/gobject-introspection )
 "
 DEPEND="${RDEPEND}"
-BDEPEND="virtual/pkgconfig"
+BDEPEND="
+	dev-util/glib-utils
+	virtual/pkgconfig
+"
 
 S="${WORKDIR}"/modulemd-${PV}
 
