@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -24,24 +24,26 @@ IUSE="fastcgi i18n +highlight +restructuredtext mysql postgres +sqlite subversio
 REQUIRED_USE="|| ( mysql postgres sqlite )"
 
 RDEPEND="
-	dev-python/setuptools[${PYTHON_USEDEP}]
-	dev-python/genshi[${PYTHON_USEDEP}]
-	dev-python/pytz[${PYTHON_USEDEP}]
-	fastcgi? ( dev-python/flup[${PYTHON_USEDEP}] )
-	i18n? ( >=dev-python/Babel-0.9.5[${PYTHON_USEDEP}] )
-	highlight? (
-		|| (
-			dev-python/pygments[${PYTHON_USEDEP}]
-			app-text/silvercity
-			app-text/pytextile
-			app-text/enscript
+	$(python_gen_cond_dep '
+		dev-python/setuptools[${PYTHON_MULTI_USEDEP}]
+		dev-python/genshi[${PYTHON_MULTI_USEDEP}]
+		dev-python/pytz[${PYTHON_MULTI_USEDEP}]
+		fastcgi? ( dev-python/flup[${PYTHON_MULTI_USEDEP}] )
+		i18n? ( >=dev-python/Babel-0.9.5[${PYTHON_MULTI_USEDEP}] )
+		highlight? (
+			|| (
+				dev-python/pygments[${PYTHON_MULTI_USEDEP}]
+				app-text/silvercity
+				app-text/pytextile
+				app-text/enscript
+			)
 		)
-	)
-	restructuredtext? ( dev-python/docutils[${PYTHON_USEDEP}] )
-	mysql? ( dev-python/mysql-python[${PYTHON_USEDEP}] )
-	postgres? ( >=dev-python/psycopg-2[${PYTHON_USEDEP}] )
-	sqlite? ( >=dev-db/sqlite-3.3.4:3 )
-	subversion? ( dev-vcs/subversion[python,${PYTHON_USEDEP}] )
+		restructuredtext? ( dev-python/docutils[${PYTHON_MULTI_USEDEP}] )
+		mysql? ( dev-python/mysql-python[${PYTHON_MULTI_USEDEP}] )
+		postgres? ( >=dev-python/psycopg-2[${PYTHON_MULTI_USEDEP}] )
+		sqlite? ( >=dev-db/sqlite-3.3.4:3 )
+		subversion? ( dev-vcs/subversion[python,${PYTHON_MULTI_USEDEP}] )
+	')
 	"
 DEPEND="${RDEPEND}"
 
@@ -95,7 +97,7 @@ src_install() {
 	# Use this as the egg-cache for tracd
 	dodir /var/lib/trac/egg-cache
 	keepdir /var/lib/trac/egg-cache
-	#fowners tracd:tracd /var/lib/trac/egg-cache
+	fowners tracd:tracd /var/lib/trac/egg-cache
 
 	# documentation
 	dodoc -r contrib
