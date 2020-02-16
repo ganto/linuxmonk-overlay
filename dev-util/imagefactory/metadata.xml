@@ -14,11 +14,8 @@
 		virtualization and cloud providers from a single template definition.
 	</longdescription>
 	<use>
-		<flag name="ec2">Enable cloud plugin for Amazon EC2</flag>
 		<flag name="openstack">Enable cloud plugin for OpenStack running on KVM</flag>
 		<flag name="nova">Enable OS plugin to use Nova instances to build base images</flag>
-		<flag name="rackspace">Enable cloud plugin for Rackspace</flag>
 		<flag name="rhevm">Enable cloud plugin for Red Hat Virtualization</flag>
-		<flag name="vmware">Enable cloud plugin for VMware vSphere</flag>
 	</use>
 </pkgmetadata>
