@@ -4,7 +4,7 @@
 #
 language: python
 python:
-    - pypy
+    - "3.7"
 env:
     - PORTAGE_VER="2.3.84"
 before_install:
