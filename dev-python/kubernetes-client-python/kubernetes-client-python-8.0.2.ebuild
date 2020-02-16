@@ -1,9 +1,9 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
-PYTHON_COMPAT=( python2_7 python3_{5,6} )
+PYTHON_COMPAT=( python3_{6,7} )
 inherit distutils-r1
 
 KUBERNETES_BASE_COMMIT=3f6e65bccbeecfb6d68733f9c16ff6f5f2ff59df
