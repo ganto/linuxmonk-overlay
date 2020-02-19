@@ -1,8 +1,8 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-PYTHON_COMPAT=( python{3_5,3_6,3_7} )
+PYTHON_COMPAT=( python{3_6,3_7} )
 
 inherit flag-o-matic gnome.org gnome2-utils linux-info meson multilib multilib-minimal python-any-r1 toolchain-funcs xdg
 
@@ -12,6 +12,7 @@ HOMEPAGE="https://www.gtk.org/"
 LICENSE="LGPL-2.1+"
 SLOT="2"
 IUSE="dbus debug elibc_glibc fam gtk-doc kernel_linux +mime selinux static-libs systemtap test utils xattr"
+RESTRICT="!test? ( test )"
 
 KEYWORDS="~amd64"
 
