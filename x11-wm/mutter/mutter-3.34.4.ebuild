@@ -101,8 +101,6 @@ PATCHES=(
 	"${FILESDIR}"/3.34.0-window-actor-Special-case-shaped-Java-windows.patch
 	# Fix race-condition
 	"${FILESDIR}"/3.34.2-compositor-Guard-against-untimely-calls.patch
-	"${FILESDIR}"/3.34.3-get-texture-crash-fix.patch
-	"${FILESDIR}"/3.34.3-kms-race-crash-fix.patch
 )
 
 src_configure() {
