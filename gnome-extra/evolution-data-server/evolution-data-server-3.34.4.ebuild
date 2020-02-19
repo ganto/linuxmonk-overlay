@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
-PYTHON_COMPAT=( python2_7 python3_{6,7,8} )
+PYTHON_COMPAT=( python3_{6,7,8} )
 VALA_USE_DEPEND="vapigen"
 
 inherit cmake-utils db-use flag-o-matic gnome2 python-any-r1 systemd vala virtualx
@@ -81,7 +81,6 @@ pkg_setup() {
 
 # global scope PATCHES or DOCS array mustn't be used due to double default_src_prepare call
 src_prepare() {
-	eapply "${FILESDIR}/${PV}-alarm-notify-double-free.patch"
 	use vala && vala_src_prepare
 	cmake-utils_src_prepare
 	gnome2_src_prepare
