@@ -1,7 +1,7 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=6
 
 inherit gnome.org gnome2-utils meson xdg
 
@@ -10,7 +10,8 @@ HOMEPAGE="https://wiki.gnome.org/Apps/Disks"
 
 LICENSE="GPL-2+"
 SLOT="0"
-IUSE="fat gnome systemd"
+IUSE="fat elogind gnome systemd"
+REQUIRED_USE="?? ( elogind systemd )"
 KEYWORDS="~amd64"
 
 COMMON_DEPEND="
@@ -20,9 +21,10 @@ COMMON_DEPEND="
 	>=app-crypt/libsecret-0.7
 	>=dev-libs/libpwquality-1.0.0
 	>=media-libs/libcanberra-0.1[gtk3]
-	>=media-libs/libdvdread-4.2.0
+	>=media-libs/libdvdread-4.2.0:0=
 	>=x11-libs/libnotify-0.7:=
 	>=app-arch/xz-utils-5.0.5
+	elogind? ( >=sys-auth/elogind-209 )
 	systemd? ( >=sys-apps/systemd-209:0= )
 "
 RDEPEND="${COMMON_DEPEND}
@@ -43,8 +45,9 @@ DEPEND="${COMMON_DEPEND}
 
 src_configure() {
 	local emesonargs=(
+		$(usex elogind -Dlogind=libelogind '')
+		$(usex systemd -Dlogind=libsystemd '')
 		$(meson_use gnome gsd_plugin)
-		$(meson_use systemd libsystemd)
 	)
 	meson_src_configure
 }
