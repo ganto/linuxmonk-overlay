@@ -36,9 +36,9 @@ RDEPEND="${PYTHON_DEPS}
 BDEPEND="
 	>=dev-lang/swig-3.0.12
 	dev-libs/check
+	dev-util/cppunit
 	sys-devel/gettext
 	virtual/pkgconfig
-	test? ( dev-util/cppunit )
 "
 
 src_prepare() {
