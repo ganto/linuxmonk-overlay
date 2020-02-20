@@ -28,7 +28,7 @@ DEPEND="
 	>=app-arch/zchunk-0.9.11
 	>=sys-libs/libmodulemd-1.6.1:0
 	>=sys-libs/librepo-1.11.0
-	>=dev-libs/libsolv-0.7.7[python,${PYTHON_USEDEP}]
+	>=dev-libs/libsolv-0.7.7[python,${PYTHON_USEDEP},rpm]
 "
 RDEPEND="${PYTHON_DEPS}
 	${DEPEND}
