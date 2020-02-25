@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -23,6 +23,6 @@ src_install() {
 	if use copr ; then
 		doins -r keys/*
 	else
-		doins -r keys/{adobe,brave,calcforge,centos,dell,dropbox,epel,fedora,google,jpackage,mageia,microsoft,openmandriva,opensuse,postgresql,redhat,remi,rpmfusion,scientific-linux,skype,unitedrpms,virtualbox,zimbra}
+		doins -r keys/{adobe,amazon-linux,brave,calcforge,centos,dell,dropbox,epel,fedora,google,ius,jpackage,mageia,microsoft,openmandriva,opensuse,postgresql,redhat,remi,rpmfusion,scientific-linux,skype,unitedrpms,virtualbox,zimbra}
 	fi
 }
