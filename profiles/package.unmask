@@ -1,2 +1,5 @@
+# avoid upstream mask
+>=app-backup/deja-dup-40.6
+
 # required by >=gnome-core-libs-3.34.0
 >=x11-libs/pango-1.44.7

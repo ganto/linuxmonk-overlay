@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -12,7 +12,7 @@ SRC_URI="https://gitlab.gnome.org/World/${PN}/-/archive/${PV}/${P}.tar.gz"
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE="gnome-online-accounts nautilus packagekit test"
+IUSE="gnome-online-accounts nautilus test"
 
 COMMON_DEPEND="
 	>=app-crypt/libsecret-0.18.6[vala]
@@ -26,7 +26,6 @@ COMMON_DEPEND="
 
 	gnome-online-accounts? ( net-libs/gnome-online-accounts )
 	nautilus? ( gnome-base/nautilus )
-	packagekit? ( app-admin/packagekit-base )
 "
 RDEPEND="${COMMON_DEPEND}
 	gnome-base/dconf
@@ -41,7 +40,7 @@ DEPEND="${COMMON_DEPEND}
 
 RESTRICT="test" # bug#????
 
-PATCHES=( "${FILESDIR}"/${PV}-meson-disable-optional.patch )
+PATCHES=( "${FILESDIR}"/40.2-meson-disable-optional.patch )
 
 src_prepare() {
 	default
@@ -52,7 +51,7 @@ src_configure() {
 	meson_src_configure \
 		$(meson_use gnome-online-accounts enable_goa) \
 		$(meson_use nautilus enable_nautilus) \
-		$(meson_use packagekit enable_packagekit)
+		-Denable_packagekit=false
 }
 
 pkg_postinst() {
