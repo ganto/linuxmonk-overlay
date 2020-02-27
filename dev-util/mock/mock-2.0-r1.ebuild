@@ -40,6 +40,7 @@ RDEPEND="
 
 PATCHES=(
 	"${FILESDIR}"/1.4.19-Fix-path.patch
+	"${FILESDIR}"/2.0-Revert-copy-certs.patch
 )
 
 S="${WORKDIR}/mock-${P}-2"
