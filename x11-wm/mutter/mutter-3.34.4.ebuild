@@ -6,11 +6,12 @@ inherit gnome.org gnome2-utils meson virtualx xdg
 
 DESCRIPTION="GNOME 3 compositing window manager based on Clutter"
 HOMEPAGE="https://gitlab.gnome.org/GNOME/mutter/"
+SRC_URI+=" https://dev.gentoo.org/~leio/distfiles/${PF}-patchset.tar.xz"
 
 LICENSE="GPL-2+"
 SLOT="0/5" # 0/libmutter_api_version - ONLY gnome-shell (or anything using mutter-clutter-<api_version>.pc) should use the subslot
 
-IUSE="elogind gles2 input_devices_wacom +introspection screencast systemd test udev wayland"
+IUSE="elogind input_devices_wacom +introspection screencast +sysprof systemd test udev wayland"
 # native backend requires gles3 for hybrid graphics blitting support, udev and a logind provider
 REQUIRED_USE="
 	wayland? ( ^^ ( elogind systemd ) udev )
@@ -18,9 +19,6 @@ REQUIRED_USE="
 RESTRICT="!test? ( test )"
 
 KEYWORDS="~amd64"
-
-# libXi-1.7.4 or newer needed per:
-# https://bugzilla.gnome.org/show_bug.cgi?id=738944 - https://gitlab.gnome.org/GNOME/mutter/merge_requests/766
 
 # gnome-settings-daemon is build checked, but used at runtime only for org.gnome.settings-daemon.peripherals.keyboard gschema
 # xorg-server is needed at build and runtime with USE=wayland for Xwayland
@@ -30,6 +28,7 @@ DEPEND="
 	>=x11-libs/gtk+-3.19.8:3[X,introspection?]
 	x11-libs/gdk-pixbuf:2
 	>=x11-libs/pango-1.30[introspection?]
+	>=dev-libs/fribidi-1.0.0
 	>=x11-libs/cairo-1.14[X]
 	>=gnome-base/gsettings-desktop-schemas-3.33.0[introspection?]
 	>=dev-libs/glib-2.61.1:2
@@ -50,11 +49,11 @@ DEPEND="
 	>=x11-libs/libXrandr-1.5.0
 	x11-libs/libxcb
 	x11-libs/libXinerama
+	x11-libs/libXau
 	x11-libs/libICE
 	>=dev-libs/atk-2.5.3[introspection?]
-	>=dev-libs/fribidi-1.0.0
 	>=media-libs/libcanberra-0.26
-	media-libs/mesa[X(+),egl,gles2?]
+	media-libs/mesa[X(+),egl]
 	wayland? (
 		>=dev-libs/wayland-protocols-1.18
 		>=dev-libs/wayland-1.13.0
@@ -70,7 +69,7 @@ DEPEND="
 	x11-libs/libSM
 	input_devices_wacom? ( >=dev-libs/libwacom-0.13 )
 	>=x11-libs/startup-notification-0.7
-	screencast? ( >=media-video/pipewire-0.2.5:0/0.2 )
+	screencast? ( >=media-video/pipewire-0.2.2:0/0.2 )
 	introspection? ( >=dev-libs/gobject-introspection-1.54:= )
 "
 RDEPEND="${DEPEND}
@@ -78,6 +77,7 @@ RDEPEND="${DEPEND}
 "
 DEPEND="${DEPEND}
 	x11-base/xorg-proto
+	sysprof? ( >=dev-util/sysprof-capture-3.34.1-r1:3 )
 "
 # wayland bdepend for wayland-scanner, xorg-server for cvt utility
 BDEPEND="
@@ -93,14 +93,10 @@ BDEPEND="
 "
 
 PATCHES=(
-	# Allow building USE=wayland without cogl-gles2 from USE=gles2
-	"${FILESDIR}"/3.32.2-no-cogl-gles2.patch
-	# Fix build with >=mesa-19.3
+	# Some patches from gnome-3-34 branch on top of 3.34.4
+	"${WORKDIR}"/patches/
+
 	"${FILESDIR}"/3.32-eglmesaext-include.patch
-	# Fix OpenJDK windows
-	"${FILESDIR}"/3.34.0-window-actor-Special-case-shaped-Java-windows.patch
-	# Fix race-condition
-	"${FILESDIR}"/3.34.2-compositor-Guard-against-untimely-calls.patch
 )
 
 src_configure() {
@@ -109,7 +105,7 @@ src_configure() {
 		-Dopengl=true
 		#opengl_libname
 		#gles2_libname
-		$(meson_use gles2)
+		$(meson_use wayland gles2)
 		-Degl=true
 		-Dglx=true
 		$(meson_use wayland)
@@ -124,8 +120,10 @@ src_configure() {
 		-Dsm=true
 		$(meson_use introspection)
 		$(meson_use test cogl_tests)
+		$(meson_use wayland core_tests) # core tests require wayland; overall -Dtests option is honored on top, so no extra conditional needed
 		$(meson_use test clutter_tests)
 		$(meson_use test tests)
+		$(meson_use sysprof profiler)
 		-Dinstalled_tests=false
 		#verbose # Let upstream choose default for verbose mode
 		#xwayland_path
@@ -136,7 +134,8 @@ src_configure() {
 }
 
 src_test() {
-	virtx meson_src_test
+	glib-compile-schemas "${BUILD_DIR}"/data
+	GSETTINGS_SCHEMA_DIR="${BUILD_DIR}"/data virtx meson_src_test
 }
 
 pkg_postinst() {
