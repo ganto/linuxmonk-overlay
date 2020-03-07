@@ -1,8 +1,13 @@
-commit 22ca57780ee174928be84bad9daeb6afcee0826e
-Author: Mart Raudsepp <leio@gentoo.org>
-Date:   Sun Sep 15 01:18:29 2019 +0200
+From 23b1b1184a3a882febb104652f5ac2e6ffd3fed0 Mon Sep 17 00:00:00 2001
+From: Mart Raudsepp <leio@gentoo.org>
+Date: Thu, 28 Feb 2019 00:50:19 +0200
+Subject: [PATCH] build: Make bluetooth support optional
 
-    build: Make bluetooth support optional
+---
+ js/misc/meson.build | 2 +-
+ meson.build         | 7 ++++++-
+ meson_options.txt   | 6 ++++++
+ 3 files changed, 13 insertions(+), 2 deletions(-)
 
 diff --git a/js/misc/meson.build b/js/misc/meson.build
 index 5a4871762..3c5e02368 100644
@@ -18,12 +23,12 @@ index 5a4871762..3c5e02368 100644
  jsconf.set('datadir', datadir)
  jsconf.set('libexecdir', libexecdir)
 diff --git a/meson.build b/meson.build
-index b22f52af8..b45c57225 100644
+index 97de19758..77646793f 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -98,7 +98,12 @@ ibus_dep = dependency('ibus-1.0', version: ibus_req)
- x11_dep = dependency('x11')
+@@ -100,7 +100,12 @@ x11_dep = dependency('x11')
  schemas_dep = dependency('gsettings-desktop-schemas', version: schemas_req)
+ gnome_desktop_dep = dependency('gnome-desktop-3.0', version: gnome_desktop_req)
  
 -bt_dep = dependency('gnome-bluetooth-1.0', version: bt_req, required: false)
 +if get_option('bluetooth')
@@ -49,3 +54,6 @@ index 2c5539012..8e8d9eee6 100644
  option('extensions_tool',
    type: 'boolean',
    value: true,
+-- 
+2.20.1
+

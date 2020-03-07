@@ -8,6 +8,7 @@ inherit gnome.org gnome2-utils meson pax-utils python-single-r1 virtualx xdg
 
 DESCRIPTION="Provides core UI functions for the GNOME 3 desktop"
 HOMEPAGE="https://wiki.gnome.org/Projects/GnomeShell"
+SRC_URI+=" https://dev.gentoo.org/~leio/distfiles/${P}-patchset.tar.xz"
 
 LICENSE="GPL-2+ LGPL-2+"
 SLOT="0"
@@ -24,16 +25,16 @@ DEPEND="
 	>=dev-libs/libcroco-0.6.8:0.6
 	>=gnome-extra/evolution-data-server-3.33.1:=
 	>=app-crypt/gcr-3.7.5[introspection]
-	>=gnome-base/gnome-desktop-3.7.90:3=[introspection]
 	>=dev-libs/glib-2.57.2:2
 	>=dev-libs/gobject-introspection-1.49.1:=
-	>=dev-libs/gjs-1.57.0
+	>=dev-libs/gjs-1.57.3
 	>=x11-libs/gtk+-3.15.0:3[introspection]
 	>=x11-wm/mutter-3.34.0:0/5[introspection]
 	>=sys-auth/polkit-0.100[introspection]
 	>=gnome-base/gsettings-desktop-schemas-3.33.1
 	>=x11-libs/startup-notification-0.11
 	>=app-i18n/ibus-1.5.2
+	>=gnome-base/gnome-desktop-3.32:3=[introspection]
 	bluetooth? ( >=net-wireless/gnome-bluetooth-3.9[introspection] )
 	>=media-libs/gstreamer-0.11.92:1.0
 	media-libs/gst-plugins-base:1.0
@@ -41,8 +42,11 @@ DEPEND="
 		>=net-misc/networkmanager-1.10.4:=[introspection]
 		>=app-crypt/libsecret-0.18
 		dev-libs/dbus-glib )
-	systemd? ( >=sys-apps/systemd-31 )
+	systemd? ( >=sys-apps/systemd-31
+		>=gnome-base/gnome-desktop-3.34.2:3=[systemd] )
 	elogind? ( >=sys-auth/elogind-237 )
+	app-arch/gnome-autoar
+	dev-libs/json-glib
 
 	>=app-accessibility/at-spi2-atk-2.5.3
 	x11-libs/gdk-pixbuf:2[introspection]
@@ -109,6 +113,7 @@ PDEPEND="
 BDEPEND="
 	dev-lang/sassc
 	dev-libs/libxslt
+	app-text/asciidoc
 	>=dev-util/gdbus-codegen-2.45.3
 	dev-util/glib-utils
 	gtk-doc? ( >=dev-util/gtk-doc-1.17
@@ -118,6 +123,8 @@ BDEPEND="
 "
 
 PATCHES=(
+	# Patches from gnome-3-34 branch on top of 3.34.4
+	"${WORKDIR}"/patches/
 	# Fix automagic gnome-bluetooth dep, bug #398145
 	"${FILESDIR}"/3.34-optional-bluetooth.patch
 	# Change favorites defaults, bug #479918
@@ -133,10 +140,12 @@ src_prepare() {
 src_configure() {
 	local emesonargs=(
 		$(meson_use bluetooth)
+		-Dextensions_tool=true
 		$(meson_use gtk-doc gtk_doc)
 		-Dman=true
 		$(meson_use networkmanager)
-		$(meson_use systemd) # this controls journald integration only as of 3.26.2 (structured logging and having gnome-shell launched apps use its own identifier instead of gnome-session)
+		$(meson_use systemd) # this controls journald integration and desktop file user services related property only as of 3.34.4
+		# (structured logging and having gnome-shell launched apps use its own identifier instead of gnome-session)
 		# suspend support is runtime optional via /run/systemd/seats presence and org.freedesktop.login1.Manager dbus interface; elogind should provide what's necessary
 	)
 	meson_src_configure
