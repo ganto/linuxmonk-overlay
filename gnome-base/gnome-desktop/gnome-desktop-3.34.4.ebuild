@@ -7,52 +7,67 @@ inherit gnome.org gnome2-utils meson virtualx xdg
 DESCRIPTION="Library with common API for various GNOME modules"
 HOMEPAGE="https://gitlab.gnome.org/GNOME/gnome-desktop/"
 
-LICENSE="GPL-2+ FDL-1.1+ LGPL-2+"
+LICENSE="GPL-2+ LGPL-2+ FDL-1.1+"
 SLOT="3/18" # subslot = libgnome-desktop-3 soname version
-IUSE="debug doc +introspection gtk-doc seccomp udev"
+IUSE="debug gtk-doc +introspection seccomp systemd udev"
 KEYWORDS="~amd64"
 
 # cairo[X] needed for gnome-bg
-DEPEND="
-	app-text/iso-codes
-	>=dev-libs/glib-2.53.0:2
+COMMON_DEPEND="
 	>=x11-libs/gdk-pixbuf-2.36.5:2[introspection?]
 	>=x11-libs/gtk+-3.3.6:3[X,introspection?]
-	x11-libs/cairo:=[X]
-	x11-libs/libX11
+	>=dev-libs/glib-2.53.0:2
+	>=gnome-base/gsettings-desktop-schemas-3.27.0[introspection?]
 	x11-misc/xkeyboard-config
-	>=gnome-base/gsettings-desktop-schemas-3.27.0
-	introspection? ( >=dev-libs/gobject-introspection-0.9.7:= )
-	seccomp? ( sys-libs/libseccomp )
+	app-text/iso-codes
+	x11-libs/libX11
+	systemd? ( sys-apps/systemd:= )
 	udev? (
 		sys-apps/hwids
 		virtual/libudev:= )
+	seccomp? ( sys-libs/libseccomp )
+
+	x11-libs/cairo:=[X]
+	introspection? ( >=dev-libs/gobject-introspection-1.54:= )
 "
-RDEPEND="${DEPEND}
-	!<gnome-base/gnome-desktop-2.32.1-r1:2[doc]
+DEPEND="${COMMON_DEPEND}
+	media-libs/fontconfig
+"
+RDEPEND="${COMMON_DEPEND}
 	seccomp? ( sys-apps/bubblewrap )
 "
 BDEPEND="
 	app-text/docbook-xml-dtd:4.1.2
 	dev-util/gdbus-codegen
+	gtk-doc? ( >=dev-util/gtk-doc-1.14 )
 	dev-util/itstool
 	>=sys-devel/gettext-0.19.8
 	x11-base/xorg-proto
 	virtual/pkgconfig
-	media-libs/fontconfig
-	app-text/yelp-tools
 "
+# Includes X11/Xatom.h in libgnome-desktop/gnome-bg.c which comes from xorg-proto
+
 PATCHES=(
-	"${FILESDIR}/3.34.3-make-seccomp-optional.patch"
+	"${FILESDIR}"/3.32.2-optional-introspection.patch # add introspection meson option
 )
+
+src_prepare() {
+	# Don't build manual test programs that will never get run
+	sed -i -e "/'test-.*'/d" libgnome-desktop/meson.build || die
+	xdg_src_prepare
+}
+
 src_configure() {
 	local emesonargs=(
 		-Dgnome_distributor=Gentoo
+		-Ddate_in_gnome_version=true
+		-Ddesktop_docs=true
 		$(meson_use debug debug_tools)
-		-Dudev=$(usex udev enabled disabled)
+		$(meson_use introspection)
+		$(meson_feature udev)
+		$(meson_feature systemd)
 		$(meson_use gtk-doc gtk_doc)
-		$(meson_use doc desktop_docs)
-		$(meson_use seccomp)
+		-Dinstalled_tests=false
 	)
 	meson_src_configure
 }
