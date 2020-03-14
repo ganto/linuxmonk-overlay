@@ -3,9 +3,10 @@
 
 EAPI=7
 GNOME_ORG_MODULE="glib"
-PYTHON_COMPAT=( python{3_6,3_7} )
+PYTHON_COMPAT=( python3_{6,7,8} )
 PYTHON_REQ_USE="xml"
 DISTUTILS_SINGLE_IMPL=1
+DISTUTILS_USE_SETUPTOOLS=no
 
 inherit gnome.org distutils-r1
 
@@ -33,7 +34,10 @@ python_prepare_all() {
 	distutils-r1_python_prepare_all
 
 	sed -e 's:@PYTHON@:python:' gdbus-codegen.in > gdbus-codegen || die
-	sed -e "s:@VERSION@:${PV}:" config.py.in > config.py || die
+	sed -e "s:@VERSION@:${PV}:" \
+		-e "s:@MAJOR_VERSION@:${PV%%.*}:" \
+		-e "s:@MINOR_VERSION@:$(cut -d'.' -f2 <<< "${PV}"):" \
+		config.py.in > config.py || die
 	cp "${FILESDIR}/setup.py-2.32.4" setup.py || die "cp failed"
 	sed -e "s/@PV@/${PV}/" -i setup.py || die "sed setup.py failed"
 }
