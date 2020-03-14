@@ -30,7 +30,7 @@ RDEPEND="
 	!<dev-util/gdbus-codegen-${PV}
 	>=virtual/libiconv-0-r1[${MULTILIB_USEDEP}]
 	>=dev-libs/libpcre-8.31:3[${MULTILIB_USEDEP},static-libs?]
-	>=virtual/libffi-3.0.13-r1:=[${MULTILIB_USEDEP}]
+	>=dev-libs/libffi-3.0.13-r1:=[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.8-r1[${MULTILIB_USEDEP}]
 	>=virtual/libintl-0-r2[${MULTILIB_USEDEP}]
 	kernel_linux? ( >=sys-apps/util-linux-2.23[${MULTILIB_USEDEP}] )
@@ -118,10 +118,6 @@ src_prepare() {
 	sed -i -e '/subdir.*fuzzing/d' meson.build || die
 
 	# gdbus-codegen is a separate package
-	sed -i -e 's/install.*true/install : false/g' gio/gdbus-2.0/codegen/meson.build || die
-	# Older than meson-0.50 doesn't know about install kwarg for configure_file; for that we need to remove the install_dir kwarg.
-	# Upstream will remove the install kwarg in a future version to require only meson-0.49.2 or newer, at which point the
-	# install_dir removal only should be kept.
 	sed -i -e '/install_dir/d' gio/gdbus-2.0/codegen/meson.build || die
 
 	# Same kind of meson-0.50 issue with some installed-tests files; will likely be fixed upstream soon
@@ -146,21 +142,11 @@ multilib_src_configure() {
 		append-cflags -DG_DISABLE_CAST_CHECKS # https://gitlab.gnome.org/GNOME/glib/issues/1833
 	fi
 
-	# TODO: figure a way to pass appropriate values for all cross properties that glib uses (search for get_cross_property)
-	#if tc-is-cross-compiler ; then
-		# https://bugzilla.gnome.org/show_bug.cgi?id=756473
-		# TODO-meson: This should be in meson cross file as 'growing_stack' property; and more, look at get_cross_property
-		#case ${CHOST} in
-		#hppa*|metag*) export glib_cv_stack_grows=yes ;;
-		#*)            export glib_cv_stack_grows=no ;;
-		#esac
-	#fi
-
 	local emesonargs=(
 		-Ddefault_library=$(usex static-libs both shared)
 		$(meson_feature selinux)
 		$(meson_use xattr)
-		-Dlibmount=true # only used if host_system == 'linux'
+		-Dlibmount=enabled # only used if host_system == 'linux'
 		-Dinternal_pcre=false
 		-Dman=true
 		$(meson_use systemtap dtrace)
@@ -169,6 +155,7 @@ multilib_src_configure() {
 		$(meson_use fam)
 		-Dinstalled_tests=false
 		-Dnls=enabled
+		-Doss_fuzz=disabled
 	)
 	meson_src_configure
 }
