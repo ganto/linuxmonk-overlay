@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -12,7 +12,9 @@ SLOT="0"
 IUSE="+introspection"
 KEYWORDS="~amd64"
 
-DEPEND="
+DEPEND="!<gnome-base/gdm-3.8"
+RDEPEND="${DEPEND}"
+BDEPEND="
 	introspection? ( >=dev-libs/gobject-introspection-1.54:= )
 	dev-util/glib-utils
 	>=sys-devel/gettext-0.19.8
