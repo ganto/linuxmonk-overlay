@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -14,7 +14,7 @@ LICENSE="LGPL-2"
 SLOT="2"
 KEYWORDS="~amd64"
 
-IUSE="+introspection vala"
+IUSE="debug +introspection vala"
 REQUIRED_USE="vala? ( introspection )"
 
 RDEPEND="
@@ -25,15 +25,14 @@ RDEPEND="
 	>=dev-libs/libcroco-0.6.1[${MULTILIB_USEDEP}]
 	>=x11-libs/gdk-pixbuf-2.20:2[introspection?,${MULTILIB_USEDEP}]
 	>=x11-libs/gtk+-3.10:3[${MULTILIB_USEDEP}]
-	|| ( >=dev-lang/rust-1.27.0[${MULTILIB_USEDEP}] >=dev-lang/rust-bin-1.27.0[${MULTILIB_USEDEP}] )
 	introspection? ( >=dev-libs/gobject-introspection-0.10.8:= )
 "
 DEPEND="${RDEPEND}
 	dev-libs/gobject-introspection-common
 	dev-libs/vala-common
+	>=virtual/rust-1.20
 	>=dev-util/gtk-doc-am-1.13
 	>=virtual/pkgconfig-0-r1[${MULTILIB_USEDEP}]
-	virtual/cargo
 	vala? ( $(vala_depend) )
 "
 # >=gtk-doc-am-1.13, gobject-introspection-common, vala-common needed by eautoreconf
@@ -76,6 +75,7 @@ multilib_src_configure() {
 		--build=${CHOST_default} \
 		--disable-static \
 		--disable-tools \
+		$(use_enable debug) \
 		$(multilib_native_use_enable introspection) \
 		$(multilib_native_use_enable vala) \
 		--enable-pixbuf-loader \
