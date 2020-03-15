@@ -1,13 +1,14 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-PYTHON_COMPAT=( python2_7 python3_{5,6,7} )
+
+PYTHON_COMPAT=( python2_7 python3_{6,7,8} )
 
 inherit gnome.org meson python-r1 virtualx xdg
 
 DESCRIPTION="Python bindings for GObject Introspection"
-HOMEPAGE="https://wiki.gnome.org/Projects/PyGObject"
+HOMEPAGE="https://pygobject.readthedocs.io/"
 
 LICENSE="LGPL-2.1+"
 SLOT="3"
@@ -19,7 +20,7 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 RDEPEND="${PYTHON_DEPS}
 	>=dev-libs/glib-2.48:2
 	>=dev-libs/gobject-introspection-1.54:=
-	virtual/libffi:=
+	dev-libs/libffi:=
 	cairo? (
 		>=dev-python/pycairo-1.11.1[${PYTHON_USEDEP}]
 		x11-libs/cairo[glib] )
