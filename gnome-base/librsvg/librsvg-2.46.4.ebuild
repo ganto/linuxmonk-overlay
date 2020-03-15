@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -18,7 +18,6 @@ IUSE="gtk-doc +introspection tools vala"
 REQUIRED_USE="vala? ( introspection )"
 
 RDEPEND="
-	|| ( >=dev-lang/rust-1.34.0[${MULTILIB_USEDEP}] >=dev-lang/rust-bin-1.34.0[${MULTILIB_USEDEP}] )
 	>=dev-libs/glib-2.52.0:2[${MULTILIB_USEDEP}]
 	>=dev-libs/libcroco-0.6.8-r1[${MULTILIB_USEDEP}]
 	>=dev-libs/libxml2-2.9.1-r4:2[${MULTILIB_USEDEP}]
@@ -32,8 +31,8 @@ DEPEND="${RDEPEND}
 	dev-libs/gobject-introspection-common
 	dev-libs/vala-common
 	>=dev-util/gtk-doc-am-1.13
+	>=virtual/rust-1.34.0[${MULTILIB_USEDEP}]
 	>=virtual/pkgconfig-0-r1[${MULTILIB_USEDEP}]
-	virtual/cargo
 	gtk-doc? ( >=dev-util/gtk-doc-1.13 )
 	vala? ( $(vala_depend) )
 "
