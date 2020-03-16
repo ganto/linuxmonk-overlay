@@ -1,30 +1,31 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
 inherit gnome.org meson multilib-minimal systemd virtualx xdg
 
 DESCRIPTION="D-Bus accessibility specifications and registration daemon"
 HOMEPAGE="https://wiki.gnome.org/Accessibility"
 
-LICENSE="LGPL-2+"
+LICENSE="LGPL-2.1+"
 SLOT="2"
 IUSE="X gtk-doc +introspection"
 KEYWORDS="~amd64"
 
 RDEPEND="
-	>=dev-libs/glib-2.36:2[${MULTILIB_USEDEP}]
 	>=sys-apps/dbus-1.5[${MULTILIB_USEDEP}]
+	>=dev-libs/glib-2.36:2[${MULTILIB_USEDEP}]
 	introspection? ( >=dev-libs/gobject-introspection-1.54.0:= )
-	x11-libs/libSM[${MULTILIB_USEDEP}]
-	x11-libs/libXi[${MULTILIB_USEDEP}]
-	x11-libs/libXtst[${MULTILIB_USEDEP}]
 	X? (
 		x11-libs/libX11[${MULTILIB_USEDEP}]
+		x11-libs/libXtst[${MULTILIB_USEDEP}]
+		x11-libs/libXi[${MULTILIB_USEDEP}]
 	)
 "
-DEPEND="${RDEPEND}
+DEPEND="${RDEPEND}"
+BDEPEND="
+	>=dev-util/meson-0.50.0
 	dev-util/glib-utils
 	gtk-doc? (
 		>=dev-util/gtk-doc-1.25
@@ -40,11 +41,10 @@ PATCHES=(
 
 multilib_src_configure() {
 	local emesonargs=(
-		-Denable-xevie=false
-		-Denable_docs=$(multilib_native_usex gtk-doc true false)
-		-Denable-introspection=$(multilib_native_usex introspection)
-		-Denable-x11=$(usex X)
 		-Dsystemd_user_dir="$(systemd_get_userunitdir)"
+		-Ddocs=$(multilib_native_usex gtk-doc true false)
+		-Dintrospection=$(multilib_native_usex introspection)
+		-Dx11=$(usex X)
 	)
 	meson_src_configure
 }
