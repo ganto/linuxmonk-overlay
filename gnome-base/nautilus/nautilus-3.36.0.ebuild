@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -10,20 +10,18 @@ HOMEPAGE="https://wiki.gnome.org/Apps/Nautilus"
 
 LICENSE="GPL-3+ LGPL-2.1+"
 SLOT="0"
-IUSE="gnome +gstreamer gtk-doc +introspection packagekit +previewer seccomp selinux sendto"
+IUSE="gnome +gstreamer gtk-doc +introspection packagekit +previewer selinux sendto"
 
 KEYWORDS="~amd64"
 
-COMMON_DEPEND="
+DEPEND="
 	>=dev-libs/glib-2.58.1:2
 	>=media-libs/gexiv2-0.10.0
 	gstreamer? ( media-libs/gstreamer:1.0
 		media-libs/gst-plugins-base:1.0 )
 	>=app-arch/gnome-autoar-0.2.1
-	gnome-base/gsettings-desktop-schemas
-	>=gnome-base/gnome-desktop-3.30:3=
+	>=gnome-base/gnome-desktop-3.0.0:3=
 	>=x11-libs/gtk+-3.22.27:3[X,introspection?]
-	seccomp? ( sys-libs/libseccomp )
 	>=x11-libs/pango-1.28.3
 	selinux? ( >=sys-libs/libselinux-2.0 )
 	>=app-misc/tracker-2.0:=
@@ -31,16 +29,12 @@ COMMON_DEPEND="
 	>=dev-libs/libxml2-2.7.8:2
 	introspection? ( >=dev-libs/gobject-introspection-1.54:= )
 "
-RDEPEND="${COMMON_DEPEND}
+RDEPEND="${DEPEND}
 	packagekit? ( app-admin/packagekit-base )
-	seccomp? ( >=sys-apps/bubblewrap-0.3.1 )
 	sendto? ( !<gnome-extra/nautilus-sendto-3.0.1 )
 	gstreamer? ( !<media-video/totem-3.31.91[nautilus] )
 	>=app-misc/tracker-miners-2.0:=
 " # uses org.freedesktop.Tracker.Miner.Files gsettings schema from tracker-miners
-DEPEND="${COMMON_DEPEND}
-	media-libs/fontconfig
-"
 BDEPEND="
 	>=dev-util/gdbus-codegen-2.51.2
 	dev-util/glib-utils
