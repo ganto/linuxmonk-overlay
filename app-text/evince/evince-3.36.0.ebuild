@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -20,14 +20,14 @@ KEYWORDS="~amd64"
 # bundles unarr
 COMMON_DEPEND="
 	dev-libs/atk
-	>=dev-libs/glib-2.38:2[dbus]
+	>=dev-libs/glib-2.38.0:2
 	>=dev-libs/libxml2-2.5:2
 	sys-libs/zlib:=
 	>=x11-libs/gdk-pixbuf-2.36.5:2
 	>=x11-libs/gtk+-3.22.0:3[introspection?]
 	gnome-base/gsettings-desktop-schemas
 	>=x11-libs/cairo-1.10:=
-	>=app-text/poppler-0.33[cairo]
+	>=app-text/poppler-0.76.0[cairo]
 	>=app-arch/libarchive-3.2.0
 	djvu? ( >=app-text/djvu-3.5.22:= )
 	dvi? (
@@ -56,12 +56,12 @@ RDEPEND="${COMMON_DEPEND}
 "
 DEPEND="${COMMON_DEPEND}
 	app-text/docbook-xml-dtd:4.3
+	dev-libs/appstream-glib
 	dev-util/gdbus-codegen
 	dev-util/glib-utils
 	>=dev-util/gtk-doc-am-1.13
-	>=dev-util/intltool-0.35
 	dev-util/itstool
-	sys-devel/gettext
+	>=sys-devel/gettext-0.19.8
 	virtual/pkgconfig
 	app-text/yelp-tools
 "
@@ -76,7 +76,7 @@ src_prepare() {
 	gnome2_src_prepare
 
 	# Do not depend on adwaita-icon-theme, bug #326855, #391859
-	# https://bugs.freedesktop.org/show_bug.cgi?id=29942
+	# https://gitlab.freedesktop.org/xdg/default-icon-theme/issues/7
 	sed -e 's/adwaita-icon-theme >= $ADWAITA_ICON_THEME_REQUIRED//g' \
 		-i configure || die "sed failed"
 }
