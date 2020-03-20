@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -49,7 +49,7 @@ src_configure() {
 		--disable-static \
 		--enable-bz2 \
 		--enable-lzma \
-		APPSTREAM_UTIL=""
+		APPSTREAM_UTIL=$(type -P true)
 }
 
 src_install() {
