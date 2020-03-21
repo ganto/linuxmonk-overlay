@@ -1,7 +1,7 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=6
 inherit gnome.org readme.gentoo-r1 meson xdg
 
 DESCRIPTION="JavaScript extensions for GNOME Shell"
@@ -12,30 +12,22 @@ SLOT="0"
 IUSE="test"
 KEYWORDS="~amd64"
 
-DEPEND="
+COMMON_DEPEND="
 	>=dev-libs/glib-2.26:2
 	>=gnome-base/libgtop-2.28.3[introspection]
 	>=app-eselect/eselect-gnome-shell-extensions-20111211
 "
-RDEPEND="${DEPEND}
-	>=dev-libs/gjs-1.29
-	dev-libs/gobject-introspection:=
-	dev-libs/atk[introspection]
+RDEPEND="${COMMON_DEPEND}
+	gnome-base/gnome-desktop[introspection]
 	gnome-base/gnome-menus:3[introspection]
-	>=gnome-base/gnome-shell-3.34
-	media-libs/clutter:1.0[introspection]
-	net-libs/telepathy-glib[introspection]
-	x11-libs/gdk-pixbuf:2[introspection]
-	x11-libs/gtk+:3[introspection]
-	x11-libs/pango[introspection]
-	x11-themes/adwaita-icon-theme
-	>=x11-wm/mutter-3.32[introspection]
+	>=gnome-base/gnome-shell-3.36
+	<gnome-base/gnome-shell-3.37
 "
-BDEPEND="
+DEPEND="${COMMON_DEPEND}
 	dev-lang/sassc
 	>=sys-devel/gettext-0.19.8
 	virtual/pkgconfig
-	test? ( dev-lang/spidermonkey:60 )
+	test? ( dev-lang/spidermonkey:68 )
 "
 
 RESTRICT="!test? ( test )"
