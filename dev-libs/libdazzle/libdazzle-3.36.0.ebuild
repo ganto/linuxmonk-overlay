@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -12,10 +12,11 @@ LICENSE="GPL-3+"
 SLOT="0"
 KEYWORDS="~amd64"
 
-IUSE="gtk-doc +introspection test vala"
+IUSE="gtk-doc +introspection test +vala"
 REQUIRED_USE="vala? ( introspection )"
 RESTRICT="!test? ( test )"
 
+# We keep newer glib/gtk+ deps to avoid GtkEventControllerMotion backports gettings used
 RDEPEND="
 	>=dev-libs/glib-2.56.0:2
 	>=x11-libs/gtk+-3.24.0:3[introspection?]
