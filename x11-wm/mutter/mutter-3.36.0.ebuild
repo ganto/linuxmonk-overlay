@@ -6,10 +6,9 @@ inherit gnome.org gnome2-utils meson virtualx xdg
 
 DESCRIPTION="GNOME 3 compositing window manager based on Clutter"
 HOMEPAGE="https://gitlab.gnome.org/GNOME/mutter/"
-SRC_URI+=" https://dev.gentoo.org/~leio/distfiles/${PF}-patchset.tar.xz"
 
 LICENSE="GPL-2+"
-SLOT="0/5" # 0/libmutter_api_version - ONLY gnome-shell (or anything using mutter-clutter-<api_version>.pc) should use the subslot
+SLOT="0/6" # 0/libmutter_api_version - ONLY gnome-shell (or anything using mutter-clutter-<api_version>.pc) should use the subslot
 
 IUSE="elogind input_devices_wacom +introspection screencast +sysprof systemd test udev wayland"
 # native backend requires gles3 for hybrid graphics blitting support, udev and a logind provider
@@ -52,14 +51,15 @@ DEPEND="
 	x11-libs/libXau
 	x11-libs/libICE
 	>=dev-libs/atk-2.5.3[introspection?]
+	>=media-libs/graphene-1.9.3
 	>=media-libs/libcanberra-0.26
 	media-libs/mesa[X(+),egl]
 	wayland? (
-		>=dev-libs/wayland-protocols-1.18
+		>=dev-libs/wayland-protocols-1.19
 		>=dev-libs/wayland-1.13.0
 		x11-libs/libdrm:=
 		>=media-libs/mesa-10.3[egl,gbm,wayland,gles2]
-		>=dev-libs/libinput-1.4
+		>=dev-libs/libinput-1.7
 		systemd? ( sys-apps/systemd )
 		elogind? ( sys-auth/elogind )
 		x11-base/xorg-server[wayland]
@@ -69,7 +69,7 @@ DEPEND="
 	x11-libs/libSM
 	input_devices_wacom? ( >=dev-libs/libwacom-0.13 )
 	>=x11-libs/startup-notification-0.7
-	screencast? ( >=media-video/pipewire-0.2.2:0/0.2 )
+	screencast? ( >=media-video/pipewire-0.3.0:0/0.3 )
 	introspection? ( >=dev-libs/gobject-introspection-1.54:= )
 "
 RDEPEND="${DEPEND}
@@ -77,7 +77,7 @@ RDEPEND="${DEPEND}
 "
 DEPEND="${DEPEND}
 	x11-base/xorg-proto
-	sysprof? ( >=dev-util/sysprof-capture-3.34.1-r1:3 )
+	sysprof? ( >=dev-util/sysprof-capture-3.35.2:3 )
 "
 # wayland bdepend for wayland-scanner, xorg-server for cvt utility
 BDEPEND="
@@ -91,13 +91,6 @@ BDEPEND="
 	wayland? ( >=sys-kernel/linux-headers-4.4
 		x11-base/xorg-server )
 "
-
-PATCHES=(
-	# Some patches from gnome-3-34 branch on top of 3.34.4
-	"${WORKDIR}"/patches/
-
-	"${FILESDIR}"/3.32-eglmesaext-include.patch
-)
 
 src_configure() {
 	# TODO: Replicate debug vs release meson build type behaviour under our buildtype=plain
@@ -127,6 +120,7 @@ src_configure() {
 		-Dinstalled_tests=false
 		#verbose # Let upstream choose default for verbose mode
 		#xwayland_path
+		#xwayland_initfd
 		# TODO: relies on default settings, but in Gentoo we might have some more packages we want to give Xgrab access (mostly virtual managers and remote desktops)
 		#xwayland_grab_default_access_rules
 	)
