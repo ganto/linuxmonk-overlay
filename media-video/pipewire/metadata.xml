@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
+	<maintainer type="project">
+		<email>gnome@gentoo.org</email>
+		<name>Gentoo GNOME Desktop</name>
+	</maintainer>
 	<maintainer type="person">
-		<email>reto.gantenbein@linuxmonk.ch</email>
-		<name>Reto Gantenbein</name>
+		<email>asturm@gentoo.org</email>
+		<name>Andreas Sturmlechner</name>
 	</maintainer>
 	<upstream>
 		<remote-id type="github">PipeWire/pipewire</remote-id>
 	</upstream>
-	<longdescription lang="en">
-		PipeWire is a server and user space API to deal with multimedia
-		pipelines.
-	</longdescription>
+	<use>
+		<flag name="v4l2">Enable Video4Linux v2 SPA plugin integration</flag>
+		<flag name="vulkan">Enable Vulkan SPA plugin integration</flag>
+	</use>
 </pkgmetadata>
