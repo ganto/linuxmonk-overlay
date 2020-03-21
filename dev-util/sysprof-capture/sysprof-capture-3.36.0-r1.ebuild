@@ -34,3 +34,10 @@ src_configure() {
 	)
 	meson_src_configure
 }
+
+src_install() {
+	meson_src_install
+	# In 3.36 we are missing the profiler interface
+	insinto /usr/share/dbus-1/interfaces
+	doins src/org.gnome.Sysprof3.Profiler.xml
+}
