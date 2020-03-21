@@ -8,7 +8,6 @@ inherit gnome.org gnome2-utils meson pax-utils python-single-r1 virtualx xdg
 
 DESCRIPTION="Provides core UI functions for the GNOME 3 desktop"
 HOMEPAGE="https://wiki.gnome.org/Projects/GnomeShell"
-SRC_URI+=" https://dev.gentoo.org/~leio/distfiles/${P}-patchset.tar.xz"
 
 LICENSE="GPL-2+ LGPL-2+"
 SLOT="0"
@@ -29,7 +28,7 @@ DEPEND="
 	>=dev-libs/gobject-introspection-1.49.1:=
 	>=dev-libs/gjs-1.57.3
 	>=x11-libs/gtk+-3.15.0:3[introspection]
-	>=x11-wm/mutter-3.34.0:0/5[introspection]
+	>=x11-wm/mutter-3.34.0:0/6[introspection]
 	>=sys-auth/polkit-0.100[introspection]
 	>=gnome-base/gsettings-desktop-schemas-3.33.1
 	>=x11-libs/startup-notification-0.11
@@ -123,12 +122,17 @@ BDEPEND="
 "
 
 PATCHES=(
-	# Patches from gnome-3-34 branch on top of 3.34.4
-	"${WORKDIR}"/patches/
+	# https://gitlab.gnome.org/GNOME/gnome-shell/-/merge_requests/1080
+	"${FILESDIR}"/3.36.0-1080-ibusManager-fix-ibus-launch.patch
+	# https://gitlab.gnome.org/GNOME/gnome-shell/-/merge_requests/1084
+	"${FILESDIR}"/3.36.0-1084-St-Ensure-to-update-entry-hint.patch
+
+	# Try to fix crashes related to custom stylesheet; triggered often by package installs (probably desktop database update)
+	# https://gitlab.gnome.org/GNOME/gnome-shell/issues/1265
+	# https://gitlab.gnome.org/GNOME/gnome-shell/merge_requests/536
+	"${FILESDIR}"/3.34.4-custom_stylesheet_crash.patch
 	# Fix automagic gnome-bluetooth dep, bug #398145
 	"${FILESDIR}"/3.34-optional-bluetooth.patch
-	# Change favorites defaults, bug #479918
-	"${FILESDIR}"/3.28.3-defaults.patch
 )
 
 src_prepare() {
