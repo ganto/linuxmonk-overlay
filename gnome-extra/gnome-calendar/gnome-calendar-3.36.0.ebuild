@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -10,7 +10,7 @@ HOMEPAGE="https://wiki.gnome.org/Apps/Calendar"
 LICENSE="GPL-3+"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE="gtk-doc"
+IUSE=""
 
 # >=libical-1.0.1 for https://bugzilla.gnome.org/show_bug.cgi?id=751244
 DEPEND="
@@ -19,8 +19,9 @@ DEPEND="
 	>=gnome-extra/evolution-data-server-3.33.2:=[gtk]
 	net-libs/libsoup:2.4
 	>=dev-libs/libdazzle-3.33.1
+	>=gui-libs/libhandy-0.0.9
 	>=dev-libs/glib-2.58.0:2
-	>=x11-libs/gtk+-3.22.0:3
+	>=x11-libs/gtk+-3.22.20:3
 	>=net-libs/gnome-online-accounts-3.2.0:=
 	>=dev-libs/libgweather-3.27.2:=
 	>=app-misc/geoclue-2.4:2.0
@@ -32,18 +33,9 @@ BDEPEND="
 	dev-libs/libxml2:2
 	dev-util/gdbus-codegen
 	dev-util/glib-utils
-	gtk-doc? ( dev-util/gtk-doc
-		app-text/docbook-xml-dtd:4.3 )
 	>=sys-devel/gettext-0.19.8
 	virtual/pkgconfig
 "
-
-RESTRICT="!test? ( test )"
-
-src_configure() {
-	meson_src_configure \
-		$(meson_use gtk-doc documentation)
-}
 
 src_test() {
 	virtx meson_src_test
