@@ -1,9 +1,9 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 VALA_USE_DEPEND="vapigen"
-VALA_MIN_API_VERSION="0.36"
+VALA_MIN_API_VERSION="0.40"
 
 inherit gnome.org gnome2-utils linux-info meson readme.gentoo-r1 vala xdg
 
@@ -13,7 +13,7 @@ HOMEPAGE="https://wiki.gnome.org/Apps/Boxes"
 LICENSE="LGPL-2+ CC-BY-2.0"
 SLOT="0"
 
-IUSE="rdp"
+IUSE="rdp +uefi"
 KEYWORDS="~amd64"
 
 # FIXME: ovirt is not available in tree; though it seems the gnome-boxes ovirt broker is too buggy atm anyways (would need rest[vala] as well)
@@ -21,31 +21,26 @@ KEYWORDS="~amd64"
 # FIXME: Check over libvirt USE=libvirtd,qemu and the smartcard/usbredir requirements
 # Technically vala itself still ships a libsoup vapi, but that may change, and it should be better to use the .vapi from the same libsoup version
 # gtk-vnc raised due to missing vala bindings in earlier ebuilds
-COMMON_DEPEND="
-	>=app-arch/libarchive-3:=
+DEPEND="
+	>=app-arch/libarchive-3.0.0:=
 	>=dev-libs/glib-2.52:2
-	>=dev-libs/gobject-introspection-1.54:=
-	>=x11-libs/gtk+-3.22.20:3[introspection]
-	>=net-libs/gtk-vnc-0.8.0-r1[gtk3(+),vala]
-	>=sys-libs/libosinfo-1.1.0[vala]
-	app-crypt/libsecret[vala]
-	>=net-libs/libsoup-2.44:2.4[vala]
+	>=x11-libs/gtk+-3.22.20:3
+	>=net-libs/gtk-vnc-0.8.0-r1[gtk3(+)]
+	>=sys-libs/libosinfo-1.7.0
+	app-crypt/libsecret
+	>=net-libs/libsoup-2.44:2.4
 	virtual/libusb:1
-	>=app-emulation/libvirt-glib-0.2.3[vala]
+	>=app-emulation/libvirt-glib-3.0.0
 	>=dev-libs/libxml2-2.7.8:2
-	>=net-misc/spice-gtk-0.32[gtk3(+),smartcard,usbredir,vala]
+	>=net-misc/spice-gtk-0.32[gtk3(+),smartcard,usbredir]
 	app-misc/tracker:0/2.0
+	>=x11-libs/vte-0.40.2:2.91
 	net-libs/webkit-gtk:4
-	>=virtual/libgudev-165:=
+
+	>=dev-libs/gobject-introspection-1.56:=
+	>=dev-libs/libgudev-165:=
 	rdp? ( net-misc/freerdp:= )
-"
-DEPEND="${COMMON_DEPEND}
-	$(vala_depend)
-	dev-libs/appstream-glib
-	dev-util/itstool
-	>=sys-devel/gettext-0.19.8
-	virtual/pkgconfig
-"
+" # gobject-introspection needed for libovf subproject (and gtk-frdp subproject with USE=rdp)
 # These are called via exec():
 # sys-fs/mtools mcopy for unattended file copying for files that libarchive doesn't support
 # virtual/cdrtools mkisofs is needed for unattended installer secondary disk image creation
@@ -54,7 +49,7 @@ DEPEND="${COMMON_DEPEND}
 # app-emulation/libvirt virsh used for various checks (and we need the library anyways)
 # sys-auth/polkit used for making all libvirt system disks readable via "pkexec chmod a+r" that aren't already readable to the user (libvirt system importer)
 # app-emulation/qemu qemu-img used to convert image to QCOW2 format during copy
-RDEPEND="${COMMON_DEPEND}
+RDEPEND="${DEPEND}
 	>=app-misc/tracker-miners-2[iso]
 	app-emulation/spice[smartcard]
 	>=app-emulation/libvirt-0.9.3[libvirtd,qemu]
@@ -62,6 +57,23 @@ RDEPEND="${COMMON_DEPEND}
 	sys-fs/mtools
 	virtual/cdrtools
 	sys-auth/polkit
+"
+# gtk-frdp generates gir and needs gtk+ introspection for it
+# This is only needed for creating the .vapi file, but gnome-boxes needs it
+BDEPEND="
+	$(vala_depend)
+	net-libs/gtk-vnc[vala]
+	sys-libs/libosinfo[vala]
+	app-crypt/libsecret[vala]
+	net-libs/libsoup:2.4[vala]
+	app-emulation/libvirt-glib[vala]
+	net-misc/spice-gtk[vala]
+	x11-libs/vte:2.91[vala]
+	dev-libs/appstream-glib
+	rdp? ( x11-libs/gtk+:3[introspection] )
+	dev-util/itstool
+	>=sys-devel/gettext-0.19.8
+	virtual/pkgconfig
 "
 
 DISABLE_AUTOFORMATTING="yes"
@@ -92,11 +104,11 @@ src_configure() {
 	local emesonargs=(
 		-Ddistributor_name=Gentoo
 		-Ddistributor_version=${PVR}
-		-Dovirt=false
 		$(meson_use rdp)
 		-Dinstalled_tests=false
 		-Dflatpak=false
 		-Dprofile=default
+		$(meson_use uefi)
 	)
 	meson_src_configure
 }
