@@ -21,9 +21,11 @@ KEYWORDS="~amd64"
 # dconf explicitely needed for backup plugin
 # gnome-desktop support is optional with --enable-gnome-desktop
 # automagic libunity dep
+# >=webkit-gtk-2.26.4-r1 and >=gspell-1.8 to ensure all use enchant:2
+# TODO: Adjust webkit-gtk dep to actually be that once it's keyworded for needed arches
 COMMON_DEPEND="
 	>=app-crypt/gcr-3.4:=[gtk]
-	>=app-text/enchant-1.6.0:0
+	>=app-text/enchant-2.2.0:2
 	>=dev-libs/glib-2.46:2[dbus]
 	>=dev-libs/libxml2-2.7.3:2
 	>=gnome-base/gnome-desktop-2.91.3:3=
@@ -31,7 +33,7 @@ COMMON_DEPEND="
 	>=gnome-extra/evolution-data-server-${PV}:=[gtk,weather?]
 	>=media-libs/libcanberra-0.25[gtk3]
 	>=net-libs/libsoup-2.42:2.4
-	>=net-libs/webkit-gtk-2.16.0:4
+	>=net-libs/webkit-gtk-2.24.0:4
 	>=x11-libs/cairo-1.9.15:=[glib]
 	>=x11-libs/gdk-pixbuf-2.24:2
 	>=x11-libs/gtk+-3.22:3
@@ -41,11 +43,11 @@ COMMON_DEPEND="
 	>=app-text/iso-codes-0.49
 	dev-libs/atk
 	gnome-base/dconf
-	>=dev-libs/libical-3.0.2:=
 	x11-libs/libSM
 	x11-libs/libICE
 
 	archive? ( >=app-arch/gnome-autoar-0.1.1[gtk] )
+	bogofilter? ( mail-filter/bogofilter )
 	geolocation? (
 		>=media-libs/libchamplain-0.12:0.12[gtk]
 		>=media-libs/clutter-1.0.0:1.0
@@ -53,7 +55,8 @@ COMMON_DEPEND="
 		>=sci-geosciences/geocode-glib-3.10.0
 		x11-libs/mx:1.0 )
 	ldap? ( >=net-nds/openldap-2:= )
-	spell? ( app-text/gtkspell:3 )
+	spamassassin? ( mail-filter/spamassassin )
+	spell? ( >=app-text/gspell-1.8:= )
 	ssl? (
 		>=dev-libs/nspr-4.6.1:=
 		>=dev-libs/nss-3.11:= )
@@ -72,9 +75,7 @@ DEPEND="${COMMON_DEPEND}
 	virtual/pkgconfig
 "
 RDEPEND="${COMMON_DEPEND}
-	bogofilter? ( mail-filter/bogofilter )
 	highlight? ( app-text/highlight )
-	spamassassin? ( mail-filter/spamassassin )
 	!gnome-extra/evolution-exchange
 "
 
@@ -107,14 +108,14 @@ src_configure() {
 		-DWITH_OPENLDAP=$(usex ldap)
 		-DENABLE_SMIME=$(usex ssl)
 		-DENABLE_GNOME_DESKTOP=ON
-		-DWITH_ENCHANT_VERSION=1
+		-DWITH_ENCHANT_VERSION=2
 		-DENABLE_CANBERRA=ON
 		-DENABLE_AUTOAR=$(usex archive)
 		-DWITH_HELP=ON
 		-DENABLE_YTNEF=OFF
 		-DWITH_BOGOFILTER=$(usex bogofilter)
 		-DWITH_SPAMASSASSIN=$(usex spamassassin)
-		-DENABLE_GTKSPELL=$(usex spell)
+		-DENABLE_GSPELL=$(usex spell)
 		-DENABLE_TEXT_HIGHLIGHT=$(usex highlight)
 		-DENABLE_WEATHER=$(usex weather)
 		-DENABLE_CONTACT_MAPS=$(usex geolocation)
