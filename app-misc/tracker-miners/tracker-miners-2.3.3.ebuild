@@ -1,8 +1,8 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
-PYTHON_COMPAT=( python{2_7,3_5,3_6,3_7} )
+PYTHON_COMPAT=( python{3_6,3_7,3_8} )
 
 inherit gnome.org gnome2-utils meson python-any-r1 systemd xdg
 
@@ -11,7 +11,7 @@ HOMEPAGE="https://wiki.gnome.org/Projects/Tracker"
 
 LICENSE="GPL-2+ LGPL-2.1+"
 SLOT="0"
-IUSE="cue exif ffmpeg gif gsf +gstreamer iptc +iso +jpeg libav +pdf +playlist raw +rss seccomp test +taglib +tiff upower +xml xmp xps"
+IUSE="cue exif ffmpeg gif gsf +gstreamer iptc +iso +jpeg libav +pdf +playlist raw +rss seccomp test +tiff upower +xml xmp xps"
 
 REQUIRED_USE="cue? ( gstreamer )" # cue is currently only supported via gstreamer, not ffmpeg/libav
 RESTRICT="!test? ( test )"
@@ -35,7 +35,7 @@ RDEPEND="
 	xmp? ( >=media-libs/exempi-2.1.0:= )
 	raw? ( media-libs/gexiv2 )
 	>=dev-libs/icu-4.8.1.2:=
-	cue? ( media-libs/libcue )
+	cue? ( media-libs/libcue:= )
 	exif? ( >=media-libs/libexif-0.6 )
 	gsf? ( >=gnome-extra/libgsf-1.14.24:= )
 	xps? ( app-text/libgxps )
@@ -47,7 +47,6 @@ RDEPEND="
 	tiff? ( media-libs/tiff:0 )
 	xml? ( >=dev-libs/libxml2-2.6 )
 	pdf? ( >=app-text/poppler-0.16.0[cairo] )
-	taglib? ( >=media-libs/taglib-1.6 )
 	playlist? ( >=dev-libs/totem-pl-parser-3:= )
 	upower? ( >=sys-power/upower-0.9.0 )
 	sys-libs/zlib:0
@@ -120,7 +119,6 @@ src_configure() {
 		$(meson_feature playlist)
 		-Dpng=enabled
 		$(meson_feature raw)
-		$(meson_feature taglib)
 		$(meson_feature tiff)
 		-Dvorbis=disabled # never use external vorbis extractor - gst-plugins-base[vorbis] is for that; ffmpeg one is maybe worse, but that's non-default
 		$(meson_feature xml)
@@ -139,4 +137,14 @@ src_configure() {
 src_test() {
 	export GSETTINGS_BACKEND="dconf" # Tests require dconf and explicitly check for it (env_reset set it to "memory")
 	dbus-run-session meson test -C "${BUILD_DIR}" || die 'tests failed'
+}
+
+pkg_postinst() {
+	xdg_pkg_postinst
+	gnome2_schemas_update
+}
+
+pkg_postrm() {
+	xdg_pkg_postrm
+	gnome2_schemas_update
 }
