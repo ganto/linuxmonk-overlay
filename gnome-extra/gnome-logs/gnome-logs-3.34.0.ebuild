@@ -1,7 +1,7 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=6
 
 inherit gnome.org gnome2-utils meson virtualx xdg
 
@@ -22,7 +22,7 @@ RDEPEND="
 DEPEND="${RDEPEND}
 	dev-util/glib-utils
 	>=sys-devel/gettext-0.19.8
-	~app-text/docbook-xml-dtd-4.3
+	app-text/docbook-xml-dtd:4.3
 	dev-libs/libxml2:2
 	dev-libs/libxslt
 	dev-util/itstool
