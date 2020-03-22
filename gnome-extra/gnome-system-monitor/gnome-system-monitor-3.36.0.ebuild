@@ -1,7 +1,7 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 inherit gnome.org gnome2-utils meson xdg
 
 DESCRIPTION="The Gnome System Monitor"
@@ -24,7 +24,8 @@ RDEPEND="
 	systemd? ( >=sys-apps/systemd-44:0= )
 "
 # eautoreconf requires gnome-base/gnome-common
-DEPEND="${RDEPEND}
+DEPEND="${RDEPEND}"
+BDEPEND="
 	dev-util/glib-utils
 	dev-util/itstool
 	>=sys-devel/gettext-0.19.8
