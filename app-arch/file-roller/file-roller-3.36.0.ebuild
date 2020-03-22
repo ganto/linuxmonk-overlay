@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -55,6 +55,11 @@ rar     - app-arch/unrar or app-arch/unar
 rpm     - app-arch/rpm
 unstuff - app-arch/stuffit
 zoo     - app-arch/zoo"
+
+PATCHES=(
+	# https://gitlab.gnome.org/GNOME/file-roller/merge_requests/31
+	"${FILESDIR}"/${PN}-3.32.4-fno-common.patch
+)
 
 src_prepare() {
 	# File providing Gentoo package names for various archivers
