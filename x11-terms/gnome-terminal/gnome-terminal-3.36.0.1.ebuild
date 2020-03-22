@@ -17,7 +17,7 @@ KEYWORDS="~amd64"
 
 # FIXME: automagic dependency on gtk+[X], just transitive but needs proper control, bug 624960
 RDEPEND="
-	>=dev-libs/glib-2.42:2
+	>=dev-libs/glib-2.52:2
 	>=x11-libs/gtk+-3.20:3
 	>=x11-libs/vte-0.58.1:2.91[!vanilla?]
 	>=dev-libs/libpcre2-10
@@ -31,6 +31,8 @@ RDEPEND="
 # xmllint required for glib-compile-resources, see bug #549304
 DEPEND="${RDEPEND}
 	dev-libs/libxml2:2
+	dev-util/gdbus-codegen
+	dev-util/glib-utils
 	>=dev-util/intltool-0.50
 	dev-util/itstool
 	sys-devel/gettext
@@ -48,10 +50,10 @@ src_prepare() {
 		# Fedora patches:
 		# Restore transparency support (with compositing WMs only)
 		# OSC 777 desktop notification support (notifications on tabs for long-running commands completing)
-		# Restore separate menuitems for opening tabs and windows
 		# Restore "Set title" support
-		# http://pkgs.fedoraproject.org/cgit/rpms/gnome-terminal.git/plain/gnome-terminal-notify-open-title-transparency.patch
-		# Depends on vte[-vanilla] for OSC 777 patch in VTE
+		# Automatic title updating based on currently running foreground process
+		# https://src.fedoraproject.org/rpms/gnome-terminal/raw/f31/f/gnome-terminal-cntr-ntfy-autottl-ts.patch
+		# Depends on vte[-vanilla] for OSC 777 and the preexec/precmd/etc patches in VTE
 		eapply "${FILESDIR}"/3.36.0.1-gnome-terminal-cntr-ntfy-autottl-ts.patch
 	fi
 	gnome2_src_prepare
