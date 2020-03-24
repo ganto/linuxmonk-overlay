@@ -16,7 +16,7 @@ HOMEPAGE="https://wiki.gnome.org/Apps/Builder"
 LICENSE="GPL-3+ GPL-2+ LGPL-3+ LGPL-2+ MIT CC-BY-SA-3.0 CC0-1.0"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE="clang +devhelp doc +glade gtk-doc spell sysprof test vala"
+IUSE="clang +devhelp doc +git +glade gtk-doc spell sysprof test vala"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 # When bumping, pay attention to all the included plugins/*/meson.build (and other) build files and the requirements within.
@@ -26,7 +26,7 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 # them have optional runtime dependencies, for which we try to at least notify the user via DOC_CONTENTS (but not all small
 # things); `grep -rI -e 'command-pattern.*=' -e 'push_arg'` can give a (spammy) idea, plus python imports in try/except.
 
-# FIXME: plugin_flatpak needs flatpak.pc >=0.8.0, ostree-1 and libsoup-2.4.pc >=2.52.0
+# FIXME: plugin_flatpak needs flatpak.pc >=0.8.0, ostree-1, libsoup-2.4.pc >=2.52.0 and git plugin enabled
 # Editorconfig needs old pcre, with vte migrating away, might want it optional or ported to pcre2?
 # An introspection USE flag of a dep is required if any introspection based language plugin wants to use it (grep for gi.repository). Last full check at 3.28.4
 
@@ -34,19 +34,21 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 RDEPEND="
 	>=dev-libs/libdazzle-3.33.90[introspection,vala?]
 	>=dev-libs/glib-2.61.2:2
-	>=x11-libs/gtk+-3.24.0:3[introspection]
+	>=x11-libs/gtk+-3.22.26:3[introspection]
 	>=x11-libs/gtksourceview-4.0.0:4[introspection]
 	>=dev-libs/json-glib-1.2.0
-	>=dev-libs/jsonrpc-glib-3.30.1[vala?]
+	>=dev-libs/jsonrpc-glib-3.29.91[vala?]
 	>=x11-libs/pango-1.38.0
 	>=dev-libs/libpeas-1.22.0[python,${PYTHON_SINGLE_USEDEP}]
 	>=dev-libs/template-glib-3.28.0[introspection,vala?]
 	>=x11-libs/vte-0.40.2:2.91[introspection,vala?]
-	>=net-libs/webkit-gtk-2.22.0:4=[introspection]
+	>=net-libs/webkit-gtk-2.22:4=[introspection]
 	>=dev-libs/libxml2-2.9.0
-	dev-libs/libgit2[ssh,threads]
-	>=dev-libs/libgit2-glib-0.28.0.1[ssh]
+	git? ( dev-libs/libgit2[ssh,threads]
+		>=dev-libs/libgit2-glib-0.28.0.1[ssh]
+	)
 	dev-libs/libpcre:3
+	dev-libs/libpcre2
 
 	>=dev-libs/gobject-introspection-1.54.0:=
 	$(python_gen_cond_dep '
@@ -54,11 +56,12 @@ RDEPEND="
 	')
 	${PYTHON_DEPS}
 	clang? ( sys-devel/clang:= )
-	devhelp? ( >=dev-util/devhelp-3.27.4:= )
+	devhelp? ( >=dev-util/devhelp-3.25.1:= )
 	glade? ( >=dev-util/glade-3.22.0:3.10 )
 	spell? ( >=app-text/gspell-1.8:0=
 		app-text/enchant:2 )
-	sysprof? ( >=dev-util/sysprof-3.33.1[gtk] )
+	>=dev-util/sysprof-capture-3.33.1:3
+	sysprof? ( >=dev-util/sysprof-3.33.4:0/3[gtk] )
 	vala? (
 		dev-lang/vala:=
 		$(vala_depend)
@@ -67,9 +70,6 @@ RDEPEND="
 #   usage in vala-pack plugin and need it rebuilt before removing an older vala it was built against
 DEPEND="${RDEPEND}"
 # TODO: runtime ctags path finding..
-# FIXME: spellcheck plugin temporarily disabled due to requiring enchant-2
-#	>=app-text/gspell-1.2.0
-#	>=app-text/enchant:2
 
 # desktop-file-utils required for tests, but we have it in deptree for xdg update-desktop-database anyway, so be explicit and unconditional
 # appstream-glib needed for validation with appstream-util with FEATURES=test
@@ -86,8 +86,6 @@ BDEPEND="
 	>=sys-devel/gettext-0.19.8
 	virtual/pkgconfig
 "
-
-PATCHES=( "${FILESDIR}"/3.34.1-build-Fix-link_whole-usage-for-meson-0.52.0.ebuild )
 
 DOC_CONTENTS='gnome-builder can use various other dependencies on runtime to provide
 extra capabilities beyond these expressed via USE flags. Some of these
@@ -129,24 +127,27 @@ src_prepare() {
 
 src_configure() {
 	local emesonargs=(
-		-Dchannel=other
-		-Dfusermount_wrapper=false # meant for flatpak builds
-		-Dprofiling=false # not passing -pg to CFLAGS
-		-Dtcmalloc=false
 		-Dtracing=false
+		-Dprofiling=false # not passing -pg to CFLAGS
+		-Dfusermount_wrapper=false # meant for flatpak builds
+		-Dtcmalloc=false
+		-Dchannel=other
+
 		$(meson_use doc help)
 		$(meson_use gtk-doc docs)
+
 		-Dnetwork_tests=false
 		$(meson_use clang plugin_clang)
 		$(meson_use devhelp plugin_devhelp)
 		-Dplugin_deviced=false
 		-Dplugin_editorconfig=true # needs libpcre
 		-Dplugin_flatpak=false
+		$(meson_use git plugin_git)
 		$(meson_use glade plugin_glade)
-		-Dplugin_git=true
 		-Dplugin_podman=false
 		$(meson_use spell plugin_spellcheck)
 		$(meson_use sysprof plugin_sysprof)
+		-Dplugin_update_manager=false
 		$(meson_use vala plugin_vala)
 	)
 	meson_src_configure
