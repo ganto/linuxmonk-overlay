@@ -1,8 +1,8 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
-USE_RUBY="ruby24 ruby25 ruby26"
+EAPI=7
+USE_RUBY="ruby24 ruby25 ruby26 ruby27"
 
 RUBY_FAKEGEM_TASK_DOC="none"
 
@@ -30,9 +30,6 @@ all_ruby_install() {
 
 	newbashcomp completion/tmuxinator.bash tmuxinator
 	dosym tmuxinator "$(get_bashcompdir)"/mux
-
-	insinto /usr/share/fish/completions
-	doins completion/tmuxinator.fish
 	dosym tmuxinator.fish /usr/share/fish/completions/mux.fish
 
 	insinto /usr/share/zsh/site-functions
