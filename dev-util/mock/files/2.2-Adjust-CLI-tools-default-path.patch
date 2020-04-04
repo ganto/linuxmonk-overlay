@@ -1,0 +1,67 @@
+commit e59268f32e46b33809688f97be0a69c026b098bb
+Author: Reto Gantenbein <reto.gantenbein@linuxmonk.ch>
+Date:   Sat Apr 4 17:32:56 2020 +0200
+
+    Adjust CLI tools default path for Gentoo
+
+diff --git a/mock/docs/site-defaults.cfg b/mock/docs/site-defaults.cfg
+index d6291d6c..5624f8b0 100644
+--- a/mock/docs/site-defaults.cfg
++++ b/mock/docs/site-defaults.cfg
+@@ -115,7 +115,7 @@
+ # config_opts['yum_command'] = '/usr/bin/yum'
+ # config_opts['yum_builddep_command'] = '/usr/bin/yum-builddep'
+ # config_opts['dnf_command'] = '/usr/bin/dnf'
+-# config_opts['rpm_command'] = '/bin/rpm'
++# config_opts['rpm_command'] = '/usr/bin/rpm'
+ # config_opts['rpmbuild_command'] = '/usr/bin/rpmbuild'
+ #
+ # By default a Yum/DNF update is performed before each rebuild
+diff --git a/mock/py/mockbuild/plugins/hw_info.py b/mock/py/mockbuild/plugins/hw_info.py
+index 183ccf27..db37402d 100644
+--- a/mock/py/mockbuild/plugins/hw_info.py
++++ b/mock/py/mockbuild/plugins/hw_info.py
+@@ -42,7 +42,7 @@ class HwInfo(object):
+         out.write("CPU info:\n")
+         out.write(output)
+ 
+-        cmd = ["/bin/free"]
++        cmd = ["/usr/bin/free"]
+         output = mockbuild.util.do(cmd, shell=False, returnOutput=True, raiseExc=False)
+         out.write("\n\nMemory:\n")
+         out.write(output)
+diff --git a/mock/py/mockbuild/plugins/root_cache.py b/mock/py/mockbuild/plugins/root_cache.py
+index 36f4d6ac..095dbcd1 100644
+--- a/mock/py/mockbuild/plugins/root_cache.py
++++ b/mock/py/mockbuild/plugins/root_cache.py
+@@ -35,7 +35,7 @@ class RootCache(object):
+         self.rootCacheFile = os.path.join(self.rootSharedCachePath, "cache.tar")
+         self.rootCacheLock = None
+         self.compressProgram = self.root_cache_opts['compress_program']
+-        if self.compressProgram == 'pigz' and not os.path.exists('/bin/pigz'):
++        if self.compressProgram == 'pigz' and not os.path.exists('/usr/bin/pigz'):
+             getLog().warning("specified 'pigz' as the root cache compress program but not available; using gzip")
+             self.compressProgram = 'gzip'
+         # bsdtar use different decompress program
+diff --git a/mock/py/mockbuild/util.py b/mock/py/mockbuild/util.py
+index b37e2162..13c41ab5 100644
+--- a/mock/py/mockbuild/util.py
++++ b/mock/py/mockbuild/util.py
+@@ -970,7 +970,7 @@ def clean_env():
+ 
+ 
+ def get_fs_type(path):
+-    cmd = ['/bin/stat', '-f', '-L', '-c', '%T', path]
++    cmd = ['/usr/bin/stat', '-f', '-L', '-c', '%T', path]
+     p = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE,
+                          universal_newlines=True)
+     p.wait()
+@@ -1243,7 +1243,7 @@ def setup_default_config_opts(unprivUid, version, pkgpythondir):
+     config_opts['microdnf_builddep_command'] = '/usr/bin/dnf'
+     config_opts['microdnf_builddep_opts'] = []
+     config_opts['microdnf_common_opts'] = []
+-    config_opts['rpm_command'] = '/bin/rpm'
++    config_opts['rpm_command'] = '/usr/bin/rpm'
+     config_opts['rpmbuild_command'] = '/usr/bin/rpmbuild'
+     config_opts['dnf_disable_plugins'] = ['local', 'spacewalk']
+ 

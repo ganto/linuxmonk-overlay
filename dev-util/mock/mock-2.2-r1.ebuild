@@ -41,7 +41,8 @@ RDEPEND="
 "
 
 PATCHES=(
-	"${FILESDIR}"/1.4.19-Fix-path.patch
+	"${FILESDIR}"/2.2-Adjust-CLI-tools-default-path.patch
+	"${FILESDIR}"/2.2-Use-tar-instead-of-gtar.patch
 )
 
 S="${WORKDIR}/mock-${MY_P}"
