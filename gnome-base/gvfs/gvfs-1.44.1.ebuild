@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -12,6 +12,7 @@ LICENSE="LGPL-2+"
 SLOT="0"
 
 IUSE="afp archive bluray cdda elogind fuse google gnome-keyring gnome-online-accounts gphoto2 +http ios mtp nfs policykit samba systemd test +udev udisks zeroconf"
+RESTRICT="!test? ( test )"
 # elogind/systemd only relevant to udisks (in v1.38.1)
 REQUIRED_USE="
 	?? ( elogind systemd )
@@ -25,6 +26,7 @@ KEYWORDS="~amd64"
 
 RDEPEND="
 	>=dev-libs/glib-2.57.2:2
+	>=gnome-base/gsettings-desktop-schemas-3.33.0
 	afp? ( >=dev-libs/libgcrypt-1.2.2:0= )
 	sys-apps/dbus
 	app-crypt/gcr:=
@@ -36,7 +38,7 @@ RDEPEND="
 		>=net-libs/libsoup-2.58.0:2.4 )
 	zeroconf? ( >=net-dns/avahi-0.6[dbus] )
 	udev? ( >=dev-libs/libgudev-147:= )
-	fuse? ( sys-fs/fuse:3 )
+	fuse? ( >=sys-fs/fuse-3.0.0:3 )
 	udisks? ( >=sys-fs/udisks-1.97:2 )
 	systemd? ( >=sys-apps/systemd-206:0= )
 	elogind? ( >=sys-auth/elogind-229:0= )
@@ -47,7 +49,7 @@ RDEPEND="
 	gnome-keyring? ( app-crypt/libsecret )
 	bluray? ( media-libs/libbluray:= )
 	mtp? (
-		>=virtual/libusb-1-r2
+		>=dev-libs/libusb-1.0.21
 		>=media-libs/libmtp-1.1.15 )
 	samba? ( >=net-fs/samba-4[client] )
 	archive? ( app-arch/libarchive:= )
