@@ -7,11 +7,13 @@ PYTHON_COMPAT=( python3_{6,7} )
 
 inherit python-single-r1 bash-completion-r1
 
-CORE_CONFIGS_VERSION=31.6-1
+MY_PV=${PV}-1
+MY_P=${PN}-${MY_PV}
+CORE_CONFIGS_VERSION=32.6-1
 
 DESCRIPTION="Builds RPM packages inside chroots"
 HOMEPAGE="https://github.com/rpm-software-management/mock"
-SRC_URI="https://github.com/rpm-software-management/${PN}/archive/${P}-1.tar.gz
+SRC_URI="https://github.com/rpm-software-management/${PN}/archive/${MY_P}.tar.gz
 	https://github.com/rpm-software-management/${PN}/archive/${PN}-core-configs-${CORE_CONFIGS_VERSION}.tar.gz"
 
 LICENSE="GPL-2"
@@ -25,13 +27,12 @@ RDEPEND="
 	app-arch/createrepo_c
 	app-arch/pigz
 	app-arch/rpm[lua,python,${PYTHON_SINGLE_USEDEP},zstd]
-	>=app-misc/distribution-gpg-keys-1.29
+	>=app-misc/distribution-gpg-keys-1.36
 	$(python_gen_cond_dep '
 		dev-python/distro[${PYTHON_MULTI_USEDEP}]
 		dev-python/jinja[${PYTHON_MULTI_USEDEP}]
 		dev-python/pyroute2[${PYTHON_MULTI_USEDEP}]
 		dev-python/requests[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/six-1.4.0[${PYTHON_MULTI_USEDEP}]
 	')
 	sys-apps/iproute2
 	sys-apps/usermode
@@ -43,7 +44,7 @@ PATCHES=(
 	"${FILESDIR}"/1.4.19-Fix-path.patch
 )
 
-S="${WORKDIR}/mock-${P}-1"
+S="${WORKDIR}/mock-${MY_P}"
 
 src_compile() {
 	pushd mock
@@ -91,6 +92,7 @@ src_install() {
 	python_domodule py/mockbuild
 
 	doman docs/mock.1 docs/mock-parse-buildlog.1
+	dodoc README.md docs/site-defaults.cfg
 
 	insinto /usr/share/cheat
 	newins docs/mock.cheat mock
