@@ -17,28 +17,28 @@ KEYWORDS="~amd64"
 RDEPEND="
 	>=gnome-base/gnome-core-libs-${PV}[cups?]
 
-	>=gnome-base/gnome-session-${PV}
-	>=gnome-base/gnome-settings-daemon-${PV}[cups?]
+	>=gnome-base/gnome-session-3.36.0
+	>=gnome-base/gnome-settings-daemon-3.36.0[cups?]
 	>=gnome-base/gnome-control-center-${PV}[cups?]
 	>=gnome-extra/gnome-color-manager-3.35.90
 
-	>=app-crypt/gcr-3.35.91
-	>=gnome-base/nautilus-${PV}
-	>=gnome-base/gnome-keyring-3.35.90
+	>=app-crypt/gcr-3.36.0
+	>=gnome-base/nautilus-${PV}.1
+	>=gnome-base/gnome-keyring-3.36.0
 	>=gnome-extra/evolution-data-server-${PV}
 
 	>=app-crypt/seahorse-3.36
 	>=app-editors/gedit-${PV}
-	>=app-text/evince-${PV}
-	>=gnome-extra/gnome-contacts-3.35.90
+	>=app-text/evince-3.36.0
+	>=gnome-extra/gnome-contacts-3.36
 	>=media-gfx/eog-${PV}
 	>=media-video/totem-3.34.1
 	>=x11-terms/gnome-terminal-${PV}.1
 
 	>=gnome-extra/gnome-user-docs-${PV}
-	>=gnome-extra/yelp-${PV}
+	>=gnome-extra/yelp-3.36.0
 
-	>=x11-themes/adwaita-icon-theme-${PV}
+	>=x11-themes/adwaita-icon-theme-3.36.0
 
 	bluetooth? ( >=net-wireless/gnome-bluetooth-3.34.1 )
 "
