@@ -54,7 +54,7 @@ src_prepare() {
 		# Automatic title updating based on currently running foreground process
 		# https://src.fedoraproject.org/rpms/gnome-terminal/raw/f31/f/gnome-terminal-cntr-ntfy-autottl-ts.patch
 		# Depends on vte[-vanilla] for OSC 777 and the preexec/precmd/etc patches in VTE
-		eapply "${FILESDIR}"/3.36.0.1-gnome-terminal-cntr-ntfy-autottl-ts.patch
+		eapply "${FILESDIR}"/3.36.1.1-gnome-terminal-cntr-ntfy-autottl-ts.patch
 	fi
 	gnome2_src_prepare
 }
