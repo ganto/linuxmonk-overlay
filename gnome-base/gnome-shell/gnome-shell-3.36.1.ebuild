@@ -122,11 +122,6 @@ BDEPEND="
 "
 
 PATCHES=(
-	# https://gitlab.gnome.org/GNOME/gnome-shell/-/merge_requests/1080
-	"${FILESDIR}"/3.36.0-1080-ibusManager-fix-ibus-launch.patch
-	# https://gitlab.gnome.org/GNOME/gnome-shell/-/merge_requests/1084
-	"${FILESDIR}"/3.36.0-1084-St-Ensure-to-update-entry-hint.patch
-
 	# Try to fix crashes related to custom stylesheet; triggered often by package installs (probably desktop database update)
 	# https://gitlab.gnome.org/GNOME/gnome-shell/issues/1265
 	# https://gitlab.gnome.org/GNOME/gnome-shell/merge_requests/536
