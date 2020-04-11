@@ -19,31 +19,31 @@ RDEPEND="
 
 	>=sys-apps/baobab-3.34.0
 	>=media-video/cheese-3.34.0
-	>=www-client/epiphany-${PV}.1
-	>=app-arch/file-roller-3.32.3
-	>=gnome-extra/gnome-calculator-3.34.1
-	>=gnome-extra/gnome-calendar-3.34.2
-	>=gnome-extra/gnome-characters-3.32.1
-	>=gnome-extra/gnome-clocks-3.34.0
-	>=gnome-extra/gnome-contacts-3.34.1
-	>=sys-apps/gnome-disk-utility-3.34.0
+	>=www-client/epiphany-${PV}
+	>=app-arch/file-roller-${PV}
+	>=gnome-extra/gnome-calculator-3.36.0
+	>=gnome-extra/gnome-calendar-3.36.0
+	>=gnome-extra/gnome-characters-3.34.0
+	>=gnome-extra/gnome-clocks-3.36.0
+	>=gnome-extra/gnome-contacts-3.36
+	>=sys-apps/gnome-disk-utility-${PV}
 	>=media-gfx/gnome-font-viewer-3.34.0
-	>=media-gfx/gnome-screenshot-3.34.0
-	>=gnome-extra/gnome-system-monitor-3.32.1
+	>=media-gfx/gnome-screenshot-3.36.0
+	>=gnome-extra/gnome-system-monitor-3.36.0
 	>=gnome-extra/gnome-weather-3.34.0
 	>=sci-geosciences/gnome-maps-${PV}
 	>=gnome-extra/sushi-3.34.0
 
-	>=gnome-base/dconf-editor-3.34.2
+	>=gnome-base/dconf-editor-3.36.0
 	>=mail-client/evolution-${PV}
 	>=gnome-extra/gnome-tweaks-3.34.0
 
 	share? ( >=gnome-extra/gnome-user-share-3.34.0 )
 	systemd? ( >=gnome-extra/gnome-logs-3.34.0 )
 	tracker? (
-		>=app-misc/tracker-2.3.1
-		>=app-misc/tracker-miners-2.3.1
-		>=media-gfx/gnome-photos-3.34.0
+		>=app-misc/tracker-2.3.4
+		>=app-misc/tracker-miners-2.3.3
+		>=media-gfx/gnome-photos-3.34.1
 		>=media-sound/gnome-music-${PV} )
 "
 DEPEND=""
