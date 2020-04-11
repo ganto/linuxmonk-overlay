@@ -1,9 +1,7 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-
-P_RELEASE="$(ver_cut 1-2)"
 
 DESCRIPTION="Meta package for GNOME-Light, merge this package to install"
 HOMEPAGE="https://www.gnome.org/"
@@ -23,26 +21,26 @@ KEYWORDS="~amd64"
 RDEPEND="
 	>=gnome-base/gnome-core-libs-${PV}[cups?]
 
-	>=gnome-base/gnome-session-${PV}
-	>=gnome-base/gnome-settings-daemon-${PV}[cups?]
+	>=gnome-base/gnome-session-3.36.0
+	>=gnome-base/gnome-settings-daemon-3.36.0[cups?]
 	>=gnome-base/gnome-control-center-${PV}[cups?]
 
-	>=gnome-base/nautilus-${PV}
+	>=gnome-base/nautilus-${PV}.1
 
 	gnome-shell? (
 		>=x11-wm/mutter-${PV}
-		>=dev-libs/gjs-1.64.0
+		>=dev-libs/gjs-1.64.1
 		>=gnome-base/gnome-shell-${PV}
 		>=media-fonts/cantarell-0.201 )
 
-	>=x11-themes/adwaita-icon-theme-${P_RELEASE}
+	>=x11-themes/adwaita-icon-theme-3.36.0
 	>=x11-themes/gnome-themes-standard-3.28
-	>=x11-themes/gnome-backgrounds-${P_RELEASE}
+	>=x11-themes/gnome-backgrounds-3.36.0
 
 	>=x11-terms/gnome-terminal-${PV}
 "
 DEPEND=""
-PDEPEND=">=gnome-base/gvfs-1.44.0"
+PDEPEND=">=gnome-base/gvfs-1.44.1"
 BDEPEND=""
 S="${WORKDIR}"
 
