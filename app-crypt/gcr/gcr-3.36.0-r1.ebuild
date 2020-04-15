@@ -12,7 +12,7 @@ HOMEPAGE="https://gitlab.gnome.org/GNOME/gcr"
 LICENSE="GPL-2+ LGPL-2+"
 SLOT="0/1" # subslot = suffix of libgcr-3
 
-IUSE="gtk +introspection test"
+IUSE="gtk +introspection test vala"
 RESTRICT="!test? ( test )"
 
 KEYWORDS="~amd64"
