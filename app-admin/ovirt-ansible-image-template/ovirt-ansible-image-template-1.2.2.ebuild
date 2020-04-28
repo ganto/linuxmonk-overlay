@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -9,6 +9,7 @@ ANSIBLE_ROLE_NAME=image-template
 DESCRIPTION="Ansible role to create virtual machine template from disk image"
 HOMEPAGE="https://www.ovirt.org https://github.com/oVirt/ovirt-ansible-image-template"
 SRC_URI="https://github.com/oVirt/${PN}/releases/download/${PV}/${P}.tar.gz"
+RESTRICT="mirror"
 
 LICENSE="Apache-2.0"
 SLOT="0"
@@ -17,9 +18,11 @@ IUSE=""
 
 DEPEND=""
 RDEPEND="
-	>=app-admin/ansible-2.7.2
+	>=app-admin/ansible-2.9.0
 	dev-python/ovirt-engine-sdk-python
+	sys-apps/file
 "
+BDEPEND=""
 
 S=${WORKDIR}
 
