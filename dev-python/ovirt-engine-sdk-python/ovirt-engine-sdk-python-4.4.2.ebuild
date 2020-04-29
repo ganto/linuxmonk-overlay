@@ -11,7 +11,8 @@ MY_P="${MY_PN}-${PV}"
 
 DESCRIPTION="Python SDK for oVirt Engine API"
 HOMEPAGE="https://www.ovirt.org/ https://github.com/oVirt/ovirt-engine-sdk"
-SRC_URI="https://github.com/oVirt/${MY_PN}/archive/${PV}.tar.gz -> ${MY_P}.tar.gz"
+SRC_URI="https://resources.ovirt.org/pub/ovirt-4.4-pre/src/python-ovirt-engine-sdk4/${P}.tar.gz"
+RESTRICT="mirror"
 
 LICENSE="Apache-2.0"
 SLOT="0"
@@ -26,9 +27,7 @@ DEPEND="
 "
 RDEPEND="${DEPEND}"
 
-DOCS=( README.adoc CHANGES.adoc )
-
-S="${WORKDIR}/${MY_P}/sdk"
+DOCS=( README.adoc )
 
 src_prepare() {
 	cp "${FILESDIR}"/${PV}-version.py lib/ovirtsdk4/version.py || die
