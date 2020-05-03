@@ -10,7 +10,7 @@ HOMEPAGE="https://wiki.gnome.org/Apps/Nautilus"
 
 LICENSE="GPL-3+ LGPL-2.1+"
 SLOT="0"
-IUSE="gnome +gstreamer gtk-doc +introspection packagekit +previewer selinux sendto"
+IUSE="gnome +gstreamer gtk-doc +introspection +previewer selinux sendto"
 
 KEYWORDS="~amd64"
 
@@ -30,7 +30,6 @@ DEPEND="
 	introspection? ( >=dev-libs/gobject-introspection-1.54:= )
 "
 RDEPEND="${DEPEND}
-	packagekit? ( app-admin/packagekit-base )
 	sendto? ( !<gnome-extra/nautilus-sendto-3.0.1 )
 	gstreamer? ( !<media-video/totem-3.31.91[nautilus] )
 	>=app-misc/tracker-miners-2.0:=
@@ -72,7 +71,7 @@ src_configure() {
 		-Dextensions=true # image file properties, sendto support; also required for -Dgstreamer=true
 		$(meson_use gstreamer) # gstreamer audio-video-properties extension
 		$(meson_use introspection)
-		$(meson_use packagekit)
+		-Dpackagekit=false
 		$(meson_use selinux)
 		-Dprofiling=false
 		-Dtests=$(usex test all none)
