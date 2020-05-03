@@ -9,7 +9,7 @@ HOMEPAGE="https://wiki.gnome.org/Apps/FileRoller"
 
 LICENSE="GPL-2+ CC-BY-SA-3.0"
 SLOT="0"
-IUSE="libnotify nautilus packagekit"
+IUSE="libnotify nautilus"
 KEYWORDS="~amd64"
 
 # gdk-pixbuf used extensively in the source
@@ -25,7 +25,6 @@ RDEPEND="
 	x11-libs/pango
 	libnotify? ( >=x11-libs/libnotify-0.4.3:= )
 	nautilus? ( >=gnome-base/nautilus-2.22.2 )
-	packagekit? ( app-admin/packagekit-base )
 "
 DEPEND="${RDEPEND}"
 BDEPEND="
@@ -68,8 +67,8 @@ src_configure() {
 		-Drun-in-place=false
 		$(meson_use nautilus nautilus-actions)
 		$(meson_use libnotify notification)
-		$(meson_use packagekit)
 		-Dlibarchive=true
+		-Dpackagekit=false
 	)
 	meson_src_configure
 }
