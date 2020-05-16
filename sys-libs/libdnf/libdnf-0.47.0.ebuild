@@ -21,7 +21,7 @@ DEPEND="
 	app-crypt/gpgme
 	dev-db/sqlite
 	>=dev-libs/glib-2.46.0
-	dev-libs/json-c
+	dev-libs/json-c:=
 	dev-libs/openssl
 	sys-apps/util-linux
 
