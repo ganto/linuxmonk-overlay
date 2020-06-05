@@ -44,7 +44,7 @@ RDEPEND="
 	>=x11-libs/vte-0.40.2:2.91[introspection,vala?]
 	>=net-libs/webkit-gtk-2.22:4=[introspection]
 	>=dev-libs/libxml2-2.9.0
-	git? ( dev-libs/libgit2[ssh,threads]
+	git? ( dev-libs/libgit2:=[ssh,threads]
 		>=dev-libs/libgit2-glib-0.28.0.1[ssh]
 	)
 	dev-libs/libpcre:3
