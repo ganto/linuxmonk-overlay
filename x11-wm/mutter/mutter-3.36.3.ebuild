@@ -92,10 +92,6 @@ BDEPEND="
 		x11-base/xorg-server )
 "
 
-PATCHES=(
-	"${FILESDIR}"/3.36.1-x11-fix-compilation-if-libwacom-false.patch
-)
-
 src_configure() {
 	# TODO: Replicate debug vs release meson build type behaviour under our buildtype=plain
 	local emesonargs=(
