@@ -9,6 +9,7 @@ inherit meson python-r1
 DESCRIPTION="Module metadata manipulation library"
 HOMEPAGE="https://github.com/fedora-modularity/libmodulemd"
 SRC_URI="https://github.com/fedora-modularity/${PN}/releases/download/${P}/modulemd-${PV}.tar.xz"
+RESTRICT="mirror"
 
 LICENSE="MIT"
 SLOT="2"
