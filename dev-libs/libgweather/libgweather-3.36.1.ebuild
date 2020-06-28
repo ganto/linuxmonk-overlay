@@ -8,6 +8,9 @@ inherit gnome.org gnome2-utils meson vala xdg
 
 DESCRIPTION="Location and timezone database and weather-lookup library"
 HOMEPAGE="https://wiki.gnome.org/Projects/LibGWeather"
+# work-around for broken tag
+SRC_URI="https://gitlab.gnome.org/GNOME/libgweather/-/archive/3.36.1-fixed/libgweather-3.36.1-fixed.tar.bz2"
+RESTRICT="mirror"
 
 LICENSE="GPL-2+"
 SLOT="2/3-16-2" # subslot = 3-(libgweather-3 soname suffix) w/ temporary -2 suffix for silent ABI break after 3.28 without soname bump as per distro-list
@@ -41,6 +44,8 @@ BDEPEND="
 PATCHES=(
 	"${FILESDIR}"/3.32.1-meson-tweaks.patch # Provide introspection optionality and don't build tests that aren't ran automatically
 )
+
+S="${WORKDIR}/${P}-fixed"
 
 src_prepare() {
 	xdg_src_prepare
