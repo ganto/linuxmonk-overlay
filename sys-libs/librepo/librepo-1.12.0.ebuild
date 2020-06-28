@@ -3,20 +3,21 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python2_7 python3_{6,7} )
+PYTHON_COMPAT=( python3_{6,7,8} )
 
-inherit cmake-utils python-r1
+inherit cmake python-r1
 
 DESCRIPTION="Repodata downloading library"
 HOMEPAGE="https://github.com/rpm-software-management/librepo"
 SRC_URI="https://github.com/rpm-software-management/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
+RESTRICT="mirror"
 
 LICENSE="LGPL-2+"
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE="doc test zchunk"
 
-CDEPEND="app-crypt/gpgme
+DEPEND="app-crypt/gpgme
 	>=dev-libs/glib-2.26.0
 	dev-libs/expat
 	dev-libs/libxml2
@@ -28,7 +29,8 @@ CDEPEND="app-crypt/gpgme
 	sys-apps/attr
 	zchunk? ( >=app-arch/zchunk-0.9.11 )
 "
-DEPEND="${CDEPEND}
+RDEPEND="${DEPEND}"
+BDEPEND="
 	dev-libs/check
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	doc? (
@@ -36,9 +38,11 @@ DEPEND="${CDEPEND}
 		dev-python/sphinx[${PYTHON_USEDEP}]
 	)
 	virtual/pkgconfig
-	test? ( dev-python/nose[${PYTHON_USEDEP}] )"
-
-RDEPEND="${CDEPEND}"
+	test? (
+		${RDEPEND}
+		dev-python/nose[${PYTHON_USEDEP}]
+	)
+"
 
 src_prepare() {
 	eapply_user
@@ -46,7 +50,7 @@ src_prepare() {
 	# adjust python-3 specific tool names
 	sed -i 's/nosetests${NOSETEST_VERSION_SUFFIX}/nosetests/' tests/python/tests/run_nosetests.sh.in
 
-	cmake-utils_src_prepare
+	cmake_src_prepare
 }
 
 librepo_src_configure_internal() {
@@ -55,7 +59,7 @@ librepo_src_configure_internal() {
 		-DWITH_ZCHUNK=$(usex zchunk)
 		-DPYTHON_DESIRED=${python_major}
 	)
-	cmake-utils_src_configure
+	cmake_src_configure
 }
 
 src_configure() {
@@ -63,8 +67,8 @@ src_configure() {
 }
 
 librepo_src_compile_internal() {
-	cmake-utils_src_compile
-	use doc && cmake-utils_src_compile doc
+	cmake_src_compile
+	use doc && cmake_src_compile doc
 }
 
 src_compile() {
@@ -85,7 +89,7 @@ src_test() {
 }
 
 librepo_src_install_internal() {
-	cmake-utils_src_install
+	cmake_src_install
 	python_optimize "${D}"/$(python_get_sitedir)/${PN}
 	if use doc ; then
 		dohtml -r -p python "${BUILD_DIR}"/doc/python/*
