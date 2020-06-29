@@ -32,7 +32,7 @@ DEPEND="${RDEPEND}
 	dev-libs/vala-common
 	>=virtual/rust-1.20
 	>=dev-util/gtk-doc-am-1.13
-	>=virtual/pkgconfig-0-r1[${MULTILIB_USEDEP}]
+	virtual/pkgconfig
 	vala? ( $(vala_depend) )
 "
 # >=gtk-doc-am-1.13, gobject-introspection-common, vala-common needed by eautoreconf
