@@ -1,17 +1,16 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
-inherit gnome.org gnome2-utils meson virtualx xdg
+inherit gnome.org gnome2-utils meson xdg
 
-DESCRIPTION="Log messages and event viewer"
+DESCRIPTION="Log viewer for the systemd journal"
 HOMEPAGE="https://wiki.gnome.org/Apps/Logs"
 
 LICENSE="GPL-3+"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE="test"
 
 RDEPEND="
 	gnome-base/gsettings-desktop-schemas
@@ -19,7 +18,8 @@ RDEPEND="
 	>=x11-libs/gtk+-3.22:3
 	sys-apps/systemd:=
 "
-DEPEND="${RDEPEND}
+DEPEND="${RDEPEND}"
+BDEPEND="
 	dev-util/glib-utils
 	>=sys-devel/gettext-0.19.8
 	app-text/docbook-xml-dtd:4.3
@@ -29,18 +29,8 @@ DEPEND="${RDEPEND}
 	virtual/pkgconfig
 "
 
-RESTRICT="!test? ( test )"
-
 src_configure() {
-	local emesonargs=(
-		$(meson_use test tests)
-		-Dman=true
-	)
-	meson_src_configure
-}
-
-src_test() {
-	virtx meson_src_test
+	meson_src_configure -Dman=true
 }
 
 pkg_postinst() {
