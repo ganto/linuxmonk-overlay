@@ -122,10 +122,6 @@ BDEPEND="
 "
 
 PATCHES=(
-	# Try to fix crashes related to custom stylesheet; triggered often by package installs (probably desktop database update)
-	# https://gitlab.gnome.org/GNOME/gnome-shell/issues/1265
-	# https://gitlab.gnome.org/GNOME/gnome-shell/merge_requests/536
-	"${FILESDIR}"/3.34.4-custom_stylesheet_crash.patch
 	# Fix automagic gnome-bluetooth dep, bug #398145
 	"${FILESDIR}"/3.34-optional-bluetooth.patch
 )
