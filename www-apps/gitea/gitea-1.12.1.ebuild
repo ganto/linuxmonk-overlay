@@ -2,63 +2,45 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-
-if [[ ${PV} != 9999* ]] ; then
-	SCM="golang-vcs-snapshot"
-else
-	SCM="git-r3"
-fi
-
-inherit golang-base tmpfiles systemd ${SCM}
-unset SCM
-
-EGO_PN="code.gitea.io/gitea"
+inherit fcaps go-module tmpfiles systemd
+MY_PV="${PV/_rc/-rc}"
 
 DESCRIPTION="A painless self-hosted Git service"
 HOMEPAGE="https://gitea.io"
 
 if [[ ${PV} != 9999* ]] ; then
-	SRC_URI="https://github.com/go-gitea/gitea/archive/v${PV}.tar.gz -> ${P}.tar.gz"
+	SRC_URI="https://github.com/go-gitea/gitea/releases/download/v${MY_PV}/gitea-src-${MY_PV}.tar.gz -> ${P}.tar.gz"
 	KEYWORDS="~amd64"
+	S="${WORKDIR}"
 else
 	EGIT_REPO_URI="https://github.com/go-gitea/gitea"
-	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}/src/${EGO_PN}"
-	has test ${FEATURES} && EGIT_MIN_CLONE_TYPE="mirror"
+	inherit git-r3
+	S="${WORKDIR}/${P}"
 fi
 
 LICENSE="Apache-2.0 BSD BSD-2 ISC MIT MPL-2.0"
 SLOT="0"
-IUSE="+acct pam sqlite"
+IUSE="+acct build-client pam sqlite"
 
-BDEPEND="dev-lang/go"
-DEPEND="pam? ( sys-libs/pam )"
-RDEPEND="${DEPEND}
+BDEPEND="build-client? ( >=net-libs/nodejs-10[npm] )"
+COMMON_DEPEND="
 	acct? (
 		acct-group/git
-		acct-user/git[gitea]
-	)
+		acct-user/git[gitea] )
+	pam? ( sys-libs/pam )"
+DEPEND="${COMMON_DEPEND}"
+RDEPEND="${COMMON_DEPEND}
 	dev-vcs/git"
 
-DOCS=( custom/conf/app.ini.sample CONTRIBUTING.md README.md )
-S="${WORKDIR}/${P}/src/${EGO_PN}"
-
-PATCHES=( "${FILESDIR}/gitea-logflags.patch" )
-
-gitea_make() {
-	local gitea_tags=(
-		bindata
-		$(usev pam)
-		$(usex sqlite 'sqlite sqlite_unlock_notify' '')
-	)
-	local makeenv=(
-		TAGS="${gitea_tags[@]}"
-		LDFLAGS="-extldflags \"${LDFLAGS}\""
-		GOPATH="${WORKDIR}/${P}:$(get_golibdir_gopath)"
-	)
-	[[ ${PV} != 9999* ]] && makeenv+=("DRONE_TAG=${PV}")
-
-	env "${makeenv[@]}" emake "$@"
-}
+DOCS=(
+	custom/conf/app.ini.sample CONTRIBUTING.md README.md
+)
+FILECAPS=(
+	cap_net_bind_service+ep usr/bin/gitea
+)
+PATCHES=(
+	"${FILESDIR}/1.12-fix-vendoring.patch"
+)
 
 src_prepare() {
 	default
@@ -82,26 +64,36 @@ src_prepare() {
 		sed -i -e "s#^DB_TYPE = .*#DB_TYPE = sqlite3#" custom/conf/app.ini.sample || die
 	fi
 
-	gitea_make generate
+	einfo "Remove tests which are known to fail with network-sandbox enabled."
+	rm ./modules/migrations/github_test.go || die
+
+	einfo "Remove tests which depend on gitea git-repo."
+	rm ./modules/git/blob_test.go || die
+	rm ./modules/git/repo_test.go || die
+
+	# Remove already build assets (like frontend part)
+	use build-client && emake clean-all
 }
 
 src_compile() {
-	gitea_make build
-}
+	local gitea_tags=(
+		bindata
+		$(usev pam)
+		$(usex sqlite 'sqlite sqlite_unlock_notify' '')
+	)
+	local makeenv=(
+		TAGS="${gitea_tags[@]}"
+		LDFLAGS="-extldflags \"${LDFLAGS}\""
+	)
+	[[ ${PV} != 9999* ]] && makeenv+=("DRONE_TAG=${MY_PV}")
 
-src_test() {
-	if has network-sandbox ${FEATURES}; then
-		einfo "Remove tests which are known to fail with network-sandbox enabled."
-		rm ./modules/migrations/github_test.go || die
+	if use build-client; then
+		# -j1 as Makefile doesn't handle dependancy correctly, and is not
+		# useful as golang compiler don't use this info.
+		env "${makeenv[@]}" emake -j1 build
+	else
+		env "${makeenv[@]}" emake backend
 	fi
-
-	if [[ ${PV} != 9999* ]] ; then
-		einfo "Remove tests which depend on gitea git-repo."
-		rm ./modules/git/blob_test.go || die
-		rm ./modules/git/repo_test.go || die
-	fi
-
-	default
 }
 
 src_install() {
