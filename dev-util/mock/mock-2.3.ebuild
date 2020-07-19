@@ -3,16 +3,19 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{6,7} )
+PYTHON_COMPAT=( python3_{6,7,8} )
 
 inherit python-single-r1 bash-completion-r1
 
-CORE_CONFIGS_VERSION=32.3-2
+MY_PV=${PV}-1
+MY_P=${PN}-${MY_PV}
+CORE_CONFIGS_VERSION=32.6-1
 
 DESCRIPTION="Builds RPM packages inside chroots"
 HOMEPAGE="https://github.com/rpm-software-management/mock"
-SRC_URI="https://github.com/rpm-software-management/${PN}/archive/${P}-2.tar.gz
+SRC_URI="https://github.com/rpm-software-management/${PN}/archive/${MY_P}.tar.gz
 	https://github.com/rpm-software-management/${PN}/archive/${PN}-core-configs-${CORE_CONFIGS_VERSION}.tar.gz"
+RESTRICT="mirror"
 
 LICENSE="GPL-2"
 SLOT="0"
@@ -39,11 +42,11 @@ RDEPEND="
 "
 
 PATCHES=(
-	"${FILESDIR}"/1.4.19-Fix-path.patch
-	"${FILESDIR}"/2.0-Revert-copy-certs.patch
+	"${FILESDIR}"/2.2-Adjust-CLI-tools-default-path.patch
+	"${FILESDIR}"/2.2-Use-tar-instead-of-gtar.patch
 )
 
-S="${WORKDIR}/mock-${P}-2"
+S="${WORKDIR}/mock-${MY_P}"
 
 src_compile() {
 	pushd mock
@@ -91,6 +94,7 @@ src_install() {
 	python_domodule py/mockbuild
 
 	doman docs/mock.1 docs/mock-parse-buildlog.1
+	dodoc README.md docs/site-defaults.cfg
 
 	insinto /usr/share/cheat
 	newins docs/mock.cheat mock
