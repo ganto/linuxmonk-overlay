@@ -20,6 +20,7 @@ IUSE="doc test"
 
 RDEPEND="
 	app-admin/ansible[${PYTHON_USEDEP}]
+	dev-python/distro[${PYTHON_USEDEP}]
 	dev-python/dnspython[${PYTHON_USEDEP}]
 	dev-python/future[${PYTHON_USEDEP}]
 	dev-python/netaddr[${PYTHON_USEDEP}]
@@ -28,7 +29,6 @@ RDEPEND="
 	dev-python/python-ldap[${PYTHON_USEDEP}]
 "
 DEPEND="
-	dev-python/distro[${PYTHON_USEDEP}]
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	doc? (
 		dev-python/sphinx[${PYTHON_USEDEP}]
