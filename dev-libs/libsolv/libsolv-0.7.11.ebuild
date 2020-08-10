@@ -4,7 +4,7 @@
 EAPI=6
 
 PYTHON_COMPAT=( python2_7 python3_{6,7,8} )
-USE_RUBY=( ruby24 ruby25 ruby26 ruby27 )
+USE_RUBY="ruby25 ruby26 ruby27"
 RUBY_OPTIONAL=yes
 
 inherit cmake-utils python-r1 ruby-ng perl-module multilib
@@ -12,6 +12,7 @@ inherit cmake-utils python-r1 ruby-ng perl-module multilib
 DESCRIPTION="Library for solving packages and reading repositories"
 HOMEPAGE="https://doc.opensuse.org/projects/libzypp/HEAD/ https://github.com/openSUSE/libsolv"
 SRC_URI="https://github.com/openSUSE/libsolv/archive/${PV}.tar.gz -> ${P}.tar.gz"
+RESTRICT="mirror"
 
 LICENSE="BSD"
 SLOT="0"
