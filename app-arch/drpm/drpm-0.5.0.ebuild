@@ -18,7 +18,7 @@ IUSE="test zstd"
 RDEPEND="
 	app-arch/bzip2
 	app-arch/lzma
-	app-arch/rpm
+	app-arch/rpm:=
 	dev-libs/openssl
 	sys-libs/zlib
 	zstd? ( >=app-arch/zstd-1.4.2 )
