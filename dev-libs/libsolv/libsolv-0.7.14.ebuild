@@ -29,7 +29,7 @@ RDEPEND="
 	lzma? ( app-arch/xz-utils )
 	perl? ( dev-lang/perl:= )
 	python? ( ${PYTHON_DEPS} )
-	rpm? ( app-arch/rpm )
+	rpm? ( app-arch/rpm:= )
 	ruby? ( $(ruby_implementations_depend) )
 	tcl? ( dev-lang/tcl:0= )
 	zchunk? ( app-arch/zchunk )
