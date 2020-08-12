@@ -17,7 +17,7 @@ KEYWORDS="~amd64"
 IUSE="introspection"
 
 RDEPEND="
-	app-arch/rpm
+	app-arch/rpm:=
 	dev-libs/glib
 	dev-libs/libyaml
 	sys-apps/file
