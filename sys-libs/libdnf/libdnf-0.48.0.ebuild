@@ -25,7 +25,7 @@ DEPEND="
 	dev-libs/openssl
 	sys-apps/util-linux
 
-	>=app-arch/rpm-4.11.0
+	>=app-arch/rpm-4.11.0:=
 	>=app-arch/zchunk-0.9.11
 	>=sys-libs/libmodulemd-2.5.0:2
 	>=sys-libs/librepo-1.11.0
