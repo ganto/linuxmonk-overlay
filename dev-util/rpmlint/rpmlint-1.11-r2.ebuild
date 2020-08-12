@@ -3,7 +3,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{6,7} )
+PYTHON_COMPAT=( python3_{6,7,8} )
 inherit python-single-r1
 
 DESCRIPTION="Tool for checking common errors in RPM packages"
@@ -45,7 +45,9 @@ DOCS=( README.md config.example )
 S="${WORKDIR}"/${PN}-${P%%_*}
 
 src_prepare() {
-	default
+	eapply "${FILESDIR}"/rpmlint-1.11-rpm4.15.patch
+
+	eapply_user
 
 	python_fix_shebang .
 
