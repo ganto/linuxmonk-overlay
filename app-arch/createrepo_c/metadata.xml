@@ -14,4 +14,8 @@
 		provides Python bindings too, so could be easily used instead of yum
 		library for certain kinds of manipulations with repodata.
 	</longdescription>
+	<use>
+		<flag name="modulemd">Support RPM modules metadata through
+			<pkg>sys-libs/libmodulemd</pkg></flag>
+	</use>
 </pkgmetadata>

@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-PYTHON_COMPAT=( python2_7 python3_{6,7,8} )
+PYTHON_COMPAT=( python3_{6,7,8} )
 
 inherit cmake-utils python-r1 bash-completion-r1
 
@@ -19,7 +19,7 @@ RESTRICT="!test? ( test )"
 CDEPEND="
 	app-arch/bzip2
 	app-arch/drpm
-	>=app-arch/rpm-4.9.0
+	>=app-arch/rpm-4.9.0:=
 	app-arch/xz-utils
 	app-arch/zchunk
 	dev-db/sqlite:3
