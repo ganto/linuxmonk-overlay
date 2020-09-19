@@ -1,0 +1,40 @@
+From ca04bac73760bad69edf14882e89bffac4213349 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Timoth=C3=A9e=20Ravier?= <tim@siosm.fr>
+Date: Tue, 23 Jul 2019 08:46:07 +0200
+Subject: [PATCH 3/3] Halt a domain before packaging it as a box
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Ensure that we do not try to package a currently running domain (which
+will lead to hard to debug and strange issues, and is generally not a
+good idea). This may happen when creating boxes with Packer.
+
+Signed-off-by: Timothée Ravier <tim@siosm.fr>
+---
+ lib/vagrant-libvirt/action.rb | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/lib/vagrant-libvirt/action.rb b/lib/vagrant-libvirt/action.rb
+index 146d339..18b2e7e 100644
+--- a/lib/vagrant-libvirt/action.rb
++++ b/lib/vagrant-libvirt/action.rb
+@@ -161,10 +161,14 @@ module VagrantPlugins
+         end
+       end
+ 
+-      # not implemented and looks like not require
++      # Create/package a new Vagrant Box from the current Domain.
++      # This action requires access to the Domain disk image files and will use
++      # virt-sysprep (from libguestfs project) to clean the image, removing
++      # host SSH keys, etc.
+       def self.action_package
+         Vagrant::Action::Builder.new.tap do |b|
+           b.use ConfigValidate
++          b.use action_halt
+           b.use PackageDomain
+         end
+       end
+-- 
+2.21.0
+
