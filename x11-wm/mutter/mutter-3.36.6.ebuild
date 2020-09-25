@@ -24,6 +24,7 @@ KEYWORDS="~amd64"
 # v3.32.2 has many excessive or unused *_req variables declared, thus currently the dep order ignores those and goes via dependency() call order
 DEPEND="
 	x11-libs/libX11
+	>=media-libs/graphene-1.9.3[introspection?]
 	>=x11-libs/gtk+-3.19.8:3[X,introspection?]
 	x11-libs/gdk-pixbuf:2
 	>=x11-libs/pango-1.30[introspection?]
@@ -51,8 +52,8 @@ DEPEND="
 	x11-libs/libXau
 	x11-libs/libICE
 	>=dev-libs/atk-2.5.3[introspection?]
-	>=media-libs/graphene-1.9.3
 	>=media-libs/libcanberra-0.26
+	sys-apps/dbus
 	media-libs/mesa[X(+),egl]
 	wayland? (
 		>=dev-libs/wayland-protocols-1.19
@@ -92,6 +93,10 @@ BDEPEND="
 		x11-base/xorg-server )
 "
 
+PATCHES=(
+	"${FILESDIR}"/3.34.6-tests-dontreq-gdkwayland.patch
+)
+
 src_configure() {
 	# TODO: Replicate debug vs release meson build type behaviour under our buildtype=plain
 	local emesonargs=(
@@ -120,7 +125,6 @@ src_configure() {
 		-Dinstalled_tests=false
 		#verbose # Let upstream choose default for verbose mode
 		#xwayland_path
-		#xwayland_initfd
 		# TODO: relies on default settings, but in Gentoo we might have some more packages we want to give Xgrab access (mostly virtual managers and remote desktops)
 		#xwayland_grab_default_access_rules
 	)
