@@ -2,7 +2,6 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-PYTHON_COMPAT=( python{2_7,3_6,3_7} )
 
 inherit gnome.org meson xdg
 
@@ -63,10 +62,6 @@ BDEPEND="
 	virtual/pkgconfig
 	lua? ( dev-util/gperf )
 "
-
-PATCHES=(
-	"${FILESDIR}"/0.3.8-meson-goa.patch # Support controlling g-o-a dep via 'goa' meson_options
-)
 
 src_prepare() {
 	xdg_src_prepare
