@@ -1,8 +1,8 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
-PYTHON_COMPAT=( python{3_6,3_7,3_8} )
+EAPI=7
+PYTHON_COMPAT=( python3_{6,7,8} )
 
 inherit gnome.org gnome2-utils meson python-any-r1 systemd xdg
 
@@ -11,9 +11,9 @@ HOMEPAGE="https://wiki.gnome.org/Projects/Tracker"
 
 LICENSE="GPL-2+ LGPL-2.1+"
 SLOT="0"
-IUSE="cue exif ffmpeg gif gsf +gstreamer iptc +iso +jpeg libav +pdf +playlist raw +rss seccomp test +tiff upower +xml xmp xps"
+IUSE="cue exif ffmpeg gif gsf +gstreamer iptc +iso +jpeg +pdf +playlist raw +rss seccomp test +tiff upower +xml xmp xps"
 
-REQUIRED_USE="cue? ( gstreamer )" # cue is currently only supported via gstreamer, not ffmpeg/libav
+REQUIRED_USE="cue? ( gstreamer )" # cue is currently only supported via gstreamer, not ffmpeg
 RESTRICT="!test? ( test )"
 
 KEYWORDS="~amd64"
@@ -27,9 +27,7 @@ RDEPEND="
 		media-libs/gst-plugins-base:1.0
 		media-plugins/gst-plugins-meta:1.0 )
 	!gstreamer? (
-		ffmpeg? (
-			libav? ( media-video/libav:0= )
-			!libav? ( media-video/ffmpeg:0= ) ) )
+		ffmpeg? ( media-video/ffmpeg:0= ) )
 
 	>=sys-apps/dbus-1.3.1
 	xmp? ( >=media-libs/exempi-2.1.0:= )
@@ -55,16 +53,22 @@ RDEPEND="
 	rss? ( >=net-libs/libgrss-0.7:0 )
 	app-arch/gzip
 "
-DEPEND="${RDEPEND}
+DEPEND="${RDEPEND}"
+BDEPEND="
 	dev-util/glib-utils
+	dev-util/gdbus-codegen
 
 	>=dev-util/intltool-0.40.0
 	>=sys-devel/gettext-0.19.8
 	virtual/pkgconfig
 	test? ( ${PYTHON_DEPS}
-		gstreamer? ( || ( media-plugins/gst-plugins-libav:1.0
-			media-plugins/gst-plugins-openh264:1.0 ) ) )
+		gstreamer? (
+			media-libs/gstreamer:1.0[introspection]
+			|| ( media-plugins/gst-plugins-libav:1.0
+				media-plugins/gst-plugins-openh264:1.0 )
+	) )
 "
+# intltool-merge manually called in meson.build in 2.2.2; might be properly gone by 2.3
 
 pkg_setup() {
 	use test && python-any-r1_pkg_setup
