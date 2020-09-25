@@ -4,7 +4,7 @@
 EAPI=7
 PYTHON_COMPAT=( python3_{6,7,8} )
 
-inherit gnome.org gnome2-utils meson pax-utils python-single-r1 virtualx xdg
+inherit gnome.org gnome2-utils meson python-single-r1 virtualx xdg
 
 DESCRIPTION="Provides core UI functions for the GNOME 3 desktop"
 HOMEPAGE="https://wiki.gnome.org/Projects/GnomeShell"
@@ -21,24 +21,24 @@ KEYWORDS="~amd64"
 # FIXME:
 #  * gstreamer support is currently automagic
 DEPEND="
-	>=dev-libs/libcroco-0.6.8:0.6
 	>=gnome-extra/evolution-data-server-3.33.1:=
 	>=app-crypt/gcr-3.7.5[introspection]
 	>=dev-libs/glib-2.57.2:2
 	>=dev-libs/gobject-introspection-1.49.1:=
-	>=dev-libs/gjs-1.57.3
+	>=dev-libs/gjs-1.63.2
 	>=x11-libs/gtk+-3.15.0:3[introspection]
-	>=x11-wm/mutter-3.34.0:0/6[introspection]
+	>=x11-wm/mutter-3.36.0:0/6[introspection]
 	>=sys-auth/polkit-0.100[introspection]
 	>=gnome-base/gsettings-desktop-schemas-3.33.1
 	>=x11-libs/startup-notification-0.11
 	>=app-i18n/ibus-1.5.2
-	>=gnome-base/gnome-desktop-3.32:3=[introspection]
+	>=gnome-base/gnome-desktop-3.35.90:3=[introspection]
 	bluetooth? ( >=net-wireless/gnome-bluetooth-3.9[introspection] )
 	>=media-libs/gstreamer-0.11.92:1.0
 	media-libs/gst-plugins-base:1.0
 	networkmanager? (
 		>=net-misc/networkmanager-1.10.4:=[introspection]
+		net-libs/libnma[introspection]
 		>=app-crypt/libsecret-0.18
 		dev-libs/dbus-glib )
 	systemd? ( >=sys-apps/systemd-31
@@ -122,8 +122,14 @@ BDEPEND="
 "
 
 PATCHES=(
+	# origin/gnome-3-36@03062d0d9d9f + try to fix crashes related to custom stylesheet; triggered often by package installs (probably desktop database update), screen unlock, etc
+	# https://gitlab.gnome.org/GNOME/gnome-shell/issues/1265
+	# https://gitlab.gnome.org/GNOME/gnome-shell/merge_requests/536
+	"${FILESDIR}"/3.36.6-custom_stylesheet_crash.patch
 	# Fix automagic gnome-bluetooth dep, bug #398145
 	"${FILESDIR}"/3.34-optional-bluetooth.patch
+	# Change favorites defaults, bug #479918
+	"${FILESDIR}"/3.36-defaults.patch
 )
 
 src_prepare() {
@@ -136,6 +142,7 @@ src_configure() {
 	local emesonargs=(
 		$(meson_use bluetooth)
 		-Dextensions_tool=true
+		-Dextensions_app=true
 		$(meson_use gtk-doc gtk_doc)
 		-Dman=true
 		$(meson_use networkmanager)
@@ -144,13 +151,6 @@ src_configure() {
 		# suspend support is runtime optional via /run/systemd/seats presence and org.freedesktop.login1.Manager dbus interface; elogind should provide what's necessary
 	)
 	meson_src_configure
-}
-
-src_install() {
-	meson_src_install
-
-	# Required for gnome-shell on hardened/PaX, bug #398941; FIXME: Is this still relevant?
-	pax-mark m "${ED}/usr/bin/gnome-shell"{,-extension-prefs}
 }
 
 src_test() {

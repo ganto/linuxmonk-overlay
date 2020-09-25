@@ -1,25 +1,26 @@
-From 87afb02e50c7a636a508cf619beb68a46168e54b Mon Sep 17 00:00:00 2001
+From 5cdaa07bb26ac38b3af2db08113631d7b6c23e01 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Marco=20Trevisan=20=28Trevi=C3=B1o=29?= <mail@3v1n0.net>
-Date: Mon, 6 May 2019 18:28:40 -0500
-Subject: [PATCH 1/5] st-theme: Use CRStyleSheet app_data instead of hash map
+Date: Tue, 7 May 2019 01:28:40 +0200
+Subject: [PATCH 1/6] st-theme: Use CRStyleSheet app_data instead of hash map
 
-Use the CRStyleSheet field to save stylesheet details instead of using an extra
-hash table. In this way we can access to the stylesheet file faster without
-having to lookup it. Define a destroy function so that we can automatically
-remove the data when the container hash table is destroyed.
+Use the CRStyleSheet field to save stylesheet details instead of using an
+extra hash table. This way we can access to the stylesheet file faster
+without having to look it up.
+Define a destroy function so that we can automatically remove the data when
+the container hash table is destroyed.
 
 Fixes https://gitlab.gnome.org/GNOME/gnome-shell/issues/1265
 
 https://gitlab.gnome.org/GNOME/gnome-shell/merge_requests/536
 ---
- src/st/st-theme.c | 91 +++++++++++++++++++++++++++++++----------------
- 1 file changed, 60 insertions(+), 31 deletions(-)
+ src/st/st-theme.c | 111 ++++++++++++++++++++++++++++++----------------
+ 1 file changed, 74 insertions(+), 37 deletions(-)
 
 diff --git a/src/st/st-theme.c b/src/st/st-theme.c
-index b567f7e5e3..208f536c5b 100644
+index 3f08833a8..e8d5f120a 100644
 --- a/src/st/st-theme.c
 +++ b/src/st/st-theme.c
-@@ -66,11 +66,16 @@ struct _StTheme
+@@ -67,11 +67,23 @@ struct _StTheme
    GSList *custom_stylesheets;
  
    GHashTable *stylesheets_by_file;
@@ -34,21 +35,25 @@ index b567f7e5e3..208f536c5b 100644
 +  gboolean extension_stylesheet;
 +} StyleSheetData;
 +
++static void
++stylesheet_data_free (StyleSheetData *stylesheet_data)
++{
++  g_clear_object (&stylesheet_data->file);
++  g_free (stylesheet_data);
++}
++
  enum
  {
    PROP_0,
-@@ -106,12 +111,25 @@ file_equal0 (GFile *file1,
+@@ -107,12 +119,22 @@ file_equal0 (GFile *file1,
    return g_file_equal (file1, file2);
  }
  
 +static void
-+stylesheet_destroy (CRStyleSheet *stylesheet)
++stylesheet_unref (CRStyleSheet *stylesheet)
 +{
-+  if (stylesheet->app_data)
-+    {
-+      g_slice_free (StyleSheetData, stylesheet->app_data);
-+      stylesheet->app_data = NULL;
-+    }
++  if (!stylesheet->ref_count || stylesheet->ref_count == 1)
++    g_clear_pointer (&stylesheet->app_data, stylesheet_data_free);
 +
 +  cr_stylesheet_unref (stylesheet);
 +}
@@ -62,11 +67,11 @@ index b567f7e5e3..208f536c5b 100644
 +  theme->stylesheets_by_file =
 +    g_hash_table_new_full (g_file_hash, (GEqualFunc) g_file_equal,
 +                           (GDestroyNotify) g_object_unref,
-+                           (GDestroyNotify) stylesheet_destroy);
++                           (GDestroyNotify) stylesheet_unref);
  }
  
  static void
-@@ -205,9 +223,6 @@ parse_stylesheet (GFile   *file,
+@@ -206,9 +228,6 @@ parse_stylesheet (GFile   *file,
        return NULL;
      }
  
@@ -76,7 +81,7 @@ index b567f7e5e3..208f536c5b 100644
    return stylesheet;
  }
  
-@@ -234,19 +249,30 @@ parse_stylesheet_nofail (GFile *file)
+@@ -235,19 +254,27 @@ parse_stylesheet_nofail (GFile *file)
    return result;
  }
  
@@ -95,15 +100,12 @@ index b567f7e5e3..208f536c5b 100644
 -  g_object_ref (file);
 -  cr_stylesheet_ref (stylesheet);
 +  if (g_hash_table_contains (theme->stylesheets_by_file, file))
-+    {
-+      cr_stylesheet_unref (stylesheet);
-+      return FALSE;
-+    }
++    return FALSE;
  
 -  g_hash_table_insert (theme->stylesheets_by_file, file, stylesheet);
 -  g_hash_table_insert (theme->files_by_stylesheet, stylesheet, file);
-+  stylesheet_data = g_slice_new0 (StyleSheetData);
-+  stylesheet_data->file = file;
++  stylesheet_data = g_new0 (StyleSheetData, 1);
++  stylesheet_data->file = g_object_ref (file);
 +  stylesheet->app_data = stylesheet_data;
 +
 +  cr_stylesheet_ref (stylesheet);
@@ -113,7 +115,7 @@ index b567f7e5e3..208f536c5b 100644
  }
  
  gboolean
-@@ -255,14 +281,15 @@ st_theme_load_stylesheet (StTheme    *theme,
+@@ -256,14 +283,18 @@ st_theme_load_stylesheet (StTheme    *theme,
                            GError    **error)
  {
    CRStyleSheet *stylesheet;
@@ -121,8 +123,12 @@ index b567f7e5e3..208f536c5b 100644
  
    stylesheet = parse_stylesheet (file, error);
 -  if (!stylesheet)
+-    return FALSE;
 +  if (!insert_stylesheet (theme, file, stylesheet))
-     return FALSE;
++    {
++      cr_stylesheet_unref (stylesheet);
++      return FALSE;
++    }
  
 -  stylesheet->app_data = GUINT_TO_POINTER (TRUE);
 +  stylesheet_data = stylesheet->app_data;
@@ -132,18 +138,29 @@ index b567f7e5e3..208f536c5b 100644
    cr_stylesheet_ref (stylesheet);
    theme->custom_stylesheets = g_slist_prepend (theme->custom_stylesheets, stylesheet);
    g_signal_emit (theme, signals[STYLESHEETS_CHANGED], 0);
-@@ -283,9 +310,8 @@ st_theme_unload_stylesheet (StTheme    *theme,
+@@ -284,16 +315,14 @@ st_theme_unload_stylesheet (StTheme    *theme,
    if (!g_slist_find (theme->custom_stylesheets, stylesheet))
      return;
  
--  theme->custom_stylesheets = g_slist_remove (theme->custom_stylesheets, stylesheet);
-   g_hash_table_remove (theme->stylesheets_by_file, file);
++  g_hash_table_remove (theme->stylesheets_by_file, file);
+   theme->custom_stylesheets = g_slist_remove (theme->custom_stylesheets, stylesheet);
+ 
+-  g_signal_emit (theme, signals[STYLESHEETS_CHANGED], 0);
+-
+-  /* We need to remove the entry from the hashtable after emitting the signal
+-   * since we might still access the files_by_stylesheet hashtable in
+-   * _st_theme_resolve_url() during the signal emission.
++  /* We need to unref the stylesheet after emitting the signal since we might
++   * still access the stylesheet in _st_theme_resolve_url() during the signal
++   * emission.
+    */
+-  g_hash_table_remove (theme->stylesheets_by_file, file);
 -  g_hash_table_remove (theme->files_by_stylesheet, stylesheet);
-+  theme->custom_stylesheets = g_slist_remove (theme->custom_stylesheets, stylesheet);
++  g_signal_emit (theme, signals[STYLESHEETS_CHANGED], 0);
    cr_stylesheet_unref (stylesheet);
-   g_signal_emit (theme, signals[STYLESHEETS_CHANGED], 0);
  }
-@@ -306,9 +332,10 @@ st_theme_get_custom_stylesheets (StTheme *theme)
+ 
+@@ -313,9 +342,10 @@ st_theme_get_custom_stylesheets (StTheme *theme)
    for (iter = theme->custom_stylesheets; iter; iter = iter->next)
      {
        CRStyleSheet *stylesheet = iter->data;
@@ -156,7 +173,7 @@ index b567f7e5e3..208f536c5b 100644
      }
  
    return result;
-@@ -350,7 +377,6 @@ st_theme_finalize (GObject * object)
+@@ -357,7 +387,6 @@ st_theme_finalize (GObject * object)
    theme->custom_stylesheets = NULL;
  
    g_hash_table_destroy (theme->stylesheets_by_file);
@@ -164,7 +181,7 @@ index b567f7e5e3..208f536c5b 100644
  
    g_clear_object (&theme->application_stylesheet);
    g_clear_object (&theme->theme_stylesheet);
-@@ -877,18 +903,20 @@ add_matched_properties (StTheme      *a_this,
+@@ -874,18 +903,25 @@ add_matched_properties (StTheme      *a_this,
  
                  if (import_rule->url->stryng && import_rule->url->stryng->str)
                    {
@@ -173,26 +190,31 @@ index b567f7e5e3..208f536c5b 100644
                                                    a_nodesheet,
                                                    import_rule->url->stryng->str);
 -                    import_rule->sheet = parse_stylesheet (file, NULL);
--                  }
 +                    sheet = parse_stylesheet (file, NULL);
++
++                    if (insert_stylesheet (a_this, file, sheet))
++                      {
++                        /* refcount of stylesheets starts off at zero, so we don't
++                         * need to unref! */
++                        import_rule->sheet = sheet;
++                      }
++                    else
++                      {
++                        cr_stylesheet_unref (sheet);
++                      }
+                   }
  
 -                if (import_rule->sheet)
 -                  {
 -                    insert_stylesheet (a_this, file, import_rule->sheet);
 -                    /* refcount of stylesheets starts off at zero, so we don't need to unref! */
-+                    if (insert_stylesheet (a_this, file, sheet))
-+                      import_rule->sheet = sheet;
-+
-+                    /* refcount of stylesheets starts off at zero, so we don't
-+                     * need to unref! */
-                   }
+-                  }
 -                else
-+
 +                if (!import_rule->sheet)
                    {
                      /* Set a marker to avoid repeatedly trying to parse a non-existent or
                       * broken stylesheet
-@@ -962,12 +990,12 @@ static inline int
+@@ -960,12 +996,12 @@ static inline int
  get_origin (const CRDeclaration * decl)
  {
    enum CRStyleOrigin origin = decl->parent_statement->parent_sheet->origin;
@@ -207,7 +229,7 @@ index b567f7e5e3..208f536c5b 100644
      origin += ORIGIN_OFFSET_EXTENSION;
  
    return origin;
-@@ -1046,8 +1074,9 @@ _st_theme_resolve_url (StTheme      *theme,
+@@ -1044,8 +1080,9 @@ _st_theme_resolve_url (StTheme      *theme,
    else if (base_stylesheet != NULL)
      {
        GFile *base_file = NULL, *parent;
@@ -219,27 +241,26 @@ index b567f7e5e3..208f536c5b 100644
        /* This is an internal function, if we get here with
           a bad @base_stylesheet we have a problem. */
 -- 
-2.24.1
+2.20.1
 
-
-From 0974a3290aa2951ada3c9f2adceb2c65c2321849 Mon Sep 17 00:00:00 2001
+From 394828c4e62ed686b1b5e26b876c382f80265506 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Marco=20Trevisan=20=28Trevi=C3=B1o=29?= <mail@3v1n0.net>
-Date: Mon, 6 May 2019 18:33:36 -0500
-Subject: [PATCH 2/5] st-theme: Use newer functions to finalize objects
+Date: Tue, 7 May 2019 01:33:36 +0200
+Subject: [PATCH 2/6] st-theme: Use newer functions to finalize objects
 
 Use g_slist_free_full on custom stylesheets list and clear the hashtable and
 its pointer using g_clear_pointer and g_hash_table_destroy.
 
 https://gitlab.gnome.org/GNOME/gnome-shell/merge_requests/536
 ---
- src/st/st-theme.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ src/st/st-theme.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
 diff --git a/src/st/st-theme.c b/src/st/st-theme.c
-index 208f536c5b..2d51420a20 100644
+index e8d5f120a..8d38f3ba8 100644
 --- a/src/st/st-theme.c
 +++ b/src/st/st-theme.c
-@@ -372,11 +372,11 @@ st_theme_finalize (GObject * object)
+@@ -382,11 +382,10 @@ st_theme_finalize (GObject * object)
  {
    StTheme *theme = ST_THEME (object);
  
@@ -249,36 +270,42 @@ index 208f536c5b..2d51420a20 100644
 +  g_clear_pointer (&theme->stylesheets_by_file, g_hash_table_destroy);
  
 -  g_hash_table_destroy (theme->stylesheets_by_file);
-+  g_slist_free_full (theme->custom_stylesheets,
++  g_slist_free_full (g_steal_pointer (&theme->custom_stylesheets),
 +                     (GDestroyNotify) cr_stylesheet_unref);
-+  theme->custom_stylesheets = NULL;
  
    g_clear_object (&theme->application_stylesheet);
    g_clear_object (&theme->theme_stylesheet);
 -- 
-2.24.1
+2.20.1
 
-
-From 801fd1884af2011ec6981e4d7844aac6f8dbecf0 Mon Sep 17 00:00:00 2001
+From d89ebff3c83a6d0e51dedaeb185ca8e9d473f43a Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Marco=20Trevisan=20=28Trevi=C3=B1o=29?= <mail@3v1n0.net>
-Date: Tue, 7 May 2019 01:59:11 -0500
-Subject: [PATCH 3/5] st-theme: Remove custom stylesheets list
+Date: Tue, 7 May 2019 08:59:11 +0200
+Subject: [PATCH 3/6] st-theme: Remove custom stylesheets list
 
-Since we already mark the stylesheet laded by extensions in the data, we don't
-need to use another list to go trough these as we can just iterate over the
-hash table with a minimum overhead, as this will normally contain just one
-default stylesheet and all the extension stylesheets anyways.
+Since we already mark the stylesheet loaded by extensions in the data, we
+don't need to use another list to go trough these as we can just iterate
+over the hash table with a minimum overhead, as this will normally contain
+just one default stylesheet and all the extension stylesheets anyways.
 
 https://gitlab.gnome.org/GNOME/gnome-shell/merge_requests/536
 ---
- src/st/st-theme.c | 37 +++++++++++++++++++------------------
- 1 file changed, 19 insertions(+), 18 deletions(-)
+ src/st/st-theme.c | 44 ++++++++++++++++++++++++--------------------
+ 1 file changed, 24 insertions(+), 20 deletions(-)
 
 diff --git a/src/st/st-theme.c b/src/st/st-theme.c
-index 2d51420a20..9f6b2f6e35 100644
+index 8d38f3ba8..20906796d 100644
 --- a/src/st/st-theme.c
 +++ b/src/st/st-theme.c
-@@ -63,7 +63,6 @@ struct _StTheme
+@@ -42,6 +42,7 @@
+ 
+ #include <gio/gio.h>
+ 
++#include "croco/cr-stylesheet.h"
+ #include "st-private.h"
+ #include "st-theme-node.h"
+ #include "st-theme-private.h"
+@@ -64,7 +65,6 @@ struct _StTheme
    GFile *application_stylesheet;
    GFile *default_stylesheet;
    GFile *theme_stylesheet;
@@ -286,7 +313,7 @@ index 2d51420a20..9f6b2f6e35 100644
  
    GHashTable *stylesheets_by_file;
  
-@@ -290,8 +289,6 @@ st_theme_load_stylesheet (StTheme    *theme,
+@@ -295,8 +295,6 @@ st_theme_load_stylesheet (StTheme    *theme,
    stylesheet_data = stylesheet->app_data;
    stylesheet_data->extension_stylesheet = TRUE;
  
@@ -295,7 +322,7 @@ index 2d51420a20..9f6b2f6e35 100644
    g_signal_emit (theme, signals[STYLESHEETS_CHANGED], 0);
  
    return TRUE;
-@@ -302,17 +299,17 @@ st_theme_unload_stylesheet (StTheme    *theme,
+@@ -307,23 +305,24 @@ st_theme_unload_stylesheet (StTheme    *theme,
                              GFile      *file)
  {
    CRStyleSheet *stylesheet;
@@ -311,23 +338,33 @@ index 2d51420a20..9f6b2f6e35 100644
 +  if (!stylesheet_data->extension_stylesheet)
      return;
  
-   g_hash_table_remove (theme->stylesheets_by_file, file);
+-  g_hash_table_remove (theme->stylesheets_by_file, file);
 -  theme->custom_stylesheets = g_slist_remove (theme->custom_stylesheets, stylesheet);
--  cr_stylesheet_unref (stylesheet);
+-
+-  /* We need to unref the stylesheet after emitting the signal since we might
++  /* We need to keep a reference while emitting the signal since we might
+    * still access the stylesheet in _st_theme_resolve_url() during the signal
+    * emission.
+    */
++  cr_stylesheet_ref (stylesheet);
++  g_hash_table_remove (theme->stylesheets_by_file, file);
    g_signal_emit (theme, signals[STYLESHEETS_CHANGED], 0);
+-  cr_stylesheet_unref (stylesheet);
++  stylesheet_unref (stylesheet);
  }
  
-@@ -327,14 +324,17 @@ GSList*
+ /**
+@@ -337,14 +336,17 @@ GSList*
  st_theme_get_custom_stylesheets (StTheme *theme)
  {
    GSList *result = NULL;
 -  GSList *iter;
 +  GHashTableIter iter;
 +  gpointer value;
++
++  g_hash_table_iter_init (&iter, theme->stylesheets_by_file);
  
 -  for (iter = theme->custom_stylesheets; iter; iter = iter->next)
-+  g_hash_table_iter_init (&iter, theme->stylesheets_by_file);
-+
 +  while (g_hash_table_iter_next (&iter, NULL, &value))
      {
 -      CRStyleSheet *stylesheet = iter->data;
@@ -339,18 +376,17 @@ index 2d51420a20..9f6b2f6e35 100644
          result = g_slist_prepend (result, g_object_ref (stylesheet_data->file));
      }
  
-@@ -374,10 +374,6 @@ st_theme_finalize (GObject * object)
+@@ -384,9 +386,6 @@ st_theme_finalize (GObject * object)
  
    g_clear_pointer (&theme->stylesheets_by_file, g_hash_table_destroy);
  
--  g_slist_free_full (theme->custom_stylesheets,
+-  g_slist_free_full (g_steal_pointer (&theme->custom_stylesheets),
 -                     (GDestroyNotify) cr_stylesheet_unref);
--  theme->custom_stylesheets = NULL;
 -
    g_clear_object (&theme->application_stylesheet);
    g_clear_object (&theme->theme_stylesheet);
    g_clear_object (&theme->default_stylesheet);
-@@ -1030,7 +1026,7 @@ _st_theme_get_matched_properties (StTheme        *theme,
+@@ -1035,7 +1034,7 @@ _st_theme_get_matched_properties (StTheme        *theme,
    enum CRStyleOrigin origin = 0;
    CRStyleSheet *sheet = NULL;
    GPtrArray *props = g_ptr_array_new ();
@@ -359,7 +395,7 @@ index 2d51420a20..9f6b2f6e35 100644
  
    g_return_val_if_fail (ST_IS_THEME (theme), NULL);
    g_return_val_if_fail (ST_IS_THEME_NODE (node), NULL);
-@@ -1044,8 +1040,13 @@ _st_theme_get_matched_properties (StTheme        *theme,
+@@ -1049,8 +1048,13 @@ _st_theme_get_matched_properties (StTheme        *theme,
        add_matched_properties (theme, sheet, node, props);
      }
  
@@ -376,13 +412,12 @@ index 2d51420a20..9f6b2f6e35 100644
    /* We count on a stable sort here so that later declarations come
     * after earlier declarations */
 -- 
-2.24.1
+2.20.1
 
-
-From 5b66ecb1019f3ba32aa05562a8b58ebd95702669 Mon Sep 17 00:00:00 2001
+From b842c2359fc46e28864b19efb34d8810c76b959f Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Marco=20Trevisan=20=28Trevi=C3=B1o=29?= <mail@3v1n0.net>
-Date: Mon, 6 May 2019 18:56:49 -0500
-Subject: [PATCH 4/5] st-theme: Ref stylesheet using facility function
+Date: Tue, 7 May 2019 01:56:49 +0200
+Subject: [PATCH 4/6] st-theme: Ref stylesheet using facility function
 
 Define stylesheet_ref as a wrapper of cr_stylesheet_ref that returns the
 ref'ed instance so that we can use this on the caller function to make clear
@@ -394,10 +429,10 @@ https://gitlab.gnome.org/GNOME/gnome-shell/merge_requests/536
  1 file changed, 8 insertions(+), 2 deletions(-)
 
 diff --git a/src/st/st-theme.c b/src/st/st-theme.c
-index 9f6b2f6e35..30733b6fd5 100644
+index 20906796d..f977bc007 100644
 --- a/src/st/st-theme.c
 +++ b/src/st/st-theme.c
-@@ -110,6 +110,13 @@ file_equal0 (GFile *file1,
+@@ -119,6 +119,13 @@ file_equal0 (GFile *file1,
    return g_file_equal (file1, file2);
  }
  
@@ -409,10 +444,10 @@ index 9f6b2f6e35..30733b6fd5 100644
 +}
 +
  static void
- stylesheet_destroy (CRStyleSheet *stylesheet)
+ stylesheet_unref (CRStyleSheet *stylesheet)
  {
-@@ -268,9 +275,8 @@ insert_stylesheet (StTheme      *theme,
-   stylesheet_data->file = file;
+@@ -271,9 +278,8 @@ insert_stylesheet (StTheme      *theme,
+   stylesheet_data->file = g_object_ref (file);
    stylesheet->app_data = stylesheet_data;
  
 -  cr_stylesheet_ref (stylesheet);
@@ -423,13 +458,12 @@ index 9f6b2f6e35..30733b6fd5 100644
  }
  
 -- 
-2.24.1
+2.20.1
 
-
-From bf5ea4dc4fbcf09c77a830ae9a227660e1c72d7d Mon Sep 17 00:00:00 2001
+From 716ade8c1eb146759086f89ccf7502fde3722baf Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Marco=20Trevisan=20=28Trevi=C3=B1o=29?= <mail@3v1n0.net>
-Date: Mon, 6 May 2019 18:40:13 -0500
-Subject: [PATCH 5/5] st-theme: Use glib auto free/ptr features
+Date: Tue, 7 May 2019 01:40:13 +0200
+Subject: [PATCH 5/6] st-theme: Use glib auto free/ptr features
 
 Use g_autofree and g_autoptr for managing memory in a smarter way.
 
@@ -439,10 +473,10 @@ https://gitlab.gnome.org/GNOME/gnome-shell/merge_requests/536
  1 file changed, 6 insertions(+), 15 deletions(-)
 
 diff --git a/src/st/st-theme.c b/src/st/st-theme.c
-index 30733b6fd5..4c8730a4ce 100644
+index f977bc007..13206dc32 100644
 --- a/src/st/st-theme.c
 +++ b/src/st/st-theme.c
-@@ -205,7 +205,7 @@ parse_stylesheet (GFile   *file,
+@@ -211,7 +211,7 @@ parse_stylesheet (GFile   *file,
  {
    enum CRStatus status;
    CRStyleSheet *stylesheet;
@@ -451,7 +485,7 @@ index 30733b6fd5..4c8730a4ce 100644
    gsize length;
  
    if (file == NULL)
-@@ -218,14 +218,11 @@ parse_stylesheet (GFile   *file,
+@@ -224,14 +224,11 @@ parse_stylesheet (GFile   *file,
                                            length,
                                            CR_UTF_8,
                                            &stylesheet);
@@ -467,7 +501,7 @@ index 30733b6fd5..4c8730a4ce 100644
        return NULL;
      }
  
-@@ -901,7 +898,7 @@ add_matched_properties (StTheme      *a_this,
+@@ -903,7 +900,7 @@ add_matched_properties (StTheme      *a_this,
  
              if (import_rule->sheet == NULL)
                {
@@ -476,7 +510,7 @@ index 30733b6fd5..4c8730a4ce 100644
  
                  if (import_rule->url->stryng && import_rule->url->stryng->str)
                    {
-@@ -925,9 +922,6 @@ add_matched_properties (StTheme      *a_this,
+@@ -932,9 +929,6 @@ add_matched_properties (StTheme      *a_this,
                       */
                      import_rule->sheet = (CRStyleSheet *) - 1;
                    }
@@ -486,7 +520,7 @@ index 30733b6fd5..4c8730a4ce 100644
                }
  
              if (import_rule->sheet != (CRStyleSheet *) - 1)
-@@ -1070,20 +1064,19 @@ _st_theme_resolve_url (StTheme      *theme,
+@@ -1078,20 +1072,19 @@ _st_theme_resolve_url (StTheme      *theme,
                         CRStyleSheet *base_stylesheet,
                         const char   *url)
  {
@@ -510,7 +544,7 @@ index 30733b6fd5..4c8730a4ce 100644
  
        /* This is an internal function, if we get here with
           a bad @base_stylesheet we have a problem. */
-@@ -1091,8 +1084,6 @@ _st_theme_resolve_url (StTheme      *theme,
+@@ -1099,8 +1092,6 @@ _st_theme_resolve_url (StTheme      *theme,
  
        parent = g_file_get_parent (base_file);
        resource = g_file_resolve_relative_path (parent, url);
@@ -520,5 +554,108 @@ index 30733b6fd5..4c8730a4ce 100644
    else
      {
 -- 
-2.24.1
+2.20.1
+
+From 8c76188925286cfae0d7f6b031fa8a94e8fc6efa Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Marco=20Trevisan=20=28Trevi=C3=B1o=29?= <mail@3v1n0.net>
+Date: Wed, 15 Jul 2020 02:54:04 +0200
+Subject: [PATCH 6/6] st-theme: Use saner styleshet refcounting and
+ auto-cleanup function
+
+CRStyleSheet refcounting starts at 0, this makes handing it in a bit
+different way, compared to how we're used with GObject.
+
+In order to use the same paradigm everywhere, add a reference to all the
+stylesheet we create and we manage the memory, so that we can use them in
+the same way we'd do with other objects.
+
+Add an autoptr definition so that we can use smart pointers to handle the
+stylesheets lifecycle easily.
+
+https://gitlab.gnome.org/GNOME/gnome-shell/merge_requests/536
+---
+ src/st/st-theme.c | 30 ++++++++++++------------------
+ 1 file changed, 12 insertions(+), 18 deletions(-)
+
+diff --git a/src/st/st-theme.c b/src/st/st-theme.c
+index 13206dc32..526efb54f 100644
+--- a/src/st/st-theme.c
++++ b/src/st/st-theme.c
+@@ -134,6 +134,7 @@ stylesheet_unref (CRStyleSheet *stylesheet)
+ 
+   cr_stylesheet_unref (stylesheet);
+ }
++G_DEFINE_AUTOPTR_CLEANUP_FUNC (CRStyleSheet, stylesheet_unref);
+ 
+ static void
+ st_theme_init (StTheme *theme)
+@@ -232,6 +233,10 @@ parse_stylesheet (GFile   *file,
+       return NULL;
+     }
+ 
++  /* Styleshet ref cunting starts at 0, normalize it, ensuring it's set at 1 */
++  g_assert_true (stylesheet->ref_count == 0);
++  cr_stylesheet_ref (stylesheet);
++
+   return stylesheet;
+ }
+ 
+@@ -285,15 +290,12 @@ st_theme_load_stylesheet (StTheme    *theme,
+                           GFile      *file,
+                           GError    **error)
+ {
+-  CRStyleSheet *stylesheet;
++  g_autoptr(CRStyleSheet) stylesheet = NULL;
+   StyleSheetData *stylesheet_data;
+ 
+   stylesheet = parse_stylesheet (file, error);
+   if (!insert_stylesheet (theme, file, stylesheet))
+-    {
+-      cr_stylesheet_unref (stylesheet);
+-      return FALSE;
+-    }
++    return FALSE;
+ 
+   stylesheet_data = stylesheet->app_data;
+   stylesheet_data->extension_stylesheet = TRUE;
+@@ -360,9 +362,9 @@ static void
+ st_theme_constructed (GObject *object)
+ {
+   StTheme *theme = ST_THEME (object);
+-  CRStyleSheet *application_stylesheet;
+-  CRStyleSheet *theme_stylesheet;
+-  CRStyleSheet *default_stylesheet;
++  g_autoptr(CRStyleSheet) application_stylesheet = NULL;
++  g_autoptr(CRStyleSheet) theme_stylesheet = NULL;
++  g_autoptr(CRStyleSheet) default_stylesheet = NULL;
+ 
+   G_OBJECT_CLASS (st_theme_parent_class)->constructed (object);
+ 
+@@ -904,22 +906,14 @@ add_matched_properties (StTheme      *a_this,
+ 
+                 if (import_rule->url->stryng && import_rule->url->stryng->str)
+                   {
+-                    CRStyleSheet *sheet;
++                    g_autoptr(CRStyleSheet) sheet = NULL;
+                     file = _st_theme_resolve_url (a_this,
+                                                   a_nodesheet,
+                                                   import_rule->url->stryng->str);
+                     sheet = parse_stylesheet (file, NULL);
+ 
+                     if (insert_stylesheet (a_this, file, sheet))
+-                      {
+-                        /* refcount of stylesheets starts off at zero, so we don't
+-                         * need to unref! */
+-                        import_rule->sheet = sheet;
+-                      }
+-                    else
+-                      {
+-                        cr_stylesheet_unref (sheet);
+-                      }
++                      import_rule->sheet = g_steal_pointer (&sheet);
+                   }
+ 
+                 if (!import_rule->sheet)
+-- 
+2.20.1
 
