@@ -18,27 +18,28 @@ RDEPEND="
 	>=gnome-base/gnome-core-libs-${PV}[cups?]
 
 	>=gnome-base/gnome-session-3.36.0
-	>=gnome-base/gnome-settings-daemon-3.36.0[cups?]
-	>=gnome-base/gnome-control-center-${PV}[cups?]
-	>=gnome-extra/gnome-color-manager-3.35.90
+	>=gnome-base/gnome-settings-daemon-3.36.1[cups?]
+	>=gnome-base/gnome-control-center-3.36.4[cups?]
+	>=gnome-extra/gnome-color-manager-3.36.0
 
 	>=app-crypt/gcr-3.36.0
-	>=gnome-base/nautilus-${PV}.1
+	>=gnome-base/nautilus-3.36.3
 	>=gnome-base/gnome-keyring-3.36.0
-	>=gnome-extra/evolution-data-server-${PV}
+	>=gnome-extra/evolution-data-server-3.36.5
 
-	>=app-crypt/seahorse-3.36
-	>=app-editors/gedit-${PV}
-	>=app-text/evince-3.36.0
-	>=gnome-extra/gnome-contacts-3.36
-	>=media-gfx/eog-${PV}
+	>=app-crypt/seahorse-3.36.2
+	>=gui-libs/tepl-4.4.0
+	>=app-editors/gedit-3.36.2
+	>=app-text/evince-3.36.7
+	>=gnome-extra/gnome-contacts-3.36.2
+	>=media-gfx/eog-3.36.3
 	>=media-video/totem-3.34.1
-	>=x11-terms/gnome-terminal-${PV}.1
+	>=x11-terms/gnome-terminal-3.36.2
 
-	>=gnome-extra/gnome-user-docs-${PV}
+	>=gnome-extra/gnome-user-docs-3.36.2
 	>=gnome-extra/yelp-3.36.0
 
-	>=x11-themes/adwaita-icon-theme-3.36.0
+	>=x11-themes/adwaita-icon-theme-3.36.1
 
 	bluetooth? ( >=net-wireless/gnome-bluetooth-3.34.1 )
 "
