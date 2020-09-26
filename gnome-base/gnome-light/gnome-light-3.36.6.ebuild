@@ -3,14 +3,14 @@
 
 EAPI=7
 
+P_RELEASE="$(ver_cut 1-2)"
+
 DESCRIPTION="Meta package for GNOME-Light, merge this package to install"
 HOMEPAGE="https://www.gnome.org/"
 LICENSE="metapackage"
 SLOT="2.0"
 IUSE="cups +gnome-shell"
 
-# when unmasking for an arch
-# double check none of the deps are still masked !
 KEYWORDS="~amd64"
 
 # XXX: Note to developers:
@@ -22,22 +22,22 @@ RDEPEND="
 	>=gnome-base/gnome-core-libs-${PV}[cups?]
 
 	>=gnome-base/gnome-session-3.36.0
-	>=gnome-base/gnome-settings-daemon-3.36.0[cups?]
-	>=gnome-base/gnome-control-center-${PV}[cups?]
+	>=gnome-base/gnome-settings-daemon-3.36.1[cups?]
+	>=gnome-base/gnome-control-center-3.36.4[cups?]
 
-	>=gnome-base/nautilus-${PV}.1
+	>=gnome-base/nautilus-3.36.3
 
 	gnome-shell? (
 		>=x11-wm/mutter-${PV}
-		>=dev-libs/gjs-1.64.1
+		>=dev-libs/gjs-1.64.4
 		>=gnome-base/gnome-shell-${PV}
 		>=media-fonts/cantarell-0.201 )
 
-	>=x11-themes/adwaita-icon-theme-3.36.0
+	>=x11-themes/adwaita-icon-theme-3.36.1
 	>=x11-themes/gnome-themes-standard-3.28
 	>=x11-themes/gnome-backgrounds-3.36.0
 
-	>=x11-terms/gnome-terminal-${PV}
+	>=x11-terms/gnome-terminal-3.36.2
 "
 DEPEND=""
 PDEPEND=">=gnome-base/gvfs-1.44.1"
