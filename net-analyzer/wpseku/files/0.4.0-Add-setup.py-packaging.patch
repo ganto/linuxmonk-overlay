@@ -1,0 +1,379 @@
+commit daab3ea9b66b3250a10e66069891ebdc490ec5b7
+Author: Reto Gantenbein <reto.gantenbein@linuxmonk.ch>
+Date:   Thu Sep 14 14:23:37 2017 +0200
+
+    Add setup.py packaging
+
+diff --git a/wpseku.py b/bin/wpseku
+similarity index 80%
+rename from wpseku.py
+rename to bin/wpseku
+index d3edde6..ea9dd2c 100755
+--- a/wpseku.py
++++ b/bin/wpseku
+@@ -1,14 +1,16 @@
++#!/usr/bin/python3
++
+ """The WPSeku main part."""
+ import getopt
+ 
+-from lib.scan import *
+-from lib.usage import *
+-from modules.bruteforce.wpxmlrpc import *
+-from modules.discovery.generic.generic import *
+-from modules.discovery.plugins.wpplugins import *
+-from modules.discovery.themes.wpthemes import *
+-from modules.discovery.users.wpusers import *
+-from modules.fingerprint.fingerprint import *
++from wpseku.lib.scan import *
++from wpseku.lib.usage import *
++from wpseku.modules.bruteforce.wpxmlrpc import *
++from wpseku.modules.discovery.generic.generic import *
++from wpseku.modules.discovery.plugins.wpplugins import *
++from wpseku.modules.discovery.themes.wpthemes import *
++from wpseku.modules.discovery.users.wpusers import *
++from wpseku.modules.fingerprint.fingerprint import *
+ 
+ 
+ class wpseku(object):
+diff --git a/lib/check.py b/lib/check.py
+index cc00a34..a7485af 100755
+--- a/lib/check.py
++++ b/lib/check.py
+@@ -6,7 +6,7 @@
+ 
+ from urllib.parse import urlparse
+ 
+-from lib.printer import *
++from wpseku.lib.printer import *
+ 
+ 
+ def Data(url,data):
+diff --git a/lib/printer.py b/lib/printer.py
+index 62afba4..2734938 100755
+--- a/lib/printer.py
++++ b/lib/printer.py
+@@ -4,7 +4,7 @@
+ # WPSeku - Wordpress Security Scanner 
+ # by Momo Outaadi (m4ll0k)
+ 
+-from lib.colors import *
++from wpseku.lib.colors import *
+ 
+ 
+ def decode(string):
+diff --git a/lib/request.py b/lib/request.py
+index a76b216..83061e0 100755
+--- a/lib/request.py
++++ b/lib/request.py
+@@ -7,9 +7,9 @@
+ import requests
+ import urllib3
+ 
+-from lib.check import *
+-from lib.printer import *
+-from lib.ragent import *
++from wpseku.lib.check import *
++from wpseku.lib.printer import *
++from wpseku.lib.ragent import *
+ 
+ 
+ class Request(object):
+diff --git a/lib/scan.py b/lib/scan.py
+index 0f60a48..94a659d 100755
+--- a/lib/scan.py
++++ b/lib/scan.py
+@@ -14,8 +14,8 @@ import time
+ 
+ from humanfriendly.tables import format_pretty_table
+ 
+-from lib.printer import *
+-from lib.readfile import *
++from wpseku.lib.printer import *
++from wpseku.lib.readfile import *
+ 
+ 
+ class Scan:
+diff --git a/lib/usage.py b/lib/usage.py
+index 4c796c5..6682864 100755
+--- a/lib/usage.py
++++ b/lib/usage.py
+@@ -7,7 +7,7 @@
+ import sys
+ from time import strftime
+ 
+-from lib.printer import *
++from wpseku.lib.printer import *
+ 
+ 
+ def ptime(url):
+diff --git a/modules/bruteforce/wpxmlrpc.py b/modules/bruteforce/wpxmlrpc.py
+index 2d29444..c9368b9 100755
+--- a/modules/bruteforce/wpxmlrpc.py
++++ b/modules/bruteforce/wpxmlrpc.py
+@@ -6,8 +6,8 @@ from threading import Thread
+ 
+ from humanfriendly.tables import format_pretty_table
+ 
+-from lib.readfile import *
+-from lib.request import *
++from wpseku.lib.readfile import *
++from wpseku.lib.request import *
+ 
+ 
+ class XMLRPCBrute(Request):
+diff --git a/modules/discovery/generic/generic.py b/modules/discovery/generic/generic.py
+index ed3ab5e..fa63a07 100755
+--- a/modules/discovery/generic/generic.py
++++ b/modules/discovery/generic/generic.py
+@@ -1,11 +1,11 @@
+ """Support for discovering Wordpress generic parts."""
+-from modules.discovery.generic.wpconfig import *
+-from modules.discovery.generic.wpfile import *
+-from modules.discovery.generic.wpfpd import *
+-from modules.discovery.generic.wplisting import *
+-from modules.discovery.generic.wplogin import *
+-from modules.discovery.generic.wprobots import *
+-from modules.discovery.generic.wpversion import *
++from wpseku.modules.discovery.generic.wpconfig import *
++from wpseku.modules.discovery.generic.wpfile import *
++from wpseku.modules.discovery.generic.wpfpd import *
++from wpseku.modules.discovery.generic.wplisting import *
++from wpseku.modules.discovery.generic.wplogin import *
++from wpseku.modules.discovery.generic.wprobots import *
++from wpseku.modules.discovery.generic.wpversion import *
+ 
+ 
+ def generic(url,data,kwargs):
+diff --git a/modules/discovery/generic/wpconfig.py b/modules/discovery/generic/wpconfig.py
+index 064019c..c42cc03 100755
+--- a/modules/discovery/generic/wpconfig.py
++++ b/modules/discovery/generic/wpconfig.py
+@@ -1,8 +1,8 @@
+ """Support for discovering Wordpress configuration."""
+ from os.path import realpath
+ 
+-from lib.readfile import *
+-from lib.request import *
++from wpseku.lib.readfile import *
++from wpseku.lib.request import *
+ 
+ 
+ class wpconfig(Request):
+diff --git a/modules/discovery/generic/wpfile.py b/modules/discovery/generic/wpfile.py
+index 414bfd7..ad0afd2 100755
+--- a/modules/discovery/generic/wpfile.py
++++ b/modules/discovery/generic/wpfile.py
+@@ -1,8 +1,8 @@
+ """Support for discovering Wordpress files."""
+ from os.path import realpath
+ 
+-from lib.readfile import *
+-from lib.request import *
++from wpseku.lib.readfile import *
++from wpseku.lib.request import *
+ 
+ 
+ class wpfile(Request):
+diff --git a/modules/discovery/generic/wpfpd.py b/modules/discovery/generic/wpfpd.py
+index d9f179b..42e7e02 100755
+--- a/modules/discovery/generic/wpfpd.py
++++ b/modules/discovery/generic/wpfpd.py
+@@ -1,7 +1,7 @@
+ """Support for discovering Wordpress path disclosures."""
+ from re import I, findall, search
+ 
+-from lib.request import *
++from wpseku.lib.request import *
+ 
+ 
+ class wpfpd(Request):
+diff --git a/modules/discovery/generic/wplisting.py b/modules/discovery/generic/wplisting.py
+index cf5aa4d..c224ad0 100755
+--- a/modules/discovery/generic/wplisting.py
++++ b/modules/discovery/generic/wplisting.py
+@@ -2,8 +2,8 @@
+ from os.path import realpath
+ from re import I, search
+ 
+-from lib.readfile import *
+-from lib.request import *
++from wpseku.lib.readfile import *
++from wpseku.lib.request import *
+ 
+ 
+ class wplisting(Request):
+diff --git a/modules/discovery/generic/wplogin.py b/modules/discovery/generic/wplogin.py
+index 4f83ead..caf46fe 100755
+--- a/modules/discovery/generic/wplogin.py
++++ b/modules/discovery/generic/wplogin.py
+@@ -1,5 +1,5 @@
+ """Support for discovering Wordpress logins."""
+-from lib.request import *
++from wpseku.lib.request import *
+ 
+ 
+ class wplogin(Request):
+diff --git a/modules/discovery/generic/wprobots.py b/modules/discovery/generic/wprobots.py
+index 458189f..73df331 100755
+--- a/modules/discovery/generic/wprobots.py
++++ b/modules/discovery/generic/wprobots.py
+@@ -1,5 +1,5 @@
+ """Support for discovering Wordpress robots."""
+-from lib.request import *
++from wpseku.lib.request import *
+ 
+ 
+ class wprobots(Request):
+diff --git a/modules/discovery/generic/wpversion.py b/modules/discovery/generic/wpversion.py
+index 82f6247..3d2fff0 100755
+--- a/modules/discovery/generic/wpversion.py
++++ b/modules/discovery/generic/wpversion.py
+@@ -2,7 +2,7 @@
+ from json import loads
+ from re import findall
+ 
+-from lib.request import *
++from wpseku.lib.request import *
+ 
+ 
+ class wpversion(Request):
+diff --git a/modules/discovery/plugins/wpplugins.py b/modules/discovery/plugins/wpplugins.py
+index 36271d3..28f1a76 100755
+--- a/modules/discovery/plugins/wpplugins.py
++++ b/modules/discovery/plugins/wpplugins.py
+@@ -3,7 +3,7 @@ from os.path import exists, join, realpath
+ from json import loads
+ from re import I, findall, search
+ 
+-from lib.request import *
++from wpseku.lib.request import *
+ 
+ 
+ class wpplugins(Request):
+diff --git a/modules/discovery/themes/wpthemes.py b/modules/discovery/themes/wpthemes.py
+index 06ea715..703bd70 100755
+--- a/modules/discovery/themes/wpthemes.py
++++ b/modules/discovery/themes/wpthemes.py
+@@ -3,7 +3,7 @@ from os.path import exists, join, realpath
+ from json import loads
+ from re import I, findall, search
+ 
+-from lib.request import *
++from wpseku.lib.request import *
+ 
+ 
+ class wpthemes(Request):
+diff --git a/modules/discovery/users/wpusers.py b/modules/discovery/users/wpusers.py
+index 1d3fcd9..6717b43 100755
+--- a/modules/discovery/users/wpusers.py
++++ b/modules/discovery/users/wpusers.py
+@@ -4,7 +4,7 @@ from re import I, findall
+ 
+ from humanfriendly.tables import format_pretty_table
+ 
+-from lib.request import *
++from wpseku.lib.request import *
+ 
+ 
+ class wpusers(Request):
+diff --git a/modules/fingerprint/cms.py b/modules/fingerprint/cms.py
+index d5a8681..f73d478 100755
+--- a/modules/fingerprint/cms.py
++++ b/modules/fingerprint/cms.py
+@@ -1,7 +1,7 @@
+ """Support for fingerprinting CMS."""
+ from re import I, search
+ 
+-from lib.printer import *
++from wpseku.lib.printer import *
+ 
+ 
+ def wordpress(headers,content):
+diff --git a/modules/fingerprint/fingerprint.py b/modules/fingerprint/fingerprint.py
+index dfc0a64..6365d69 100755
+--- a/modules/fingerprint/fingerprint.py
++++ b/modules/fingerprint/fingerprint.py
+@@ -1,9 +1,9 @@
+ """Support for fingerprint Wordpress."""
+-from lib.request import *
+-from modules.fingerprint.cms import *
+-from modules.fingerprint.headers import *
+-from modules.fingerprint.server import *
+-from modules.fingerprint.waf import *
++from wpseku.lib.request import *
++from wpseku.modules.fingerprint.cms import *
++from wpseku.modules.fingerprint.headers import *
++from wpseku.modules.fingerprint.server import *
++from wpseku.modules.fingerprint.waf import *
+ 
+ 
+ class fingerprint(Request):
+diff --git a/modules/fingerprint/headers.py b/modules/fingerprint/headers.py
+index f6e3445..1fa16be 100755
+--- a/modules/fingerprint/headers.py
++++ b/modules/fingerprint/headers.py
+@@ -1,5 +1,5 @@
+ """Support for getting the HTTP headers."""
+-from lib.printer import *
++from wpseku.lib.printer import *
+ 
+ 
+ def headers(headers):
+diff --git a/modules/fingerprint/waf.py b/modules/fingerprint/waf.py
+index c5f98c0..4b33825 100755
+--- a/modules/fingerprint/waf.py
++++ b/modules/fingerprint/waf.py
+@@ -1,7 +1,7 @@
+ """Support for detecting Web application firewalls."""
+ from re import search
+ 
+-from lib.printer import *
++from wpseku.lib.printer import *
+ 
+ 
+ def wordfence_security(content):
+diff --git a/setup.py b/setup.py
+new file mode 100644
+index 0000000..7dce6e4
+--- /dev/null
++++ b/setup.py
+@@ -0,0 +1,35 @@
++from distutils.core import setup
++
++setup(name='wpseku',
++      version='0.4.0',
++      author='Momo Outaadl (M4all0k)',
++      license='GPL-3',
++      description='Black box WordPress vulnerability scanner',
++      url='https://github.com/m4ll0k/WPSeku',
++      packages=[
++          'wpseku',
++          'wpseku.db',
++          'wpseku.lib',
++          'wpseku.modules',
++          'wpseku.modules.bruteforce',
++          'wpseku.modules.discovery',
++          'wpseku.modules.discovery.generic',
++          'wpseku.modules.discovery.plugins',
++          'wpseku.modules.discovery.themes',
++          'wpseku.modules.discovery.users',
++          'wpseku.modules.fingerprint',
++      ],
++      package_dir={
++          'wpseku.db': 'db',
++          'wpseku.lib': 'lib',
++          'wpseku.modules': 'modules',
++      },
++      package_data={
++          'wpseku.db': [
++              '*'
++          ],
++      },
++      scripts=[
++          'bin/wpseku',
++      ],
++)
+diff --git a/wpseku/__init__.py b/wpseku/__init__.py
+new file mode 100644
+index 0000000..e69de29
