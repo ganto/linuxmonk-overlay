@@ -29,7 +29,6 @@ BDEPEND="
 "
 
 PATCHES=(
-	"${FILESDIR}"/0.30.1-bash-completion-dir.patch
 	"${FILESDIR}"/0.32.0-drop-vapigen-dep.patch # .vapi/.deps are pregenerated, just install them without a vala dep
 )
 
