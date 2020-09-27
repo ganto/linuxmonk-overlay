@@ -55,6 +55,7 @@ src_configure() {
 		$(meson_use gtk-doc gtk_doc)
 		$(meson_use introspection)
 		-Dinstalled_tests=false
+		-Dlibportal=false
 	)
 	meson_src_configure
 }
