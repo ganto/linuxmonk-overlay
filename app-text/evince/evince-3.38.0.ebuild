@@ -1,11 +1,9 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
-GNOME2_LA_PUNT="yes"
-GNOME2_EAUTORECONF="yes"
+EAPI=7
 
-inherit gnome2 systemd
+inherit gnome.org gnome2-utils meson systemd xdg
 
 DESCRIPTION="Simple document viewer for GNOME"
 HOMEPAGE="https://wiki.gnome.org/Apps/Evince"
@@ -13,12 +11,12 @@ HOMEPAGE="https://wiki.gnome.org/Apps/Evince"
 LICENSE="GPL-2+ CC-BY-SA-3.0"
 # subslot = evd3.(suffix of libevdocument3)-evv3.(suffix of libevview3)
 SLOT="0/evd3.4-evv3.3"
-IUSE="djvu dvi gstreamer gnome gnome-keyring +introspection nautilus nsplugin postscript spell t1lib tiff xps"
+IUSE="djvu dvi gnome gnome-keyring gstreamer gtk-doc +introspection nautilus nsplugin postscript spell t1lib tiff xps"
 KEYWORDS="~amd64"
 
 # atk used in libview
 # bundles unarr
-COMMON_DEPEND="
+DEPEND="
 	dev-libs/atk
 	>=dev-libs/glib-2.38.0:2
 	>=dev-libs/libxml2-2.5:2
@@ -41,20 +39,20 @@ COMMON_DEPEND="
 	gnome? ( gnome-base/gnome-desktop:3= )
 	gnome-keyring? ( >=app-crypt/libsecret-0.5 )
 	introspection? ( >=dev-libs/gobject-introspection-1:= )
-	nautilus? ( >=gnome-base/nautilus-2.91.4 )
+	nautilus? ( >=gnome-base/nautilus-3.28.0 )
 	postscript? ( >=app-text/libspectre-0.2:= )
 	spell? ( >=app-text/gspell-1.6.0:= )
 	tiff? ( >=media-libs/tiff-3.6:0= )
 	xps? ( >=app-text/libgxps-0.2.1:= )
 "
-RDEPEND="${COMMON_DEPEND}
+RDEPEND="${DEPEND}
 	gnome-base/gvfs
 	gnome-base/librsvg
 	|| (
 		>=x11-themes/adwaita-icon-theme-2.17.1
 		>=x11-themes/hicolor-icon-theme-0.10 )
 "
-DEPEND="${COMMON_DEPEND}
+BDEPEND="
 	app-text/docbook-xml-dtd:4.3
 	dev-libs/appstream-glib
 	dev-util/gdbus-codegen
@@ -65,43 +63,50 @@ DEPEND="${COMMON_DEPEND}
 	virtual/pkgconfig
 	app-text/yelp-tools
 "
-# eautoreconf needs:
-#  app-text/yelp-tools
 
 PATCHES=(
-	"${FILESDIR}"/3.30.2-internal-synctex.patch # don't automagically link to synctex from texlive-core - always use internal copy of this small parser for now; requires eautoreconf
+	"${FILESDIR}"/3.38.0-internal-synctex.patch
 )
 
 src_prepare() {
-	gnome2_src_prepare
-
-	# Do not depend on adwaita-icon-theme, bug #326855, #391859
-	# https://gitlab.freedesktop.org/xdg/default-icon-theme/issues/7
-	sed -e 's/adwaita-icon-theme >= $ADWAITA_ICON_THEME_REQUIRED//g' \
-		-i configure || die "sed failed"
+	xdg_src_prepare
 }
 
 src_configure() {
-	gnome2_src_configure \
-		--disable-static \
-		--enable-pdf \
-		--enable-comics \
-		--enable-thumbnailer \
-		--with-platform=gnome \
-		--enable-dbus \
-		$(use_enable djvu) \
-		$(use_enable dvi) \
-		$(use_enable gstreamer multimedia) \
-		$(use_enable gnome libgnome-desktop) \
-		$(use_with gnome-keyring keyring) \
-		$(use_enable introspection) \
-		$(use_enable nautilus) \
-		$(use_enable nsplugin browser-plugin) \
-		$(use_enable postscript ps) \
-		$(use_with spell gspell) \
-		$(use_enable t1lib) \
-		$(use_enable tiff) \
-		$(use_enable xps) \
-		BROWSER_PLUGIN_DIR="${EPREFIX}"/usr/$(get_libdir)/nsbrowser/plugins \
-		--with-systemduserunitdir="$(systemd_get_userunitdir)"
+	local emesonargs=(
+		-Dcomics=enabled
+		-Ddbus=true
+		-Dpdf=enabled
+		-Dplatform=gnome
+		-Dthumbnailer=true
+		$(meson_feature djvu)
+		$(meson_feature dvi)
+		$(meson_use introspection)
+		$(meson_feature gnome thumbnail_cache)
+		$(meson_feature gnome-keyring keyring)
+		$(meson_feature gstreamer multimedia)
+		$(meson_use gtk-doc gtk_doc)
+		$(meson_use nautilus)
+		$(meson_use nsplugin browser_plugin)
+		$(meson_feature postscript ps)
+		$(meson_feature spell gspell)
+		$(meson_feature t1lib)
+		$(meson_feature tiff)
+		$(meson_feature xps)
+		-Dbrowser_plugin_dir="${EPREFIX}"/usr/$(get_libdir)/nsbrowser/plugins
+		-Dsystemduserunitdir=$(systemd_get_userunitdir)
+	)
+	meson_src_configure
+}
+
+src_test() { :; }
+
+pkg_postinst() {
+	xdg_pkg_postinst
+	gnome2_schemas_update
+}
+
+pkg_postrm() {
+	xdg_pkg_postrm
+	gnome2_schemas_update
 }
