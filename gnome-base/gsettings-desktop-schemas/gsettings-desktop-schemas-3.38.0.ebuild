@@ -12,8 +12,6 @@ SLOT="0"
 IUSE="+introspection"
 KEYWORDS="~amd64"
 
-DEPEND="!<gnome-base/gdm-3.8"
-RDEPEND="${DEPEND}"
 BDEPEND="
 	introspection? ( >=dev-libs/gobject-introspection-1.54:= )
 	dev-util/glib-utils
