@@ -1,0 +1,30 @@
+commit 77a9e636ad2226f2a8fff52111508b573bf1ec52
+Author: Reto Gantenbein <reto.gantenbein@linuxmonk.ch>
+Date:   Sun Sep 27 14:46:37 2020 +0200
+
+    build: Make wacom optional and controllable via meson_options
+
+diff --git a/meson.build b/meson.build
+index 82c41592..e5dc0347 100644
+--- a/meson.build
++++ b/meson.build
+@@ -154,8 +154,8 @@ if enable_wayland
+ endif
+ config_h.set10('HAVE_WAYLAND', enable_wayland)
+ 
+-# wacom (disabled for s390/s390x and non Linux platforms)
+-enable_wacom = host_is_linux_not_s390
++# wacom
++enable_wacom = get_option('wacom')
+ if enable_wacom
+   assert(enable_gudev, 'GUDev support is required for wacom support.')
+   libwacom_dep = dependency('libwacom', version: '>= 0.7')
+diff --git a/meson_options.txt b/meson_options.txt
+index 3e04cf64..abfba235 100644
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -12,3 +12,4 @@ option('usb-protection', type: 'boolean', value: true, description: 'build with
+ option('wayland', type: 'boolean', value: true, description: 'build with Wayland support')
+ option('wwan', type: 'boolean', value: true, description: 'build with WWAN support')
+ option('colord', type: 'boolean', value: true, description: 'build with colord support')
++option('wacom', type: 'boolean', value: true, description: 'build with Wacom devices support')

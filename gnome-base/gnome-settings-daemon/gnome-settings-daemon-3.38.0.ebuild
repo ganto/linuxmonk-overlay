@@ -80,9 +80,9 @@ BDEPEND="
 
 PATCHES=(
 	# Patches taken from Gentoo patchset (gnome-settings-daemon-3.34.2-patchset.tar.xz)
-	"${FILESDIR}"/3.34.2-0002-build-Make-colord-and-wacom-optional-and-controllabl.patch
 	"${FILESDIR}"/3.34.2-0003-build-Allow-NM-optional-on-Linux.patch
 	"${FILESDIR}"/3.36.0-0004-Allow-udev-optional-on-Linux.patch
+	"${FILESDIR}"/3.38.0-build-Make-wacom-optional-and-controllable.patch
 )
 
 python_check_deps() {
