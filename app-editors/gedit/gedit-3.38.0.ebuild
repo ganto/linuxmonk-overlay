@@ -15,17 +15,18 @@ LICENSE="GPL-2+ CC-BY-SA-3.0"
 SLOT="0"
 
 IUSE="+introspection +python gtk-doc spell vala"
-REQUIRED_USE="python? ( introspection ${PYTHON_REQUIRED_USE} ) spell? ( python )"
+REQUIRED_USE="python? ( introspection ${PYTHON_REQUIRED_USE} )"
 
 KEYWORDS="~amd64"
 
 # X libs are not needed for OSX (aqua)
 DEPEND="
-	>=dev-libs/glib-2.52:2
-	>=gui-libs/tepl-4.4:4
+	>=dev-libs/glib-2.64:2
+	>=dev-libs/libpeas-1.14.1[gtk]
 	>=x11-libs/gtk+-3.22.0:3[introspection?]
 	>=x11-libs/gtksourceview-4.0.2:4[introspection?]
-	>=dev-libs/libpeas-1.14.1[gtk]
+	>=gui-libs/tepl-5.0:5
+
 	>=dev-libs/libxml2-2.5.0:2
 	>=net-libs/libsoup-2.60:2.4
 	x11-libs/libX11
@@ -55,7 +56,7 @@ BDEPEND="
 	>=sys-devel/gettext-0.18
 	virtual/pkgconfig
 "
-PATCHES=( "${FILESDIR}/3.36.0-make-spell-optional.patch" )
+PATCHES=( "${FILESDIR}/3.38.0-make-spell-optional.patch" )
 
 pkg_setup() {
 	use python && python-single-r1_pkg_setup

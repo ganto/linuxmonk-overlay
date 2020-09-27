@@ -1,0 +1,55 @@
+commit 96b6f071d75ee5698c754df632301b3f0c680fd6
+Author: Reto Gantenbein <reto.gantenbein@linuxmonk.ch>
+Date:   Sat Sep 14 18:29:11 2019 +0200
+
+    Make spell optional
+
+diff --git a/meson.build b/meson.build
+index c48d81937..b0f4470e4 100644
+--- a/meson.build
++++ b/meson.build
+@@ -40,6 +40,8 @@ libgd_subproject = subproject(
+ libgd_dep = libgd_subproject.get_variable('libgd_dep')
+ 
+ # Dependencies
++with_gspell = get_option('spell')
++gspell_dep = dependency('gspell-1', version: '>= 1.0', required: false)
+ gio_dep = dependency('gio-2.0', version: '>= 2.64')
+ 
+ libgedit_public_deps = [
+@@ -93,4 +95,5 @@ summary('API version', api_version)
+ summary('Prefix', get_option('prefix'))
+ summary('API documentation', get_option('gtk_doc'))
+ summary('User documentation', get_option('user_documentation'))
++summary('Spell', with_gspell)
+ summary('Require all tests', get_option('require_all_tests'))
+diff --git a/meson_options.txt b/meson_options.txt
+index 4e842d1ea..2f1206bde 100644
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -14,6 +14,10 @@ option(
+   description: 'Require that all tests can be run, even those that depend on third party programs'
+ )
+ 
++option('spell',
++        type:'boolean', value: true,
++        description: 'Build spell support')
++
+ # This option exists for the developers, to speed up the install.
+ option(
+   'user_documentation',
+diff --git a/plugins/meson.build b/plugins/meson.build
+index 50bc5d393..ebb23fb8b 100644
+--- a/plugins/meson.build
++++ b/plugins/meson.build
+@@ -23,7 +23,9 @@ subdir('quickhighlight')
+ subdir('quickopen')
+ subdir('snippets')
+ subdir('sort')
+-subdir('spell')
++if with_gspell
++  subdir('spell')
++endif
+ subdir('time')
+ 
+ if get_option('plugin_externaltools')
