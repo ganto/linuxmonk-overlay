@@ -33,16 +33,14 @@ DEPEND="
 "
 
 # Pure-runtime deps from the session files should *NOT* be added here.
-# gnome-settings-daemon is assumed to be >=3.35.90, but this is about
-# removed components, so no need to strictly require it (older just
-# won't have those daemons loaded by gnome-session).
+# >=gnome-settings-daemon-3.35.91 for UsbProtection required component.
 # x11-misc/xdg-user-dirs{,-gtk} are needed to create the various XDG_*_DIRs, and
 # create .config/user-dirs.dirs which is read by glib to get G_USER_DIRECTORY_*
 # xdg-user-dirs-update is run during login (see 10-user-dirs-update-gnome below).
 # sys-apps/dbus[X] is needed for session management.
 # Our 90-xcursor-theme-gnome reads a setting from gsettings-desktop-schemas.
 RDEPEND="${DEPEND}
-	>=gnome-base/gnome-settings-daemon-3.23.3
+	>=gnome-base/gnome-settings-daemon-3.35.91
 	>=gnome-base/gsettings-desktop-schemas-3.28.1
 	sys-apps/dbus[X]
 	consolekit? ( sys-auth/consolekit )
@@ -61,8 +59,7 @@ BDEPEND="
 "
 
 PATCHES=(
-	# Patches taken from Gentoo patchset (gnome-session-3.34.2-patchset.tar.xz)
-	"${FILESDIR}"/3.34.2-0006-autostart-app-Place-launched-applications-into-a-sys.patch
+	# Patches taken from Gentoo patchset (gnome-session-3.36.0-patchset.tar.xz)
 	"${FILESDIR}"/3.36.0-elogind-support.patch
 )
 
@@ -95,7 +92,7 @@ src_install() {
 	doexe "${FILESDIR}/Gnome"
 
 	insinto /usr/share/applications
-	newins "${FILESDIR}/defaults.list-r4" gnome-mimeapps.list
+	newins "${FILESDIR}/defaults.list-r5" gnome-mimeapps.list
 
 	dodir /etc/X11/xinit/xinitrc.d/
 	exeinto /etc/X11/xinit/xinitrc.d/
