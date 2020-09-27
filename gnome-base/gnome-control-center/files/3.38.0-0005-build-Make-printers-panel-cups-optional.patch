@@ -1,6 +1,6 @@
-commit 55607e1e5c2cc3dba721062307cc5a346a15e915
+commit 61606f6a1ed1bfcaaf0103c01d54ed6a6c2bf8d3
 Author: Mart Raudsepp <leio@gentoo.org>
-Date:   Sun Mar 15 23:53:33 2020 +0100
+Date:   Sun Jul 12 12:38:19 2020 +0300
 
     build: Make printers panel (cups) optional
     
@@ -8,10 +8,10 @@ Date:   Sun Mar 15 23:53:33 2020 +0100
     by the printers panel.
 
 diff --git a/meson.build b/meson.build
-index d88c10354..63c2a4859 100644
+index 1aec8ce97..064306fc9 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -161,9 +161,10 @@ common_deps = [
+@@ -162,9 +162,11 @@ common_deps = [
  ]
  
  # Check for CUPS 1.4 or newer
@@ -19,23 +19,29 @@ index d88c10354..63c2a4859 100644
 -assert(cups_dep.found(), 'CUPS 1.4 or newer not found')
 +cups_dep = dependency('cups', version : '>= 1.4', required: get_option('cups'))
 +enable_cups = cups_dep.found()
++have_cups_httpconnect2 = false
  
 +if enable_cups
  # https://bugzilla.gnome.org/show_bug.cgi?id=696766
  cups_cflags = []
  if cups_dep.version().version_compare('>= 1.6')
-@@ -179,6 +180,9 @@ check_headers = [
- foreach header: check_headers
+@@ -181,8 +183,13 @@ foreach header: check_headers
    assert(cc.has_header(header[1], args: cups_cflags), 'CUPS headers not found: ' + header[1])
  endforeach
+ 
++have_cups_httpconnect2 = cc.has_function('httpConnect2', dependencies: cups_dep)
 +endif
++
 +config_h.set('BUILD_PRINTERS', enable_cups,
 +             description: 'Define to 1 to build the Printers panel')
- 
  config_h.set10('HAVE_CUPS_HTTPCONNECT2',
-                cc.has_function('httpConnect2', dependencies: cups_dep),
+-               cc.has_function('httpConnect2', dependencies: cups_dep),
++               have_cups_httpconnect2,
+                description: 'Define if httpConnect2() is available in CUPS')
+ 
+ # Optional dependency for the user accounts panel
 diff --git a/meson_options.txt b/meson_options.txt
-index 8f3b73365..00d5fec9a 100644
+index 17e3551fa..a089293ae 100644
 --- a/meson_options.txt
 +++ b/meson_options.txt
 @@ -1,5 +1,6 @@
@@ -69,7 +75,7 @@ index 90bb3deef..7d2660986 100644
    panels += ['online-accounts']
  endif
 diff --git a/shell/cc-panel-loader.c b/shell/cc-panel-loader.c
-index b10611c80..cce44eeec 100644
+index b10611c80..c524b17d9 100644
 --- a/shell/cc-panel-loader.c
 +++ b/shell/cc-panel-loader.c
 @@ -52,7 +52,9 @@ extern GType cc_notifications_panel_get_type (void);
@@ -78,7 +84,7 @@ index b10611c80..cce44eeec 100644
  extern GType cc_power_panel_get_type (void);
 +#ifdef BUILD_PRINTERS
  extern GType cc_printers_panel_get_type (void);
-+#endif
++#endif /* BUILD_PRINTERS */
  extern GType cc_region_panel_get_type (void);
  extern GType cc_removable_media_panel_get_type (void);
  extern GType cc_search_panel_get_type (void);

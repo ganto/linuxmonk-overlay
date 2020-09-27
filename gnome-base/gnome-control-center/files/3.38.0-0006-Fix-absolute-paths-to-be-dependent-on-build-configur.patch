@@ -1,0 +1,118 @@
+commit 2a7c6f6bd3b3ad787085cfb42569f6cae4271911
+Author: Mart Raudsepp <leio@gentoo.org>
+Date:   Sun Sep 27 17:23:05 2020 +0200
+
+    Fix absolute paths to be dependent on build configuration
+    
+    Most of this should be upstreamable, except for maybe LIBEXECDIR bits,
+    as the old value may not match for `--prefix /` builds with new value.
+
+diff --git a/panels/datetime/meson.build b/panels/datetime/meson.build
+index ec735f34b..3211820e6 100644
+--- a/panels/datetime/meson.build
++++ b/panels/datetime/meson.build
+@@ -175,6 +175,7 @@ deps = common_deps + [
+ ]
+ 
+ cflags += [
++  '-DDATADIR="@0@"'.format(control_center_datadir),
+   '-DGNOMECC_DATA_DIR="@0@"'.format(control_center_pkgdatadir)
+ ]
+ 
+diff --git a/panels/printers/meson.build b/panels/printers/meson.build
+index f887625db..fdea72cd7 100644
+--- a/panels/printers/meson.build
++++ b/panels/printers/meson.build
+@@ -64,6 +64,11 @@ deps = common_deps + [
+   dependency('smbclient')
+ ]
+ 
++cflags += [
++  '-DDATADIR="@0@"'.format(control_center_datadir),
++  '-DLIBEXECDIR="@0@"'.format(control_center_libexecdir)
++]
++
+ printers_panel_lib = static_library(
+   cappletname,
+   sources: sources,
+diff --git a/panels/printers/pp-host.c b/panels/printers/pp-host.c
+index a31a606e3..530256940 100644
+--- a/panels/printers/pp-host.c
++++ b/panels/printers/pp-host.c
+@@ -256,7 +256,7 @@ _pp_host_get_snmp_devices_thread (GTask        *task,
+   devices = g_ptr_array_new_with_free_func (g_object_unref);
+ 
+   argv = g_new0 (gchar *, 3);
+-  argv[0] = g_strdup ("/usr/lib/cups/backend/snmp");
++  argv[0] = g_strdup (LIBEXECDIR "cups/backend/snmp");
+   argv[1] = g_strdup (priv->hostname);
+ 
+   /* Use SNMP to get printer's informations */
+diff --git a/panels/printers/pp-options-dialog.c b/panels/printers/pp-options-dialog.c
+index 05f8e72df..3283a1b14 100644
+--- a/panels/printers/pp-options-dialog.c
++++ b/panels/printers/pp-options-dialog.c
+@@ -835,7 +835,7 @@ test_page_cb (PpOptionsDialog *self)
+ 
+   if (self->printer_name)
+     {
+-      const gchar      *const dirs[] = { "/usr/share/cups",
++      const gchar      *const dirs[] = { DATADIR "/cups",
+                                          "/usr/local/share/cups",
+                                          NULL };
+       const gchar      *datadir = NULL;
+diff --git a/panels/user-accounts/meson.build b/panels/user-accounts/meson.build
+index 4375d3816..58876ba5e 100644
+--- a/panels/user-accounts/meson.build
++++ b/panels/user-accounts/meson.build
+@@ -190,6 +190,7 @@ endif
+ 
+ cflags += [
+   '-DGNOMELOCALEDIR="@0@"'.format(control_center_localedir),
++  '-DBINDIR="@0@"'.format(control_center_bindir),
+   '-DHAVE_LIBPWQUALITY',
+   '-DUM_PIXMAP_DIR="@0@"'.format(join_paths(control_center_pkgdatadir, 'pixmaps'))
+ ]
+diff --git a/panels/user-accounts/run-passwd.c b/panels/user-accounts/run-passwd.c
+index 56eea9f29..a174ac514 100644
+--- a/panels/user-accounts/run-passwd.c
++++ b/panels/user-accounts/run-passwd.c
+@@ -150,7 +150,7 @@ spawn_passwd (PasswdHandler *passwd_handler, GError **error)
+         gchar  **envp;
+         gint    my_stdin, my_stdout, my_stderr;
+ 
+-        argv[0] = "/usr/bin/passwd";    /* Is it safe to rely on a hard-coded path? */
++        argv[0] = BINDIR "/passwd";    /* Is it safe to rely on a hard-coded path? */
+         argv[1] = NULL;
+ 
+         envp = g_get_environ ();
+diff --git a/tests/datetime/meson.build b/tests/datetime/meson.build
+index c9f07877c..fd0799b16 100644
+--- a/tests/datetime/meson.build
++++ b/tests/datetime/meson.build
+@@ -14,6 +14,7 @@ env = [
+ ]
+ cflags = [
+   '-DTEST_SRCDIR="@0@"'.format(meson.current_source_dir()),
++  '-DDATADIR="@0@"'.format(control_center_datadir),
+   '-DSRCDIR="@0@"'.format(meson.source_root() + '/panels/datetime')
+ ]
+ 
+diff --git a/tests/datetime/test-endianess.c b/tests/datetime/test-endianess.c
+index 9cb92007a..864681e75 100644
+--- a/tests/datetime/test-endianess.c
++++ b/tests/datetime/test-endianess.c
+@@ -26,11 +26,11 @@ test_endianess (void)
+ 	g_autoptr(GDir) dir = NULL;
+ 	const char *name;
+ 
+-	dir = g_dir_open ("/usr/share/i18n/locales/", 0, NULL);
++	dir = g_dir_open (DATADIR "/i18n/locales/", 0, NULL);
+ 	if (dir == NULL) {
+ 		/* Try with /usr/share/locale/
+ 		 * https://bugzilla.gnome.org/show_bug.cgi?id=646780 */
+-		dir = g_dir_open ("/usr/share/locale/", 0, NULL);
++		dir = g_dir_open (DATADIR "/locale/", 0, NULL);
+ 		if (dir == NULL) {
+ 			g_assert_not_reached ();
+ 		}

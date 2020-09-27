@@ -1,23 +1,23 @@
-commit ed40c974f68a8b15807603501157045624c8752d
+commit acdec352fcd3b8bb141f8e266b07ca5049bf62f6
 Author: Mart Raudsepp <leio@gentoo.org>
 Date:   Sun Mar 15 23:45:11 2020 +0100
 
     build: Make grilo and gnome-online-accounts optional
 
 diff --git a/meson.build b/meson.build
-index a6d2dbbef..d88c10354 100644
+index 091ba9c88..1aec8ce97 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -123,7 +123,7 @@ gio_dep = dependency('gio-2.0')
+@@ -124,7 +124,7 @@ gio_dep = dependency('gio-2.0')
  glib_dep = dependency('glib-2.0', version: '>= 2.56.0')
  gnome_desktop_dep = dependency('gnome-desktop-3.0', version: '>= 3.27.90')
  gnome_settings_dep = dependency('gnome-settings-daemon', version: '>= 3.27.90')
 -goa_dep = dependency('goa-1.0', version: goa_req_version)
 +goa_dep = dependency('goa-1.0', version: goa_req_version, required: get_option('goa'))
- gsettings_desktop_dep = dependency('gsettings-desktop-schemas', version: '>= 3.31.0')
+ gsettings_desktop_dep = dependency('gsettings-desktop-schemas', version: '>= 3.37.1')
  libxml_dep = dependency('libxml-2.0')
  polkit_gobject_dep = dependency('polkit-gobject-1', version: '>= 0.114')
-@@ -137,6 +137,19 @@ epoxy_dep = dependency('epoxy')
+@@ -138,6 +138,19 @@ epoxy_dep = dependency('epoxy')
  
  m_dep = cc.find_library('m')
  
@@ -38,7 +38,7 @@ index a6d2dbbef..d88c10354 100644
    gio_dep,
    glib_dep,
 diff --git a/meson_options.txt b/meson_options.txt
-index 9f4b27b7f..8f3b73365 100644
+index 5c558557d..17e3551fa 100644
 --- a/meson_options.txt
 +++ b/meson_options.txt
 @@ -1,6 +1,8 @@
@@ -51,7 +51,7 @@ index 9f4b27b7f..8f3b73365 100644
  option('kerberos', type: 'feature', value: 'auto', description: 'build with kerberos support')
  option('network_manager', type: 'boolean', value: true, description: 'build with NetworkManager support')
 diff --git a/panels/background/bg-pictures-source.c b/panels/background/bg-pictures-source.c
-index faafd93bd..f02e97319 100644
+index 3a3027b13..edc6c3247 100644
 --- a/panels/background/bg-pictures-source.c
 +++ b/panels/background/bg-pictures-source.c
 @@ -23,13 +23,17 @@
@@ -144,7 +144,7 @@ index faafd93bd..f02e97319 100644
  
  gboolean
  bg_pictures_source_add (BgPicturesSource     *bg_source,
-@@ -806,6 +822,7 @@ monitor_path (BgPicturesSource *self,
+@@ -804,6 +820,7 @@ monitor_path (BgPicturesSource *self,
    return monitor;
  }
  
@@ -152,7 +152,7 @@ index faafd93bd..f02e97319 100644
  static void
  media_found_cb (BgPicturesSource *self, GrlMedia *media)
  {
-@@ -817,6 +834,7 @@ media_found_cb (BgPicturesSource *self, GrlMedia *media)
+@@ -815,6 +832,7 @@ media_found_cb (BgPicturesSource *self, GrlMedia *media)
    g_object_set_data_full (G_OBJECT (file), "grl-media", g_object_ref (media), g_object_unref);
    add_single_file_from_media (self, file, media);
  }
@@ -160,13 +160,13 @@ index faafd93bd..f02e97319 100644
  
  static void
  bg_pictures_source_init (BgPicturesSource *self)
-@@ -839,9 +857,11 @@ bg_pictures_source_init (BgPicturesSource *self)
+@@ -837,9 +855,11 @@ bg_pictures_source_init (BgPicturesSource *self)
    cache_path = bg_pictures_source_get_cache_path ();
    self->cache_dir_monitor = monitor_path (self, cache_path);
  
 +#ifdef HAVE_GRILO
    self->grl_miner = cc_background_grilo_miner_new ();
-   g_signal_connect_swapped (self->grl_miner, "media-found", G_CALLBACK (media_found_cb), self);
+   g_signal_connect_object (self->grl_miner, "media-found", G_CALLBACK (media_found_cb), self, G_CONNECT_SWAPPED);
    cc_background_grilo_miner_start (self->grl_miner);
 +#endif
  }

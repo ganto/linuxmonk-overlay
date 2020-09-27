@@ -1,7 +1,7 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 PYTHON_COMPAT=( python3_{6,7,8} )
 
 inherit gnome.org gnome2-utils meson python-any-r1 xdg
@@ -23,9 +23,8 @@ KEYWORDS="~amd64"
 # display panel requires colord and gnome-settings-daemon[colord]
 # wacom panel requires gsd-enums.h from gsd at build time, probably also runtime support
 # printer panel requires cups and smbclient (the latter is not patched yet to be separately optional)
-# >=polkit-0.114 for .policy files gettext ITS
 # First block is toplevel meson.build deps in order of occurrence (plus deeper deps if in same conditional). Second block is dependency() from subdir meson.builds, sorted by directory name occurrence order
-COMMON_DEPEND="
+DEPEND="
 	>=gui-libs/libhandy-0.0.10:0.0=
 	gnome-online-accounts? ( >=net-libs/gnome-online-accounts-3.25.3:= )
 	>=media-sound/pulseaudio-2.0[glib]
@@ -34,13 +33,14 @@ COMMON_DEPEND="
 	>=x11-libs/gdk-pixbuf-2.23.0:2
 	>=dev-libs/glib-2.56.0:2
 	>=gnome-base/gnome-desktop-3.27.90:3=
-	>=gnome-base/gnome-settings-daemon-3.27.90[colord,input_devices_wacom?]
+	>=gnome-base/gnome-settings-daemon-3.37.1[colord,input_devices_wacom?]
 	>=gnome-base/gsettings-desktop-schemas-3.31.0
 	dev-libs/libxml2:2
 	>=sys-auth/polkit-0.114
 	>=sys-power/upower-0.99.8:=
 	x11-libs/libX11
 	>=x11-libs/libXi-1.2
+	media-libs/libepoxy
 	flickr? ( >=media-libs/grilo-0.3.0:0.3= )
 	>=x11-libs/gtk+-3.22.20:3[X,wayland=]
 	cups? (
@@ -52,7 +52,7 @@ COMMON_DEPEND="
 	ibus? ( >=app-i18n/ibus-1.5.2 )
 	wayland? ( dev-libs/libgudev )
 	networkmanager? (
-		>=gnome-extra/nm-applet-1.8.0
+		>=net-libs/libnma-1.8.0
 		>=net-misc/networkmanager-1.12.0:=[modemmanager]
 		>=net-misc/modemmanager-0.7.990 )
 	bluetooth? ( >=net-wireless/gnome-bluetooth-3.18.2:= )
@@ -81,7 +81,7 @@ COMMON_DEPEND="
 #
 # system-config-printer provides org.fedoraproject.Config.Printing service and interface
 # cups-pk-helper provides org.opensuse.cupspkhelper.mechanism.all-edit policykit helper policy
-RDEPEND="${COMMON_DEPEND}
+RDEPEND="${DEPEND}
 	systemd? ( >=sys-apps/systemd-31 )
 	elogind? ( app-admin/openrc-settingsd
 		sys-auth/elogind )
@@ -102,10 +102,12 @@ RDEPEND="${COMMON_DEPEND}
 	!<gnome-extra/gnome-media-2.32.0-r300
 	!<net-wireless/gnome-bluetooth-3.3.2
 "
-# PDEPEND to avoid circular dependency
-PDEPEND=">=gnome-base/gnome-session-2.91.6-r1"
+# PDEPEND to avoid circular dependency; gnome-session-check-accelerated called by info panel
+# gnome-session-2.91.6-r1 also needed so that 10-user-dirs-update is run at login
+PDEPEND=">=gnome-base/gnome-session-2.91.6-r1
+	networkmanager? ( gnome-extra/nm-applet )" # networking panel can call into nm-connection-editor
 
-DEPEND="${COMMON_DEPEND}
+BDEPEND="
 	dev-libs/libxslt
 	app-text/docbook-xsl-stylesheets
 	app-text/docbook-xml-dtd:4.2
@@ -121,11 +123,12 @@ DEPEND="${COMMON_DEPEND}
 "
 
 PATCHES=(
-	# Patches taken from Gentoo patchset (gnome-control-center-3.32.2-patchset.tar.xz)
-	"${FILESDIR}"/3.36.0-0014-build-Restore-options-for-bluetooth-NetworkManager-a.patch
-	"${FILESDIR}"/3.36.0-0015-build-Make-kerberos-optional.patch
-	"${FILESDIR}"/3.36.0-0016-build-Make-grilo-and-gnome-online-accounts-optional.patch
-	"${FILESDIR}"/3.36.0-0017-build-Make-printers-panel-cups-optional.patch
+	# Patches taken from Gentoo patchset (gnome-control-center-3.36.4-patchset.tar.xz)
+	"${FILESDIR}"/3.38.0-0002-build-Restore-options-for-bluetooth-NetworkManager-a.patch
+	"${FILESDIR}"/3.38.0-0003-build-Make-kerberos-optional.patch
+	"${FILESDIR}"/3.38.0-0004-build-Make-grilo-and-gnome-online-accounts-optional.patch
+	"${FILESDIR}"/3.38.0-0005-build-Make-printers-panel-cups-optional.patch
+	"${FILESDIR}"/3.38.0-0006-Fix-absolute-paths-to-be-dependent-on-build-configur.patch
 )
 
 python_check_deps() {
@@ -155,6 +158,9 @@ src_configure() {
 		$(meson_use ibus)
 		-Dkerberos=$(usex kerberos enabled disabled)
 		$(meson_use networkmanager network_manager)
+		-Dprivileged_group=wheel
+		-Dsnap=false
+		$(meson_use test tests)
 		$(meson_use debug tracing)
 		$(meson_use input_devices_wacom wacom)
 		$(meson_use wayland)
