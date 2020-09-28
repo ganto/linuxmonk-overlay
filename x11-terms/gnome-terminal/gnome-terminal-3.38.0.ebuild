@@ -18,14 +18,14 @@ KEYWORDS="~amd64"
 # FIXME: automagic dependency on gtk+[X], just transitive but needs proper control, bug 624960
 RDEPEND="
 	>=dev-libs/glib-2.52:2
-	>=x11-libs/gtk+-3.20:3
-	>=x11-libs/vte-0.58.1:2.91[!vanilla?]
+	>=x11-libs/gtk+-3.22.27:3
+	>=x11-libs/vte-0.60.2:2.91[!vanilla?]
 	>=dev-libs/libpcre2-10
 	>=gnome-base/dconf-0.14
 	>=gnome-base/gsettings-desktop-schemas-0.1.0
 	sys-apps/util-linux
 	gnome-shell? ( gnome-base/gnome-shell )
-	nautilus? ( >=gnome-base/nautilus-3 )
+	nautilus? ( >=gnome-base/nautilus-3.28.0 )
 "
 # itstool required for help/* with non-en LINGUAS, see bug #549358
 # xmllint required for glib-compile-resources, see bug #549304
@@ -33,9 +33,8 @@ DEPEND="${RDEPEND}
 	dev-libs/libxml2:2
 	dev-util/gdbus-codegen
 	dev-util/glib-utils
-	>=dev-util/intltool-0.50
 	dev-util/itstool
-	sys-devel/gettext
+	>=sys-devel/gettext-0.19.8
 	virtual/pkgconfig
 "
 
@@ -54,8 +53,10 @@ src_prepare() {
 		# Automatic title updating based on currently running foreground process
 		# https://src.fedoraproject.org/rpms/gnome-terminal/raw/f31/f/gnome-terminal-cntr-ntfy-autottl-ts.patch
 		# Depends on vte[-vanilla] for OSC 777 and the preexec/precmd/etc patches in VTE
-		eapply "${FILESDIR}"/3.36.1.1-gnome-terminal-cntr-ntfy-autottl-ts.patch
+		eapply "${FILESDIR}"/3.38.0-gnome-terminal-cntr-ntfy-autottl-ts.patch
 	fi
+	# https://gitlab.gnome.org/GNOME/gnome-terminal/-/issues/253 
+	eapply "${FILESDIR}"/3.38.0-Revert-screen-Use-clean-env-when-creating-new-tab.patch
 	gnome2_src_prepare
 }
 
