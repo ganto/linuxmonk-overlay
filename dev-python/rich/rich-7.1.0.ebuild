@@ -4,6 +4,8 @@
 EAPI=7
 
 PYTHON_COMPAT=( python3_{7,8} )
+DISTUTILS_USE_SETUPTOOLS=pyproject.toml
+
 inherit distutils-r1
 
 DESCRIPTION="Rich is a Python library for rich text and beautiful formatting in the terminal"
@@ -26,3 +28,9 @@ DEPEND="${RDEPEND}
 	test? ( dev-python/pytest[${PYTHON_USEDEP}] )"
 
 distutils_enable_tests pytest
+
+src_prepare() {
+	cp "${FILESDIR}"/setup.py .
+	sed -i 's/@@VERSION@@/${PV}/' setup.py
+	distutils-r1_python_prepare_all
+}
