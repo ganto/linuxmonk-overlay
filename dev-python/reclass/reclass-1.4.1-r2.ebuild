@@ -14,18 +14,8 @@ SRC_URI="https://github.com/madduck/${PN}/archive/${P}.tar.gz"
 LICENSE="Artistic-2"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE="test"
+RESTRICT="test"
 
 RDEPEND="dev-python/pyyaml[${PYTHON_USEDEP}]"
-DEPEND="
-	test? (
-		dev-python/mock[${PYTHON_USEDEP}]
-		dev-python/unittest2[${PYTHON_USEDEP}]
-	)
-"
 
 S="${WORKDIR}/reclass-${P}"
-
-python_test() {
-	emake tests || die "Tests failed with ${EPYTHON}"
-}
