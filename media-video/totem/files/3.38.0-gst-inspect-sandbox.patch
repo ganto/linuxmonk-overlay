@@ -1,25 +1,22 @@
-From 742b64b7a74eabd67344ef1cc260427dc402588f Mon Sep 17 00:00:00 2001
-From: Gilles Dartiguelongue <eva@gentoo.org>
-Date: Thu, 7 Jun 2018 23:47:48 +0200
-Subject: [PATCH 5/5] Make gst-inspect calls optional at build-time
+commit cbb3b37ec7bc1e3d35b458d67b724883b9ff15fb
+Author: Gilles Dartiguelongue <eva@gentoo.org>
+Date:   Mon Sep 28 01:55:39 2020 +0200
 
-Crashes on Gentoo due to plugins trying to access dri nodes which are sandboxed
----
- meson_options.txt       | 1 +
- src/backend/meson.build | 2 ++
- 2 files changed, 3 insertions(+)
+    Make gst-inspect calls optional at build-time
+    
+    Crashes on Gentoo due to plugins trying to access dri nodes which are sandboxed
 
 diff --git a/meson_options.txt b/meson_options.txt
-index 6e056952..631b8cca 100644
+index 7070fd5d0..678b8f588 100644
 --- a/meson_options.txt
 +++ b/meson_options.txt
-@@ -32,3 +32,4 @@ option('enable-nautilus', type: 'combo', choices: ['yes', 'no', 'auto'], value:
- option('with-nautilusdir', type: 'string', value: '', description: 'Installation path for Nautilus extension')
+@@ -3,3 +3,4 @@ option('enable-python', type: 'combo', choices: ['yes', 'no', 'auto'], value: 'a
+ option('with-plugins', type: 'combo', choices: ['all', 'none', 'auto'], value: 'auto', description: 'Which Totem plugins to compile (default: auto; "all", "none" and "auto" are valid)')
  option('enable-gtk-doc', type: 'boolean', value: false, description: 'use gtk-doc to build documentation')
- option('enable-introspection', type: 'combo', choices: ['yes', 'no', 'auto'], value: 'auto', description: 'Enable GObject Introspection (depends on GObject)')
+ option('profile', type: 'combo', choices: ['default', 'development'], value: 'default', description: 'Build profiles')
 +option('gst-inspect', type: 'boolean', value: true, description: 'build-time test of available gstreamer plugins')
 diff --git a/src/backend/meson.build b/src/backend/meson.build
-index 28c8e123..55037a6a 100644
+index fbf74258b..1e025a5b9 100644
 --- a/src/backend/meson.build
 +++ b/src/backend/meson.build
 @@ -1,5 +1,6 @@
@@ -37,6 +34,3 @@ index 28c8e123..55037a6a 100644
  
  sources = files(
    'bacon-time-label.c',
--- 
-2.17.0
-
