@@ -10,12 +10,12 @@ inherit distutils-r1 systemd
 
 DESCRIPTION="System image generation tool"
 HOMEPAGE="http://imgfac.org"
-SRC_URI="https://github.com/redhat-imaging/imagefactory/archive/${P}-1.tar.gz"
+SRC_URI="https://github.com/redhat-imaging/imagefactory/archive/${P}-2.tar.gz"
 
 LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE="openstack nova rhevm test"
+IUSE="openstack rhevm test"
 RESTRICT="!test? ( test )"
 
 RDEPEND="
@@ -26,7 +26,6 @@ RDEPEND="
 		dev-python/httplib2[${PYTHON_MULTI_USEDEP}]
 		dev-python/pycurl[${PYTHON_MULTI_USEDEP}]
 		dev-python/zope-interface[${PYTHON_MULTI_USEDEP}]
-		nova? ( dev-python/rackspace-novaclient[${PYTHON_MULTI_USEDEP}] )
 		openstack? ( dev-python/python-glanceclient[${PYTHON_MULTI_USEDEP}] )
 		rhevm? ( dev-python/ovirt-engine-sdk-python[${PYTHON_MULTI_USEDEP}] )
 	')
@@ -43,7 +42,7 @@ PATCHES=(
 	"${FILESDIR}"/${PN}-1.1.11-Adjust-certificate-path-for-Gentoo.patch
 )
 
-S="${WORKDIR}"/${PN}-${P}-1
+S="${WORKDIR}"/${PN}-${P}-2
 
 python_test() {
 	PYTHONPATH=${BUILD_DIR}/imgfac:${BUILD_DIR}/imagefactory_plugins nosetests --verbose || die "Tests failed for ${EPYTHON}"
@@ -77,8 +76,6 @@ python_install() {
 
 	einfo "Remove deprecated plugin 'EC2'"
 	rm -r "${ED}"$(python_get_sitedir)/imagefactory_plugins/EC2
-	rm "${ED}"/usr/bin/create-ec2-factory-credentials
-	rm "${ED}"$(python_get_scriptdir)/create-ec2-factory-credentials
 	rm -r "${ED}"/etc/ssl/imagefactory/cert-ec2.pem
 	rm "${ED}"/etc/imagefactory/jeos_images/ec2_fedora_jeos.conf
 	rm "${ED}"/etc/imagefactory/jeos_images/ec2_rhel_jeos.conf
@@ -89,15 +86,14 @@ python_install() {
 	einfo "Remove deprecated plugin 'vSphere'"
 	rm -r "${ED}"$(python_get_sitedir)/imagefactory_plugins/vSphere
 
+	einfo "Remove deprecated plugin 'Nova'"
+	rm -r "${ED}"$(python_get_sitedir)/imagefactory_plugins/Nova
+
 	if ! use openstack; then
 		einfo "Remove deselected plugin 'OpenStack'"
 		rm -r "${ED}"$(python_get_sitedir)/imagefactory_plugins/OpenStack
 		rm "${ED}"/etc/imagefactory/jeos_images/rackspace_fedora_jeos.conf
 		rm "${ED}"/etc/imagefactory/jeos_images/rackspace_rhel_jeos.conf
-	fi
-	if ! use nova; then
-		einfo "Remove deselected plugin 'Nova'"
-		rm -r "${ED}"$(python_get_sitedir)/imagefactory_plugins/Nova
 	fi
 	if ! use rhevm; then
 		einfo "Remove deselected plugin 'RHEVM'"

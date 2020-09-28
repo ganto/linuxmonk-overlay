@@ -15,7 +15,6 @@
 	</longdescription>
 	<use>
 		<flag name="openstack">Enable cloud plugin for OpenStack running on KVM</flag>
-		<flag name="nova">Enable OS plugin to use Nova instances to build base images</flag>
 		<flag name="rhevm">Enable cloud plugin for Red Hat Virtualization</flag>
 	</use>
 </pkgmetadata>
