@@ -1,9 +1,9 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
-PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
+PYTHON_COMPAT=( python3_{6,7,8} )
 inherit distutils-r1 bash-completion-r1
 
 DESCRIPTION="Command line tool to invoke vcs commands on multiple repositories"
@@ -12,7 +12,7 @@ SRC_URI="https://github.com/dirk-thomas/${PN}/archive/${PV}.tar.gz -> ${P}.tar.g
 
 LICENSE="Apache-2.0"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64"
 IUSE="test"
 
 RDEPEND="
@@ -26,7 +26,7 @@ DEPEND="
 	)
 "
 
-DOCS=( CHANGELOG.rst CONTRIBUTING.md README.rst )
+DOCS=( CONTRIBUTING.md README.rst )
 
 PATCHES=( "${FILESDIR}"/vcstool-0.1.34-Setuptools-no-completions.patch )
 
