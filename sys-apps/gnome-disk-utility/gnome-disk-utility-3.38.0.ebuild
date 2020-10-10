@@ -1,7 +1,7 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
 inherit gnome.org gnome2-utils meson xdg
 
@@ -14,29 +14,28 @@ IUSE="fat elogind gnome systemd"
 REQUIRED_USE="?? ( elogind systemd )"
 KEYWORDS="~amd64"
 
-COMMON_DEPEND="
+DEPEND="
+	>=media-libs/libdvdread-4.2.0:0=
 	>=dev-libs/glib-2.31:2
-	>=sys-fs/udisks-2.7.6:2
 	>=x11-libs/gtk+-3.16.0:3
+	>=media-libs/libcanberra-0.1[gtk3]
+	>=app-arch/xz-utils-5.0.5
+	>=x11-libs/libnotify-0.7:=
 	>=app-crypt/libsecret-0.7
 	>=dev-libs/libpwquality-1.0.0
-	>=media-libs/libcanberra-0.1[gtk3]
-	>=media-libs/libdvdread-4.2.0:0=
-	>=x11-libs/libnotify-0.7:=
-	>=app-arch/xz-utils-5.0.5
+	>=sys-fs/udisks-2.7.6:2
 	elogind? ( >=sys-auth/elogind-209 )
 	systemd? ( >=sys-apps/systemd-209:0= )
 "
-RDEPEND="${COMMON_DEPEND}
+RDEPEND="${DEPEND}
 	x11-themes/adwaita-icon-theme
 	fat? ( sys-fs/dosfstools )
 	gnome? ( >=gnome-base/gnome-settings-daemon-3.8 )
 "
-# appstream-glib for developer_name tag in appdata (gettext-0.19.8.1 own appdata.its file doesn't have it yet)
 # libxml2 for xml-stripblanks in gresource
-DEPEND="${COMMON_DEPEND}
-	dev-libs/appstream-glib
+BDEPEND="
 	dev-libs/libxml2:2
+	app-text/docbook-xsl-stylesheets
 	dev-libs/libxslt
 	dev-util/glib-utils
 	>=sys-devel/gettext-0.19.8
@@ -45,18 +44,10 @@ DEPEND="${COMMON_DEPEND}
 
 src_configure() {
 	local emesonargs=(
-		-Dman=true
+		-Dlogind=$(usex systemd libsystemd $(usex elogind libelogind none))
 		$(meson_use gnome gsd_plugin)
+		-Dman=true
 	)
-	if use systemd; then
-		emesonargs+=(-Dlogind=libsystemd)
-	else
-		if use elogind; then
-			emesonargs+=(-Dlogind=libelogind)
-		else
-			emesonargs+=(-Dlogind=none)
-		fi
-	fi
 	meson_src_configure
 }
 
