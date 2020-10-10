@@ -17,14 +17,14 @@ KEYWORDS="~amd64"
 # pango used in fr-window
 RDEPEND="
 	>=app-arch/libarchive-3:=
-	>=dev-libs/glib-2.36:2
+	>=dev-libs/glib-2.38:2
 	>=dev-libs/json-glib-0.14
-	>=x11-libs/gtk+-3.13.2:3
+	>=x11-libs/gtk+-3.22.0:3
 	x11-libs/cairo
 	x11-libs/gdk-pixbuf:2
 	x11-libs/pango
 	libnotify? ( >=x11-libs/libnotify-0.4.3:= )
-	nautilus? ( >=gnome-base/nautilus-2.22.2 )
+	nautilus? ( >=gnome-base/nautilus-3.28.0 )
 "
 DEPEND="${RDEPEND}"
 BDEPEND="
@@ -53,11 +53,12 @@ lz4     - app-arch/lz4
 rar     - app-arch/unrar or app-arch/unar
 rpm     - app-arch/rpm
 unstuff - app-arch/stuffit
+zstd    - app-arch/zstd
 zoo     - app-arch/zoo"
 
 src_prepare() {
 	# File providing Gentoo package names for various archivers
-	cp -v "${FILESDIR}"/3.32-packages.match data/packages.match || die
+	cp -v "${FILESDIR}"/3.36-packages.match data/packages.match || die
 
 	xdg_src_prepare
 }
