@@ -21,7 +21,6 @@ REQUIRED_USE="vala? ( introspection )"
 # libsoup used in goaoauthprovider
 # goa kerberos provider is incompatible with app-crypt/heimdal, see
 # https://bugzilla.gnome.org/show_bug.cgi?id=692250
-# json-glib-0.16 needed for bug #485092
 RDEPEND="
 	>=dev-libs/glib-2.52:2
 	>=app-crypt/libsecret-0.5
@@ -29,7 +28,7 @@ RDEPEND="
 	dev-libs/libxml2:2
 	>=net-libs/libsoup-2.42:2.4
 	net-libs/rest:0.7
-	>=net-libs/webkit-gtk-2.12.0:4
+	>=net-libs/webkit-gtk-2.26.0:4
 	>=x11-libs/gtk+-3.19.12:3
 	x11-libs/pango
 
@@ -38,14 +37,12 @@ RDEPEND="
 		app-crypt/gcr:0=[gtk]
 		app-crypt/mit-krb5 )
 "
-#	telepathy? ( net-libs/telepathy-glib )
 # goa-daemon can launch gnome-control-center
 PDEPEND="gnome? ( >=gnome-base/gnome-control-center-3.2[gnome-online-accounts(+)] )"
 
 DEPEND="${RDEPEND}
 	vala? ( $(vala_depend) )
 	dev-libs/libxslt
-	>=dev-util/gtk-doc-am-1.3
 	>=dev-util/gdbus-codegen-2.30.0
 	>=sys-devel/gettext-0.19.8
 	virtual/pkgconfig
@@ -76,6 +73,7 @@ src_configure() {
 		--enable-windows-live \
 		$(usex debug --enable-debug=yes ' ') \
 		$(use_enable kerberos) \
+		$(use_enable kerberos fedora) \
 		$(use_enable introspection) \
 		$(use_enable vala)
 }
