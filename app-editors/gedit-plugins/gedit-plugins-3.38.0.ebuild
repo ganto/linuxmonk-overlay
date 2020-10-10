@@ -25,7 +25,7 @@ REQUIRED_USE="
 
 RDEPEND="
 	>=dev-libs/libpeas-1.14.1[gtk]
-	>=app-editors/gedit-3.36[vala]
+	>=app-editors/gedit-3.38
 
 	>=dev-libs/glib-2.32:2
 	>=x11-libs/gtk+-3.9:3
@@ -34,7 +34,7 @@ RDEPEND="
 	python? (
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
-			>=app-editors/gedit-3.16[introspection,python,${PYTHON_SINGLE_USEDEP}]
+			>=app-editors/gedit-3.38[introspection,python,${PYTHON_SINGLE_USEDEP}]
 			dev-libs/libpeas[python,${PYTHON_SINGLE_USEDEP}]
 			>=dev-python/dbus-python-0.82[${PYTHON_MULTI_USEDEP}]
 			dev-python/pycairo[${PYTHON_MULTI_USEDEP}]
