@@ -14,13 +14,13 @@ IUSE=""
 
 RDEPEND="
 	>=dev-libs/glib-2.58:2
+	>=x11-libs/gtk+-3.20:3
+	>=media-libs/gsound-0.98
 	>=dev-libs/libgweather-3.32.0:2=
 	>=gnome-base/gnome-desktop-3.8:3=
-	>=media-libs/gsound-0.98
 	>=sci-geosciences/geocode-glib-1
 	>=app-misc/geoclue-2.4:2.0
-	>=gui-libs/libhandy-0.0.10
-	>=x11-libs/gtk+-3.20:3
+	>=gui-libs/libhandy-0.0.10:0.0
 "
 DEPEND="${RDEPEND}"
 BDEPEND="
@@ -31,7 +31,10 @@ BDEPEND="
 	$(vala_depend)
 	dev-libs/libgweather:2[vala]
 	media-libs/gsound[vala]
+	gui-libs/libhandy:0.0[vala]
 "
+
+DOCS=( AUTHORS.md CONTRIBUTING.md README.md )
 
 src_prepare() {
 	xdg_src_prepare
