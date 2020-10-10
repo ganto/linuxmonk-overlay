@@ -2,9 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
-PYTHON_COMPAT=( python{3_6,3_7,3_8} )
+PYTHON_COMPAT=( python3_{6,7,8} )
 
-inherit gnome2 python-r1
+inherit gnome2 python-r1 virtualx
 
 DESCRIPTION="Python client bindings for D-Bus AT-SPI"
 HOMEPAGE="https://wiki.gnome.org/Accessibility"
@@ -14,7 +14,7 @@ LICENSE="LGPL-2 GPL-2+"
 SLOT="0"
 KEYWORDS="~amd64"
 
-IUSE="" # test
+IUSE="test"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 COMMON_DEPEND="${PYTHON_DEPS}
@@ -24,11 +24,12 @@ COMMON_DEPEND="${PYTHON_DEPS}
 "
 RDEPEND="${COMMON_DEPEND}
 	>=sys-apps/dbus-1
-	>=app-accessibility/at-spi2-core-2.36[introspection]
+	>=app-accessibility/at-spi2-core-2.38[introspection]
 	!<gnome-extra/at-spi-1.32.0-r1
 "
 DEPEND="${COMMON_DEPEND}
 	virtual/pkgconfig
+	test? ( sys-apps/dbus )
 "
 
 src_prepare() {
@@ -37,11 +38,15 @@ src_prepare() {
 }
 
 src_configure() {
-	python_foreach_impl run_in_build_dir gnome2_src_configure --disable-tests
+	python_foreach_impl run_in_build_dir gnome2_src_configure $(use_enable test tests)
 }
 
 src_compile() {
 	python_foreach_impl run_in_build_dir gnome2_src_compile
+}
+
+src_test() {
+	python_foreach_impl run_in_build_dir virtx dbus-run-session emake check
 }
 
 src_install() {
