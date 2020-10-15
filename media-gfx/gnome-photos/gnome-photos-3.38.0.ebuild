@@ -53,10 +53,7 @@ BDEPEND="
 	dev-util/itstool
 	>=sys-devel/gettext-0.19.8
 	virtual/pkgconfig
-	test? (
-		$(python_gen_any_dep 'dev-util/dogtail[${PYTHON_USEDEP}]')
-		$(python_gen_any_dep 'dev-python/pyatspi[${PYTHON_USEDEP}]')
-	)
+	test? ( $(python_gen_any_dep 'dev-util/dogtail[${PYTHON_USEDEP}]') )
 "
 
 DOCS=() # meson installs docs itself
