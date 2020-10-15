@@ -15,7 +15,7 @@ IUSE="gnome +gstreamer gtk-doc +introspection +previewer selinux sendto"
 KEYWORDS="~amd64"
 
 DEPEND="
-	>=dev-libs/glib-2.58.1:2
+	>=dev-libs/glib-2.62.0:2
 	>=media-libs/gexiv2-0.10.0
 	gstreamer? ( media-libs/gstreamer:1.0
 		media-libs/gst-plugins-base:1.0 )
@@ -24,7 +24,7 @@ DEPEND="
 	>=x11-libs/gtk+-3.22.27:3[X,introspection?]
 	>=x11-libs/pango-1.28.3
 	selinux? ( >=sys-libs/libselinux-2.0 )
-	>=app-misc/tracker-2.0:=
+	>=app-misc/tracker-3.0:=
 	x11-libs/libX11
 	>=dev-libs/libxml2-2.7.8:2
 	introspection? ( >=dev-libs/gobject-introspection-1.54:= )
