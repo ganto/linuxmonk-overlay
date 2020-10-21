@@ -42,6 +42,9 @@ PATCHES=(
 	"${FILESDIR}/1.12-fix-vendoring.patch"
 )
 
+RESTRICT="test"
+QA_PRESTRIPPED="usr/bin/gitea"
+
 src_prepare() {
 	default
 
@@ -113,4 +116,9 @@ src_install() {
 		keepdir /var/lib/gitea /var/lib/gitea/custom /var/lib/gitea/data
 		keepdir /var/log/gitea
 	fi
+}
+
+pkg_postinst() {
+	fcaps_pkg_postinst
+	go-module_pkg_postinst
 }
