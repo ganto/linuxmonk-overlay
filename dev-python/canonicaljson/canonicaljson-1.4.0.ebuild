@@ -17,8 +17,7 @@ KEYWORDS="~amd64"
 
 RDEPEND="
 	>=dev-python/frozendict-1.0[${PYTHON_USEDEP}]
-	>=dev-python/simplejson-3.6.5[${PYTHON_USEDEP}]
-	dev-python/six[${PYTHON_USEDEP}]
+	>=dev-python/simplejson-3.14.0[${PYTHON_USEDEP}]
 "
 BDEPEND="${RDEPEND}"
 
