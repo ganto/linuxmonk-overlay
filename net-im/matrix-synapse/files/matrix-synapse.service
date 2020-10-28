@@ -3,13 +3,15 @@ Description=Synapse Matrix homeserver
 ConditionPathExists=/etc/matrix-synapse/conf.d/server_name.yaml
 
 [Service]
-Type=simple
+Type=notify
 User=matrix-synapse
 WorkingDirectory=/var/lib/matrix-synapse
 ExecStartPre=/usr/bin/python3 -m synapse.app.homeserver --config-path=/etc/matrix-synapse/homeserver.yaml --config-path=/etc/matrix-synapse/conf.d/ --generate-keys
 ExecStart=/usr/bin/python3 -m synapse.app.homeserver --config-path=/etc/matrix-synapse/homeserver.yaml --config-path=/etc/matrix-synapse/conf.d/
-Restart=on-failure
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=always
 RestartSec=3
+SyslogIdentifier=matrix-synapse
 
 [Install]
 WantedBy=multi-user.target

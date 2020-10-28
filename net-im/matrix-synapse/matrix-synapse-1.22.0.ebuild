@@ -3,7 +3,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_6 )
+PYTHON_COMPAT=( python3_{6,7,8} )
 
 inherit distutils-r1 eutils systemd
 
@@ -17,14 +17,13 @@ SRC_URI="https://github.com/matrix-org/${MY_PN}/archive/v${PV}.tar.gz -> ${MY_P}
 LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE="test systemd"
+IUSE="test sqlite systemd"
 
 DEPEND="
-	>=dev-python/attrs-17.4.0[${PYTHON_USEDEP}]
+	>=dev-python/attrs-19.1.0[${PYTHON_USEDEP}]
 	>=dev-python/bcrypt-3.1.0[${PYTHON_USEDEP}]
 	>=dev-python/bleach-1.4.3[${PYTHON_USEDEP}]
-	>=dev-python/canonicaljson-1.1.3[${PYTHON_USEDEP}]
-	>=dev-python/daemonize-2.3.1[${PYTHON_USEDEP}]
+	>=dev-python/canonicaljson-1.4.0[${PYTHON_USEDEP}]
 	>=dev-python/frozendict-1.0[${PYTHON_USEDEP}]
 	>=dev-python/idna-2.5[${PYTHON_USEDEP}]
 	>=dev-python/jinja-2.9[${PYTHON_USEDEP}]
@@ -33,7 +32,8 @@ DEPEND="
 	>=dev-python/netaddr-0.7.18[${PYTHON_USEDEP}]
 	>=dev-python/phonenumbers-8.2.0[${PYTHON_USEDEP}]
 	>=dev-python/pillow-4.3.0[jpeg,${PYTHON_USEDEP}]
-	>=dev-python/prometheus_client-0.0.18[${PYTHON_USEDEP}]
+	>=dev-python/prometheus_client-0.4.0[${PYTHON_USEDEP}]
+	<dev-python/prometheus_client-0.9.0[${PYTHON_USEDEP}]
 	>=dev-python/pyasn1-0.1.9[${PYTHON_USEDEP}]
 	>=dev-python/pyasn1-modules-0.0.7[${PYTHON_USEDEP}]
 	>=dev-python/pymacaroons-0.13.0[${PYTHON_USEDEP}]
@@ -41,8 +41,7 @@ DEPEND="
 	>=dev-python/pyopenssl-16.0.0[${PYTHON_USEDEP}]
 	>=dev-python/pyyaml-3.11[${PYTHON_USEDEP}]
 	>=dev-python/service_identity-18.1.0[${PYTHON_USEDEP}]
-	>=dev-python/signedjson-1.0.0[${PYTHON_USEDEP}]
-	>=dev-python/six-1.10[${PYTHON_USEDEP}]
+	>=dev-python/signedjson-1.1.0[${PYTHON_USEDEP}]
 	>=dev-python/sortedcontainers-1.4.4[${PYTHON_USEDEP}]
 	>=dev-python/treq-15.1[${PYTHON_USEDEP}]
 	>=dev-python/twisted-18.9.0[${PYTHON_USEDEP}]
@@ -55,6 +54,7 @@ RDEPEND="
 	${DEPEND}
 	acct-user/matrix-synapse
 	acct-group/matrix-synapse
+	sqlite? ( dev-db/sqlite )
 "
 BDEPEND="
 	dev-python/setuptools[${PYTHON_USEDEP}]
@@ -100,6 +100,10 @@ pkg_postinst() {
 	einfo "By default Synapse will use a SQLite database backend which is fine for testing."
 	einfo "For a production setup please install:"
 	optfeature "PostgreSQL backend support" dev-python/psycopg:2
+	optfeature "URL preview support" dev-python/lxml
+	optfeature "SAML2 support" dev-python/pysaml2
+	optfeature "Sentry support" dev-python/sentry-sdk
+	optfeature "JWT support" dev-python/pyjwt
 	einfo ""
 	einfo "Before you can start the service, the public hostname of the Synapse"
 	einfo "service needs to be defined (for more information on how to choose your"
