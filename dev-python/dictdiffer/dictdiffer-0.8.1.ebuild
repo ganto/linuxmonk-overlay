@@ -1,9 +1,9 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
-PYTHON_COMPAT=( python2_7 python3_{5,6} )
+PYTHON_COMPAT=( python3_{6,7,8,9} )
 
 inherit distutils-r1
 
@@ -22,9 +22,9 @@ DEPEND="
 		>=dev-python/sphinx_rtd_theme-0.1.9 )
 "
 
-PATCHES=( "${FILESDIR}/${PN}-0.6.1-Remove-setup_requires.patch" )
+PATCHES=( "${FILESDIR}"/0.8.0-Remove-setup_requires.patch )
 
-DOCS=( AUTHORS CHANGES CONTRIBUTING.rst MAINTAINERS README.rst RELEASE-NOTES.rst )
+DOCS=( AUTHORS CHANGES CONTRIBUTING.rst MAINTAINERS README.rst )
 
 python_compile_all() {
 	default
