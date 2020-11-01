@@ -3,7 +3,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{6,7} )
+PYTHON_COMPAT=( python3_{6,7,8} )
 inherit distutils-r1
 
 KUBERNETES_BASE_COMMIT=474e9fb32293fa05098e920967bb0e0645182d5b
@@ -20,9 +20,7 @@ IUSE=""
 
 DEPEND="dev-python/setuptools[${PYTHON_USEDEP}]"
 RDEPEND="
-	>=dev-python/adal-1.0.2[${PYTHON_USEDEP}]
 	dev-python/certifi[${PYTHON_USEDEP}]
-	$(python_gen_cond_dep '>=dev-python/ipaddress-1.0.17[${PYTHON_USEDEP}]' 'python2_7')
 	>=dev-python/google-auth-1.0.1[${PYTHON_USEDEP}]
 	>=dev-python/python-dateutil-2.5.3[${PYTHON_USEDEP}]
 	>=dev-python/pyyaml-3.12[${PYTHON_USEDEP}]
