@@ -36,6 +36,6 @@ python_install() {
 	distutils-r1_python_install
 	# cleanup inproper packaging (see python-openshift.spec)
 	rm -r "${ED}"$(python_get_sitedir)/scripts
-	rm -r "${ED}"usr/requirements.txt
-	rm -r "${ED}"usr/custom_objects_spec.json
+	rm -r "${ED}"/usr/requirements.txt
+	rm -r "${ED}"/usr/custom_objects_spec.json
 }
