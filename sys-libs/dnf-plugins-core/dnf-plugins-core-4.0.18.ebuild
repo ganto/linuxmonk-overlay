@@ -3,9 +3,9 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{6,7} )
+PYTHON_COMPAT=( python3_{6,7,8} )
 
-inherit cmake-utils python-single-r1
+inherit cmake python-single-r1
 
 DESCRIPTION="Core DNF plugins"
 HOMEPAGE="https://github.com/rpm-software-management/dnf-plugins-core"
@@ -16,6 +16,12 @@ LICENSE="GPL-2+"
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE="test"
+
+LANGS=( ca cs da de es eu fi fr hu it id ja ko nl pa pl pt pt-BR ru sk sq sr sv tr uk zh-CN zh-TW )
+
+for i in "${LANGS[@]}"; do
+	IUSE="${IUSE} l10n_${i}"
+done
 
 CDEPEND="${PYTHON_DEPS}"
 RDEPEND="${CDEPEND}
@@ -30,26 +36,19 @@ DEPEND="${CDEPEND}
 	test? ( dev-python/nose )
 "
 
-LANGS=( ca cs da de es eu fi fr hu it id ja ko nl pa pl pt ru sq sr sv tr uk )
-
-for X in "${LANGS[@]}" ; do
-	IUSE+=" l10n_${X}"
-done
-unset X
-
 src_prepare() {
-	cmake-utils_src_prepare
+	cmake_src_prepare
 	sed -i 's/sphinx-build-3/sphinx-build/' doc/CMakeLists.txt
 }
 
 src_configure() {
-	mycmakeargs=( -DPYTHON_DESIRED:str=3 )
-	cmake-utils_src_configure
+	mycmakeargs=( -DPYTHON_DESIRED:str=3 -Wno-dev )
+	cmake_src_configure
 }
 
 src_compile() {
-	cmake-utils_src_compile
-	cmake-utils_src_compile doc-man
+	cmake_src_compile
+	cmake_src_compile doc-man
 }
 
 src_test() {
@@ -57,7 +56,7 @@ src_test() {
 }
 
 src_install() {
-	cmake-utils_src_install
+	cmake_src_install
 
 	mv "${ED}"/usr/libexec/dnf-utils-3 "${ED}"/usr/libexec/dnf-utils
 
@@ -80,17 +79,13 @@ src_install() {
 	done
 
 	# cleanup leaked build files
-	rm -Rf "${ED}"/usr/share/man/man8/{CMakeFiles,.doctrees}
+	rm -rf "${ED}"/usr/share/man/man8/{CMakeFiles,.doctrees}
 
-	einfo "Cleaning up locales..."
-	for lang in ${LANGS[@]}; do
-		use "l10n_${lang}" && {
-			einfo "- keeping ${lang}"
-			continue
-		}
-		rm -Rf "${ED}"/usr/share/locale/${lang} || die
+	# clean unneeded language documentation
+	for i in ${LANGS[@]}; do
+		use l10n_${i} || rm -rf "${ED}"/usr/share/locale/${i/-/_}
 	done
-	rm -Rf "${ED}"/usr/share/locale/{fur,pt_BR,zh_CN,zh_TW}
+	rm -rf "${ED}"/usr/share/locale/fur
 
 	# remove locale directory when empty
 	rmdir "${ED}"/usr/share/locale 2>/dev/null
