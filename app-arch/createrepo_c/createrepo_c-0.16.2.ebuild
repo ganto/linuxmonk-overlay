@@ -13,45 +13,41 @@ SRC_URI="https://github.com/rpm-software-management/${PN}/archive/${PV}.tar.gz -
 LICENSE="GPL-2+"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE="doc test"
-RESTRICT="!test? ( test )"
+IUSE="doc modulemd test zchunk"
+RESTRICT="mirror !test? ( test )"
 
-CDEPEND="
+DEPEND="
 	app-arch/bzip2
-	app-arch/drpm
+	>=app-arch/drpm-0.4.0
 	>=app-arch/rpm-4.9.0:=
 	app-arch/xz-utils
-	app-arch/zchunk
 	dev-db/sqlite:3
-	dev-libs/expat
 	>=dev-libs/glib-2.22:2
 	dev-libs/libxml2
 	dev-libs/openssl:0
 	net-misc/curl
 	sys-apps/file
-	>=sys-libs/libmodulemd-2.3:2
 	sys-libs/zlib
+	modulemd? ( >=sys-libs/libmodulemd-2.3:2 )
+	zchunk? ( app-arch/zchunk )
 "
 RDEPEND="
 	${PYTHON_DEPS}
-	${CDEPEND}
+	${DEPEND}
 "
-DEPEND="${CDEPEND}
+BDEPEND="
 	doc? (
 		app-doc/doxygen
 		$(python_gen_any_dep 'dev-python/sphinx[${PYTHON_USEDEP}]')
 	)
 	test? (
+		${RDEPEND}
 		dev-libs/check
 		dev-python/nose[${PYTHON_USEDEP}]
 	)
 "
 
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
-
-#PATCHES=(
-#	"${FILESDIR}/${PN}-0.10.0-ignorelock-doublefree.patch"
-#)
 
 python_check_deps() {
 	has_version "dev-python/sphinx[${PYTHON_USEDEP}]"
@@ -60,7 +56,11 @@ python_check_deps() {
 src_configure() {
 	createrepo_c_src_configure_internal() {
 		local python_major=$( cut -d'.' -f1 <<< "${EPYTHON/python/}" )
-		mycmakeargs=( -DPYTHON_DESIRED=${python_major} )
+		mycmakeargs=(
+			-DPYTHON_DESIRED=${python_major}
+			-DWITH_LIBMODULEMD=$(usex modulemd)
+			-DWITH_ZCHUNK=$(usex zchunk)
+		)
 
 		cmake-utils_src_configure
 	}
