@@ -4,7 +4,7 @@
 EAPI=6
 CMAKE_MAKEFILE_GENERATOR="ninja"
 PYTHON_COMPAT=( python{3_6,3_7,3_8} )
-USE_RUBY="ruby24 ruby25 ruby26 ruby27"
+USE_RUBY="ruby25 ruby26 ruby27"
 CMAKE_MIN_VERSION=3.10
 
 inherit check-reqs cmake-utils flag-o-matic gnome2 pax-utils python-any-r1 ruby-single toolchain-funcs virtualx
@@ -18,7 +18,7 @@ LICENSE="LGPL-2+ BSD"
 SLOT="4/37" # soname version of libwebkit2gtk-4.0
 KEYWORDS="~amd64"
 
-IUSE="aqua coverage +egl +geolocation gles2-only gnome-keyring +gstreamer gtk-doc +introspection +jpeg2k +jumbo-build libnotify +opengl seccomp spell wayland +X"
+IUSE="aqua +egl +geolocation gles2-only gnome-keyring +gstreamer gtk-doc +introspection +jpeg2k +jumbo-build libnotify +opengl seccomp spell wayland +X"
 
 # gstreamer with opengl/gles2 needs egl
 REQUIRED_USE="
@@ -41,6 +41,7 @@ wpe_depend="
 	>=gui-libs/libwpe-1.3.0:1.0
 	>=gui-libs/wpebackend-fdo-1.3.1:1.0
 "
+# TODO: gst-plugins-base[X] is only needed when build configuration ends up with GLX set, but that's a bit automagic too to fix
 RDEPEND="
 	>=x11-libs/cairo-1.16.0:=[X?]
 	>=media-libs/fontconfig-2.13.0:1.0
@@ -67,7 +68,7 @@ RDEPEND="
 	spell? ( >=app-text/enchant-0.22:2 )
 	gstreamer? (
 		>=media-libs/gstreamer-1.14:1.0
-		>=media-libs/gst-plugins-base-1.14:1.0[egl?,opengl?]
+		>=media-libs/gst-plugins-base-1.14:1.0[egl?,opengl?,X?]
 		gles2-only? ( media-libs/gst-plugins-base:1.0[gles2] )
 		>=media-plugins/gst-plugins-opus-1.14.4-r1:1.0
 		>=media-libs/gst-plugins-bad-1.14:1.0 )
@@ -87,6 +88,8 @@ RDEPEND="
 	gles2-only? ( media-libs/mesa[gles2] )
 	opengl? ( virtual/opengl )
 	wayland? (
+		dev-libs/wayland
+		>=dev-libs/wayland-protocols-1.12
 		opengl? ( ${wpe_depend} )
 		gles2-only? ( ${wpe_depend} )
 	)
@@ -116,7 +119,7 @@ DEPEND="${RDEPEND}
 	virtual/perl-Carp
 	virtual/perl-JSON-PP
 
-	gtk-doc? ( >=dev-util/gtk-doc-1.10 )
+	gtk-doc? ( >=dev-util/gtk-doc-1.32 )
 	geolocation? ( dev-util/gdbus-codegen )
 "
 #	test? (
@@ -145,7 +148,7 @@ pkg_pretend() {
 
 	if ! use opengl && ! use gles2-only; then
 		ewarn
-		ewarn "You are disabling OpenGL usage (USE=opengl or USE=gles-only) completely."
+		ewarn "You are disabling OpenGL usage (USE=opengl or USE=gles2-only) completely."
 		ewarn "This is an unsupported configuration meant for very specific embedded"
 		ewarn "use cases, where there truly is no GL possible (and even that use case"
 		ewarn "is very unlikely to come by). If you have GL (even software-only), you"
@@ -164,7 +167,9 @@ pkg_setup() {
 
 src_prepare() {
 	eapply "${FILESDIR}/${PN}-2.24.4-eglmesaext-include.patch" # bug 699054 # https://bugs.webkit.org/show_bug.cgi?id=204108
-	eapply "${FILESDIR}"/2.26.3-fix-gtk-doc.patch # bug 704550 - retest without it once we can depend on >=gtk-doc-1.32
+	eapply "${FILESDIR}"/2.28.2-opengl-without-X-fixes.patch
+	eapply "${FILESDIR}"/2.28.2-non-jumbo-fix.patch
+	eapply "${FILESDIR}"/2.28.4-non-jumbo-fix2.patch
 	cmake-utils_src_prepare
 	gnome2_src_prepare
 }
@@ -172,6 +177,30 @@ src_prepare() {
 src_configure() {
 	# Respect CC, otherwise fails on prefix #395875
 	tc-export CC
+
+	# It does not compile on alpha without this in LDFLAGS
+	# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=648761
+	use alpha && append-ldflags "-Wl,--no-relax"
+
+	# ld segfaults on ia64 with LDFLAGS --as-needed, bug #555504
+	use ia64 && append-ldflags "-Wl,--no-as-needed"
+
+	# Sigbuses on SPARC with mcpu and co., bug #???
+	use sparc && filter-flags "-mvis"
+
+	# https://bugs.webkit.org/show_bug.cgi?id=42070 , #301634
+	use ppc64 && append-flags "-mminimal-toc"
+
+	# Try to use less memory, bug #469942 (see Fedora .spec for reference)
+	# --no-keep-memory doesn't work on ia64, bug #502492
+	if ! use ia64; then
+		append-ldflags "-Wl,--no-keep-memory"
+	fi
+
+	# We try to use gold when possible for this package
+#	if ! tc-ld-is-gold ; then
+#		append-ldflags "-Wl,--reduce-memory-overheads"
+#	fi
 
 	# Ruby situation is a bit complicated. See bug 513888
 	local rubyimpl
@@ -220,7 +249,7 @@ src_configure() {
 		$(cmake-utils_use_find_package egl EGL)
 		$(cmake-utils_use_find_package opengl OpenGL)
 		-DENABLE_X11_TARGET=$(usex X)
-		-DENABLE_OPENGL=${opengl_enabled}
+		-DUSE_OPENGL=${opengl_enabled}
 		-DENABLE_WEBGL=${opengl_enabled}
 		-DENABLE_BUBBLEWRAP_SANDBOX=$(usex seccomp)
 		-DBWRAP_EXECUTABLE="${EPREFIX}"/usr/bin/bwrap # If bubblewrap[suid] then portage makes it go-r and cmake find_program fails with that
@@ -238,7 +267,7 @@ src_configure() {
 #		mycmakeargs+=( -DUSE_LD_GOLD=OFF )
 #	fi
 
-	cmake-utils_src_configure
+	WK_USE_CCACHE=NO cmake-utils_src_configure
 }
 
 src_compile() {
