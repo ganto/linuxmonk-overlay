@@ -18,15 +18,15 @@ DEPEND="
 	>=dev-libs/glib-2.61.2:2
 	>=x11-libs/gtk+-3.24.0:3
 	>=dev-libs/nettle-3.4:=
-	>=net-libs/webkit-gtk-2.27.4:4=
+	>=sys-libs/libportal-0.0.2
+	>=net-libs/webkit-gtk-2.29.3:4=
 	>=x11-libs/cairo-1.2
 	>=app-crypt/gcr-3.5.5:=[gtk]
 	>=x11-libs/gdk-pixbuf-2.36.5:2
 	gnome-base/gsettings-desktop-schemas
-	dev-libs/icu:=
 	>=app-text/iso-codes-0.35
 	>=dev-libs/json-glib-1.2.4
-	>=dev-libs/libdazzle-3.35.3
+	>=dev-libs/libdazzle-3.37.1
 	>=gui-libs/libhandy-0.0.10:0.0=
 	>=x11-libs/libnotify-0.5.1
 	>=app-crypt/libsecret-0.19
