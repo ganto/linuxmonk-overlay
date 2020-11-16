@@ -1,0 +1,28 @@
+commit 4ec72c4a07f2ffd56f9bcf25e21d6a86ad6f6a70
+Author: Reto Gantenbein <reto.gantenbein@linuxmonk.ch>
+Date:   Mon Nov 16 23:51:47 2020 +0100
+
+    setup.py: Remove ddt dependency only used for testing
+
+diff --git a/requirements.txt b/requirements.txt
+index a470ea7..164ab91 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -1,4 +1,3 @@
+ pyparsing
+ pyyaml
+ six
+-ddt
+diff --git a/setup.py b/setup.py
+index aedc44a..789b0fd 100644
+--- a/setup.py
++++ b/setup.py
+@@ -42,7 +42,7 @@ setup(
+     url = URL,
+     packages = find_packages(exclude=['*tests']), #FIXME validate this
+     entry_points = { 'console_scripts': console_scripts },
+-    install_requires = ['pyparsing', 'pyyaml', 'six', 'ddt'], #FIXME pygit2 (require libffi-dev, libgit2-dev 0.26.x )
++    install_requires = ['pyparsing', 'pyyaml', 'six'], #FIXME pygit2 (require libffi-dev, libgit2-dev 0.26.x )
+ 
+     classifiers=[
+         'Development Status :: 4 - Beta',

@@ -9,23 +9,25 @@ inherit distutils-r1
 
 DESCRIPTION="A recursive external node classifier for automation tools"
 HOMEPAGE="https://github.com/salt-formulas/reclass"
-SRC_URI="https://github.com/salt-formulas/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
+SRC_URI="https://github.com/salt-formulas/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
+RESTRICT="!test? ( test ) mirror"
 
 LICENSE="Artistic-2"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE="test"
+IUSE="doc test"
 
 RDEPEND="
-	dev-python/ddt[${PYTHON_USEDEP}]
 	dev-python/pyparsing[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
 	dev-python/six[${PYTHON_USEDEP}]
 "
-DEPEND="
+DEPEND="${RDEPEND}"
+BDEPEND="
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	test? (
 		${RDEPEND}
+		dev-python/ddt[${PYTHON_USEDEP}]
 		dev-python/mock[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/unittest2[${PYTHON_USEDEP}]
@@ -33,9 +35,8 @@ DEPEND="
 "
 
 PATCHES=(
-	"${FILESDIR}/${PV}-namedtuple-Avoid-verbose-argument.patch"
-	"${FILESDIR}/${PV}-setup-py-Avoid-enum34-dependency.patch"
-	"${FILESDIR}/${PV}-Fix-class_mappings-regression.patch"
+	"${FILESDIR}"/1.7.0-setup-py-Avoid-enum34-dependency.patch
+	"${FILESDIR}"/1.7.0-setup-py-Remove-ddt-dependency-only-used-for-testing.patch
 )
 
 python_compile_all() {
