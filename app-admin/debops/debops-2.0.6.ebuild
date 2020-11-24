@@ -3,7 +3,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{6,7} )
+PYTHON_COMPAT=( python3_{6..9} )
 inherit distutils-r1
 
 DEBOPS_GIT_COMMIT="f8d74ea00a5ceaa817aab2d203e4f5ff2290a23f"
