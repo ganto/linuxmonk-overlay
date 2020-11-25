@@ -1,0 +1,2 @@
+# Re-enable masked 'lua' USE-flag for overlay 
+app-arch/rpm::linuxmonk-overlay -lua
