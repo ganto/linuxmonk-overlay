@@ -1,0 +1,57 @@
+From e8d4c0e3c49044fc73986c312e6033b47f5a93c4 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jakub=20=C4=8Cajka?= <jcajka@redhat.com>
+Date: Tue, 25 Feb 2020 14:26:01 +0100
+Subject: [PATCH] plugin docker: Fix arch string used for container metadata to
+ be compliant with the standard Fixes: RHBZ#1793927
+
+---
+ imagefactory_plugins/Docker/Docker.py | 18 +++++++++++-------
+ 1 file changed, 11 insertions(+), 7 deletions(-)
+
+diff --git a/imagefactory_plugins/Docker/Docker.py b/imagefactory_plugins/Docker/Docker.py
+index 16d928d..aaa0418 100644
+--- a/imagefactory_plugins/Docker/Docker.py
++++ b/imagefactory_plugins/Docker/Docker.py
+@@ -40,6 +40,15 @@ class Docker(object):
+                           "gzip":  "gzip -c %s > %s",
+                           "bzip2": "bzip2 -c %s > %s" }
+ 
++    # In image metadata, Go arch is used to identify the architecture
++    # https://docs.docker.com/registry/spec/manifest-v2-2/
++    goarchs = { "x86_64": "amd64",
++                "aarch64": "arm64",
++                "armv7hl": "armhfp",
++                "riscv64": "riscv64",
++                "ppc64le": "ppc64le",
++                "s390x": "s390x"}
++
+     # The templates below allow us to generate base images without a running docker locally
+ 
+     # imcleod@redhat.com - 26-Aug-2014
+@@ -385,7 +394,7 @@ def _run_guestmount(g):
+             if set_arch_label:
+                 if label == 'null':
+                     label = dict()
+-                label["architecture"] = tdlobj.arch
++                label["architecture"] = self.goarchs[tdlobj.arch]
+ 
+             rdict = { repository: { tag: docker_image_id } }
+ 
+@@ -394,16 +403,11 @@ def _run_guestmount(g):
+                 raise Exception("No docker JSON template available for specified docker version (%s)" % (dockerversion))
+             docker_json_template=self.docker_templates_dict[dockerversion]
+ 
+-            arch = tdlobj.arch
+-            if arch == "x86_64":
+-                arch = "amd64"
+-            elif arch == "armv7hl":
+-                arch = "armhfp"
+             tdict = { }
+             tdict['commentstring'] = parameters.get('comment', 'Created by Image Factory')
+             tdict['os'] = parameters.get('os', 'linux')
+             tdict['createdtime'] = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
+-            tdict['arch'] = arch
++            tdict['arch'] = self.goarchs[tdlobj.arch]
+             tdict['idstring'] = docker_image_id
+             tdict['cmd'] = cmd
+             tdict['env'] = env

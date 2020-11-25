@@ -3,7 +3,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_6 )
+PYTHON_COMPAT=( python3_{7,8} )
 DISTUTILS_SINGLE_IMPL=1
 
 inherit distutils-r1 systemd
@@ -40,6 +40,8 @@ BDEPEND="
 
 PATCHES=(
 	"${FILESDIR}"/${PN}-1.1.11-Adjust-certificate-path-for-Gentoo.patch
+	"${FILESDIR}"/${PN}-1.1.14-utf8-config-id.patch
+	"${FILESDIR}"/${PV}-container-github-pr434.patch
 )
 
 S="${WORKDIR}"/${PN}-${P}-2

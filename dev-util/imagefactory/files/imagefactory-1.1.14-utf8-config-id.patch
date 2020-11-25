@@ -1,0 +1,12 @@
+diff -Nur imagefactory-imagefactory-1.1.14-1.orig/Docker/Docker.py imagefactory-imagefactory-1.1.14-1/Docker/Docker.py
+--- imagefactory-imagefactory-1.1.14-1.orig/imagefactory_plugins/Docker/Docker.py	2019-06-20 09:45:56.000000000 -0700
++++ imagefactory-imagefactory-1.1.14-1/imagefactory_plugins/Docker/Docker.py	2019-06-25 13:38:19.421280663 -0700
+@@ -432,7 +432,7 @@
+                                             'type': 'layers' }
+ 
+                 # Docker wants this config file to be named after its own sha256 sum
+-                image_v2_config_id = hashlib.sha256(json.dumps(image_v2_config)).hexdigest()
++                image_v2_config_id = hashlib.sha256(json.dumps(image_v2_config).encode('utf-8')).hexdigest()
+ 
+                 image_v2_manifest = [ { "Config": "%s.json" % (image_v2_config_id),
+                                         "Layers": [ "%s/layer.tar" % (docker_image_id) ],
