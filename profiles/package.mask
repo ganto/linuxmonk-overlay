@@ -1,7 +1,3 @@
-# Reto Gantenbein <reto.gantenbein@linuxmonk.ch> (17 Oct 2019)
-# Issues with Wayland login session
-=gnome-base/gdm-3.34.1-r1
-
 # Reto Gantenbein <reto.gantenbein@linuxmonk.ch> (21 Apr 2019)
 # Breaks Gentoo python setup of dev-util/mock.
 =sys-apps/usermode-1.113-r1
