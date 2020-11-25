@@ -1,0 +1,58 @@
+From 94ff24b8800ebc79f19bd686ec2dda393906c454 Mon Sep 17 00:00:00 2001
+From: "Richard W.M. Jones" <rjones@redhat.com>
+Date: Wed, 6 May 2020 12:31:56 +0100
+Subject: [PATCH] appliance: Set default guestfs appliance path to
+ $libdir/guestfs.
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+For unclear reasons this broke recently, although the breakage is only
+reproducible in Fedora Koji.  It appears to be caused by the
+calculation of the internal autoconf variable $acl_libdirstem
+changing.  In the reproducer system:
+
+checking for the common suffixes of directories in the library search path... lib,lib,lib64
+
+On my local system:
+
+checking for the common suffixes of directories in the library search path... lib64,lib64
+
+My local system would be the correct one.  The actual code that
+calculates this does some crazy stuff with ‘gcc -print-search-dirs’
+which would hint that this output has changed in some way that subtly
+breaks the generated configure script.  However even with match GCC
+versions on my local system I could still not reproduce the issue.
+
+None of this matters, as the easiest fix here is simply to stop using
+internal autoconf variables at all.  I also added some AC_MSG_*
+statements so we can more easily see what's going on in the configure
+output.
+
+Fixes commit 0f79400c7f3d69e1a5d67f7f56c9bd7e3584aae9.
+---
+ m4/guestfs-appliance.m4 | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/m4/guestfs-appliance.m4 b/m4/guestfs-appliance.m4
+index 3cb7f5b42..a7f7d8321 100644
+--- a/m4/guestfs-appliance.m4
++++ b/m4/guestfs-appliance.m4
+@@ -126,11 +126,13 @@ AC_ARG_WITH([extra-packages],
+ AC_SUBST([EXTRA_PACKAGES])
+ 
+ dnl Set guestfs default path
++AC_MSG_CHECKING([for guestfs path])
+ AC_ARG_WITH([guestfs-path],
+     [AS_HELP_STRING([--with-guestfs-path=PATH],
+                    [specify guestfs path (default=$libdir/guestfs)])],
+     [GUESTFS_DEFAULT_PATH="$withval"],
+-    [GUESTFS_DEFAULT_PATH="${acl_final_exec_prefix}/${acl_libdirstem}/guestfs"])
++    [GUESTFS_DEFAULT_PATH="$libdir/guestfs"])
++AC_MSG_RESULT([$GUESTFS_DEFAULT_PATH])
+ AC_SUBST([GUESTFS_DEFAULT_PATH])
+ 
+ AC_DEFINE_UNQUOTED([GUESTFS_DEFAULT_PATH], ["$GUESTFS_DEFAULT_PATH"],
+-- 
+2.24.1
+

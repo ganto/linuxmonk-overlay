@@ -1,0 +1,34 @@
+--- a/sysprep/Makefile.in.orig       2020-07-03 03:06:13.848360412 -0500
++++ b/sysprep/Makefile.in   2020-07-03 04:10:12.593041697 -0500
+@@ -2734,12 +2734,12 @@
+
+ @HAVE_OCAML_TRUE@sysprep-extra-options.pod: virt-sysprep
+ @HAVE_OCAML_TRUE@	rm -f $@ $@-t
+-@HAVE_OCAML_TRUE@	$(top_builddir)/run $< --dump-pod-options > $@-t
++@HAVE_OCAML_TRUE@	LD_LIBRARY_PATH=/usr/lib64/xcrypt $(top_builddir)/run $< --dump-pod-options > $@-t
+ @HAVE_OCAML_TRUE@	mv $@-t $@
+
+ @HAVE_OCAML_TRUE@sysprep-operations.pod: virt-sysprep
+ @HAVE_OCAML_TRUE@	rm -f $@ $@-t
+-@HAVE_OCAML_TRUE@	$(top_builddir)/run $< --dump-pod > $@-t
++@HAVE_OCAML_TRUE@	LD_LIBRARY_PATH=/usr/lib64/xcrypt $(top_builddir)/run $< --dump-pod > $@-t
+ @HAVE_OCAML_TRUE@	mv $@-t $@
+
+ @HAVE_OCAML_TRUE@check-valgrind:
+--- a/sysprep/Makefile.am.orig       2018-09-21 10:05:41.058638816 -0500
++++ b/sysprep/Makefile.am   2020-07-03 04:19:01.691961084 -0500
+@@ -198,12 +198,12 @@
+
+ sysprep-extra-options.pod: virt-sysprep
+ 	rm -f $@ $@-t
+-	$(top_builddir)/run $< --dump-pod-options > $@-t
++	LD_LIBRARY_PATH=/usr/lib64/xcrypt $(top_builddir)/run $< --dump-pod-options > $@-t
+ 	mv $@-t $@
+
+ sysprep-operations.pod: virt-sysprep
+ 	rm -f $@ $@-t
+-	$(top_builddir)/run $< --dump-pod > $@-t
++	LD_LIBRARY_PATH=/usr/lib64/xcrypt $(top_builddir)/run $< --dump-pod > $@-t
+ 	mv $@-t $@
+
+ # Tests.

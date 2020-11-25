@@ -1,0 +1,41 @@
+From 31e6b187100626cae44bcb505db153088245155c Mon Sep 17 00:00:00 2001
+From: "Richard W.M. Jones" <rjones@redhat.com>
+Date: Mon, 9 Mar 2020 17:31:55 +0000
+Subject: [PATCH] po: Remove virt-v2v related dependency from POTFILES-ml.
+
+Causes this error if you compile libguestfs 1.42.0 from the tarball
+without invoking the generator:
+
+make[4]: *** No rule to make target '../common/mlv2v/uefi.ml', needed by 'libguestfs.pot'.  Stop.
+---
+ Makefile.am    | 1 +
+ po/POTFILES-ml | 1 -
+ 2 files changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index 27f2c6eed..2f0446d60 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -345,6 +345,7 @@ po/POTFILES-ml: configure.ac
+ 	cd $(srcdir); \
+ 	find builder common/ml* customize dib get-kernel resize sparsify sysprep -name '*.ml' | \
+ 	grep -v '^builder/templates/' | \
++	grep -v '^common/mlv2v/' | \
+ 	grep -v -E '.*_tests\.ml$$' | \
+ 	LC_ALL=C sort > $@-t
+ 	mv $@-t $@
+diff --git a/po/POTFILES-ml b/po/POTFILES-ml
+index a9b6efdaa..2fbdff03d 100644
+--- a/po/POTFILES-ml
++++ b/po/POTFILES-ml
+@@ -41,7 +41,6 @@ common/mltools/urandom.ml
+ common/mltools/xpath_helpers.ml
+ common/mlutils/c_utils.ml
+ common/mlutils/unix_utils.ml
+-common/mlv2v/uefi.ml
+ common/mlvisit/visit.ml
+ common/mlxml/xml.ml
+ customize/append_line.ml
+-- 
+2.25.0
+
