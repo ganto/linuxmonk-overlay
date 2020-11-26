@@ -1,4 +1,4 @@
-# Copyright 2019 Gentoo Authors
+# Copyright 2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -12,7 +12,7 @@ SRC_URI="https://gitlab.gnome.org/hughsie/${PN}-updater/-/archive/${PV}/${PN}-up
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE="consolekit systemd elogind"
+IUSE="systemd elogind"
 REQUIRED_USE="|| ( elogind systemd )"
 
 RDEPEND="
@@ -21,7 +21,6 @@ RDEPEND="
 	>=net-libs/libsoup-2.51.92
 	>=sys-apps/fwupd-1.2.10
 	>=x11-libs/gtk+-3.11.2:3
-	consolekit? ( sys-auth/consolekit )
 	elogind? ( >=sys-auth/elogind-211 )
 	systemd? ( >=sys-apps/systemd-211 )
 "
@@ -33,10 +32,10 @@ S="${WORKDIR}"/${PN}-updater-${PV}
 
 src_configure() {
 	local emesonargs=(
-		$(meson_use consolekit)
+		-Dconsolekit=false
+		-Dman=false
 		$(meson_use elogind)
 		$(meson_use systemd)
-		-Dman=false
 	)
 	meson_src_configure
 }
