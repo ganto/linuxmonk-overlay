@@ -18,7 +18,7 @@ RDEPEND="
 	>=gnome-base/gnome-core-libs-${PV}[cups?]
 
 	>=gnome-base/gnome-session-3.38.0
-	>=gnome-base/gnome-settings-daemon-3.38.0[cups?]
+	>=gnome-base/gnome-settings-daemon-3.38.1[cups?]
 	>=gnome-base/gnome-control-center-${PV}[cups?]
 	>=gnome-extra/gnome-color-manager-3.36.0
 
@@ -27,14 +27,14 @@ RDEPEND="
 	>=gnome-base/gnome-keyring-3.36.0
 	>=gnome-extra/evolution-data-server-${PV}
 
-	>=app-crypt/seahorse-3.36.2
-	>=gui-libs/tepl-5.0.0:5
-	>=app-editors/gedit-3.38.0
+	>=app-crypt/seahorse-3.38.0.1
+	>=gui-libs/tepl-5.0.1:5
+	>=app-editors/gedit-3.38.1
 	>=app-text/evince-3.38.0
-	>=gnome-extra/gnome-contacts-3.38
-	>=media-gfx/eog-3.38.0
+	>=gnome-extra/gnome-contacts-3.38.1
+	>=media-gfx/eog-3.38.1
 	>=media-video/totem-3.38.0
-	>=x11-terms/gnome-terminal-3.38.0
+	>=x11-terms/gnome-terminal-3.38.1
 
 	>=gnome-extra/gnome-user-docs-${PV}
 	>=gnome-extra/yelp-${PV}
