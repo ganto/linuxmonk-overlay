@@ -19,7 +19,7 @@ VALA_DEPEND="
 	dev-libs/folks[vala(+)]
 	net-libs/gnome-online-accounts[vala]
 	gnome-extra/evolution-data-server[gtk,vala]
-	gui-libs/libhandy:0.0[vala]
+	gui-libs/libhandy:1[vala]
 "
 # Configure is wrong; it needs cheese-3.5.91, not 3.3.91
 RDEPEND="
