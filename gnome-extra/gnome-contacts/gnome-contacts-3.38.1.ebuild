@@ -31,7 +31,7 @@ RDEPEND="
 	net-libs/gnome-online-accounts:=
 	>=x11-libs/gtk+-3.23.1:3
 	v4l? ( >=media-video/cheese-3.5.91:= )
-	>=gui-libs/libhandy-0.0.12:0.0=
+	>=gui-libs/libhandy-1.0.0:1=
 "
 DEPEND="${RDEPEND}"
 BDEPEND="
