@@ -25,7 +25,7 @@ KEYWORDS="~amd64"
 # printer panel requires cups and smbclient (the latter is not patched yet to be separately optional)
 # First block is toplevel meson.build deps in order of occurrence (plus deeper deps if in same conditional). Second block is dependency() from subdir meson.builds, sorted by directory name occurrence order
 DEPEND="
-	>=gui-libs/libhandy-0.0.10:0.0=
+	gui-libs/libhandy:1=
 	gnome-online-accounts? ( >=net-libs/gnome-online-accounts-3.25.3:= )
 	>=media-sound/pulseaudio-2.0[glib]
 	>=sys-apps/accountsservice-0.6.39
