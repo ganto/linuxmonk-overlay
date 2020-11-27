@@ -45,7 +45,7 @@ src_prepare() {
 	if ! use vanilla; then
 		# Part of https://src.fedoraproject.org/rpms/vte291/raw/f31/f/vte291-cntnr-precmd-preexec-scroll.patch
 		# Adds OSC 777 support for desktop notifications in gnome-terminal or elsewhere
-		eapply "${FILESDIR}"/0.62.0-cntnr-precmd-preexec-scroll.patch
+		eapply "${FILESDIR}"/${PV}-cntnr-precmd-preexec-scroll.patch
 	fi
 
 	# -Ddebugg option enables various debug support via VTE_DEBUG, but also ggdb3; strip the latter
