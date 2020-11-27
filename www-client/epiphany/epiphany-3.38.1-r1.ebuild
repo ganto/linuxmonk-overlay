@@ -27,7 +27,7 @@ DEPEND="
 	>=app-text/iso-codes-0.35
 	>=dev-libs/json-glib-1.2.4
 	>=dev-libs/libdazzle-3.37.1
-	>=gui-libs/libhandy-0.0.10:0.0=
+	gui-libs/libhandy:1=
 	>=x11-libs/libnotify-0.5.1
 	>=app-crypt/libsecret-0.19
 	>=net-libs/libsoup-2.48.0:2.4
