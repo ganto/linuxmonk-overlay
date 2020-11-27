@@ -20,7 +20,7 @@ RDEPEND="
 	>=gnome-base/gnome-desktop-3.8:3=
 	>=sci-geosciences/geocode-glib-1
 	>=app-misc/geoclue-2.4:2.0
-	>=gui-libs/libhandy-0.0.10:0.0
+	gui-libs/libhandy:1
 "
 DEPEND="${RDEPEND}"
 BDEPEND="
