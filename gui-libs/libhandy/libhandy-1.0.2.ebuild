@@ -5,14 +5,12 @@ EAPI=7
 
 inherit meson xdg vala virtualx
 
-MY_P="${PN}-v${PV}"
 DESCRIPTION="Library with GTK widgets for mobile phones"
-HOMEPAGE="https://source.puri.sm/Librem5/libhandy/"
-SRC_URI="https://source.puri.sm/Librem5/libhandy/-/archive/v${PV}/${MY_P}.tar.bz2"
-S="${WORKDIR}/${MY_P}"
+HOMEPAGE="https://gitlab.gnome.org/GNOME/libhandy/"
+SRC_URI="https://gitlab.gnome.org/GNOME/libhandy/-/archive/${PV}/${P}.tar.gz"
 
 LICENSE="LGPL-2.1+"
-SLOT="0.0/0" # It may or may not break ABI in future versions at this point; if new
+SLOT="1/0" # It may or may not break ABI in future versions at this point; if new
 # SLOT happens, it'll likely file conflict on gtk-doc and glade library and catalog
 KEYWORDS="~amd64"
 
@@ -36,6 +34,10 @@ BDEPEND="
 	gtk-doc? ( dev-util/gtk-doc
 		app-text/docbook-xml-dtd:4.3 )
 "
+
+#PATCHES=(
+#	"${FILESDIR}"/0.0.13-glade3.36-compat{1,2}.patch
+#)
 
 src_prepare() {
 	use vala && vala_src_prepare
