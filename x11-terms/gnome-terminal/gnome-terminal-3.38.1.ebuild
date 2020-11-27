@@ -19,7 +19,7 @@ KEYWORDS="~amd64"
 RDEPEND="
 	>=dev-libs/glib-2.52:2
 	>=x11-libs/gtk+-3.22.27:3
-	>=x11-libs/vte-0.60.2:2.91[!vanilla?]
+	>=x11-libs/vte-0.62.1:2.91[!vanilla?]
 	>=dev-libs/libpcre2-10
 	>=gnome-base/dconf-0.14
 	>=gnome-base/gsettings-desktop-schemas-0.1.0
@@ -56,7 +56,7 @@ src_prepare() {
 		eapply "${FILESDIR}"/3.38.0-gnome-terminal-cntr-ntfy-autottl-ts.patch
 	fi
 	# https://gitlab.gnome.org/GNOME/gnome-terminal/-/issues/253 
-	eapply "${FILESDIR}"/3.38.0-Revert-screen-Use-clean-env-when-creating-new-tab.patch
+	eapply "${FILESDIR}"/3.38.1-Revert-screen-Use-clean-env-when-creating-new-tab.patch
 	gnome2_src_prepare
 }
 
