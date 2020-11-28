@@ -1,0 +1,19 @@
+[Unit]
+Description=Pi-hole FTL daemon
+Documentation=man:pihole-FTL(8)
+After=network.target
+
+[Service]
+#ExecStartPre=/usr/bin/pihole-FTL test
+ExecStart=/usr/bin/pihole-FTL
+ExecReload=/bin/kill -HUP $MAINPID
+Group=pihole
+PIDFile=/run/pihole/pihole.pid
+RemoveIPC=true
+RuntimeDirectory=pihole
+Type=forking
+User=pihole
+WorkingDirectory=/run/pihole
+
+[Install]
+WantedBy=multi-user.target
