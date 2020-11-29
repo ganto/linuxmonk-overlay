@@ -1,30 +1,29 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=5
+EAPI=7
 
-inherit git-r3 cmake-utils eutils
+inherit cmake
 
 DESCRIPTION="A tool which profiles OpenCL devices to find their peak capacities"
 HOMEPAGE="https://github.com/krrishnarraj/clpeak"
-
-EGIT_REPO_URI="https://github.com/krrishnarraj/clpeak.git"
+SRC_URI="https://github.com/krrishnarraj/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="Unlicense"
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE="results"
 
-DEPEND="
-	dev-libs/libffi
-	media-libs/mesa[opencl]
-	sys-libs/zlib
-	x11-libs/libdrm
-	x11-libs/libXau
-	x11-libs/libxcb
-	x11-libs/libXdmcp
-"
-RDEPEND="${DEPEND}"
+RDEPEND="dev-libs/ocl-icd"
+DEPEND="${RDEPEND}
+	dev-libs/boost"
+BDEPEND=">=dev-libs/clhpp-2.0.12-r1"
+
+PATCHES=( "${FILESDIR}"/1.1.0-Use-opencl-hpp-instead-of-cl-hpp.patch )
+
+src_configure() {
+	cmake_src_configure -Wno-dev
+}
 
 src_install() {
 	dobin "${BUILD_DIR}"/clpeak
