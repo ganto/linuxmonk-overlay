@@ -1,0 +1,19 @@
+commit ee8b1ad7d331c0f2866419510aeb0759060e43f4
+Author: Reto Gantenbein <reto.gantenbein@linuxmonk.ch>
+Date:   Sun Nov 29 19:56:31 2020 +0100
+
+    version.sh: Don't show error on missing setupVars.conf
+
+diff --git a/advanced/Scripts/version.sh b/advanced/Scripts/version.sh
+index 87768006..5e39af71 100755
+--- a/advanced/Scripts/version.sh
++++ b/advanced/Scripts/version.sh
+@@ -193,7 +193,7 @@ errorOutput() {
+ defaultOutput() {
+     # Source the setupvars config file
+     # shellcheck disable=SC1091
+-    source /etc/pihole/setupVars.conf
++    source /etc/pihole/setupVars.conf 2> /dev/null
+ 
+     versionOutput "pi-hole" "$@"
+ 

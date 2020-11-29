@@ -1,0 +1,45 @@
+commit 3f7b87a01d170ee3a30f7082ae9e17e638535eb2
+Author: Reto Gantenbein <reto.gantenbein@linuxmonk.ch>
+Date:   Sun Nov 29 13:51:45 2020 +0100
+
+    pihole: Set /usr/bin script path
+
+diff --git a/advanced/Scripts/pihole-reenable.sh b/advanced/Scripts/pihole-reenable.sh
+index 93ec3b95..b7550284 100755
+--- a/advanced/Scripts/pihole-reenable.sh
++++ b/advanced/Scripts/pihole-reenable.sh
+@@ -17,7 +17,7 @@
+ # This ensures that pihole ends up in the correct state after a sequence of
+ # commands suchs as: `pihole disable 30s; pihole enable; pihole disable`
+ 
+-readonly PI_HOLE_BIN_DIR="/usr/local/bin"
++readonly PI_HOLE_BIN_DIR="/usr/bin"
+ 
+ sleep "${1}"
+ "${PI_HOLE_BIN_DIR}"/pihole enable
+diff --git a/advanced/Scripts/piholeDebug.sh b/advanced/Scripts/piholeDebug.sh
+index 92d6dad7..48c5d927 100755
+--- a/advanced/Scripts/piholeDebug.sh
++++ b/advanced/Scripts/piholeDebug.sh
+@@ -68,7 +68,7 @@ CRON_D_DIRECTORY="/etc/cron.d"
+ DNSMASQ_D_DIRECTORY="/etc/dnsmasq.d"
+ PIHOLE_DIRECTORY="/etc/pihole"
+ PIHOLE_SCRIPTS_DIRECTORY="/opt/pihole"
+-BIN_DIRECTORY="/usr/local/bin"
++BIN_DIRECTORY="/usr/bin"
+ RUN_DIRECTORY="/run"
+ LOG_DIRECTORY="/var/log"
+ WEB_SERVER_LOG_DIRECTORY="${LOG_DIRECTORY}/lighttpd"
+diff --git a/pihole b/pihole
+index 6e06e85d..e2b481da 100755
+--- a/pihole
++++ b/pihole
+@@ -15,7 +15,7 @@ readonly PI_HOLE_SCRIPT_DIR="/opt/pihole"
+ # they might get set again when the installer is sourced. This causes an
+ # error due to modifying a readonly variable.
+ setupVars="/etc/pihole/setupVars.conf"
+-PI_HOLE_BIN_DIR="/usr/local/bin"
++PI_HOLE_BIN_DIR="/usr/bin"
+ 
+ readonly colfile="${PI_HOLE_SCRIPT_DIR}/COL_TABLE"
+ source "${colfile}"

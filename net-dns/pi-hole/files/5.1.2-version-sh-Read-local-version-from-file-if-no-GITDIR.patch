@@ -1,0 +1,45 @@
+commit 5a5fad54b423a6e34db83f6042040b24dbcfb31f
+Author: Reto Gantenbein <reto.gantenbein@linuxmonk.ch>
+Date:   Sun Nov 29 19:37:23 2020 +0100
+
+    version.sh: Read local version from file if no GITDIR
+
+diff --git a/advanced/Scripts/version.sh b/advanced/Scripts/version.sh
+index f77ee635..87768006 100755
+--- a/advanced/Scripts/version.sh
++++ b/advanced/Scripts/version.sh
+@@ -24,6 +24,11 @@ getLocalVersion() {
+     local directory="${1}"
+     local version
+ 
++    if [[ ! -d "${directory}" ]] && [[ -r /etc/pihole/VERSION ]]; then
++        awk '{ print $1 }' < /etc/pihole/VERSION
++        return $?
++    fi
++
+     cd "${directory}" 2> /dev/null || { echo "${DEFAULT}"; return 1; }
+     version=$(git describe --tags --always || echo "$DEFAULT")
+     if [[ "${version}" =~ ^v ]]; then
+@@ -48,6 +53,11 @@ getLocalHash() {
+     local directory="${1}"
+     local hash
+ 
++    if [[ ! -d "${directory}" ]] && [[ -r /etc/pihole/VERSION ]]; then
++        awk '{ print $2 }' < /etc/pihole/VERSION
++        return $?
++    fi
++
+     cd "${directory}" 2> /dev/null || { echo "${DEFAULT}"; return 1; }
+     hash=$(git rev-parse --short HEAD || echo "$DEFAULT")
+     if [[ "${hash}" == "${DEFAULT}" ]]; then
+@@ -121,6 +131,10 @@ getLocalBranch(){
+     if [[ "$1" == "FTL" ]]; then
+         branch="$(pihole-FTL branch)"
+     else
++        if [[ ! -d "${directory}" ]]; then
++            echo ""
++            return 0
++        fi
+         cd "${directory}" 2> /dev/null || { echo "${DEFAULT}"; return 1; }
+         branch=$(git rev-parse --abbrev-ref HEAD || echo "$DEFAULT")
+     fi
