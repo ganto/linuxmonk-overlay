@@ -1,0 +1,43 @@
+commit 64c8be012557e0cd558912cdacf8fcad84d0b7d3
+Author: Reto Gantenbein <reto.gantenbein@linuxmonk.ch>
+Date:   Sun Nov 29 23:53:28 2020 +0100
+
+    Disable blocking if not explicitly defined in setupVars.conf
+    
+    If the setupVars.conf doesn't explicitly define BLOCKING_ENABLED to
+    'true' or 'false' this could mean that the block lists stored in the
+    gravity.db are not (yet) setup. In this case blocking should be
+    disabled to avoid messages that gravity.db doesn't exist.
+
+diff --git a/src/setupVars.c b/src/setupVars.c
+index d018a79..ff8298a 100644
+--- a/src/setupVars.c
++++ b/src/setupVars.c
+@@ -239,19 +239,20 @@ void check_blocking_status(void)
+ 	const char* blocking = read_setupVarsconf("BLOCKING_ENABLED");
+ 	const char* message;
+ 
+-	if(blocking == NULL || getSetupVarsBool(blocking))
++	if(blocking == NULL || !getSetupVarsBool(blocking))
+ 	{
+ 		// Parameter either not present in setupVars.conf
+-		// or explicitly set to true
+-		blockingstatus = BLOCKING_ENABLED;
+-		message = "enabled";
++		// or explicitly set to false
++		blockingstatus = BLOCKING_DISABLED;
++		message = "disabled";
++
+ 		clearSetupVarsArray();
+ 	}
+ 	else
+ 	{
+-		// Disabled
+-		blockingstatus = BLOCKING_DISABLED;
+-		message = "disabled";
++		// Enabled
++		blockingstatus = BLOCKING_ENABLED;
++		message = "enabled";
+ 	}
+ 
+ 	logg("Blocking status is %s", message);
