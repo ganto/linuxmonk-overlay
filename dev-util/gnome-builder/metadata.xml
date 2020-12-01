@@ -10,6 +10,5 @@
 	<flag name="devhelp">Provide API docs browsing and integration via <pkg>dev-util/devhelp</pkg></flag>
 	<flag name="glade">Provide plugin to create graphical user interfaces via <pkg>dev-util/glade</pkg></flag>
 	<flag name="sysprof">Provide an integrated profiler via <pkg>dev-util/sysprof</pkg></flag>
-	<flag name="vala">Provide an autoindenter, autocompletion, diagnostics, and symbol resolver for Vala</flag>
 </use>
 </pkgmetadata>

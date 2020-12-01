@@ -3,11 +3,10 @@
 
 EAPI=7
 PYTHON_COMPAT=( python3_{6,7,8} )
-VALA_MIN_API_VERSION="0.36"
 DISABLE_AUTOFORMATTING=1
 FORCE_PRINT_ELOG=1
 
-inherit gnome.org gnome2-utils llvm meson python-single-r1 readme.gentoo-r1 vala virtualx xdg
+inherit gnome.org gnome2-utils llvm meson python-single-r1 readme.gentoo-r1 virtualx xdg
 
 DESCRIPTION="An IDE for writing GNOME-based software"
 HOMEPAGE="https://wiki.gnome.org/Apps/Builder"
@@ -16,7 +15,7 @@ HOMEPAGE="https://wiki.gnome.org/Apps/Builder"
 LICENSE="GPL-3+ GPL-2+ LGPL-3+ LGPL-2+ MIT CC-BY-SA-3.0 CC0-1.0"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE="clang +devhelp doc +git +glade gtk-doc spell sysprof test vala"
+IUSE="clang +devhelp doc +git +glade gtk-doc spell sysprof test"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 # When bumping, pay attention to all the included plugins/*/meson.build (and other) build files and the requirements within.
@@ -32,17 +31,18 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 # TODO: Handle llvm slots via llvm.eclass; see plugins/clang/meson.build
 RDEPEND="
-	>=dev-libs/libdazzle-3.33.90[introspection,vala?]
-	>=dev-libs/glib-2.61.2:2
+	>=dev-libs/libdazzle-3.37.0[introspection]
+	>=dev-libs/glib-2.65.0:2
 	>=x11-libs/gtk+-3.22.26:3[introspection]
 	>=x11-libs/gtksourceview-4.0.0:4[introspection]
 	>=dev-libs/json-glib-1.2.0
-	>=dev-libs/jsonrpc-glib-3.29.91[vala?]
+	>=dev-libs/jsonrpc-glib-3.29.91
 	>=x11-libs/pango-1.38.0
 	>=dev-libs/libpeas-1.22.0[python,${PYTHON_SINGLE_USEDEP}]
-	>=dev-libs/template-glib-3.28.0[introspection,vala?]
-	>=x11-libs/vte-0.40.2:2.91[introspection,vala?]
-	>=net-libs/webkit-gtk-2.22:4=[introspection]
+	>=sys-libs/libportal-0.3
+	>=dev-libs/template-glib-3.28.0[introspection]
+	>=x11-libs/vte-0.40.2:2.91[introspection]
+	>=net-libs/webkit-gtk-2.26:4=[introspection]
 	>=dev-libs/libxml2-2.9.0
 	git? ( dev-libs/libgit2:=[ssh,threads]
 		>=dev-libs/libgit2-glib-0.28.0.1[ssh]
@@ -52,29 +52,27 @@ RDEPEND="
 
 	>=dev-libs/gobject-introspection-1.54.0:=
 	$(python_gen_cond_dep '
-		>=dev-python/pygobject-3.22.0:3[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/pygobject-3.22.0:3[${PYTHON_USEDEP}]
 	')
 	${PYTHON_DEPS}
 	clang? ( sys-devel/clang:= )
 	devhelp? ( >=dev-util/devhelp-3.25.1:= )
-	glade? ( >=dev-util/glade-3.22.0:3.10 )
+	glade? ( >=dev-util/glade-3.22.0:3.10= )
 	spell? ( >=app-text/gspell-1.8:0=
 		app-text/enchant:2 )
 	>=dev-util/sysprof-capture-3.33.1:3
-	sysprof? ( >=dev-util/sysprof-3.33.4:0/3[gtk] )
-	vala? (
-		dev-lang/vala:=
-		$(vala_depend)
-	)
-" # We use subslot operator dep on vala in addition to $(vala_depend), because we have _runtime_
-#   usage in vala-pack plugin and need it rebuilt before removing an older vala it was built against
+	sysprof? ( >=dev-util/sysprof-3.37.1:0/4[gtk] )
+"
 DEPEND="${RDEPEND}"
 # TODO: runtime ctags path finding..
 
 # desktop-file-utils required for tests, but we have it in deptree for xdg update-desktop-database anyway, so be explicit and unconditional
 # appstream-glib needed for validation with appstream-util with FEATURES=test
 BDEPEND="
-	doc? ( dev-python/sphinx )
+	doc? ( $(python_gen_cond_dep '
+		dev-python/sphinx[${PYTHON_USEDEP}]
+		dev-python/sphinx_rtd_theme[${PYTHON_USEDEP}]
+	') )
 	gtk-doc? ( dev-util/gtk-doc
 		app-text/docbook-xml-dtd:4.3 )
 	test? (
@@ -110,6 +108,8 @@ that are currently available with packages include:
 # rust language server via rls; Go via go-langserver
 # autotools stuff for autotools plugin; gtkmm/autoconf-archive for C++ template
 # gjs/gettext/mono/PHPize stuff, but most of these are probably installed for other reasons anyways, when needed inside IDE
+# stylelint for stylesheet (CSS and co) linting
+# gvls for vala language-server integration
 
 llvm_check_deps() {
 	has_version "sys-devel/clang:${LLVM_SLOT}"
@@ -118,11 +118,6 @@ llvm_check_deps() {
 pkg_setup() {
 	python-single-r1_pkg_setup
 	use clang && llvm_pkg_setup
-}
-
-src_prepare() {
-	use vala && vala_src_prepare
-	xdg_src_prepare
 }
 
 src_configure() {
@@ -148,7 +143,6 @@ src_configure() {
 		$(meson_use spell plugin_spellcheck)
 		$(meson_use sysprof plugin_sysprof)
 		-Dplugin_update_manager=false
-		$(meson_use vala plugin_vala)
 	)
 	meson_src_configure
 }
