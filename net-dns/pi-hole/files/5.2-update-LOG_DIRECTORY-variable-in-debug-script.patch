@@ -1,0 +1,21 @@
+commit 358ac957a97afef07b05397efb811d95ab1d32d3
+Author: Adam Warner <me@adamwarner.co.uk>
+Date:   Sat Sep 5 15:00:37 2020 +0100
+
+    update LOG_DIRECTORY variable in debug script
+    
+    Signed-off-by: Adam Warner <me@adamwarner.co.uk>
+
+diff --git a/advanced/Scripts/piholeDebug.sh b/advanced/Scripts/piholeDebug.sh
+index 5c2b5f1c..d886994a 100755
+--- a/advanced/Scripts/piholeDebug.sh
++++ b/advanced/Scripts/piholeDebug.sh
+@@ -71,7 +71,7 @@ PIHOLE_DIRECTORY="/etc/pihole"
+ PIHOLE_SCRIPTS_DIRECTORY="/opt/pihole"
+ BIN_DIRECTORY="/usr/local/bin"
+ RUN_DIRECTORY="/run"
+-LOG_DIRECTORY="/var/log"
++LOG_DIRECTORY="/var/log/pihole"
+ WEB_SERVER_LOG_DIRECTORY="${LOG_DIRECTORY}/lighttpd"
+ WEB_SERVER_CONFIG_DIRECTORY="/etc/lighttpd"
+ HTML_DIRECTORY="/var/www/html"

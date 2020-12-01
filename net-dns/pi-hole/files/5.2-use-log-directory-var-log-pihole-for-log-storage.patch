@@ -1,0 +1,172 @@
+commit f95034936cebf8507f14b6b369872a37158d0d4f
+Author: Adam Warner <me@adamwarner.co.uk>
+Date:   Sat Sep 5 14:15:03 2020 +0100
+
+    use directory /var/log/pihole/ for log storage
+    
+    Signed-off-by: Adam Warner <me@adamwarner.co.uk>
+
+diff --git a/advanced/01-pihole.conf b/advanced/01-pihole.conf
+index e243e91a..1d9d3256 100644
+--- a/advanced/01-pihole.conf
++++ b/advanced/01-pihole.conf
+@@ -37,7 +37,7 @@ interface=@INT@
+ cache-size=@CACHE_SIZE@
+ 
+ log-queries
+-log-facility=/var/log/pihole.log
++log-facility=/var/log/pihole/pihole.log
+ 
+ local-ttl=2
+ 
+diff --git a/advanced/Scripts/piholeLogFlush.sh b/advanced/Scripts/piholeLogFlush.sh
+index 51e94d7c..a3fe98d8 100755
+--- a/advanced/Scripts/piholeLogFlush.sh
++++ b/advanced/Scripts/piholeLogFlush.sh
+@@ -26,7 +26,7 @@ if [ -z "$DBFILE" ]; then
+ fi
+ 
+ if [[ "$@" != *"quiet"* ]]; then
+-    echo -ne "  ${INFO} Flushing /var/log/pihole.log ..."
++    echo -ne "  ${INFO} Flushing /var/log/pihole/pihole.log ..."
+ fi
+ if [[ "$@" == *"once"* ]]; then
+     # Nightly logrotation
+@@ -39,9 +39,9 @@ if [[ "$@" == *"once"* ]]; then
+         # Note that moving the file is not an option, as
+         # dnsmasq would happily continue writing into the
+         # moved file (it will have the same file handler)
+-        cp -p /var/log/pihole.log /var/log/pihole.log.1
+-        echo " " > /var/log/pihole.log
+-        chmod 644 /var/log/pihole.log
++        cp -p /var/log/pihole/pihole.log /var/log/pihole/pihole.log.1
++        echo " " > /var/log/pihole/pihole.log
++        chmod 644 /var/log/pihole/pihole.log
+     fi
+ else
+     # Manual flushing
+@@ -51,10 +51,10 @@ else
+         /usr/sbin/logrotate --force /etc/pihole/logrotate
+     else
+         # Flush both pihole.log and pihole.log.1 (if existing)
+-        echo " " > /var/log/pihole.log
+-        if [ -f /var/log/pihole.log.1 ]; then
+-            echo " " > /var/log/pihole.log.1
+-            chmod 644 /var/log/pihole.log.1
++        echo " " > /var/log/pihole/pihole.log
++        if [ -f /var/log/pihole/pihole.log.1 ]; then
++            echo " " > /var/log/pihole/pihole.log.1
++            chmod 644 /var/log/pihole/pihole.log.1
+         fi
+     fi
+     # Delete most recent 24 hours from FTL's database, leave even older data intact (don't wipe out all history)
+@@ -65,6 +65,6 @@ else
+ fi
+ 
+ if [[ "$@" != *"quiet"* ]]; then
+-    echo -e "${OVER}  ${TICK} Flushed /var/log/pihole.log"
++    echo -e "${OVER}  ${TICK} Flushed /var/log/pihole/pihole.log"
+     echo -e "  ${TICK} Deleted ${deleted} queries from database"
+ fi
+diff --git a/advanced/Templates/logrotate b/advanced/Templates/logrotate
+index ffed910b..eeeeeadd 100644
+--- a/advanced/Templates/logrotate
++++ b/advanced/Templates/logrotate
+@@ -1,4 +1,4 @@
+-/var/log/pihole.log {
++/var/log/pihole/pihole.log {
+ 	# su #
+ 	daily
+ 	copytruncate
+@@ -9,7 +9,7 @@
+ 	nomail
+ }
+ 
+-/var/log/pihole-FTL.log {
++/var/log/pihole/pihole-FTL.log {
+ 	# su #
+ 	weekly
+ 	copytruncate
+diff --git a/advanced/Templates/pihole-FTL.service b/advanced/Templates/pihole-FTL.service
+index f0743b49..5fa26873 100644
+--- a/advanced/Templates/pihole-FTL.service
++++ b/advanced/Templates/pihole-FTL.service
+@@ -23,7 +23,7 @@ start() {
+     echo "pihole-FTL is already running"
+   else
+     # Touch files to ensure they exist (create if non-existing, preserve if existing)
+-    touch /var/log/pihole-FTL.log /var/log/pihole.log
++    touch /var/log/pihole/pihole-FTL.log /var/log/pihole/pihole.log
+     touch /run/pihole-FTL.pid /run/pihole-FTL.port
+     touch /etc/pihole/dhcp.leases
+     mkdir -p /run/pihole
+@@ -35,8 +35,8 @@ start() {
+     # Ensure that permissions are set so that pihole-FTL can edit all necessary files
+     chown pihole:pihole /run/pihole-FTL.pid /run/pihole-FTL.port
+     chown pihole:pihole /etc/pihole /etc/pihole/dhcp.leases 2> /dev/null
+-    chown pihole:pihole /var/log/pihole-FTL.log /var/log/pihole.log
+-    chmod 0644 /var/log/pihole-FTL.log /run/pihole-FTL.pid /run/pihole-FTL.port /var/log/pihole.log
++    chown pihole:pihole /var/log/pihole/pihole-FTL.log /var/log/pihole/pihole.log
++    chmod 0644 /var/log/pihole/pihole-FTL.log /run/pihole-FTL.pid /run/pihole-FTL.port /var/log/pihole/pihole.log
+     # Chown database files to the user FTL runs as. We ignore errors as the files may not (yet) exist
+     chown pihole:pihole /etc/pihole/pihole-FTL.db /etc/pihole/gravity.db 2> /dev/null
+     if setcap CAP_NET_BIND_SERVICE,CAP_NET_RAW,CAP_NET_ADMIN,CAP_SYS_NICE+eip "$(which pihole-FTL)"; then
+diff --git a/advanced/Templates/pihole.cron b/advanced/Templates/pihole.cron
+index ecd1e808..682ba704 100644
+--- a/advanced/Templates/pihole.cron
++++ b/advanced/Templates/pihole.cron
+@@ -18,7 +18,7 @@
+ #          early morning. Download any updates from the adlists
+ #          Squash output to log, then splat the log to stdout on error to allow for
+ #          standard crontab job error handling.
+-59 1    * * 7   root    PATH="$PATH:/usr/sbin:/usr/local/bin/" pihole updateGravity >/var/log/pihole_updateGravity.log || cat /var/log/pihole_updateGravity.log
++59 1    * * 7   root    PATH="$PATH:/usr/sbin:/usr/local/bin/" pihole updateGravity >/var/log/pihole/pihole_updateGravity.log || cat /var/log/pihole/pihole_updateGravity.log
+ 
+ # Pi-hole: Flush the log daily at 00:00
+ #          The flush script will use logrotate if available
+diff --git a/manpages/pihole.8 b/manpages/pihole.8
+index a57eb05e..1334fec8 100644
+--- a/manpages/pihole.8
++++ b/manpages/pihole.8
+@@ -187,12 +187,12 @@ Available commands and options:
+ 
+ 	(Logging options):
+ .br
+-      on                Enable the Pi-hole log at /var/log/pihole.log
++      on                Enable the Pi-hole log at /var/log/pihole/pihole.log
+ .br
+       off               Disable and flush the Pi-hole log at
+-                        /var/log/pihole.log
++                        /var/log/pihole/pihole.log
+ .br
+-      off noflush       Disable the Pi-hole log at /var/log/pihole.log
++      off noflush       Disable the Pi-hole log at /var/log/pihole/pihole.log
+ .br
+ 
+ \fB-up, updatePihole\fR [--check-only]
+diff --git a/pihole b/pihole
+index 2b2b7bc2..bda3f417 100755
+--- a/pihole
++++ b/pihole
+@@ -220,9 +220,9 @@ Example: 'pihole logging on'
+ Specify whether the Pi-hole log should be used
+ 
+ Options:
+-  on                  Enable the Pi-hole log at /var/log/pihole.log
+-  off                 Disable and flush the Pi-hole log at /var/log/pihole.log
+-  off noflush         Disable the Pi-hole log at /var/log/pihole.log"
++  on                  Enable the Pi-hole log at /var/log/pihole/pihole.log
++  off                 Disable and flush the Pi-hole log at /var/log/pihole/pihole.log
++  off noflush         Disable the Pi-hole log at /var/log/pihole/pihole.log"
+     exit 0
+   elif [[ "${1}" == "off" ]]; then
+     # Disable logging
+@@ -335,7 +335,7 @@ tailFunc() {
+   # Color blocklist/blacklist/wildcard entries as red
+   # Color A/AAAA/DHCP strings as white
+   # Color everything else as gray
+-  tail -f /var/log/pihole.log | sed -E \
++  tail -f /var/log/pihole/pihole.log | sed -E \
+     -e "s,($(date +'%b %d ')| dnsmasq\[[0-9]*\]),,g" \
+     -e "s,(.*(blacklisted |gravity blocked ).* is (0.0.0.0|::|NXDOMAIN|${IPV4_ADDRESS%/*}|${IPV6_ADDRESS:-NULL}).*),${COL_RED}&${COL_NC}," \
+     -e "s,.*(query\\[A|DHCP).*,${COL_NC}&${COL_NC}," \

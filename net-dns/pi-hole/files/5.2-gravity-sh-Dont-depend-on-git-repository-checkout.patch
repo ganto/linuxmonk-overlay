@@ -1,0 +1,51 @@
+commit 6dc74d2e4323e26eb7b2a0ad56b11e58030318b0
+Author: Reto Gantenbein <reto.gantenbein@linuxmonk.ch>
+Date:   Sun Nov 29 14:30:09 2020 +0100
+
+    gravity.sh: Don't depend on git repository checkout
+
+diff --git a/advanced/Scripts/database_migration/gravity-db.sh b/advanced/Scripts/database_migration/gravity-db.sh
+index 282ea07b..32fd30e7 100644
+--- a/advanced/Scripts/database_migration/gravity-db.sh
++++ b/advanced/Scripts/database_migration/gravity-db.sh
+@@ -10,7 +10,7 @@
+ # This file is copyright under the latest version of the EUPL.
+ # Please see LICENSE file for your rights under this license.
+ 
+-readonly scriptPath="/etc/.pihole/advanced/Scripts/database_migration/gravity"
++readonly scriptPath="/opt/pihole/database_migration/gravity"
+ 
+ upgrade_gravityDB(){
+ 	local database piholeDir auditFile version
+diff --git a/gravity.sh b/gravity.sh
+index 9ac38512..810b4364 100755
+--- a/gravity.sh
++++ b/gravity.sh
+@@ -18,10 +18,10 @@ source "${coltable}"
+ regexconverter="/opt/pihole/wildcard_regex_converter.sh"
+ source "${regexconverter}"
+ # shellcheck disable=SC1091
+-source "/etc/.pihole/advanced/Scripts/database_migration/gravity-db.sh"
++source "/opt/pihole/database_migration/gravity-db.sh"
+ 
+ basename="pihole"
+-PIHOLE_COMMAND="/usr/local/bin/${basename}"
++PIHOLE_COMMAND="/usr/bin/${basename}"
+ 
+ piholeDir="/etc/${basename}"
+ 
+@@ -34,11 +34,11 @@ adListFile="${piholeDir}/adlists.list"
+ localList="${piholeDir}/local.list"
+ VPNList="/etc/openvpn/ipp.txt"
+ 
+-piholeGitDir="/etc/.pihole"
++piholeSqlDir="/opt/pihole/database_migration"
+ gravityDBfile="${piholeDir}/gravity.db"
+ gravityTEMPfile="${piholeDir}/gravity_temp.db"
+-gravityDBschema="${piholeGitDir}/advanced/Templates/gravity.db.sql"
+-gravityDBcopy="${piholeGitDir}/advanced/Templates/gravity_copy.sql"
++gravityDBschema="${piholeSqlDir}/gravity.db.sql"
++gravityDBcopy="${piholeSqlDir}/gravity_copy.sql"
+ 
+ domainsExtension="domains"
+ 
