@@ -37,6 +37,7 @@ BDEPEND=""
 S="${WORKDIR}/${P#pihole-}"
 
 PATCHES=(
+	"${FILESDIR}/${PV}-logs-from-var-log-var-log-pihole.patch"
 	"${FILESDIR}/${PV}-Disable-blocking-if-not-explicitly-defined-in-setupVars-conf.patch"
 )
 
@@ -47,10 +48,6 @@ src_prepare() {
 
 	# don't set file capabilities through cmake
 	sed -e '/SETCAP/d' -i src/CMakeLists.txt || die
-
-	# change log directory
-	sed -e 's|/var/log/pihole-FTL.log|/var/log/pihole/pihole-FTL.log|g' \
-		-i src/config.c || die
 }
 
 cmake_build() {
