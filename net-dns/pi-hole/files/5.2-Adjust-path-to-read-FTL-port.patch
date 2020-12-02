@@ -1,0 +1,19 @@
+commit 9665533c757c743424a26adfff128c7f84181a14
+Author: Reto Gantenbein <reto.gantenbein@linuxmonk.ch>
+Date:   Wed Dec 2 22:59:39 2020 +0100
+
+    Adjust path to read FTL port
+
+diff --git a/advanced/Scripts/chronometer.sh b/advanced/Scripts/chronometer.sh
+index 37fd5177..a3f15048 100755
+--- a/advanced/Scripts/chronometer.sh
++++ b/advanced/Scripts/chronometer.sh
+@@ -13,7 +13,7 @@ LC_NUMERIC=C
+ 
+ # Retrieve stats from FTL engine
+ pihole-FTL() {
+-    ftl_port=$(cat /run/pihole-FTL.port 2> /dev/null)
++    ftl_port=$(cat /run/pihole/pihole-FTL.port 2> /dev/null)
+     if [[ -n "$ftl_port" ]]; then
+         # Open connection to FTL
+         exec 3<>"/dev/tcp/127.0.0.1/$ftl_port"

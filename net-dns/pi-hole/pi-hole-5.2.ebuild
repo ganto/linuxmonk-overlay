@@ -38,6 +38,7 @@ PATCHES=(
 	"${FILESDIR}/${PV}-update-LOG_DIRECTORY-variable-in-debug-script.patch"
 
 	"${FILESDIR}/${PV}-gravity-sh-Dont-depend-on-git-repository-checkout.patch"
+	"${FILESDIR}/${PV}-Adjust-path-to-read-FTL-port.patch"
 	"${FILESDIR}/5.1.2-pihole-Set-usr-bin-script-path.patch"
 	"${FILESDIR}/5.1.2-pihole-Disable-reconfigure-update-checkout-uninstall.patch"
 	"${FILESDIR}/5.1.2-version-sh-Read-local-version-from-file-if-no-GITDIR.patch"
@@ -72,8 +73,10 @@ src_install() {
 
 	# Install the configs
 	insinto /etc/pihole
-	doins "${FILESDIR}"/adlists.list
 	doins "${FILESDIR}"/custom.list
+
+	# TODO: This file will be deleted after creating the gravitydb
+	doins "${FILESDIR}"/adlists.list
 
 	# TODO: Only required for Web interface
 	#doins "${FILESDIR}"/dns-servers.conf
