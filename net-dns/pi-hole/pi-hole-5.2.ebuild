@@ -71,8 +71,10 @@ src_install() {
 	doins advanced/Templates/*.sql
 
 	# Install the configs
+	insinto /etc/pihole
+	doins "${FILESDIR}"/custom.list
+
 	# TODO: Only required for Web interface
-	#insinto /etc/pihole
 	#doins "${FILESDIR}"/dns-servers.conf
 
 	# Write current version
@@ -82,6 +84,7 @@ src_install() {
 	# Custom configuration for pihole-FTL
 	insinto /etc/dnsmasq.d
 	doins advanced/01-pihole.conf
+	sed -e 's/@CACHE_SIZE@/10000/' -i "${D}"/etc/dnsmasq.d/01-pihole.conf
 
 	insinto /etc/cron.d
 	newins "${FILESDIR}"/pihole.cron pihole

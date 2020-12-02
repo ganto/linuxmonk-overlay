@@ -1,0 +1,14 @@
+# Custom host database
+#
+# This file can be used to manage custom alias-to-address mappings used and
+# served by Pi-hole FTL. It can be updated through the Pi-hole Web interface
+# if available.
+#
+# Alias entries must folow the format of /etc/hosts which is:
+#
+#   IP_address canonical_hostname [aliases...]
+#
+# Example:
+#
+#   192.168.42.42 myhost.mydomain.home
+#
