@@ -8,9 +8,9 @@ FTL_GIT_VERSION="v${PV}"
 # Retrieved via:
 #   git checkout v${PV}
 #   git --no-pager show --date=short --format=\"%ai\" --name-only | head -n 1
-FTL_GIT_DATE="2020-11-28 21:59:12 +0100"
+FTL_GIT_DATE="2020-12-02 21:28:39 +0000"
 #   git --no-pager describe --always --dirty
-FTL_GIT_HASH="e1db31d"
+FTL_GIT_HASH="0790cf7"
 
 DESCRIPTION="The Pi-hole FTL engine"
 HOMEPAGE="https://pi-hole.net/"
@@ -38,11 +38,9 @@ S="${WORKDIR}/${P#pihole-}"
 
 PATCHES=(
 	# pihole-FTL GH#882
-	"${FILESDIR}/${PV}-logs-from-var-log-var-log-pihole.patch"
-	# pihole-FTL GH#954
-	"${FILESDIR}/${PV}-Fix-build-failure-with-gcc-10-2.patch"
+	"${FILESDIR}/5.3.1-logs-from-var-log-var-log-pihole.patch"
 
-	"${FILESDIR}/${PV}-Disable-blocking-if-not-explicitly-defined-in-setupVars-conf.patch"
+	"${FILESDIR}/5.3.1-Disable-blocking-if-not-explicitly-defined-in-setupVars-conf.patch"
 
 )
 
@@ -90,6 +88,5 @@ src_install() {
 	fowners pihole:pihole /etc/pihole /var/log/pihole
 	fowners pihole /etc/pihole/${PN}.conf
 
-	newinitd "${FILESDIR}"/${PN}.initd "${PN}"
 	systemd_dounit "${FILESDIR}/${PN}.service"
 }
