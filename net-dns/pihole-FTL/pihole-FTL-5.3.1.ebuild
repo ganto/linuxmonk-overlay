@@ -37,8 +37,13 @@ BDEPEND=""
 S="${WORKDIR}/${P#pihole-}"
 
 PATCHES=(
+	# pihole-FTL GH#882
 	"${FILESDIR}/${PV}-logs-from-var-log-var-log-pihole.patch"
+	# pihole-FTL GH#954
+	"${FILESDIR}/${PV}-Fix-build-failure-with-gcc-10-2.patch"
+
 	"${FILESDIR}/${PV}-Disable-blocking-if-not-explicitly-defined-in-setupVars-conf.patch"
+
 )
 
 FILECAPS=( cap_net_raw,cap_net_bind_service,cap_net_admin,cap_sys_nice+eip usr/bin/pihole-FTL )

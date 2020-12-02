@@ -4,16 +4,14 @@ Documentation=man:pihole-FTL(8)
 After=network.target
 
 [Service]
-#ExecStartPre=/usr/bin/pihole-FTL test
-ExecStart=/usr/bin/pihole-FTL
-ExecReload=/bin/kill -HUP $MAINPID
+Type=simple
+User=pihole
 Group=pihole
-PIDFile=/run/pihole/pihole.pid
+#ExecStartPre=/usr/bin/pihole-FTL test
+ExecStart=/usr/bin/pihole-FTL no-daemon
+ExecReload=/bin/kill -HUP $MAINPID
 RemoveIPC=true
 RuntimeDirectory=pihole
-Type=forking
-User=pihole
-WorkingDirectory=/run/pihole
 
 [Install]
 WantedBy=multi-user.target
