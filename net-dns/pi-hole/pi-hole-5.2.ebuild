@@ -72,6 +72,7 @@ src_install() {
 
 	# Install the configs
 	insinto /etc/pihole
+	doins "${FILESDIR}"/adlists.list
 	doins "${FILESDIR}"/custom.list
 
 	# TODO: Only required for Web interface
