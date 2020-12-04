@@ -1,11 +1,9 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
-GNOME2_LA_PUNT="yes"
-GNOME2_EAUTORECONF="yes"
+EAPI=7
 
-inherit eutils gnome2 pam readme.gentoo-r1 systemd udev user
+inherit desktop gnome.org gnome2-utils meson pam readme.gentoo-r1 systemd udev user xdg
 
 DESCRIPTION="GNOME Display Manager for managing graphical display servers and user logins"
 HOMEPAGE="https://wiki.gnome.org/Projects/GDM"
@@ -21,23 +19,23 @@ LICENSE="
 
 SLOT="0"
 
-IUSE="accessibility audit bluetooth-sound branding elogind fprint +introspection ipv6 plymouth selinux smartcard systemd tcpd test wayland xinerama"
+IUSE="accessibility audit bluetooth-sound branding fprint +introspection ipv6 plymouth selinux smartcard tcpd test wayland"
 RESTRICT="!test? ( test )"
-REQUIRED_USE="^^ ( elogind systemd )"
 
 KEYWORDS="~amd64"
 
 # NOTE: x11-base/xorg-server dep is for X_SERVER_PATH etc, bug #295686
 # nspr used by smartcard extension
 # dconf, dbus and g-s-d are needed at install time for dconf update
-# We need either systemd or >=openrc-0.12 to restart gdm properly, bug #463784
-COMMON_DEPEND="
+# keyutils is automagic dep that makes autologin unlock login keyring when all the passwords match (disk encryption, user pw and login keyring)
+# dbus-run-session used at runtime
+DEPEND="
 	app-text/iso-codes
 	>=dev-libs/glib-2.44:2
 	dev-libs/libgudev
 	>=x11-libs/gtk+-2.91.1:3
 	>=gnome-base/dconf-0.20
-	>=gnome-base/gnome-settings-daemon-3.1.4
+	>=gnome-base/gnome-settings-daemon-3.28
 	gnome-base/gsettings-desktop-schemas
 	>=media-libs/fontconfig-2.5.0:1.0
 	>=media-libs/libcanberra-0.4[gtk3]
@@ -53,22 +51,21 @@ COMMON_DEPEND="
 	>=x11-misc/xdg-utils-1.0.2-r3
 
 	sys-libs/pam
-	elogind? ( >=sys-auth/elogind-239.3[pam] )
-	systemd? ( >=sys-apps/systemd-186:0=[pam] )
+	sys-apps/keyutils:=
+	>=sys-apps/systemd-186:0=[pam]
 
-	sys-auth/pambase[elogind?,systemd?]
+	sys-auth/pambase[systemd]
 
 	audit? ( sys-process/audit )
 	introspection? ( >=dev-libs/gobject-introspection-0.9.12:= )
 	plymouth? ( sys-boot/plymouth )
 	selinux? ( sys-libs/libselinux )
 	tcpd? ( >=sys-apps/tcp-wrappers-7.6 )
-	xinerama? ( x11-libs/libXinerama )
 "
 # XXX: These deps are from session and desktop files in data/ directory
 # fprintd is used via dbus by gdm-fingerprint-extension
 # gnome-session-3.6 needed to avoid freezing with orca
-RDEPEND="${COMMON_DEPEND}
+RDEPEND="${DEPEND}
 	>=gnome-base/gnome-session-3.6
 	>=gnome-base/gnome-shell-3.1.90
 	x11-apps/xhost
@@ -79,10 +76,8 @@ RDEPEND="${COMMON_DEPEND}
 	fprint? (
 		sys-auth/fprintd
 		sys-auth/pam_fprint )
-
-	!gnome-extra/fast-user-switch-applet
 "
-DEPEND="${COMMON_DEPEND}
+BDEPEND="
 	app-text/docbook-xml-dtd:4.1.2
 	dev-util/gdbus-codegen
 	dev-util/glib-utils
@@ -90,7 +85,8 @@ DEPEND="${COMMON_DEPEND}
 	>=sys-devel/gettext-0.19.8
 	virtual/pkgconfig
 	x11-base/xorg-proto
-	test? ( >=dev-libs/check-0.9.4 )
+	test? ( ${DEPEND}
+		>=dev-libs/check-0.9.4 )
 	app-text/yelp-tools
 " # yelp-tools needed for eautoreconf to not lose help docs (m4_ifdeffed YELP_HELP_INIT call and setup)
 
@@ -128,76 +124,46 @@ pkg_setup() {
 }
 
 src_prepare() {
+	default
+
 	# ssh-agent handling must be done at xinitrc.d, bug #220603
 	eapply "${FILESDIR}/${PN}-2.32.0-xinitrc-ssh-agent.patch"
 
 	# Gentoo does not have a fingerprint-auth pam stack
 	eapply "${FILESDIR}/${PN}-3.8.4-fingerprint-auth.patch"
 
-	# Support pam_elogind.so in gdm-launch-environment.pam
-	eapply "${FILESDIR}/pam-elogind.patch"
-
-	# Wait 10 seconds for a DRM master with systemd. Workaround for gdm not waiting for CanGraphical=yes property on the seat. Bug #613222
-	eapply "${FILESDIR}/gdm-CanGraphical-wait.patch" # needs eautoreconf
-
 	# Show logo when branding is enabled
 	use branding && eapply "${FILESDIR}/${PN}-3.30.3-logo.patch"
-
-	gnome2_src_prepare
 }
 
 src_configure() {
-	# PAM is the only auth scheme supported
-	# even though configure lists shadow and crypt
-	# they don't have any corresponding code.
 	# --with-at-spi-registryd-directory= needs to be passed explicitly because
 	# of https://bugzilla.gnome.org/show_bug.cgi?id=607643#c4
-	# Xevie is obsolete, bug #482304
-
-	# --with-initial-vt=7 conflicts with plymouth, bug #453392
-	# gdm-3.30 now reaps (stops) the login screen when the login VT isn't active, which
-	# saves on memory. However this means if we don't start on VT1, gdm doesn't start up
-	# before user manually goes to VT7. Thus as-is we can not keep gdm away from VT1,
-	# so lets try always having it in VT1 and see if that is an issue for people before
-	# hacking up workarounds for the initial start case.
-	# ! use plymouth && myconf="${myconf} --with-initial-vt=7"
-	local myconf=(
-		--enable-gdm-xsession
-		--enable-user-display-server
-		--with-run-dir=/run/gdm
-		--localstatedir="${EPREFIX}"/var
-		--disable-static
-		--with-xdmcp=yes
-		--enable-authentication-scheme=pam
-		--with-default-pam-config=exherbo
-		--with-pam-mod-dir=$(getpam_mod_dir)
-		--with-udevdir=$(get_udevdir)
-		--with-at-spi-registryd-directory="${EPREFIX}"/usr/libexec
-		--without-xevie
-		$(use_enable systemd systemd-journal)
-		--with-systemdsystemunitdir="$(systemd_get_systemunitdir)"
-		$(use_with audit libaudit)
-		$(use_enable ipv6)
-		$(use_with plymouth)
-		$(use_with selinux)
-		$(use_with tcpd tcp-wrappers)
-		$(use_enable wayland wayland-support)
-		$(use_with xinerama)
+	local emesonargs=(
+		-Dat-spi-registryd-dir="${EPREFIX}"/usr/libexec
+		-Ddefault-pam-config=exherbo
+		-Dgdm-xsession=true
+		$(meson_use ipv6)
+		$(meson_feature audit libaudit)
+		-Dpam-mod-dir=$(getpam_mod_dir)
+		$(meson_feature plymouth)
+		-Drun-dir=/run/gdm
+		$(meson_feature selinux)
+		-Dsystemd-journal=true
+		-Dsystemdsystemunitdir="$(systemd_get_systemunitdir)"
+		-Dsystemduserunitdir="$(systemd_get_userunitdir)"
+		$(meson_use tcpd tcp-wrappers)
+		-Dudev-dir=$(get_udevdir)/rules.d
+		-Duser-display-server=true
+		$(meson_use wayland wayland-support)
+		-Dworking-dir=/var/lib/gdm
+		-Dxdmcp=enabled
 	)
-
-	if use elogind; then
-		myconf+=(
-			--with-initial-vt=7 # TODO: Revisit together with startDM.sh and other xinit talks; also ignores plymouth possibility
-			SYSTEMD_CFLAGS=`pkg-config --cflags "libelogind" 2>/dev/null`
-			SYSTEMD_LIBS=`pkg-config --libs "libelogind" 2>/dev/null`
-		)
-	fi
-
-	gnome2_src_configure "${myconf[@]}"
+	meson_src_configure
 }
 
 src_install() {
-	gnome2_src_install
+	meson_src_install
 
 	if ! use accessibility ; then
 		rm "${ED}"/usr/share/gdm/greeter/autostart/orca-autostart.desktop || die
@@ -228,14 +194,15 @@ src_install() {
 }
 
 pkg_postinst() {
-	gnome2_pkg_postinst
-	local d ret
+	xdg_pkg_postinst
+	gnome2_schemas_update
 
+	local d ret
 	# bug #669146; gdm may crash if /var/lib/gdm subdirs are not owned by gdm:gdm
 	ret=0
-	ebegin "Fixing "${EROOT}"var/lib/gdm ownership"
-	chown --no-dereference gdm:gdm "${EROOT}var/lib/gdm" || ret=1
-	for d in "${EROOT}var/lib/gdm/"{.cache,.color,.config,.dbus,.local}; do
+	ebegin "Fixing "${EROOT}"/var/lib/gdm ownership"
+	chown --no-dereference gdm:gdm "${EROOT}/var/lib/gdm" || ret=1
+	for d in "${EROOT}/var/lib/gdm/"{.cache,.color,.config,.dbus,.local}; do
 		[[ ! -e "${d}" ]] || chown --no-dereference -R gdm:gdm "${d}" || ret=1
 	done
 	eend ${ret}
