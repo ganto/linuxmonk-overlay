@@ -33,12 +33,15 @@ BDEPEND=""
 DOCS=( CONTRIBUTING.md README.md )
 
 PATCHES=(
-	# upstream patches (#3732)
-	"${FILESDIR}/${PV}-use-log-directory-var-log-pihole-for-log-storage.patch"
-	"${FILESDIR}/${PV}-update-LOG_DIRECTORY-variable-in-debug-script.patch"
+	# pi-hole/pi-hole upstream patches
+	# GH #3732
+	"${FILESDIR}/5.2-use-log-directory-var-log-pihole-for-log-storage.patch"
+	"${FILESDIR}/5.2-update-LOG_DIRECTORY-variable-in-debug-script.patch"
+	# GH #3900
+	"${FILESDIR}/${PV}-Fix-chronometer-output-if-web-interface-is-not-installed.patch"
 
-	"${FILESDIR}/${PV}-gravity-sh-Dont-depend-on-git-repository-checkout.patch"
-	"${FILESDIR}/${PV}-Adjust-path-to-read-FTL-port.patch"
+	"${FILESDIR}/5.2-gravity-sh-Dont-depend-on-git-repository-checkout.patch"
+	"${FILESDIR}/5.2-Adjust-path-to-read-FTL-port.patch"
 	"${FILESDIR}/5.1.2-pihole-Set-usr-bin-script-path.patch"
 	"${FILESDIR}/5.1.2-pihole-Disable-reconfigure-update-checkout-uninstall.patch"
 	"${FILESDIR}/5.1.2-version-sh-Read-local-version-from-file-if-no-GITDIR.patch"
