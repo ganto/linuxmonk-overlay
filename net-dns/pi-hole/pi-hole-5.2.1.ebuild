@@ -39,6 +39,8 @@ PATCHES=(
 	"${FILESDIR}/5.2-update-LOG_DIRECTORY-variable-in-debug-script.patch"
 	# GH #3900
 	"${FILESDIR}/${PV}-Fix-chronometer-output-if-web-interface-is-not-installed.patch"
+	# GH #3902
+	"${FILESDIR}/${PV}-piholeDebug-Fix-version-check-if-lighttpd-php-are-not-installed.patch"
 
 	"${FILESDIR}/5.2-gravity-sh-Dont-depend-on-git-repository-checkout.patch"
 	"${FILESDIR}/5.2-Adjust-path-to-read-FTL-port.patch"

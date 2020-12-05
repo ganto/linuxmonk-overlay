@@ -1,0 +1,24 @@
+commit 18e4eb460c1cdcf396736b403bbd83ece7e8e637
+Author: Reto Gantenbein <reto.gantenbein@linuxmonk.ch>
+Date:   Sat Dec 5 13:40:44 2020 +0100
+
+    piholeDebug: Fix version check if lighttpd/php are not installed
+    
+    Signed-off-by: Reto Gantenbein <reto.gantenbein@linuxmonk.ch>
+
+diff --git a/advanced/Scripts/piholeDebug.sh b/advanced/Scripts/piholeDebug.sh
+index bc83d70a..9b923eb6 100755
+--- a/advanced/Scripts/piholeDebug.sh
++++ b/advanced/Scripts/piholeDebug.sh
+@@ -371,9 +371,9 @@ get_program_version() {
+     echo_current_diagnostic "${program_name} version"
+     # Evalutate the program we are checking, if it is any of the ones below, show the version
+     case "${program_name}" in
+-        "lighttpd") program_version="$(${program_name} -v |& head -n1 | cut -d '/' -f2 | cut -d ' ' -f1)"
++        "lighttpd") program_version="$(${program_name} -v 2> /dev/null | head -n1 | cut -d '/' -f2 | cut -d ' ' -f1)"
+                     ;;
+-        "php") program_version="$(${program_name} -v |& head -n1 | cut -d '-' -f1 | cut -d ' ' -f2)"
++        "php") program_version="$(${program_name} -v 2> /dev/null | head -n1 | cut -d '-' -f1 | cut -d ' ' -f2)"
+                 ;;
+         # If a match is not found, show an error
+         *) echo "Unrecognized program";
