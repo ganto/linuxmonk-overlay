@@ -33,7 +33,6 @@ DEPEND="
 	>=dev-python/phonenumbers-8.2.0[${PYTHON_USEDEP}]
 	>=dev-python/pillow-4.3.0[jpeg,${PYTHON_USEDEP}]
 	>=dev-python/prometheus_client-0.4.0[${PYTHON_USEDEP}]
-	<dev-python/prometheus_client-0.9.0[${PYTHON_USEDEP}]
 	>=dev-python/pyasn1-0.1.9[${PYTHON_USEDEP}]
 	>=dev-python/pyasn1-modules-0.0.7[${PYTHON_USEDEP}]
 	>=dev-python/pymacaroons-0.13.0[${PYTHON_USEDEP}]

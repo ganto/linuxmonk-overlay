@@ -4,12 +4,13 @@ ConditionPathExists=/etc/matrix-synapse/conf.d/server_name.yaml
 
 [Service]
 Type=notify
+NotifyAccess=main
 User=matrix-synapse
 WorkingDirectory=/var/lib/matrix-synapse
 ExecStartPre=/usr/bin/python3 -m synapse.app.homeserver --config-path=/etc/matrix-synapse/homeserver.yaml --config-path=/etc/matrix-synapse/conf.d/ --generate-keys
 ExecStart=/usr/bin/python3 -m synapse.app.homeserver --config-path=/etc/matrix-synapse/homeserver.yaml --config-path=/etc/matrix-synapse/conf.d/
 ExecReload=/bin/kill -HUP $MAINPID
-Restart=always
+Restart=on-abort
 RestartSec=3
 SyslogIdentifier=matrix-synapse
 
