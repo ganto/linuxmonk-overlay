@@ -5,5 +5,4 @@ EAPI=7
 
 inherit acct-group
 
-DESCRIPTION="group for matrix-synapse"
-ACCT_GROUP_ID=-1
+ACCT_GROUP_ID="-1"
