@@ -5,7 +5,7 @@ EAPI=7
 
 PYTHON_COMPAT=( python3_{6,7,8} )
 
-inherit distutils-r1 eutils systemd
+inherit distutils-r1 eutils optfeature systemd
 
 MY_PN=synapse
 MY_P="${MY_PN}-${PV}"
