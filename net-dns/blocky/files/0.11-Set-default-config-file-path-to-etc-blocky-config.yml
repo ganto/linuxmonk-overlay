@@ -1,0 +1,19 @@
+commit 10f707e122a663fc9be6a9c860044198a78695e9
+Author: Reto Gantenbein <reto.gantenbein@linuxmonk.ch>
+Date:   Wed Dec 16 09:58:49 2020 +0100
+
+    Set default config file path to /etc/blocky/config.yml
+
+diff --git a/cmd/root.go b/cmd/root.go
+index 2ee4d5d..17dba39 100644
+--- a/cmd/root.go
++++ b/cmd/root.go
+@@ -42,7 +42,7 @@ func apiURL(path string) string {
+ func init() {
+ 	cobra.OnInitialize(initConfig)
+ 
+-	rootCmd.PersistentFlags().StringVarP(&configPath, "config", "c", "./config.yml", "path to config file")
++	rootCmd.PersistentFlags().StringVarP(&configPath, "config", "c", "/etc/blocky/config.yml", "path to config file")
+ 	rootCmd.PersistentFlags().StringVar(&apiHost, "apiHost", "localhost", "host of blocky (API)")
+ 	rootCmd.PersistentFlags().Uint16Var(&apiPort, "apiPort", 0, "port of blocky (API)")
+ }
