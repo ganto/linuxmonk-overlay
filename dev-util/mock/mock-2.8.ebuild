@@ -7,9 +7,9 @@ PYTHON_COMPAT=( python3_{6,7,8} )
 
 inherit python-single-r1 bash-completion-r1
 
-MY_PV=${PV}-2
+MY_PV=${PV}-1
 MY_P=${PN}-${MY_PV}
-CORE_CONFIGS_VERSION=33-1
+CORE_CONFIGS_VERSION=33.3-1
 
 DESCRIPTION="Builds RPM packages inside chroots"
 HOMEPAGE="https://github.com/rpm-software-management/mock"
@@ -42,14 +42,15 @@ RDEPEND="
 "
 
 PATCHES=(
-	"${FILESDIR}"/2.2-Adjust-CLI-tools-default-path.patch
+	"${FILESDIR}"/2.8-Adjust-CLI-tools-default-path.patch
 	"${FILESDIR}"/2.2-Use-tar-instead-of-gtar.patch
 )
 
 S="${WORKDIR}/mock-${MY_P}"
 
 src_compile() {
-	pushd mock
+	pushd mock >/dev/null || die
+	sed -i -e "s|^_MOCK_NVR = None$|_MOCK_NVR = \"${MY_P}\"|" py/mock.py
 	for i in py/mock.py py/mock-parse-buildlog.py; do
 		sed -i -e "s|^__VERSION__\s*=.*|__VERSION__=\"${PV}\"|" ${i}
 		sed -i -e "s|^SYSCONFDIR\s*=.*|SYSCONFDIR=\"/etc\"|" ${i}
@@ -62,11 +63,11 @@ src_compile() {
 
 	# Gentoo doesn't know /etc/pki
 	sed -i -e "s|/etc/pki/mock|/etc/ssl/mock|g" etc/mock/*
-	popd
+	popd >/dev/null
 }
 
 src_install() {
-	pushd mock
+	pushd mock >/dev/null || die
 	python_scriptinto /usr/bin
 	python_newscript py/mock-parse-buildlog.py mock-parse-buildlog
 	dobin mockchain
@@ -106,12 +107,12 @@ src_install() {
 	dobashcomp etc/bash_completion.d/mock
 	bashcomp_alias mock mock.py
 	bashcomp_alias mock mock-parse-buildlog
-	popd
+	popd >/dev/null
 
-	pushd ../mock-mock-core-configs-${CORE_CONFIGS_VERSION}/mock-core-configs
+	pushd ../mock-mock-core-configs-${CORE_CONFIGS_VERSION}/mock-core-configs >/dev/null || die
 	insinto /etc/mock
 	doins -r etc/mock/*
-	popd
+	popd >/dev/null
 }
 
 pkg_postinst() {
