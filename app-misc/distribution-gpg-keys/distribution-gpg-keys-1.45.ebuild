@@ -24,6 +24,6 @@ src_install() {
 	if use copr ; then
 		doins -r keys/*
 	else
-		doins -r keys/{adobe,amazon-linux,bluejeans,brave,calcforge,centos,datto,dell,dropbox,epel,eurolinux,fedora,google,intel,ius,jpackage,mageia,microsoft,openmandriva,opensuse,postgresql,qubes,redhat,remi,rosa,rpmfusion,scientific-linux,skype,unitedrpms,virtualbox,zimbra}
+		doins -r keys/{adobe,amazon-linux,bluejeans,brave,calcforge,centos,datto,dell,dropbox,epel,eurolinux,fedora,google,intel,ius,jpackage,mageia,microsoft,openmandriva,opensuse,oraclelinux,postgresql,qubes,redhat,remi,rosa,rpmfusion,scientific-linux,skype,unitedrpms,virtualbox,zimbra,zoom}
 	fi
 }
