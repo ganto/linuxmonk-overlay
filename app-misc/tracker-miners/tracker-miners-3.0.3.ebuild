@@ -68,7 +68,6 @@ BDEPEND="
 				media-plugins/gst-plugins-openh264:1.0 )
 	) )
 "
-# intltool-merge manually called in meson.build in 2.2.2; might be properly gone by 2.3
 
 pkg_setup() {
 	use test && python-any-r1_pkg_setup
