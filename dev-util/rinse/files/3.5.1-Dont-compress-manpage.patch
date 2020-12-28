@@ -1,0 +1,21 @@
+commit 8047df3a51de3c806a98bdd0eb4e9befe501a6f2
+Author: Reto Gantenbein <reto.gantenbein@linuxmonk.ch>
+Date:   Mon Dec 28 14:27:49 2020 +0100
+
+    Don't compress man-page
+
+diff --git a/Makefile b/Makefile
+index fd5fb4e..ad15ff7 100644
+--- a/Makefile
++++ b/Makefile
+@@ -66,9 +66,8 @@ install: fixupperms
+ 	for i in scripts/*/; do name=`basename $$i`; mkdir -p ${PREFIX}/usr/libexec/rinse/$$name  ; cp -P $$i/*.sh ${PREFIX}/usr/libexec/rinse/$$name ; done
+ 	cp -p misc/rinse ${PREFIX}/usr/share/bash-completion/completions
+ 	pod2man --release=${VERSION} --official --section=8 ./bin/rinse ./bin/rinse.8
+-	gzip --force -9 bin/rinse.8
+ 	-mkdir -p ${PREFIX}/usr/share/man/man8/
+-	mv ./bin/rinse.8.gz ${PREFIX}/usr/share/man/man8/
++	mv ./bin/rinse.8 ${PREFIX}/usr/share/man/man8/
+ 
+ #
+ #  Make a new release tarball, and make a GPG signature.

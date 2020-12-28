@@ -1,5 +1,11 @@
+commit db2042c49022c07accf66af48397e8989f664c0a
+Author: Reto Gantenbein <reto.gantenbein@linuxmonk.ch>
+Date:   Mon Dec 28 14:21:05 2020 +0100
+
+    Change lib paths to libexec
+
 diff --git a/Makefile b/Makefile
-index 6e94fd6..221a7ac 100644
+index f66817b..fd5fb4e 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -53,17 +53,17 @@ install: fixupperms
@@ -20,8 +26,8 @@ index 6e94fd6..221a7ac 100644
  	chmod 755 ${PREFIX}/usr/sbin/rinse*
  	cp -p etc/*.packages ${PREFIX}/etc/rinse
  	cp -p etc/*.conf     ${PREFIX}/etc/rinse
--	for i in scripts/*/; do name=`basename $$i`; mkdir -p ${PREFIX}/usr/lib/rinse/$$name  ; cp $$i/*.sh ${PREFIX}/usr/lib/rinse/$$name ; done
-+	for i in scripts/*/; do name=`basename $$i`; mkdir -p ${PREFIX}/usr/libexec/rinse/$$name  ; cp $$i/*.sh ${PREFIX}/usr/libexec/rinse/$$name ; done
+-	for i in scripts/*/; do name=`basename $$i`; mkdir -p ${PREFIX}/usr/lib/rinse/$$name  ; cp -P $$i/*.sh ${PREFIX}/usr/lib/rinse/$$name ; done
++	for i in scripts/*/; do name=`basename $$i`; mkdir -p ${PREFIX}/usr/libexec/rinse/$$name  ; cp -P $$i/*.sh ${PREFIX}/usr/libexec/rinse/$$name ; done
  	cp -p misc/rinse ${PREFIX}/usr/share/bash-completion/completions
  	pod2man --release=${VERSION} --official --section=8 ./bin/rinse ./bin/rinse.8
  	gzip --force -9 bin/rinse.8
@@ -34,7 +40,7 @@ index 6e94fd6..221a7ac 100644
  	rm -f  ${PREFIX}/etc/bash_completion.d/rinse
  
 diff --git a/bin/rinse b/bin/rinse
-index d08666b..79a5995 100755
+index 676ee86..66eeb9f 100755
 --- a/bin/rinse
 +++ b/bin/rinse
 @@ -31,7 +31,7 @@ rinse - RPM Installation Entity.
@@ -64,7 +70,7 @@ index d08666b..79a5995 100755
  }
  $CONFIG{ 'scripts-dir' } = $scriptsdir;
  
-@@ -1280,8 +1280,8 @@ sub postInstallationCustomization {
+@@ -1339,8 +1339,8 @@ sub postInstallationCustomization {
      # common files.
      #
      my @scripts;
