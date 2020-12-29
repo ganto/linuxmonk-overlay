@@ -1,0 +1,41 @@
+commit 033f2e5d464474c3e02b92cd968e87883f93fdbb
+Author: Reto Gantenbein <reto.gantenbein@linuxmonk.ch>
+Date:   Tue Dec 29 13:01:19 2020 +0100
+
+    rinse: Don't resolve $configdir and $scriptsdir at runtime
+
+diff --git a/bin/rinse b/bin/rinse
+index 66eeb9f..ad444f2 100755
+--- a/bin/rinse
++++ b/bin/rinse
+@@ -216,7 +216,6 @@ use File::Basename;
+ use Getopt::Long;
+ use Pod::Usage;
+ use LWP::UserAgent;
+-use FindBin '$Bin';
+ 
+ #
+ # Release number.
+@@ -235,20 +234,11 @@ my %CONFIG;
+ $CONFIG{ 'cache' }     = 1;
+ $CONFIG{ 'cache-dir' } = "/var/cache/rinse/";
+ 
+-# We first try to from the un-installed tree. If that doesn't work, we try the
+-# installed paths. Anything given on the commandline still overrides either of
+-# these
+-my $configdir = "$Bin/../etc";
+-if ( !-d $configdir ) {
+-  $configdir = "/etc/rinse";
+-}
++my $configdir = "/etc/rinse";
+ $CONFIG{ 'pkgs-dir' }  = $configdir;
+ $CONFIG{ 'config' }    = "$configdir/rinse.conf";
+ 
+-my $scriptsdir = "$Bin/../scripts";
+-if ( !-d $scriptsdir ) {
+-  $scriptsdir = "/usr/libexec/rinse";
+-}
++my $scriptsdir = "/usr/libexec/rinse";
+ $CONFIG{ 'scripts-dir' } = $scriptsdir;
+ 
+ #

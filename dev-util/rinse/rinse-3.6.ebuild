@@ -29,6 +29,7 @@ BDEPEND="${DEPEND}
 PATCHES=(
 	"${FILESDIR}"/3.5.1-Change-lib-paths-to-libexec.patch
 	"${FILESDIR}"/3.5.1-Dont-compress-manpage.patch
+	"${FILESDIR}"/3.5.1-rinse-Dont-resolve-dirs-at-runtime.patch
 )
 
 S="${WORKDIR}/${PN}"
