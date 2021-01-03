@@ -1,11 +1,12 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
+LUA_COMPAT=( lua5-1 lua5-2 lua5-3 lua5-4 )
 PYTHON_COMPAT=( python3_{7,8} )
 
-inherit autotools bash-completion-r1 eutils linux-info perl-functions python-single-r1 xdg-utils
+inherit autotools bash-completion-r1 l10n linux-info lua-single perl-functions python-single-r1 xdg-utils
 
 MY_PV_1="$(ver_cut 1-2)"
 MY_PV_2="$(ver_cut 2)"
@@ -22,7 +23,8 @@ KEYWORDS="~amd64"
 IUSE="doc erlang +fuse inspect-icons introspection libvirt lua ocaml +perl python ruby selinux static-libs systemtap test"
 RESTRICT="!test? ( test )"
 
-REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
+REQUIRED_USE="lua? ( ${LUA_REQUIRED_USE} )
+	python? ( ${PYTHON_REQUIRED_USE} )"
 
 # Failures - doc
 
@@ -34,16 +36,16 @@ DEPEND="
 	dev-libs/libpcre:3
 	app-arch/cpio
 	dev-lang/perl:=
-	virtual/cdrtools
+	app-cdr/cdrtools
 	>=app-emulation/qemu-2.0[qemu_softmmu_targets_x86_64,systemtap?,selinux?,filecaps]
 	sys-apps/fakeroot
 	sys-apps/file
 	libvirt? ( app-emulation/libvirt )
-	dev-libs/libxml2:2
+	dev-libs/libxml2:2=
 	>=sys-apps/fakechroot-2.8
 	>=app-admin/augeas-1.8.0
 	sys-fs/squashfs-tools:*
-	dev-libs/libconfig:0=
+	dev-libs/libconfig:=
 	sys-libs/readline:0=
 	>=sys-libs/db-4.6:*
 	app-arch/xz-utils
@@ -70,7 +72,7 @@ DEPEND="
 		sys-libs/libsemanage
 	)
 	systemtap? ( dev-util/systemtap )
-	ocaml? ( >=dev-lang/ocaml-4.03[ocamlopt] )
+	ocaml? ( >=dev-lang/ocaml-4.03:=[ocamlopt] )
 	erlang? ( dev-lang/erlang )
 	inspect-icons? (
 		media-libs/netpbm
@@ -78,21 +80,22 @@ DEPEND="
 	)
 	virtual/acl
 	sys-libs/libcap
-	lua? ( dev-lang/lua:* )
+	lua? ( ${LUA_DEPS} )
 	>=dev-libs/yajl-2.0.4
-	net-libs/libtirpc
-	sys-libs/libxcrypt
+	net-libs/libtirpc:=
+	sys-libs/libxcrypt:=
 	"
 RDEPEND="${DEPEND}
 	app-emulation/libguestfs-appliance
 	"
 BDEPEND="
 	dev-util/gperf
-	>=dev-lang/ocaml-4.03[ocamlopt]
+	>=dev-lang/ocaml-4.03:=[ocamlopt]
 	dev-ml/findlib[ocamlopt]
-	dev-ml/ocaml-gettext
+	dev-ml/ocaml-gettext:=
 	>=dev-ml/ounit-2
 	doc? ( app-text/po4a )
+	lua? ( ${LUA_DEPS} )
 	ruby? ( dev-lang/ruby virtual/rubygems dev-ruby/rake )
 	test? ( ${DEPEND} introspection? ( dev-libs/gjs ) )
 	"
@@ -111,6 +114,7 @@ pkg_setup() {
 		CONFIG_CHECK="~KVM ~VIRTIO"
 		[ -n "${CONFIG_CHECK}" ] && check_extra_config;
 
+		use lua && lua-single_pkg_setup
 		use python && python-single-r1_pkg_setup
 }
 
@@ -188,7 +192,7 @@ src_install() {
 
 pkg_postinst() {
 	if ! use ocaml ; then
-		einfo "Ocaml based tools and bindings (sysprep, ...) NOT installed"
+		einfo "Ocaml based tools (sysprep, ...) NOT installed"
 	fi
 	if ! use perl ; then
 		einfo "Perl based tools NOT build"
