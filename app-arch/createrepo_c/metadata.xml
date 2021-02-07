@@ -15,9 +15,11 @@
 		library for certain kinds of manipulations with repodata.
 	</longdescription>
 	<use>
-		<flag name="zchunk">Build with zchunk support through
-			<pkg>app-arch/zchunk</pkg></flag>
+		<flag name="drpm">Enable delta RPM support through
+			<pkg>app-arch/drpm</pkg></flag>
 		<flag name="modulemd">Support RPM modules metadata through
 			<pkg>sys-libs/libmodulemd</pkg></flag>
+		<flag name="zchunk">Build with zchunk support through
+			<pkg>app-arch/zchunk</pkg></flag>
 	</use>
 </pkgmetadata>
