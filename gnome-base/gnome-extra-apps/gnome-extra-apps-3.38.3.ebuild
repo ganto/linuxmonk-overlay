@@ -1,4 +1,4 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -19,14 +19,14 @@ RDEPEND="
 
 	>=sys-apps/baobab-3.38.0
 	>=media-video/cheese-3.38.0
-	>=www-client/epiphany-3.38.1
+	>=www-client/epiphany-3.38.2
 	>=app-arch/file-roller-3.38.0
-	>=gnome-extra/gnome-calculator-${PV}
-	>=gnome-extra/gnome-calendar-3.38.1
+	>=gnome-extra/gnome-calculator-3.38.2
+	>=gnome-extra/gnome-calendar-3.38.2
 	>=gnome-extra/gnome-characters-3.34.0
 	>=gnome-extra/gnome-clocks-3.38.0
 	>=gnome-extra/gnome-contacts-3.38.1
-	>=sys-apps/gnome-disk-utility-3.38.0
+	>=sys-apps/gnome-disk-utility-3.38.1
 	>=media-gfx/gnome-font-viewer-3.34.0
 	>=media-gfx/gnome-screenshot-3.38.0
 	>=gnome-extra/gnome-system-monitor-3.38.0
@@ -36,7 +36,7 @@ RDEPEND="
 	>=gnome-extra/sushi-3.38.0
 	>=media-sound/sound-juicer-3.38.0
 
-	>=gnome-base/dconf-editor-${PV}
+	>=gnome-base/dconf-editor-3.38.2
 	>=app-dicts/gnome-dictionary-3.26.1
 	>=mail-client/evolution-${PV}
 	>=gnome-extra/gnome-tweaks-3.34.0
@@ -47,10 +47,10 @@ RDEPEND="
 	shotwell? ( >=media-gfx/shotwell-0.30.10 )
 	systemd? ( >=gnome-extra/gnome-logs-3.36.0 )
 	tracker? (
-		>=app-misc/tracker-3.0.1
-		>=app-misc/tracker-miners-3.0.1
+		>=app-misc/tracker-3.0.3
+		>=app-misc/tracker-miners-3.0.4
 		>=media-gfx/gnome-photos-3.38.0
-		>=media-sound/gnome-music-${PV} )
+		>=media-sound/gnome-music-3.38.2 )
 "
 DEPEND=""
 BDEPEND=""
