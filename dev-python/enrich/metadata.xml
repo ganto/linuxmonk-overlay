@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<upstream>
+		<remote-id type="github">pycontribs/enrich</remote-id>
+		<remote-id type="pypi">enrich</remote-id>
+	</upstream>
+	<longdescription lang="en">
+		Enrich extends rich library functionality with a set of changes that
+		were not accepted to rich itself.
+	</longdescription>
+</pkgmetadata>
