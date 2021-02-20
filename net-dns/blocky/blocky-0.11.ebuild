@@ -752,7 +752,7 @@ BDEPEND="~dev-go/swag-1.6.9
 DOCS=( docs/README.md docs/config.yml )
 
 PATCHES=(
-	"${FILESDIR}"/0.11-Set-default-config-file-path-to-etc-blocky-config.yml
+	"${FILESDIR}"/0.11-Set-default-config-file-path-to-etc-blocky-config.patch
 )
 
 src_unpack() {
