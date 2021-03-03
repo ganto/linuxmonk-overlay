@@ -1,4 +1,4 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -6,7 +6,7 @@ EAPI=7
 PYTHON_COMPAT=( python3_{6..9} )
 inherit distutils-r1
 
-DEBOPS_GIT_COMMIT="f8d74ea00a5ceaa817aab2d203e4f5ff2290a23f"
+DEBOPS_GIT_COMMIT="5cbbf1dcb0c9aee954e0bef6daed5b9197ecce10"
 
 DESCRIPTION="Your Debian-based data center in a box"
 HOMEPAGE="https://debops.org/"
@@ -25,7 +25,6 @@ RDEPEND="
 	dev-python/future[${PYTHON_USEDEP}]
 	dev-python/netaddr[${PYTHON_USEDEP}]
 	dev-python/passlib[${PYTHON_USEDEP}]
-	dev-python/pyopenssl[${PYTHON_USEDEP}]
 	dev-python/python-ldap[${PYTHON_USEDEP}]
 "
 DEPEND="

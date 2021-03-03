@@ -1,4 +1,4 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -6,7 +6,7 @@ EAPI=7
 PYTHON_COMPAT=( python3_{6..9} )
 inherit distutils-r1
 
-DEBOPS_GIT_COMMIT="f8d74ea00a5ceaa817aab2d203e4f5ff2290a23f"
+DEBOPS_GIT_COMMIT="0861ebf6e151fe693d9af6fe1f92cd8dee6161bf"
 
 DESCRIPTION="Your Debian-based data center in a box"
 HOMEPAGE="https://debops.org/"
@@ -25,13 +25,12 @@ RDEPEND="
 	dev-python/future[${PYTHON_USEDEP}]
 	dev-python/netaddr[${PYTHON_USEDEP}]
 	dev-python/passlib[${PYTHON_USEDEP}]
-	dev-python/pyopenssl[${PYTHON_USEDEP}]
 	dev-python/python-ldap[${PYTHON_USEDEP}]
 "
 DEPEND="
 	dev-python/setuptools[${PYTHON_USEDEP}]
-	dev-python/sphinx[${PYTHON_USEDEP}]
 	doc? (
+		dev-python/sphinx[${PYTHON_USEDEP}]
 		dev-python/sphinx_rtd_theme[${PYTHON_USEDEP}]
 	)
 	test? (
@@ -60,12 +59,11 @@ src_prepare() {
 }
 
 python_compile_all() {
-	pushd docs >/dev/null || die
-	sphinx-build -b man -d _build/doctrees -n -t manpages -W . _build/man || die "Failed to build man-pages"
 	if use doc; then
-		sphinx-build -b html -d _build/doctrees -n -W . _build/html || die "Failed to build documentation"
+		pushd docs || die
+		sphinx-build -d _build/doctrees . _build/html || die "Failed to build documentation"
+		popd || die
 	fi
-	popd || die >/dev/null
 }
 
 python_test() {
