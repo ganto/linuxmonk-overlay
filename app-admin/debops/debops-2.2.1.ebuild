@@ -6,7 +6,7 @@ EAPI=7
 PYTHON_COMPAT=( python3_{6..9} )
 inherit distutils-r1
 
-DEBOPS_GIT_COMMIT="8da64bd647c40933a470d66520528f1e12b91789"
+DEBOPS_GIT_COMMIT="d4128947e2ad9aa6a5c31700add4b19ad4aeb2b7"
 
 DESCRIPTION="Your Debian-based data center in a box"
 HOMEPAGE="https://debops.org/"
@@ -20,6 +20,7 @@ IUSE="doc test"
 
 RDEPEND="
 	app-admin/ansible[${PYTHON_USEDEP}]
+	dev-python/cryptography[${PYTHON_USEDEP}]
 	dev-python/distro[${PYTHON_USEDEP}]
 	dev-python/dnspython[${PYTHON_USEDEP}]
 	dev-python/future[${PYTHON_USEDEP}]
