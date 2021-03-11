@@ -1,15 +1,15 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{6,7,8} )
+PYTHON_COMPAT=( python3_{6..9} )
 
 inherit python-single-r1 bash-completion-r1
 
 MY_PV=${PV}-1
 MY_P=${PN}-${MY_PV}
-CORE_CONFIGS_VERSION=33.3-1
+CORE_CONFIGS_VERSION=34.2-1
 
 DESCRIPTION="Builds RPM packages inside chroots"
 HOMEPAGE="https://github.com/rpm-software-management/mock"
@@ -28,12 +28,13 @@ RDEPEND="
 	app-arch/createrepo_c
 	app-arch/pigz
 	app-arch/rpm[lua,python,${PYTHON_SINGLE_USEDEP},zstd]
-	>=app-misc/distribution-gpg-keys-1.41
+	>=app-misc/distribution-gpg-keys-1.48
 	$(python_gen_cond_dep '
 		dev-python/distro[${PYTHON_MULTI_USEDEP}]
 		dev-python/jinja[${PYTHON_MULTI_USEDEP}]
 		dev-python/pyroute2[${PYTHON_MULTI_USEDEP}]
 		dev-python/requests[${PYTHON_MULTI_USEDEP}]
+		dev-python/templated-dictionary[${PYTHON_MULTI_USEDEP}]
 	')
 	sys-apps/iproute2
 	sys-apps/usermode
