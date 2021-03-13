@@ -8,26 +8,31 @@ upstream:
   #  - tcp-tls:fdns1.dismail.de:853
   #  - https://dns.digitale-gesellschaft.ch/dns-query
 
-# optional: custom IP address for domain name (with all sub-domains)
+# optional: custom IP address(es) for domain name (with all sub-domains). Multiple addresses must be separated by a comma
 # example: query "printer.lan" or "my.printer.lan" will return 192.168.178.3
-customDNS: {}
+customDNS:
   #mapping:
-  #  printer.lan: 192.168.178.3
+  #  printer.lan: 192.168.178.3,2001:0db8:85a3:08d3:1319:8a2e:0370:7344
 
-# optional: definition, which DNS resolver should be used for queries to the domain (with all sub-domains).
+# optional: definition, which DNS resolver(s) should be used for queries to the domain (with all sub-domains).
+# Multiple resolvers must be separated by a comma
 # Example: Query client.fritz.box will ask DNS server 192.168.178.1.
 # This is necessary for local network, to resolve clients by host name
-conditional: {}
+conditional:
+  # optional: replace domain in the query with other domain before resover lookup in the mapping
+  #rewrite:
+  #  example.com: fritz.box
   #mapping:
   #  fritz.box: udp:192.168.178.1
+  #  lan.net: udp:192.168.178.1,udp:192.168.178.2
 
 # optional: use black and white lists to block queries (for example ads, trackers, adult pages etc.)
 blocking:
   # definition of blacklist groups. Can be external link (http/https) or local file
   blackLists:
     ads:
+      - https://s3.amazonaws.com/lists.disconnect.me/simple_ad.txt
       - https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts
-    #  - https://s3.amazonaws.com/lists.disconnect.me/simple_ad.txt
     #  - https://mirror1.malwaredomains.com/files/justdomains
     #  - http://sysctl.org/cameleon/hosts
     #  - https://zeustracker.abuse.ch/blocklist.php?download=domainblocklist
@@ -36,7 +41,7 @@ blocking:
     #  - https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews/hosts
   # definition of whitelist groups. Attention: if the same group has black and whitelists, whitelists will be used to disable particular blacklist entries.
   # If a group has only whitelist entries -> this means only domains from this list are allowed, all other domains will be blocked
-  whiteLists: {}
+  whiteLists:
     #ads:
     #  - whitelist.txt
   # definition: which groups should be applied for which client
@@ -74,6 +79,10 @@ caching:
   # If > 0, use this value, if TTL is greater
   # Default: 0
   maxTime: -1
+  # if true, will preload DNS results for often used queries (names queried more than 5 times in a 2 hour time window)
+  # this improves the response time for often used queries, but significantly increases external traffic
+  # default: false
+  prefetching: true
 
 # optional: configuration of client name resolution
 clientLookup:
@@ -85,7 +94,9 @@ clientLookup:
     - 2
     - 1
   # optional: custom mapping of client name to IP addresses. Useful if reverse DNS does not work properly or just to have custom client names.
-  clients: {}
+  clients:
+  #  laptop:
+  #    - 192.168.178.29
 # optional: configuration for prometheus metrics endpoint
 prometheus:
   # enabled if true
@@ -102,7 +113,7 @@ queryLog:
   # if > 0, deletes log files which are older than ... days
   logRetentionDays: 7
 
-# optional: DNS listener port, default 53 (UDP and TCP)
+# optional: DNS listener port and bind ip address, default 53 (UDP and TCP). Example: 53, :53, 127.0.0.1:53
 port: 53
 # optional: HTTP listener port, default 0 = no http listener. If > 0, will be used for prometheus metrics, pprof, REST API, DoH ...
 httpPort: 4000
@@ -113,7 +124,7 @@ httpPort: 4000
 #httpsKeyFile: server.key
 # optional: use this DNS server to resolve blacklist urls and upstream DNS servers (DOH).
 # Useful if no DNS resolver is configured and blocky needs to resolve a host name. Format net:IP:port, net must be udp or tcp
-bootstrapDns: tcp+udp:1.1.1.1
+bootstrapDns: tcp:1.1.1.1
 # optional: Log level (one from debug, info, warn, error). Default: info
 logLevel: info
 # optional: Log format (text or json). Default: text

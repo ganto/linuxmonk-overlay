@@ -1,0 +1,19 @@
+commit 5f3aa191fc02d51319b1d05f69f17855d3249a7e
+Author: Reto Gantenbein <reto.gantenbein@linuxmonk.ch>
+Date:   Sat Mar 13 15:11:00 2021 +0100
+
+    Set default config file path to /etc/blocky/config.yml
+
+diff --git a/cmd/root.go b/cmd/root.go
+index f45e91e..d40f5d0 100644
+--- a/cmd/root.go
++++ b/cmd/root.go
+@@ -33,7 +33,7 @@ Complete documentation is available at https://github.com/0xERR0R/blocky`,
+ 		},
+ 	}
+ 
+-	c.PersistentFlags().StringVarP(&configPath, "config", "c", "./config.yml", "path to config file")
++	c.PersistentFlags().StringVarP(&configPath, "config", "c", "/etc/blocky/config.yml", "path to config file")
+ 	c.PersistentFlags().StringVar(&apiHost, "apiHost", "localhost", "host of blocky (API)")
+ 	c.PersistentFlags().Uint16Var(&apiPort, "apiPort", 4000, "port of blocky (API)")
+ 
