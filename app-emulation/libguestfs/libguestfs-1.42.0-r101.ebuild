@@ -29,7 +29,7 @@ REQUIRED_USE="lua? ( ${LUA_REQUIRED_USE} )
 # Failures - doc
 
 # FIXME: selinux support is automagic
-DEPEND="
+COMMON_DEPEND="
 	sys-libs/ncurses:0=
 	sys-devel/gettext
 	>=app-misc/hivex-1.3.1
@@ -85,20 +85,25 @@ DEPEND="
 	net-libs/libtirpc:=
 	sys-libs/libxcrypt:=
 	"
-RDEPEND="${DEPEND}
-	app-emulation/libguestfs-appliance
-	"
-BDEPEND="
+DEPEND="${COMMON_DEPEND}
 	dev-util/gperf
 	>=dev-lang/ocaml-4.03:=[ocamlopt]
 	dev-ml/findlib[ocamlopt]
-	dev-ml/ocaml-gettext:=
-	>=dev-ml/ounit-2
+	|| (
+		<dev-ml/ocaml-gettext-0.4.2
+		dev-ml/ocaml-gettext-stub[ocamlopt]
+	)
+	dev-ml/ounit2[ocamlopt]
 	doc? ( app-text/po4a )
-	lua? ( ${LUA_DEPS} )
 	ruby? ( dev-lang/ruby virtual/rubygems dev-ruby/rake )
-	test? ( ${DEPEND} introspection? ( dev-libs/gjs ) )
+	test? ( introspection? ( dev-libs/gjs ) )
 	"
+RDEPEND="${COMMON_DEPEND}
+	app-emulation/libguestfs-appliance
+	"
+# Upstream build scripts compile and install Lua bindings for the ABI version
+# obtained by running 'lua' on the build host
+BDEPEND="lua? ( ${LUA_DEPS} )"
 
 DOCS=( AUTHORS BUGS ChangeLog HACKING README TODO )
 
