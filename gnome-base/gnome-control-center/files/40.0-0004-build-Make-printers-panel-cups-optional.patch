@@ -1,14 +1,11 @@
-commit 61606f6a1ed1bfcaaf0103c01d54ed6a6c2bf8d3
+commit 940f65f5163165d79b267cb297453f087a28f0dc
 Author: Mart Raudsepp <leio@gentoo.org>
-Date:   Sun Jul 12 12:38:19 2020 +0300
+Date:   Sat Mar 27 17:56:04 2021 +0100
 
     build: Make printers panel (cups) optional
-    
-    As a side-effect smbclient is also optional, as it's only required
-    by the printers panel.
 
 diff --git a/meson.build b/meson.build
-index 1aec8ce97..064306fc9 100644
+index 24f54815f..d4f50a406 100644
 --- a/meson.build
 +++ b/meson.build
 @@ -162,9 +162,11 @@ common_deps = [

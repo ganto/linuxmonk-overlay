@@ -1,14 +1,14 @@
-commit c51c3a27a3da147eb7121f07654c74a40d34bdc8
+commit b5e106e4959df5688717ede3c3d63b17eb01a3c2
 Author: Mart Raudsepp <leio@gentoo.org>
-Date:   Sun Mar 15 23:21:43 2020 +0100
+Date:   Sat Mar 27 17:44:59 2021 +0100
 
     build: Restore options for bluetooth, NetworkManager and Wacom
 
 diff --git a/meson.build b/meson.build
-index 9496baee0..746c99e10 100644
+index 900216962..4470376db 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -214,7 +214,8 @@ endif
+@@ -216,7 +216,8 @@ endif
  config_h.set('HAVE_MALCONTENT', enable_malcontent,
               description: 'Define to 1 if malcontent support is enabled')
  
@@ -17,8 +17,8 @@ index 9496baee0..746c99e10 100644
 +if enable_network_manager
    # network manager
    network_manager_deps = [
-     dependency('libnm', version: '>= 1.20.0'),
-@@ -222,15 +223,20 @@ if host_is_linux
+     dependency('libnm', version: '>= 1.24.0'),
+@@ -224,15 +225,20 @@ if host_is_linux
      dependency('mm-glib', version: '>= 0.7')
    ]
  endif
@@ -42,7 +42,7 @@ index 9496baee0..746c99e10 100644
    libwacom_dep = dependency('libwacom', version: '>= 0.7')
  
    wacom_deps = [
-@@ -238,17 +244,18 @@ if host_is_linux_not_s390
+@@ -240,17 +246,18 @@ if host_is_linux_not_s390
    ]
    config_h.set('HAVE_WACOM_3D_STYLUS', libwacom_dep.version().version_compare('>= 0.27'),
                 description: 'Define to 1 if libwacom provides definition for 3D styli')
@@ -67,21 +67,19 @@ index 9496baee0..746c99e10 100644
               description: 'Define to 1 if Wacom is supportted')
  config_h.set('BUILD_THUNDERBOLT', host_is_linux_not_s390,
               description: 'Define to 1 to build the Thunderbolt panel')
-@@ -300,11 +307,11 @@ output += '     Build Tests ................................ ' + get_option('tes
- output += '     Tracing .................................... ' + enable_tracing.to_string() + '\n'
- output += '     Optimized .................................. ' + control_center_optimized.to_string() + '\n'
- output += ' Panels \n'
--output += '     GNOME Bluetooth (Bluetooth panel) .......... ' + host_is_linux_not_s390.to_string() + '\n'
-+output += '     GNOME Bluetooth (Bluetooth panel) .......... ' + enable_bluetooth.to_string() + '\n'
- output += '     Cheese (Users panel webcam support) ........ ' + enable_cheese.to_string() + '\n'
- output += '     IBus (Region panel IBus support) ........... ' + enable_ibus.to_string() + '\n'
--output += '     NetworkManager (Network panel) ............. ' + host_is_linux.to_string() + '\n'
--output += '     Wacom (Wacom tablet panel) ................. ' + host_is_linux_not_s390.to_string() + '\n'
-+output += '     NetworkManager (Network panel) ............. ' + enable_network_manager.to_string() + '\n'
-+output += '     Wacom (Wacom tablet panel) ................. ' + enable_wacom.to_string() + '\n'
- output += '     Snap support ............................... ' + enable_snap.to_string() + '\n'
- output += '     Malcontent support ......................... ' + enable_malcontent.to_string() + '\n'
+@@ -301,9 +308,9 @@ summary({
+ })
  
+ summary({
+-  'GNOME Bluetooth': host_is_linux_not_s390,
+-  'NetworkManager': host_is_linux,
+-  'Wacom': host_is_linux_not_s390,
++  'GNOME Bluetooth': enable_bluetooth,
++  'NetworkManager': enable_network_manager,
++  'Wacom': enable_wacom,
+ }, section: 'Dependencies')
+ 
+ summary({
 diff --git a/meson_options.txt b/meson_options.txt
 index 1b7b54810..2b3da02c0 100644
 --- a/meson_options.txt
@@ -132,10 +130,10 @@ index 2f4fdc5e3..6798f6997 100644
  
  panels_list = []
 diff --git a/panels/power/meson.build b/panels/power/meson.build
-index 1700c91e8..f9e478938 100644
+index 625059dd2..e3b8c4233 100644
 --- a/panels/power/meson.build
 +++ b/panels/power/meson.build
-@@ -41,11 +41,11 @@ deps = common_deps + [
+@@ -46,11 +46,11 @@ deps = common_deps + [
    upower_glib_dep
  ]
  

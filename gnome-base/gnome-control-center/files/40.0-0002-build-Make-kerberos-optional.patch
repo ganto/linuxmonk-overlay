@@ -1,14 +1,14 @@
-commit 98c9ad077bfa3fc7db7b79d67c62b5e0f79974cf
+commit 842cc995931cf9e4c05581aee5bfcc520a0755f8
 Author: Mart Raudsepp <leio@gentoo.org>
-Date:   Sun Mar 15 23:31:04 2020 +0100
+Date:   Sat Mar 27 17:51:16 2021 +0100
 
     build: Make kerberos optional
 
 diff --git a/meson.build b/meson.build
-index 746c99e10..091ba9c88 100644
+index 4470376db..acf68a1da 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -260,6 +260,11 @@ config_h.set('HAVE_WACOM', enable_wacom,
+@@ -262,6 +262,11 @@ config_h.set('HAVE_WACOM', enable_wacom,
  config_h.set('BUILD_THUNDERBOLT', host_is_linux_not_s390,
               description: 'Define to 1 to build the Thunderbolt panel')
  
@@ -33,7 +33,7 @@ index 2b3da02c0..5c558557d 100644
  option('privileged_group', type: 'string', value: 'wheel', description: 'name of group that has elevated permissions')
  option('snap', type: 'boolean', value: false, description: 'build with Snap support')
 diff --git a/panels/user-accounts/cc-realm-manager.c b/panels/user-accounts/cc-realm-manager.c
-index 9b8077e49..ead3dc36e 100644
+index bc43e6d0f..f22415a55 100644
 --- a/panels/user-accounts/cc-realm-manager.c
 +++ b/panels/user-accounts/cc-realm-manager.c
 @@ -22,7 +22,9 @@
@@ -46,7 +46,7 @@ index 9b8077e49..ead3dc36e 100644
  
  #include <glib.h>
  #include <glib/gi18n.h>
-@@ -612,6 +614,7 @@ login_closure_free (gpointer data)
+@@ -596,6 +598,7 @@ login_closure_free (gpointer data)
          g_slice_free (LoginClosure, login);
  }
  
@@ -54,26 +54,26 @@ index 9b8077e49..ead3dc36e 100644
  static krb5_error_code
  login_perform_kinit (krb5_context k5,
                       const gchar *realm,
-@@ -675,6 +678,7 @@ login_perform_kinit (krb5_context k5,
+@@ -657,6 +660,7 @@ login_perform_kinit (krb5_context k5,
  
          return code;
  }
 +#endif
  
  static void
- kinit_thread_func (GTask *task,
-@@ -682,6 +686,7 @@ kinit_thread_func (GTask *task,
+ kinit_thread_func (GTask *t,
+@@ -664,6 +668,7 @@ kinit_thread_func (GTask *t,
                     gpointer task_data,
                     GCancellable *cancellable)
  {
 +#ifdef HAVE_KERBEROS
+         g_autoptr(GTask) task = t;
          LoginClosure *login = task_data;
          krb5_context k5 = NULL;
-         krb5_error_code code;
-@@ -762,6 +767,10 @@ kinit_thread_func (GTask *task,
-                 krb5_free_context (k5);
+@@ -740,6 +745,10 @@ kinit_thread_func (GTask *t,
  
-         g_object_unref (task);
+         if (k5)
+                 krb5_free_context (k5);
 +#else
 +        g_task_return_new_error (task, CC_REALM_ERROR, CC_REALM_ERROR_GENERIC,
 +                                 _("gnome-control-center was built without kerberos support"));

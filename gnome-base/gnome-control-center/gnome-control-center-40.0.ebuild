@@ -1,8 +1,8 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-PYTHON_COMPAT=( python3_{6,7,8} )
+PYTHON_COMPAT=( python3_{7..9} )
 
 inherit gnome.org gnome2-utils meson python-any-r1 xdg
 
@@ -25,7 +25,7 @@ KEYWORDS="~amd64"
 # printer panel requires cups and smbclient (the latter is not patched yet to be separately optional)
 # First block is toplevel meson.build deps in order of occurrence (plus deeper deps if in same conditional). Second block is dependency() from subdir meson.builds, sorted by directory name occurrence order
 DEPEND="
-	gui-libs/libhandy:1=
+	>=gui-libs/libhandy-1:1=
 	gnome-online-accounts? ( >=net-libs/gnome-online-accounts-3.25.3:= )
 	>=media-sound/pulseaudio-2.0[glib]
 	>=sys-apps/accountsservice-0.6.39
@@ -34,10 +34,11 @@ DEPEND="
 	>=dev-libs/glib-2.56.0:2
 	>=gnome-base/gnome-desktop-3.27.90:3=
 	>=gnome-base/gnome-settings-daemon-3.37.1[colord,input_devices_wacom?]
-	>=gnome-base/gsettings-desktop-schemas-3.31.0
+	>=gnome-base/gsettings-desktop-schemas-3.37.0
 	dev-libs/libxml2:2
 	>=sys-auth/polkit-0.114
 	>=sys-power/upower-0.99.8:=
+	>=dev-libs/libgudev-232
 	x11-libs/libX11
 	>=x11-libs/libXi-1.2
 	media-libs/libepoxy
@@ -53,7 +54,7 @@ DEPEND="
 	wayland? ( dev-libs/libgudev )
 	networkmanager? (
 		>=net-libs/libnma-1.8.0
-		>=net-misc/networkmanager-1.12.0:=[modemmanager]
+		>=net-misc/networkmanager-1.24.0:=[modemmanager]
 		>=net-misc/modemmanager-0.7.990 )
 	bluetooth? ( >=net-wireless/gnome-bluetooth-3.18.2:= )
 	input_devices_wacom? ( >=dev-libs/libwacom-0.7 )
@@ -124,11 +125,11 @@ BDEPEND="
 
 PATCHES=(
 	# Patches taken from Gentoo patchset (gnome-control-center-3.36.4-patchset.tar.xz)
-	"${FILESDIR}"/3.38.0-0002-build-Restore-options-for-bluetooth-NetworkManager-a.patch
-	"${FILESDIR}"/3.38.0-0003-build-Make-kerberos-optional.patch
-	"${FILESDIR}"/3.38.0-0004-build-Make-grilo-and-gnome-online-accounts-optional.patch
-	"${FILESDIR}"/3.38.0-0005-build-Make-printers-panel-cups-optional.patch
-	"${FILESDIR}"/3.38.0-0006-Fix-absolute-paths-to-be-dependent-on-build-configur.patch
+	"${FILESDIR}"/40.0-0001-build-Restore-options-for-bluetooth-NetworkManager-a.patch
+	"${FILESDIR}"/40.0-0002-build-Make-kerberos-optional.patch
+	"${FILESDIR}"/40.0-0003-build-Make-grilo-and-gnome-online-accounts-optional.patch
+	"${FILESDIR}"/40.0-0004-build-Make-printers-panel-cups-optional.patch
+	"${FILESDIR}"/40.0-0005-Fix-absolute-paths-to-be-dependent-on-build-configur.patch
 )
 
 python_check_deps() {
@@ -157,6 +158,7 @@ src_configure() {
 		-Dgrilo=$(usex flickr enabled disabled)
 		$(meson_use ibus)
 		-Dkerberos=$(usex kerberos enabled disabled)
+		-Dmalcontent=false # unpackaged
 		$(meson_use networkmanager network_manager)
 		-Dprivileged_group=wheel
 		-Dsnap=false
