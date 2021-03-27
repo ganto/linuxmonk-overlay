@@ -1,17 +1,15 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
-inherit meson xdg vala virtualx
+inherit gnome.org meson xdg vala virtualx
 
-DESCRIPTION="Library with GTK widgets for mobile phones"
+DESCRIPTION="Building blocks for modern adaptive GNOME apps"
 HOMEPAGE="https://gitlab.gnome.org/GNOME/libhandy/"
-SRC_URI="https://gitlab.gnome.org/GNOME/libhandy/-/archive/${PV}/${P}.tar.gz"
 
 LICENSE="LGPL-2.1+"
-SLOT="1/0" # It may or may not break ABI in future versions at this point; if new
-# SLOT happens, it'll likely file conflict on gtk-doc and glade library and catalog
+SLOT="1"
 KEYWORDS="~amd64"
 
 IUSE="examples glade gtk-doc +introspection test +vala"
@@ -26,18 +24,14 @@ RDEPEND="
 "
 DEPEND="${RDEPEND}"
 BDEPEND="
-	vala? ( $(vala_depend) )
 	dev-libs/libxml2:2
 	dev-util/glib-utils
 	>=sys-devel/gettext-0.19.8
 	virtual/pkgconfig
 	gtk-doc? ( dev-util/gtk-doc
 		app-text/docbook-xml-dtd:4.3 )
+	vala? ( $(vala_depend) )
 "
-
-#PATCHES=(
-#	"${FILESDIR}"/0.0.13-glade3.36-compat{1,2}.patch
-#)
 
 src_prepare() {
 	use vala && vala_src_prepare
@@ -47,7 +41,6 @@ src_prepare() {
 src_configure() {
 	local emesonargs=(
 		-Dprofiling=false # -pg passing
-		-Dstatic=false
 		$(meson_feature introspection)
 		$(meson_use vala vapi)
 		$(meson_use gtk-doc gtk_doc)
