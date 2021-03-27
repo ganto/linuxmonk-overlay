@@ -1,0 +1,23 @@
+commit 880edb4e58f1afcd6e5fe6622dcedf37a6b38f17
+Author: Mart Raudsepp <leio@gentoo.org>
+Date:   Sat Mar 27 12:34:50 2021 +0100
+
+    tests: Skip metar tests when METAR_SOURCES couldn't be resolved
+
+diff --git a/libgweather/test_libgweather.c b/libgweather/test_libgweather.c
+index f97683a2..14658cec 100644
+--- a/libgweather/test_libgweather.c
++++ b/libgweather/test_libgweather.c
+@@ -434,6 +434,12 @@ test_metar_weather_stations (void)
+     msg = soup_message_new ("GET", METAR_SOURCES);
+     session = soup_session_new ();
+     soup_session_send_message (session, msg);
++    if (msg->status_code == SOUP_STATUS_CANT_RESOLVE) {
++        g_test_skip ("Could not resolve " METAR_SOURCES " - network sandboxed?");
++        g_object_unref (session);
++        g_object_unref (msg);
++        return;
++    }
+     if (msg->status_code == SOUP_STATUS_SSL_FAILED) {
+         g_test_message ("SSL/TLS failure, please check your glib-networking installation");
+         g_test_failed ();
