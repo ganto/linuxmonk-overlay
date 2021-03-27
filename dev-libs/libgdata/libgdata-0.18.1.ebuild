@@ -1,4 +1,4 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -29,7 +29,6 @@ RDEPEND="
 "
 DEPEND="${RDEPEND}"
 BDEPEND="
-	>=dev-util/meson-0.50.0
 	dev-util/glib-utils
 	gtk-doc? ( >=dev-util/gtk-doc-1.25
 		app-text/docbook-xml-dtd:4.3 )
