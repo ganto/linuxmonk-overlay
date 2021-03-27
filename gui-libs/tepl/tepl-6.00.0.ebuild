@@ -1,4 +1,4 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -9,11 +9,11 @@ DESCRIPTION="GtkSourceView-based text editors and IDE helper library"
 HOMEPAGE="https://wiki.gnome.org/Projects/Tepl"
 
 LICENSE="LGPL-2.1+"
-SLOT="5"
+SLOT="6"
 KEYWORDS="~amd64"
-IUSE="test"
+IUSE="gtk-doc"
 
-DEPEND="
+RDEPEND="
 	>=dev-libs/glib-2.64:2
 	>=dev-libs/gobject-introspection-1.42:=
 	>=x11-libs/gtk+-3.22:3[introspection]
@@ -22,6 +22,7 @@ DEPEND="
 	>=dev-libs/libxml2-2.5:2
 	app-i18n/uchardet
 "
+DEPEND="${RDEPEND}"
 BDEPEND="
 	>=sys-devel/gettext-0.19.6
 	dev-util/glib-utils
@@ -30,6 +31,13 @@ BDEPEND="
 "
 
 RESTRICT="!test? ( test )"
+
+src_configure() {
+	local emesonargs=(
+		$(meson_use gtk-doc gtk_doc)
+	)
+	meson_src_configure
+}
 
 src_test() {
 	virtx meson_src_test
