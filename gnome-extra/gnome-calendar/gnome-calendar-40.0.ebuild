@@ -1,4 +1,4 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -19,9 +19,9 @@ DEPEND="
 	>=gnome-extra/evolution-data-server-3.33.2:=[gtk]
 	net-libs/libsoup:2.4
 	>=dev-libs/libdazzle-3.33.1
-	>=gui-libs/libhandy-0.0.9:0.0=
-	>=dev-libs/glib-2.58.0:2
-	>=x11-libs/gtk+-3.22.20:3
+	>=gui-libs/libhandy-1:1=
+	>=dev-libs/glib-2.67.5:2
+	>=x11-libs/gtk+-3.22.0:3
 	>=net-libs/gnome-online-accounts-3.2.0:=
 	>=dev-libs/libgweather-3.27.2:=
 	>=app-misc/geoclue-2.4:2.0
