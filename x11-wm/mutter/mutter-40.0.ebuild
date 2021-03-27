@@ -1,4 +1,4 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -10,7 +10,7 @@ HOMEPAGE="https://gitlab.gnome.org/GNOME/mutter/"
 LICENSE="GPL-2+"
 SLOT="0/7" # 0/libmutter_api_version - ONLY gnome-shell (or anything using mutter-clutter-<api_version>.pc) should use the subslot
 
-IUSE="elogind input_devices_wacom +introspection screencast +sysprof systemd test udev wayland"
+IUSE="elogind input_devices_wacom +introspection screencast sysprof systemd test udev wayland"
 # native backend requires gles3 for hybrid graphics blitting support, udev and a logind provider
 REQUIRED_USE="
 	wayland? ( ^^ ( elogind systemd ) udev )
@@ -55,6 +55,7 @@ DEPEND="
 	>=media-libs/libcanberra-0.26
 	sys-apps/dbus
 	media-libs/mesa[X(+),egl]
+	sysprof? ( >=dev-util/sysprof-capture-3.38.0:4 )
 	wayland? (
 		>=dev-libs/wayland-protocols-1.19
 		>=dev-libs/wayland-1.18.0
@@ -78,12 +79,11 @@ RDEPEND="${DEPEND}
 "
 DEPEND="${DEPEND}
 	x11-base/xorg-proto
-	sysprof? ( >=dev-util/sysprof-capture-3.38.0:4 )
+	sysprof? ( >=dev-util/sysprof-common-3.38.0 )
 "
 # wayland bdepend for wayland-scanner, xorg-server for cvt utility
 BDEPEND="
 	dev-libs/wayland
-	>=dev-util/meson-0.50.0
 	dev-util/gdbus-codegen
 	dev-util/glib-utils
 	>=sys-devel/gettext-0.19.8
