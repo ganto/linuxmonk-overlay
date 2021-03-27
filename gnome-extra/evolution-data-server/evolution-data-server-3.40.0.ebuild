@@ -1,17 +1,17 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 VALA_USE_DEPEND="vapigen"
 
-inherit cmake-utils db-use flag-o-matic gnome2 systemd vala virtualx
+inherit cmake db-use flag-o-matic gnome2 systemd vala virtualx
 
 DESCRIPTION="Evolution groupware backend"
 HOMEPAGE="https://wiki.gnome.org/Apps/Evolution"
 
 # Note: explicitly "|| ( LGPL-2 LGPL-3 )", not "LGPL-2+".
 LICENSE="|| ( LGPL-2 LGPL-3 ) BSD Sleepycat"
-SLOT="0/62-25-20" # subslot = libcamel-1.2/libedataserver-1.2/libebook-1.2.so soname version
+SLOT="0/62-26-20" # subslot = libcamel-1.2/libedataserver-1.2/libebook-1.2.so soname version
 
 IUSE="berkdb +gnome-online-accounts +gtk gtk-doc +introspection ipv6 ldap kerberos oauth vala +weather"
 REQUIRED_USE="vala? ( introspection )"
@@ -56,6 +56,12 @@ RDEPEND="
 	weather? ( >=dev-libs/libgweather-3.10:2= )
 "
 DEPEND="${RDEPEND}
+	vala? ( $(vala_depend)
+		net-libs/libsoup:2.4[vala]
+		dev-libs/libical[vala]
+	)
+"
+BDEPEND="
 	dev-util/gdbus-codegen
 	dev-util/glib-utils
 	dev-util/gperf
@@ -64,10 +70,6 @@ DEPEND="${RDEPEND}
 	>=dev-util/intltool-0.35.5
 	>=sys-devel/gettext-0.18.3
 	virtual/pkgconfig
-	vala? ( $(vala_depend)
-		net-libs/libsoup:2.4[vala]
-		dev-libs/libical[vala]
-	)
 "
 
 # Some tests fail due to missing locales.
@@ -78,7 +80,7 @@ RESTRICT="test !test? ( test )"
 # global scope PATCHES or DOCS array mustn't be used due to double default_src_prepare call
 src_prepare() {
 	use vala && vala_src_prepare
-	cmake-utils_src_prepare
+	cmake_src_prepare
 	gnome2_src_prepare
 
 	eapply "${FILESDIR}"/3.36.5-gtk-doc-1.32-compat.patch
@@ -128,19 +130,19 @@ src_configure() {
 		-DENABLE_VALA_BINDINGS=$(usex vala)
 	)
 
-	cmake-utils_src_configure
+	cmake_src_configure
 }
 
 src_compile() {
-	cmake-utils_src_compile
+	cmake_src_compile
 }
 
 src_test() {
-	virtx cmake-utils_src_test
+	virtx cmake_src_test
 }
 
 src_install() {
-	cmake-utils_src_install
+	cmake_src_install
 
 	if use ldap; then
 		insinto /etc/openldap/schema
