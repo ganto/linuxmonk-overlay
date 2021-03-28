@@ -1,9 +1,9 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
-inherit cmake-utils gnome2 flag-o-matic readme.gentoo-r1
+inherit cmake gnome2 flag-o-matic readme.gentoo-r1
 
 DESCRIPTION="Integrated mail, addressbook and calendaring functionality"
 HOMEPAGE="https://wiki.gnome.org/Apps/Evolution"
@@ -21,19 +21,18 @@ KEYWORDS="~amd64"
 # dconf explicitely needed for backup plugin
 # gnome-desktop support is optional with --enable-gnome-desktop
 # automagic libunity dep
-# >=webkit-gtk-2.26.4-r1 and >=gspell-1.8 to ensure all use enchant:2
-# TODO: Adjust webkit-gtk dep to actually be that once it's keyworded for needed arches
-COMMON_DEPEND="
+# >=gspell-1.8 to ensure it uses enchant:2 like webkit-gtk
+DEPEND="
 	>=app-crypt/gcr-3.4:=[gtk]
 	>=app-text/enchant-2.2.0:2
-	>=dev-libs/glib-2.46:2[dbus]
+	>=dev-libs/glib-2.56:2[dbus]
 	>=dev-libs/libxml2-2.7.3:2
 	>=gnome-base/gnome-desktop-2.91.3:3=
 	>=gnome-base/gsettings-desktop-schemas-2.91.92
 	>=gnome-extra/evolution-data-server-${PV}:=[gtk,weather?]
 	>=media-libs/libcanberra-0.25[gtk3]
 	>=net-libs/libsoup-2.42:2.4
-	>=net-libs/webkit-gtk-2.24.0:4
+	>=net-libs/webkit-gtk-2.28.0:4[spell?]
 	>=x11-libs/cairo-1.9.15:=[glib]
 	>=x11-libs/gdk-pixbuf-2.24:2
 	>=x11-libs/gtk+-3.22:3
@@ -63,7 +62,10 @@ COMMON_DEPEND="
 	weather? ( >=dev-libs/libgweather-3.10:2= )
 	ytnef? ( net-mail/ytnef )
 "
-DEPEND="${COMMON_DEPEND}
+RDEPEND="${DEPEND}
+	highlight? ( app-text/highlight )
+"
+BDEPEND="
 	app-text/docbook-xml-dtd:4.1.2
 	dev-util/gdbus-codegen
 	dev-util/glib-utils
@@ -73,10 +75,6 @@ DEPEND="${COMMON_DEPEND}
 	>=dev-util/intltool-0.40.0
 	>=sys-devel/gettext-0.18.3
 	virtual/pkgconfig
-"
-RDEPEND="${COMMON_DEPEND}
-	highlight? ( app-text/highlight )
-	!gnome-extra/evolution-exchange
 "
 
 DISABLE_AUTOFORMATTING="yes"
@@ -92,10 +90,10 @@ x-scheme-handler/https=firefox.desktop
 file from /usr/share/applications if you use a different browser)."
 
 # global scope PATCHES or DOCS array mustn't be used due to double default_src_prepare
-# call; if needed, set them after cmake-utils_src_prepare call, if that works
+# call; if needed, set them after cmake_src_prepare call, if that works
 
 src_prepare() {
-	cmake-utils_src_prepare
+	cmake_src_prepare
 	gnome2_src_prepare
 }
 
@@ -124,19 +122,19 @@ src_configure() {
 		-DWITH_GLADE_CATALOG=OFF
 	)
 
-	cmake-utils_src_configure
+	cmake_src_configure
 }
 
 src_compile() {
-	cmake-utils_src_compile
+	cmake_src_compile
 }
 
 src_test() {
-	cmake-utils_src_test
+	cmake_src_test
 }
 
 src_install() {
-	cmake-utils_src_install
+	cmake_src_install
 
 	# Problems with prelink:
 	# https://bugzilla.gnome.org/show_bug.cgi?id=731680
