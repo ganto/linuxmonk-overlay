@@ -1,4 +1,4 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -18,6 +18,7 @@ RDEPEND="
 	>=x11-libs/gtk+-3.22:3[X(+)]
 	>=dev-cpp/gtkmm-3.3.18:3.0
 	>=gnome-base/libgtop-2.37.2:2=
+	>=gui-libs/libhandy-1.0:1
 	>=gnome-base/librsvg-2.35:2
 	>=dev-libs/libxml2-2.0:2
 	X? ( >=x11-libs/libwnck-2.91.0:3 )
