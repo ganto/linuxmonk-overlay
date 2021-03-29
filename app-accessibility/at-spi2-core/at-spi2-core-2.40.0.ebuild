@@ -1,4 +1,4 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -15,7 +15,7 @@ KEYWORDS="~amd64"
 
 RDEPEND="
 	>=sys-apps/dbus-1.5[${MULTILIB_USEDEP}]
-	>=dev-libs/glib-2.36:2[${MULTILIB_USEDEP}]
+	>=dev-libs/glib-2.62.0:2[${MULTILIB_USEDEP}]
 	introspection? ( >=dev-libs/gobject-introspection-1.54.0:= )
 	X? (
 		x11-libs/libX11[${MULTILIB_USEDEP}]
@@ -25,11 +25,11 @@ RDEPEND="
 "
 DEPEND="${RDEPEND}"
 BDEPEND="
-	>=dev-util/meson-0.50.0
 	dev-util/glib-utils
 	gtk-doc? (
 		>=dev-util/gtk-doc-1.25
-		app-text/docbook-xml-dtd:4.3 )
+		app-text/docbook-xml-dtd:4.3
+	)
 	>=sys-devel/gettext-0.19.8
 	virtual/pkgconfig
 "
