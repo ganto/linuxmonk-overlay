@@ -1,4 +1,4 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -9,17 +9,19 @@ HOMEPAGE="https://gitlab.gnome.org/GNOME/gnome-screenshot"
 
 LICENSE="GPL-2+"
 SLOT="0"
-IUSE=""
+IUSE="X"
 KEYWORDS="~amd64"
 
 # libcanberra 0.26-r2 is needed for gtk+:3 fixes
 DEPEND="
-	x11-libs/libX11
-	x11-libs/libXext
+	X? (
+		x11-libs/libX11
+		x11-libs/libXext
+	)
 	>=dev-libs/glib-2.35.1:2[dbus]
 	>=x11-libs/gtk+-3.12.0:3
 	>=media-libs/libcanberra-0.26-r2[gtk3]
-	gui-libs/libhandy:1
+	>=gui-libs/libhandy-1:1=
 "
 RDEPEND="${DEPEND}
 	>=gnome-base/gsettings-desktop-schemas-0.1.0
@@ -35,6 +37,13 @@ BDEPEND="
 DOC_CONTENTS="${P} saves screenshots in ~/Pictures/ and defaults to
 	non-interactive mode when launched from a terminal. If you want to choose
 	where to save the screenshot, run 'gnome-screenshot --interactive'"
+
+src_configure() {
+	local emesonargs=(
+		$(meson_feature X x11)
+	)
+	meson_src_configure
+}
 
 src_install() {
 	meson_src_install
