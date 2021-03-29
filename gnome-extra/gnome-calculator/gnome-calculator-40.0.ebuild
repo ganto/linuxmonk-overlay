@@ -1,4 +1,4 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -23,7 +23,8 @@ RDEPEND="
 	>=dev-libs/libgee-0.20.0:0.8
 	dev-libs/mpc:=
 	dev-libs/mpfr:0=
-	>=x11-libs/gtk+-3.19.3:3
+	>=gui-libs/libhandy-1.0.0:1
+	>=x11-libs/gtk+-3.24.1:3
 	>=x11-libs/gtksourceview-4.0.2:4
 	introspection? ( >=dev-libs/gobject-introspection-1.58:= )
 "
