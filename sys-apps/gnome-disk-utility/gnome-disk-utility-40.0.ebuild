@@ -19,6 +19,7 @@ DEPEND="
 	>=dev-libs/glib-2.31:2
 	>=x11-libs/gtk+-3.16.0:3
 	>=media-libs/libcanberra-0.1[gtk3]
+	>=gui-libs/libhandy-1.2:1
 	>=app-arch/xz-utils-5.0.5
 	>=x11-libs/libnotify-0.7:=
 	>=app-crypt/libsecret-0.7
