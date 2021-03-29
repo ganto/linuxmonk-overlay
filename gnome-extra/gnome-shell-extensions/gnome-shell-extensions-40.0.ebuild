@@ -1,23 +1,22 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
-inherit eapi7-ver gnome.org readme.gentoo-r1 meson xdg
+EAPI=7
+inherit gnome.org readme.gentoo-r1 meson xdg
 
 DESCRIPTION="JavaScript extensions for GNOME Shell"
 HOMEPAGE="https://wiki.gnome.org/Projects/GnomeShell/Extensions"
 
 LICENSE="GPL-2+"
 SLOT="0"
-IUSE="test"
 KEYWORDS="~amd64"
 
-COMMON_DEPEND="
+DEPEND="
 	>=dev-libs/glib-2.26:2
 	>=gnome-base/libgtop-2.28.3[introspection]
 	>=app-eselect/eselect-gnome-shell-extensions-20111211
 "
-RDEPEND="${COMMON_DEPEND}
+RDEPEND="${DEPEND}
 	>=dev-libs/gjs-1.29
 	dev-libs/gobject-introspection:=
 	dev-libs/atk[introspection]
@@ -31,14 +30,11 @@ RDEPEND="${COMMON_DEPEND}
 	x11-themes/adwaita-icon-theme
 	>=x11-wm/mutter-3.32[introspection]
 "
-DEPEND="${COMMON_DEPEND}
+BDEPEND="
 	dev-lang/sassc
 	>=sys-devel/gettext-0.19.8
 	virtual/pkgconfig
-	test? ( dev-lang/spidermonkey:68 )
 "
-
-RESTRICT="!test? ( test )"
 
 DISABLE_AUTOFORMATTING="yes"
 DOC_CONTENTS="Installed extensions installed are initially disabled by default.
