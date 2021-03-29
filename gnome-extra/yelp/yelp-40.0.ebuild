@@ -1,10 +1,10 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
-GNOME2_LA_PUNT="yes"
+EAPI=7
+GNOME2_EAUTORECONF="yes"
 
-inherit autotools gnome2
+inherit gnome2
 
 DESCRIPTION="Help browser for GNOME"
 HOMEPAGE="https://wiki.gnome.org/Apps/Yelp"
@@ -26,7 +26,8 @@ RDEPEND="
 	>=x11-libs/gtk+-3.13.3:3
 	x11-themes/adwaita-icon-theme
 "
-DEPEND="${RDEPEND}
+DEPEND="${RDEPEND}"
+BDEPEND="
 	dev-libs/appstream-glib
 	>=dev-util/gtk-doc-am-1.13
 	dev-util/glib-utils
@@ -35,14 +36,11 @@ DEPEND="${RDEPEND}
 	virtual/pkgconfig
 "
 
-src_prepare() {
+PATCHES=(
 	# Fix compatibility with Gentoo's sys-apps/man
 	# https://bugzilla.gnome.org/show_bug.cgi?id=648854
-	eapply "${FILESDIR}"/${PN}-3.20.0-man-compatibility.patch
-
-	eautoreconf
-	gnome2_src_prepare
-}
+	"${FILESDIR}"/${PN}-3.20.0-man-compatibility.patch # needs eautoreconf
+)
 
 src_configure() {
 	gnome2_src_configure \
