@@ -1,8 +1,7 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
-PYTHON_COMPAT=( python3_{6,7,8} )
+EAPI=7
 
 inherit gnome.org gnome2-utils meson xdg
 
@@ -19,11 +18,13 @@ RDEPEND="
 	>=dev-libs/glib-2.32:2
 	>=dev-libs/gobject-introspection-1.35.9:=
 	>=dev-libs/libunistring-0.9.5
+	>=gui-libs/libhandy-1.1:1=
 	>=x11-libs/gtk+-3.20:3[introspection]
 	x11-libs/gdk-pixbuf:2
 	>=x11-libs/pango-1.36[introspection]
 "
-DEPEND="${RDEPEND}
+DEPEND="${RDEPEND}"
+BDEPEND="
 	dev-libs/libxml2:2
 	dev-util/glib-utils
 	>=sys-devel/gettext-0.19.8
