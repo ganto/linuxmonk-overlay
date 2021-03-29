@@ -1,9 +1,9 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
-inherit gnome2
+inherit gnome2 meson
 
 DESCRIPTION="Collection of tools for building and converting documentation"
 HOMEPAGE="https://wiki.gnome.org/Apps/Yelp/Tools"
@@ -17,9 +17,9 @@ RDEPEND="
 	>=dev-libs/libxml2-2.6.12
 	>=dev-libs/libxslt-1.1.8
 	dev-util/itstool
-	>=gnome-extra/yelp-xsl-3.17.3
-	virtual/awk
+	>=gnome-extra/yelp-xsl-3.38.0
 "
-DEPEND="${RDEPEND}
+DEPEND="${RDEPEND}"
+BDEPEND="
 	virtual/pkgconfig
 "
