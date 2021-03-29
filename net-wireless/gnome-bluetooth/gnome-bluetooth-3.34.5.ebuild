@@ -1,4 +1,4 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -13,7 +13,7 @@ IUSE="gtk-doc +introspection"
 KEYWORDS="~amd64"
 
 DEPEND="
-	>=dev-libs/glib-2.38:2
+	>=dev-libs/glib-2.44:2
 	>=x11-libs/gtk+-3.12:3[introspection?]
 	media-libs/libcanberra[gtk3]
 	>=x11-libs/libnotify-0.7.0
@@ -27,7 +27,6 @@ RDEPEND="${DEPEND}
 "
 BDEPEND="
 	>=dev-util/meson-0.49.0
-	!net-wireless/bluez-gnome
 	dev-libs/libxml2:2
 	dev-util/gdbus-codegen
 	dev-util/glib-utils
