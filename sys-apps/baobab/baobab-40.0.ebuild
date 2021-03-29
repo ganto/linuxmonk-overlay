@@ -1,28 +1,27 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
-inherit gnome.org gnome2-utils meson vala xdg
+EAPI=7
+
+inherit gnome.org gnome2-utils vala xdg meson
 
 DESCRIPTION="Disk usage browser for GNOME"
 HOMEPAGE="https://wiki.gnome.org/Apps/Baobab"
 
 LICENSE="GPL-2+ FDL-1.1+"
 SLOT="0"
-IUSE=""
 KEYWORDS="~amd64"
 
 RDEPEND="
 	>=dev-libs/glib-2.44:2
-	>=x11-libs/gtk+-3.20:3
-"
-DEPEND="${RDEPEND}
+	>=x11-libs/gtk+-3.24.1:3
+	>=gui-libs/libhandy-1.0:1="
+DEPEND="${RDEPEND}"
+BDEPEND="
 	$(vala_depend)
-	dev-libs/appstream-glib
 	dev-util/itstool
-	>=sys-devel/gettext-0.19.8
-	virtual/pkgconfig
-"
+	>=sys-devel/gettext-0.21
+	virtual/pkgconfig"
 
 src_prepare() {
 	vala_src_prepare
