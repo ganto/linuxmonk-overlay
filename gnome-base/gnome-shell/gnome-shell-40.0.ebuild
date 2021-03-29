@@ -1,8 +1,8 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-PYTHON_COMPAT=( python3_{6,7,8} )
+PYTHON_COMPAT=( python3_{7..9} )
 
 inherit gnome.org gnome2-utils meson python-single-r1 virtualx xdg
 
@@ -27,7 +27,8 @@ DEPEND="
 	>=dev-libs/gobject-introspection-1.49.1:=
 	>=dev-libs/gjs-1.65.1
 	>=x11-libs/gtk+-3.15.0:3[introspection]
-	>=x11-wm/mutter-3.38.0:0/7[introspection]
+	>=x11-libs/gtk+-4.0:4[introspection]
+	>=x11-wm/mutter-40.0:0/8[introspection]
 	>=sys-auth/polkit-0.100[introspection]
 	>=gnome-base/gsettings-desktop-schemas-3.33.1
 	>=x11-libs/startup-notification-0.11
@@ -41,7 +42,7 @@ DEPEND="
 		net-libs/libnma[introspection]
 		>=app-crypt/libsecret-0.18
 		dev-libs/dbus-glib )
-	systemd? ( >=sys-apps/systemd-31
+	systemd? ( >=sys-apps/systemd-242
 		>=gnome-base/gnome-desktop-3.34.2:3=[systemd] )
 	elogind? ( >=sys-auth/elogind-237 )
 	app-arch/gnome-autoar
@@ -122,14 +123,8 @@ BDEPEND="
 "
 
 PATCHES=(
-	# origin/gnome-3-36@03062d0d9d9f + try to fix crashes related to custom stylesheet; triggered often by package installs (probably desktop database update), screen unlock, etc
-	# https://gitlab.gnome.org/GNOME/gnome-shell/issues/1265
-	# https://gitlab.gnome.org/GNOME/gnome-shell/merge_requests/536
-	"${FILESDIR}"/3.36.6-custom_stylesheet_crash.patch
 	# Fix automagic gnome-bluetooth dep, bug #398145
 	"${FILESDIR}"/3.34-optional-bluetooth.patch
-	# Change favorites defaults, bug #479918
-	"${FILESDIR}"/3.36-defaults.patch
 )
 
 src_prepare() {
