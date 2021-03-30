@@ -1,8 +1,8 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="7"
-PYTHON_COMPAT=( python3_{6,7,8} )
+EAPI=7
+PYTHON_COMPAT=( python3_{7..9} )
 PYTHON_REQ_USE="xml"
 VALA_MIN_API_VERSION="0.28"
 
@@ -25,7 +25,7 @@ REQUIRED_USE="
 
 RDEPEND="
 	>=dev-libs/libpeas-1.14.1[gtk]
-	>=app-editors/gedit-3.38
+	>=app-editors/gedit-40.0
 
 	>=dev-libs/glib-2.32:2
 	>=x11-libs/gtk+-3.9:3
@@ -34,7 +34,7 @@ RDEPEND="
 	python? (
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
-			>=app-editors/gedit-3.38[introspection,python,${PYTHON_SINGLE_USEDEP}]
+			>=app-editors/gedit-40.0[python,${PYTHON_SINGLE_USEDEP}]
 			dev-libs/libpeas[python,${PYTHON_SINGLE_USEDEP}]
 			>=dev-python/dbus-python-0.82[${PYTHON_MULTI_USEDEP}]
 			dev-python/pycairo[${PYTHON_MULTI_USEDEP}]
@@ -94,7 +94,7 @@ src_configure() {
 
 src_install() {
 	meson_src_install
-	python_optimize "${ED}/usr/$(get_libdir)/gedit/plugins/"
+	use python && python_optimize "${ED}/usr/$(get_libdir)/gedit/plugins/"
 }
 
 pkg_postinst() {
