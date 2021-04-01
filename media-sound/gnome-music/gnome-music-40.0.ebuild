@@ -1,8 +1,8 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-PYTHON_COMPAT=( python3_{6,7,8} )
+PYTHON_COMPAT=( python3_{7..9} )
 
 inherit gnome.org gnome2-utils meson python-single-r1 xdg
 
@@ -24,20 +24,20 @@ DEPEND="${PYTHON_DEPS}
 	>=dev-libs/libdazzle-3.28.0[introspection]
 	>=media-libs/libmediaart-1.9.1:2.0[introspection]
 	net-libs/libsoup:2.4[introspection]
-	>=app-misc/tracker-2.3.0:=[introspection(+)]
+	>=app-misc/tracker-3.0.0:=[introspection(+)]
 	$(python_gen_cond_dep '
-		>=dev-python/pygobject-3.29.1:3[cairo,${PYTHON_MULTI_USEDEP}]
+		>=dev-python/pygobject-3.36.1:3[cairo,${PYTHON_MULTI_USEDEP}]
 		>=dev-python/pycairo-1.14.0[${PYTHON_MULTI_USEDEP}]
 	')
-	>=media-libs/grilo-0.3.12:0.3[introspection]
-	>=media-plugins/grilo-plugins-0.3.10:0.3
+	>=media-libs/grilo-0.3.13:0.3[introspection]
+	>=media-plugins/grilo-plugins-0.3.12:0.3
 "
 # xdg-user-dirs-update needs to be there to create needed dirs
 # https://bugzilla.gnome.org/show_bug.cgi?id=731613
 RDEPEND="${DEPEND}
 	|| (
-		>=app-misc/tracker-miners-2.2.0[gstreamer]
-		>=app-misc/tracker-miners-2.2.0[ffmpeg]
+		>=app-misc/tracker-miners-3.0.0[gstreamer]
+		>=app-misc/tracker-miners-3.0.0[ffmpeg]
 	)
 	x11-libs/libnotify[introspection]
 	media-libs/gstreamer:1.0[introspection]
