@@ -1,4 +1,4 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -13,10 +13,9 @@ HOMEPAGE="https://wiki.gnome.org/Apps/Boxes"
 LICENSE="LGPL-2+ CC-BY-2.0"
 SLOT="0"
 
-IUSE="rdp +uefi"
+IUSE="rdp"
 KEYWORDS="~amd64"
 
-# FIXME: ovirt is not available in tree; though it seems the gnome-boxes ovirt broker is too buggy atm anyways (would need rest[vala] as well)
 # FIXME: qemu probably needs to depend on spice[smartcard] directly with USE=spice
 # FIXME: Check over libvirt USE=libvirtd,qemu and the smartcard/usbredir requirements
 # Technically vala itself still ships a libsoup vapi, but that may change, and it should be better to use the .vapi from the same libsoup version
@@ -33,29 +32,30 @@ DEPEND="
 	>=app-emulation/libvirt-glib-3.0.0
 	>=dev-libs/libxml2-2.7.8:2
 	>=net-misc/spice-gtk-0.32[gtk3(+),smartcard,usbredir]
-	app-misc/tracker:0/2.0
+	app-misc/tracker:3
 	>=x11-libs/vte-0.40.2:2.91
 	net-libs/webkit-gtk:4
+	>=gui-libs/libhandy-0.0.11:0.0
 
 	>=dev-libs/gobject-introspection-1.56:=
 	>=dev-libs/libgudev-165:=
-	rdp? ( net-misc/freerdp:= )
+	rdp? ( >=net-misc/freerdp-2.0.0:= )
 " # gobject-introspection needed for libovf subproject (and gtk-frdp subproject with USE=rdp)
 # These are called via exec():
 # sys-fs/mtools mcopy for unattended file copying for files that libarchive doesn't support
-# virtual/cdrtools mkisofs is needed for unattended installer secondary disk image creation
+# app-cdr/cdrtools mkisofs is needed for unattended installer secondary disk image creation
 # app-emulation/libguestfs virt-sysprep is used for VM cloing, if not there, it logs debug and doesn't function
 # sys-apps/policycoreutils restorecon is used for checking selinux context
 # app-emulation/libvirt virsh used for various checks (and we need the library anyways)
 # sys-auth/polkit used for making all libvirt system disks readable via "pkexec chmod a+r" that aren't already readable to the user (libvirt system importer)
 # app-emulation/qemu qemu-img used to convert image to QCOW2 format during copy
 RDEPEND="${DEPEND}
-	>=app-misc/tracker-miners-2[iso]
+	app-cdr/cdrtools
+	>=app-misc/tracker-miners-3[iso]
 	app-emulation/spice[smartcard]
 	>=app-emulation/libvirt-0.9.3[libvirtd,qemu]
 	>=app-emulation/qemu-1.3.1[spice,smartcard,usbredir]
 	sys-fs/mtools
-	virtual/cdrtools
 	sys-auth/polkit
 "
 # gtk-frdp generates gir and needs gtk+ introspection for it
@@ -108,7 +108,6 @@ src_configure() {
 		-Dinstalled_tests=false
 		-Dflatpak=false
 		-Dprofile=default
-		$(meson_use uefi)
 	)
 	meson_src_configure
 }
