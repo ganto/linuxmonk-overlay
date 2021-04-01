@@ -1,4 +1,4 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -18,7 +18,6 @@ DEPEND="
 	>=dev-libs/glib-2.61.2:2
 	>=x11-libs/gtk+-3.24.0:3
 	>=dev-libs/nettle-3.4:=
-	>=sys-libs/libportal-0.0.2
 	>=net-libs/webkit-gtk-2.29.3:4=
 	>=x11-libs/cairo-1.2
 	>=app-crypt/gcr-3.5.5:=[gtk]
@@ -32,6 +31,7 @@ DEPEND="
 	>=app-crypt/libsecret-0.19
 	>=net-libs/libsoup-2.48.0:2.4
 	>=dev-libs/libxml2-2.6.12:2
+	>=sys-libs/libportal-0.0.2
 	dev-db/sqlite:3
 	dev-libs/gmp:0=
 "
