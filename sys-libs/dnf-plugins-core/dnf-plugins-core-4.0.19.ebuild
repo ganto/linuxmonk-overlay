@@ -1,9 +1,9 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{6,7} )
+PYTHON_COMPAT=( python3_{7..9} )
 
 inherit cmake python-single-r1
 
@@ -16,6 +16,12 @@ LICENSE="GPL-2+"
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE="test"
+
+LANGS=( ca cs da de es eu fi fr hu it id ja ko nl pa pl pt pt-BR ru sk sq sr sv tr uk zh-CN zh-TW )
+
+for i in "${LANGS[@]}"; do
+	IUSE="${IUSE} l10n_${i}"
+done
 
 CDEPEND="${PYTHON_DEPS}"
 RDEPEND="${CDEPEND}
@@ -30,20 +36,13 @@ DEPEND="${CDEPEND}
 	test? ( dev-python/nose )
 "
 
-LANGS=( ca cs da de es eu fi fr hu it id ja ko nl pa pl pt ru sq sr sv tr uk )
-
-for X in "${LANGS[@]}" ; do
-	IUSE+=" l10n_${X}"
-done
-unset X
-
 src_prepare() {
 	cmake_src_prepare
 	sed -i 's/sphinx-build-3/sphinx-build/' doc/CMakeLists.txt
 }
 
 src_configure() {
-	mycmakeargs=( -DPYTHON_DESIRED:str=3 )
+	mycmakeargs=( -DPYTHON_DESIRED:str=3 -Wno-dev )
 	cmake_src_configure
 }
 
@@ -80,17 +79,13 @@ src_install() {
 	done
 
 	# cleanup leaked build files
-	rm -Rf "${ED}"/usr/share/man/man8/{CMakeFiles,.doctrees}
+	rm -rf "${ED}"/usr/share/man/man8/{CMakeFiles,.doctrees}
 
-	einfo "Cleaning up locales..."
-	for lang in ${LANGS[@]}; do
-		use "l10n_${lang}" && {
-			einfo "- keeping ${lang}"
-			continue
-		}
-		rm -Rf "${ED}"/usr/share/locale/${lang} || die
+	# clean unneeded language documentation
+	for i in ${LANGS[@]}; do
+		use l10n_${i} || rm -rf "${ED}"/usr/share/locale/${i/-/_}
 	done
-	rm -Rf "${ED}"/usr/share/locale/{fur,pt_BR,zh_CN,zh_TW}
+	rm -rf "${ED}"/usr/share/locale/fur
 
 	# remove locale directory when empty
 	rmdir "${ED}"/usr/share/locale 2>/dev/null
