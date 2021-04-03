@@ -1,9 +1,9 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
-inherit desktop gnome.org gnome2-utils meson pam readme.gentoo-r1 systemd udev user xdg
+inherit desktop gnome.org gnome2-utils meson pam readme.gentoo-r1 systemd udev xdg
 
 DESCRIPTION="GNOME Display Manager for managing graphical display servers and user logins"
 HOMEPAGE="https://wiki.gnome.org/Projects/GDM"
@@ -29,9 +29,9 @@ KEYWORDS="~amd64"
 # dconf, dbus and g-s-d are needed at install time for dconf update
 # keyutils is automagic dep that makes autologin unlock login keyring when all the passwords match (disk encryption, user pw and login keyring)
 # dbus-run-session used at runtime
-DEPEND="
+COMMON_DEPEND="
 	app-text/iso-codes
-	>=dev-libs/glib-2.44:2
+	>=dev-libs/glib-2.56:2
 	dev-libs/libgudev
 	>=x11-libs/gtk+-2.91.1:3
 	>=gnome-base/dconf-0.20
@@ -65,7 +65,9 @@ DEPEND="
 # XXX: These deps are from session and desktop files in data/ directory
 # fprintd is used via dbus by gdm-fingerprint-extension
 # gnome-session-3.6 needed to avoid freezing with orca
-RDEPEND="${DEPEND}
+RDEPEND="${COMMON_DEPEND}
+	acct-group/gdm
+	acct-user/gdm
 	>=gnome-base/gnome-session-3.6
 	>=gnome-base/gnome-shell-3.1.90
 	x11-apps/xhost
@@ -73,20 +75,20 @@ RDEPEND="${DEPEND}
 	accessibility? (
 		>=app-accessibility/orca-3.10
 		gnome-extra/mousetweaks )
-	fprint? (
-		sys-auth/fprintd
-		sys-auth/pam_fprint )
+	fprint? ( sys-auth/fprintd[pam] )
+"
+DEPEND="${COMMON_DEPEND}
+	x11-base/xorg-proto
 "
 BDEPEND="
 	app-text/docbook-xml-dtd:4.1.2
 	dev-util/gdbus-codegen
 	dev-util/glib-utils
 	dev-util/itstool
+	>=gnome-base/dconf-0.20
 	>=sys-devel/gettext-0.19.8
 	virtual/pkgconfig
-	x11-base/xorg-proto
-	test? ( ${DEPEND}
-		>=dev-libs/check-0.9.4 )
+	test? ( >=dev-libs/check-0.9.4 )
 	app-text/yelp-tools
 " # yelp-tools needed for eautoreconf to not lose help docs (m4_ifdeffed YELP_HELP_INIT call and setup)
 
@@ -106,23 +108,6 @@ DOC_CONTENTS="
 	for smartcard support
 "
 
-pkg_setup() {
-	enewgroup gdm
-	enewgroup video # Just in case it hasn't been created yet
-	enewuser gdm -1 -1 /var/lib/gdm gdm,video
-
-	# For compatibility with certain versions of nvidia-drivers, etc., need to
-	# ensure that gdm user is in the video group
-	if ! egetent group video | grep -q gdm; then
-		# FIXME XXX: is this at all portable, ldap-safe, etc.?
-		# XXX: egetent does not have a 1-argument form, so we can't use it to
-		# get the list of gdm's groups
-		local g=$(groups gdm)
-		elog "Adding user gdm to video group"
-		usermod -G video,${g// /,} gdm || die "Adding user gdm to video group failed"
-	fi
-}
-
 src_prepare() {
 	default
 
@@ -137,7 +122,7 @@ src_prepare() {
 }
 
 src_configure() {
-	# --with-at-spi-registryd-directory= needs to be passed explicitly because
+	# -Dat-spi-registryd-dir= needs to be passed explicitly because
 	# of https://bugzilla.gnome.org/show_bug.cgi?id=607643#c4
 	local emesonargs=(
 		-Dat-spi-registryd-dir="${EPREFIX}"/usr/libexec
@@ -172,10 +157,6 @@ src_install() {
 	exeinto /etc/X11/xinit/xinitrc.d
 	newexe "${FILESDIR}/49-keychain-r1" 49-keychain
 	newexe "${FILESDIR}/50-ssh-agent-r1" 50-ssh-agent
-
-	# gdm user's home directory
-	keepdir /var/lib/gdm
-	fowners gdm:gdm /var/lib/gdm
 
 	if ! use bluetooth-sound ; then
 		# Workaround https://gitlab.freedesktop.org/pulseaudio/pulseaudio/merge_requests/10
