@@ -1,9 +1,11 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
-inherit gnome.org meson xdg
+LUA_COMPAT=( lua5-3 lua5-4 )
+
+inherit gnome.org lua-single meson xdg
 
 DESCRIPTION="A collection of plugins for the Grilo framework"
 HOMEPAGE="https://wiki.gnome.org/Projects/Grilo"
@@ -11,7 +13,10 @@ HOMEPAGE="https://wiki.gnome.org/Projects/Grilo"
 LICENSE="LGPL-2.1+"
 SLOT="0.3"
 KEYWORDS="~amd64"
+
 IUSE="daap chromaprint flickr freebox gnome-online-accounts lua test thetvdb tracker upnp-av +youtube"
+REQUIRED_USE="lua? ( ${LUA_REQUIRED_USE} )"
+
 RESTRICT="!test? ( test )"
 
 # GOA is only optionally used by flickr and lua-factory plugins (checked at v0.3.8)
@@ -38,12 +43,12 @@ RDEPEND="
 	dev-db/sqlite:3
 	>=dev-libs/totem-pl-parser-3.4.1
 	tracker? (
-		>=app-misc/tracker-2.3.0:= )
+		>=app-misc/tracker-3.0:= )
 	upnp-av? (
 		net-libs/dleyna-connector-dbus
 		net-misc/dleyna-server )
 	lua? (
-		>=dev-lang/lua-5.3
+		${LUA_DEPS}
 		app-arch/libarchive
 		dev-libs/libxml2:2 )
 	thetvdb? (
@@ -92,7 +97,8 @@ src_configure() {
 		-Denable-shoutcast=yes
 		-Denable-thetvdb=$(usex thetvdb yes no)
 		-Denable-tmdb=yes
-		-Denable-tracker=$(usex tracker yes no)
+		-Denable-tracker=no
+		-Denable-tracker3=$(usex tracker yes no)
 		-Denable-vimeo=yes
 		-Denable-youtube=$(usex youtube yes no)
 		-Dgoa=$(usex gnome-online-accounts enabled disabled)
