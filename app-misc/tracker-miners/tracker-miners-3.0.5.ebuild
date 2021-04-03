@@ -1,4 +1,4 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -100,7 +100,6 @@ src_configure() {
 	local emesonargs=(
 		-Dtracker_core=system
 
-		-Ddocs=true
 		-Dextract=true
 		-Dfunctional_tests=false # currently broken, may fare better in 2.2.3 or 2.3; if re-enabled re-add dconf test dep
 		#$(meson_use test functional_tests)
@@ -117,7 +116,6 @@ src_configure() {
 
 		$(meson_feature cue)
 		$(meson_feature exif)
-		-Dflac=disabled # never use external flac extractor - gst-plugins-flac is for that; ffmpeg one is maybe worse, but that's non-default
 		$(meson_feature gif)
 		$(meson_feature gsf)
 		$(meson_feature iptc)
@@ -128,7 +126,6 @@ src_configure() {
 		-Dpng=enabled
 		$(meson_feature raw)
 		$(meson_feature tiff)
-		-Dvorbis=disabled # never use external vorbis extractor - gst-plugins-base[vorbis] is for that; ffmpeg one is maybe worse, but that's non-default
 		$(meson_feature xml)
 		$(meson_feature xmp)
 		$(meson_feature xps)
