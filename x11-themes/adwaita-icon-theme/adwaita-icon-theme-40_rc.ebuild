@@ -1,14 +1,17 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="6"
+EAPI=7
 
 inherit gnome2
+
+MY_PV="${PV/_/.}"
+MY_P="${PN}-${MY_PV}"
 
 DESCRIPTION="GNOME default icon theme"
 HOMEPAGE="https://git.gnome.org/browse/adwaita-icon-theme/"
 
-SRC_URI="${SRC_URI}
+SRC_URI="mirror://gnome/sources/${PN}/${MY_PV%%.*}/${PN}-${MY_PV}.tar.xz
 	branding? ( https://www.mail-archive.com/tango-artists@lists.freedesktop.org/msg00043/tango-gentoo-v1.1.tar.gz )
 "
 LICENSE="
@@ -21,17 +24,20 @@ KEYWORDS="~amd64"
 
 # gtk+:3 is needed for build for the gtk-encode-symbolic-svg utility
 # librsvg is needed for gtk-encode-symbolic-svg to be able to read the source SVG via its pixbuf loader and at runtime for rendering scalable icons shipped by the theme
-RDEPEND="
-	>=x11-themes/hicolor-icon-theme-0.10
-	gnome-base/librsvg:2
+DEPEND=">=x11-themes/hicolor-icon-theme-0.10"
+RDEPEND="${DEPEND}
+	>=gnome-base/librsvg-2.48:2
 "
-DEPEND="${RDEPEND}
-	x11-libs/gtk+:3
+BDEPEND="
+	>=gnome-base/librsvg-2.48:2
 	sys-devel/gettext
 	virtual/pkgconfig
+	x11-libs/gtk+:3
 "
 # This ebuild does not install any binaries
 RESTRICT="binchecks strip"
+
+S="${WORKDIR}/${MY_P}"
 
 src_prepare() {
 	if use branding; then
@@ -51,13 +57,5 @@ src_prepare() {
 }
 
 src_configure() {
-	# less than 2.45 being a problem is just a guess, but we didn't carry anything between 2.40 and 2.48 in main tree
-	if has_version '<gnome-base/librsvg-2.45:2'; then
-		ewarn "You are building ${CATEGORY}/${PN} against an older"
-		ewarn "gnome-base/librsvg, which will result in various broken symbolic icons until"
-		ewarn "rebuild with newer librsvg, and misrendering of scalable icons at runtime"
-		ewarn "until gnome-base/librsvg is upgraded!"
-	fi
-
 	gnome2_src_configure GTK_UPDATE_ICON_CACHE=$(type -P true)
 }
