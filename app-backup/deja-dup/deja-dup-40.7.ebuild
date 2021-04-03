@@ -1,4 +1,4 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -18,7 +18,7 @@ COMMON_DEPEND="
 	>=app-crypt/libsecret-0.18.6[vala]
 	>=dev-libs/glib-2.56:2[dbus]
 	>=dev-libs/json-glib-1.2
-	>=net-libs/libsoup-2.48
+	>=net-libs/libsoup-2.48:2.4
 	>=x11-libs/gtk+-3.22:3
 	>=x11-libs/libnotify-0.7
 
