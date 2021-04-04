@@ -1,4 +1,4 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -35,7 +35,7 @@ DEPEND="
 	x11-libs/gdk-pixbuf:2
 	x11-misc/shared-mime-info
 	introspection? ( >=dev-libs/gobject-introspection-1.33.4:= )
-	tracker? ( app-misc/tracker:= )
+	tracker? ( >=app-misc/tracker-3.0:3 )
 	transcode? (
 		media-libs/gst-plugins-bad:1.0
 		media-plugins/gst-plugins-twolame:1.0
@@ -58,7 +58,7 @@ src_prepare() {
 
 src_configure() {
 	local plugins="external,gst-launch,lms,media-export,mpris,playbin"
-	use tracker && plugins+=",tracker,tracker3"
+	use tracker && plugins+=",tracker3"
 
 	local emesonargs=(
 		-Dapi-docs=false
