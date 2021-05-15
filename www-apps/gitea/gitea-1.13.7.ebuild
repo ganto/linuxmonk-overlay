@@ -79,7 +79,7 @@ src_compile() {
 		$(usex sqlite 'sqlite sqlite_unlock_notify' '')
 	)
 	local makeenv=(
-		TAGS="${gitea_tags[@]}"
+		TAGS="${gitea_tags[*]}"
 		LDFLAGS="-extldflags \"${LDFLAGS}\""
 	)
 	[[ ${PV} != 9999* ]] && makeenv+=("DRONE_TAG=${MY_PV}")
