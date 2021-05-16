@@ -1,0 +1,46 @@
+From f73d7cff45504deb36b502d073157576528a6eb3 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Daniel=20P=2E=20Berrang=C3=A9?= <berrange@redhat.com>
+Date: Fri, 15 Jan 2021 15:49:05 +0000
+Subject: [PATCH] Guest: fix to always use host-passthrough CPU for all arches
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The use of host passthrough was restricted to just arm architectures,
+which meant other arches got their built in default, which is almost
+never what you want. eg x86 gets qemu64 which lacks so many features
+that some guests will not function at all.
+
+There is no need to care about live migration with Oz, so it should
+unconditionally use host-passthrough for all architectures when KVM
+is enabled.
+
+Furthermore the way host-passthrough was requested was incorrect
+and relying on an accident of the libvirt QEMU impl. It needs to
+use mode=host-passthrough, not mode=custom + model=host. Libvirt
+should block the latter from being used.
+
+Signed-off-by: Daniel P. Berrangé <berrange@redhat.com>
+---
+ oz/Guest.py | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/oz/Guest.py b/oz/Guest.py
+index 92bdc71c..aac57bd8 100644
+--- a/oz/Guest.py
++++ b/oz/Guest.py
+@@ -475,10 +475,10 @@ def _generate_xml(self, bootdev, installdev, kernel=None, initrd=None,
+         if self.tdl.arch in ["armv7l"]:
+             oz.ozutil.lxml_subelement(features, "gic", attributes={'version': '2'})
+         # CPU
+-        if self.tdl.arch in ["aarch64", "armv7l"] and self.libvirt_type == "kvm":
+-            # Possibly related to RHBZ 1171501 - need host passthrough for aarch64 and arm with kvm
+-            cpu = oz.ozutil.lxml_subelement(domain, "cpu", None, {'mode': 'custom', 'match': 'exact'})
+-            oz.ozutil.lxml_subelement(cpu, "model", "host", {'fallback': 'allow'})
++        if self.libvirt_type == "kvm":
++            # If using KVM, we always want the best CPU the host can offer
++            # as we don't need to worry about live migration portability
++            oz.ozutil.lxml_subelement(domain, "cpu", None, {'mode': 'host-passthrough'})
+         # os
+         osNode = oz.ozutil.lxml_subelement(domain, "os")
+         mods = None
