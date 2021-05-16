@@ -13,7 +13,7 @@ HOMEPAGE="https://www.webkitgtk.org"
 SRC_URI="https://www.webkitgtk.org/releases/${MY_P}.tar.xz"
 
 LICENSE="LGPL-2+ BSD"
-SLOT="4/37" # soname version of libwebkit2gtk-4.0
+SLOT="5/0" # soname version of libwebkit2gtk-5.0
 KEYWORDS="~amd64"
 
 IUSE="+egl examples gamepad +geolocation gles2-only gnome-keyring +gstreamer gtk-doc +introspection +jpeg2k +jumbo-build libnotify +opengl seccomp spell systemd wayland +X"
@@ -32,7 +32,6 @@ RESTRICT="test"
 
 # Aqua support in gtk3 is untested
 # Dependencies found at Source/cmake/OptionsGTK.cmake
-# Various compile-time optionals for gtk+-3.22.0 - ensure it
 # Missing WebRTC support, but ENABLE_MEDIA_STREAM/ENABLE_WEB_RTC is experimental upstream (PRIVATE OFF) and shouldn't be used yet in 2.30
 # >=gst-plugins-opus-1.14.4-r1 for opusparse (required by MSE)
 wpe_depend="
@@ -45,11 +44,11 @@ RDEPEND="
 	>=media-libs/fontconfig-2.13.0:1.0
 	>=media-libs/freetype-2.9.0:2
 	>=dev-libs/libgcrypt-1.7.0:0=
-	>=x11-libs/gtk+-3.22.0:3[introspection?,wayland?,X?]
+	>=gui-libs/gtk-4.0[introspection?,wayland?,X?]
 	>=media-libs/harfbuzz-1.4.2:=[icu(+)]
 	>=dev-libs/icu-60.2:=
 	virtual/jpeg:0=
-	>=net-libs/libsoup-2.54:2.4[introspection?]
+	>=net-libs/libsoup-2.99.2:3.0[introspection?]
 	>=dev-libs/libxml2-2.8.0:2
 	>=media-libs/libpng-1.4:0=
 	dev-db/sqlite:3=
@@ -239,11 +238,11 @@ src_configure() {
 		-DENABLE_VIDEO=$(usex gstreamer)
 		-DENABLE_WEB_AUDIO=$(usex gstreamer)
 		-DENABLE_INTROSPECTION=$(usex introspection)
-		-DUSE_GTK4=OFF
+		-DUSE_GTK4=ON
 		-DUSE_LIBNOTIFY=$(usex libnotify)
 		-DUSE_LIBSECRET=$(usex gnome-keyring)
 		-DUSE_OPENJPEG=$(usex jpeg2k)
-		-DUSE_SOUP2=ON
+		-DUSE_SOUP2=OFF
 		-DUSE_WOFF2=ON
 		-DENABLE_SPELLCHECK=$(usex spell)
 		-DUSE_SYSTEMD=$(usex systemd) # Whether to enable journald logging
@@ -283,5 +282,5 @@ src_install() {
 	cmake_src_install
 
 	# Prevents crashes on PaX systems, bug #522808
-	pax-mark m "${ED}/usr/libexec/webkit2gtk-4.0/jsc" "${ED}/usr/libexec/webkit2gtk-4.0/WebKitWebProcess"
+	pax-mark m "${ED}/usr/libexec/webkit2gtk-5.0/jsc" "${ED}/usr/libexec/webkit2gtk-5.0/WebKitWebProcess"
 }
