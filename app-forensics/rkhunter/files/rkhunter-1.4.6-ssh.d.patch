@@ -1,0 +1,56 @@
+commit 19f5b937478e3f7d6f2e7b898536fea21d919548
+Author: Kevin Fenzi <kevin@scrye.com>
+Date:   Sat May 22 14:21:44 2021 +0200
+
+    Have ssh checks use the sshd.d directoy config files too
+    
+    Look for and use the ssh.d config snippet direction. Thanks John Dodson
+    for patch. Fixes rhbz#1851620.
+    Fix bug around ssh protocol detection ( rhbz#1597635 )
+    
+    Patch taken from Fedora rkhunter-1.4.6-12
+
+diff --git a/files/rkhunter b/files/rkhunter
+index 1a0d6ca..b7df058 100755
+--- a/rkhunter
++++ b/rkhunter
+@@ -17379,6 +17379,12 @@ do_system_config_files_check() {
+ 			fi
+ 		done
+ 
++			if [ -d "${SSH_CONFIG_FILE}.d" ];then
++				SSH_CONFIG_FILE="${SSH_CONFIG_FILE} ${SSH_CONFIG_FILE}.d/*"
++			else
++				:
++			fi
++
+ 		if [ -n "${SSH_CONFIG_FILE}" ]; then
+ 			display --to SCREEN+LOG --type PLAIN --result FOUND --color GREEN --log-indent 2 --screen-indent 4 SYSTEM_CONFIGS_FILE_SSH
+ 
+@@ -17396,7 +17402,7 @@ do_system_config_files_check() {
+ 			# First we check for allowed root access.
+ 			#
+ 
+-			RKHTMPVAR=`grep -i '^[ 	]*PermitRootLogin[ 	=]' "${SSH_CONFIG_FILE}" 2>/dev/null | tail ${TAIL_OPT}1`
++			RKHTMPVAR=`grep -ih '^[         ]*PermitRootLogin[      =]' ${SSH_CONFIG_FILE} 2>/dev/null | tail ${TAIL_OPT}1`
+ 
+ 			if [ -n "${RKHTMPVAR}" ]; then
+ 				#
+@@ -17427,7 +17433,7 @@ do_system_config_files_check() {
+ 			# Next we check to see if protocol version 1 is allowed.
+ 			#
+ 
+-			RKHTMPVAR=`grep -i '^[ 	]*Protocol[ 	=]' "${SSH_CONFIG_FILE}" 2>/dev/null | tail ${TAIL_OPT}1`
++			RKHTMPVAR=`grep -i '^[ 	]*Protocol[ 	=]' ${SSH_CONFIG_FILE} 2>/dev/null | tail ${TAIL_OPT}1`
+ 
+ 			if [ -n "${RKHTMPVAR}" ]; then
+ 				#
+@@ -17467,7 +17473,7 @@ do_system_config_files_check() {
+ 			# First check for the Ebury backdoor.
+ 			#
+ 
+-			RKHTMPVAR=`grep -i '^[ 	]*AuthorizedKeysFile[ 	=]' "${SSH_CONFIG_FILE}" 2>/dev/null | tail ${TAIL_OPT}1`
++			RKHTMPVAR=`grep -i '^[ 	]*AuthorizedKeysFile[ 	=]' ${SSH_CONFIG_FILE} 2>/dev/null | tail ${TAIL_OPT}1`
+ 
+ 			if [ -n "${RKHTMPVAR}" ]; then
+ 				RKHTMPVAR2=`echo ${RKHTMPVAR} | sed -e 's/^[^ 	=]*[ 	]*=*[ 	]*\([^ 	#]*\).*$/\1/'`

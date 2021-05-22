@@ -1,0 +1,45 @@
+commit 61c10da6ccd06a460e5e2ace77d47f305537f8a1
+Author: Kevin Fenzi <kevin@scrye.com>
+Date:   Sat May 22 14:17:20 2021 +0200
+
+    Drop keyutils check
+    
+    libkeyutils is an actual legit library now, so this old check is a false
+    positive. Fixes rhbz#1914662
+    
+    Patch taken from Fedora rkhunter-1.4.6-10
+
+diff --git a/files/rkhunter b/files/rkhunter
+index 79ea36b..1a0d6ca 100755
+--- a/rkhunter
++++ b/rkhunter
+@@ -8370,9 +8370,7 @@ do_system_check_initialisation() {
+ 		     /lib/libsbr.so
+ 		     /lib64/libsbr.so
+ 		     /lib/libslr.so
+-		     /lib64/libslr.so
+-		     /lib/tls/libkeyutils.so.1
+-		     /lib64/tls/libkeyutils.so.1"
++		     /lib64/libslr.so"
+ 	EBURY_DIRS=
+ 	EBURY_KSYMS=
+ 
+@@ -9762,10 +9760,6 @@ do_system_check_initialisation() {
+ 		  file:/usr/share/sshd.sync:Trojaned SSH daemon
+ 		  file:/bin/zcut:Trojaned SSH daemon
+ 		  file:/usr/bin/zmuie:Trojaned SSH daemon
+-		  file:/lib/libkeyutils.so.1.9:Sniffer component
+-		  file:/lib64/libkeyutils.so.1.9:Sniffer component
+-		  file:/usr/lib/libkeyutils.so.1.9:Sniffer component
+-		  file:/usr/lib64/libkeyutils.so.1.9:Sniffer component
+ 		  file:/IptabLes:malware component
+ 		  file:/.IptabLex:malware component
+ 		  file:/boot/.IptabLex:malware component
+@@ -9956,7 +9950,6 @@ do_system_check_initialisation() {
+ 			 ssh-scan:Port scanner
+ 			 atac:Port scanner component
+ 			 \[pdflush\]:IRC bot
+-			 libkeyutils.so.1.9:Spam tool component
+ 			 .IptabLex:malware component
+ 			 .IptabLes:malware component
+ 			 .flush:malware component
