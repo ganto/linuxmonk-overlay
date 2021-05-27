@@ -1,9 +1,9 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{6,7,8} )
+PYTHON_COMPAT=( python3_{7..9} )
 
 inherit cmake python-single-r1
 
@@ -25,15 +25,16 @@ done
 
 CDEPEND="${PYTHON_DEPS}"
 RDEPEND="${CDEPEND}
-	>=sys-apps/dnf-4.2.1[${PYTHON_SINGLE_USEDEP}]
+	>=sys-apps/dnf-4.2.22[${PYTHON_SINGLE_USEDEP}]
 	$(python_gen_cond_dep '
+		dev-python/python-dateutil[${PYTHON_MULTI_USEDEP}]
+		dev-python/dbus-python[${PYTHON_MULTI_USEDEP}]
 		sys-libs/libdnf[${PYTHON_MULTI_USEDEP}]
 	')
 "
 DEPEND="${CDEPEND}
 	dev-python/sphinx
 	sys-devel/gettext
-	test? ( dev-python/nose )
 "
 
 src_prepare() {
