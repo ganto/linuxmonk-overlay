@@ -1,0 +1,20 @@
+commit d76d8046240524c7303dee2beb809c08640b5197
+Author: Reto Gantenbein <reto.gantenbein@linuxmonk.ch>
+Date:   Tue Jun 1 23:46:16 2021 +0200
+
+    Use local sourceview4-rs crate
+
+diff --git a/fractal-gtk/Cargo.toml b/fractal-gtk/Cargo.toml
+index feaa1e94..2df052ac 100644
+--- a/fractal-gtk/Cargo.toml
++++ b/fractal-gtk/Cargo.toml
+@@ -32,8 +32,7 @@ secret-service = "1.0.0"
+ serde_json = "1.0.48"
+ 
+ [dependencies.sourceview4]
+-git = "https://gitlab.gnome.org/World/Rust/sourceview4-rs.git"
+-rev = "fa8819fa7ecbe56f44d951656d3825f468915754"
++path = "../../sourceview4-rs-fa8819fa7ecbe56f44d951656d3825f468915754/sourceview4"
+ 
+ [dependencies.gst]
+ version = "0.15.3"

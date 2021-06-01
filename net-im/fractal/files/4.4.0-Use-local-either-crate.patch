@@ -1,0 +1,18 @@
+commit 54737af24d7db187d8b38118d56de9415374a137
+Author: Reto Gantenbein <reto.gantenbein@linuxmonk.ch>
+Date:   Tue Jun 1 23:34:40 2021 +0200
+
+    Use local either crate
+
+diff --git a/fractal-gtk/Cargo.toml b/fractal-gtk/Cargo.toml
+index 960f64b5..3c4ea99e 100644
+--- a/fractal-gtk/Cargo.toml
++++ b/fractal-gtk/Cargo.toml
+@@ -77,6 +77,5 @@ version = "0.8.1"
+ features = ["v2_56"]
+ 
+ [dependencies.either]
+-git = "https://github.com/danigm/either.git"
+-rev = "60c99bc0723491e2dfd42bbe9b485c5f9323e96b"
++path = "../../either-60c99bc0723491e2dfd42bbe9b485c5f9323e96b"
+ features = ["serde_untagged"]
