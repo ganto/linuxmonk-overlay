@@ -1,4 +1,4 @@
-# Copyright 2020 Gentoo Authors
+# Copyright 2020-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -307,7 +307,7 @@ DEPEND="
 	>=app-text/gspell-1.8:0=
 	>=dev-libs/glib-2.56
 	dev-libs/openssl
-	>=gui-libs/libhandy-0.0.10
+	>=gui-libs/libhandy-0.0.10:0.0
 	>=media-libs/gstreamer-1.12
 	>=media-libs/gstreamer-editing-services-1.14.4
 	>=media-libs/gst-plugins-bad-1.12
