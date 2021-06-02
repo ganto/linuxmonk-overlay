@@ -1,12 +1,12 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{6,7,8} )
+PYTHON_COMPAT=( python3_{7..9} )
 inherit distutils-r1
 
-KUBERNETES_BASE_COMMIT=474e9fb32293fa05098e920967bb0e0645182d5b
+KUBERNETES_BASE_COMMIT=b4d3aad42dc23e7a6c0e5c032691f8dc385a786c
 
 DESCRIPTION="Kubernetes python client"
 HOMEPAGE="https://pypi.python.org/pypi/kubernetes https://github.com/kubernetes-client/python"
@@ -34,7 +34,7 @@ RDEPEND="
 	!=dev-python/websocket-client-0.42*[${PYTHON_USEDEP}]
 "
 
-DOCS=( CHANGELOG.md CONTRIBUTING.md README.md RELEASE.md )
+DOCS=( CHANGELOG.md CONTRIBUTING.md README.md )
 
 S="${WORKDIR}/${P##kubernetes-client-}"
 
