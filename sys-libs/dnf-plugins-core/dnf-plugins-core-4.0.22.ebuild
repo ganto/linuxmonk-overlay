@@ -17,7 +17,7 @@ SLOT="0"
 KEYWORDS="~amd64"
 IUSE="test"
 
-LANGS=( ca cs da de es eu fi fr hu it id ja ko nl pa pl pt pt-BR ru sk sq sr sv tr uk zh-CN zh-TW )
+LANGS=( ca cs da de es eu fi fr hu it id ja ko nl pa pl pt pt-BR ru si sk sq sr sv tr uk zh-CN zh-TW )
 
 for i in "${LANGS[@]}"; do
 	IUSE="${IUSE} l10n_${i}"
@@ -25,15 +25,16 @@ done
 
 CDEPEND="${PYTHON_DEPS}"
 RDEPEND="${CDEPEND}
-	>=sys-apps/dnf-4.2.1[${PYTHON_SINGLE_USEDEP}]
+	>=sys-apps/dnf-4.2.22[${PYTHON_SINGLE_USEDEP}]
 	$(python_gen_cond_dep '
+		dev-python/python-dateutil[${PYTHON_MULTI_USEDEP}]
+		dev-python/dbus-python[${PYTHON_MULTI_USEDEP}]
 		sys-libs/libdnf[${PYTHON_MULTI_USEDEP}]
 	')
 "
 DEPEND="${CDEPEND}
 	dev-python/sphinx
 	sys-devel/gettext
-	test? ( dev-python/nose )
 "
 
 src_prepare() {
