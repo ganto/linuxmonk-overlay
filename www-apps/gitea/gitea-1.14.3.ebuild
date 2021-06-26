@@ -79,7 +79,7 @@ src_compile() {
 		$(usex sqlite 'sqlite sqlite_unlock_notify' '')
 	)
 	local makeenv=(
-		TAGS="${gitea_tags[@]}"
+		TAGS="${gitea_tags[*]}"
 		LDFLAGS="-extldflags \"${LDFLAGS}\""
 	)
 	[[ ${PV} != 9999* ]] && makeenv+=("DRONE_TAG=${MY_PV}")
@@ -98,7 +98,7 @@ src_install() {
 
 	einstalldocs
 
-	systemd_newunit "${FILESDIR}"/gitea.service-r2 gitea.service
+	systemd_newunit "${FILESDIR}"/gitea.service-r3 gitea.service
 
 	insinto /etc/gitea
 	newins custom/conf/app.example.ini app.ini
