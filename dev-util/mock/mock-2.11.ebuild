@@ -3,13 +3,13 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{6..9} )
+PYTHON_COMPAT=( python3_{7..9} )
 
 inherit python-single-r1 bash-completion-r1
 
 MY_PV=${PV}-1
 MY_P=${PN}-${MY_PV}
-CORE_CONFIGS_VERSION=34.2-1
+CORE_CONFIGS_VERSION=34.4-1
 
 DESCRIPTION="Builds RPM packages inside chroots"
 HOMEPAGE="https://github.com/rpm-software-management/mock"
@@ -28,7 +28,7 @@ RDEPEND="
 	app-arch/createrepo_c
 	app-arch/pigz
 	app-arch/rpm[lua,python,${PYTHON_SINGLE_USEDEP},zstd]
-	>=app-misc/distribution-gpg-keys-1.48
+	>=app-misc/distribution-gpg-keys-1.54
 	$(python_gen_cond_dep '
 		dev-python/distro[${PYTHON_MULTI_USEDEP}]
 		dev-python/jinja[${PYTHON_MULTI_USEDEP}]
