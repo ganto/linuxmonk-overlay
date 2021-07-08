@@ -1,14 +1,14 @@
 # Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
-PYTHON_COMPAT=( python2_7 python3_{6..9} )
+PYTHON_COMPAT=( python3_{8,9,10} )
 
-USE_RUBY="ruby25 ruby26 ruby27"
+USE_RUBY="ruby25 ruby26 ruby27 ruby30"
 RUBY_OPTIONAL=yes
 
-inherit cmake-utils python-r1 ruby-ng perl-module multilib
+inherit cmake python-r1 ruby-ng perl-module multilib
 
 DESCRIPTION="Library for solving packages and reading repositories"
 HOMEPAGE="https://doc.opensuse.org/projects/libzypp/HEAD/ https://github.com/openSUSE/libsolv"
@@ -35,7 +35,8 @@ RDEPEND="
 	zchunk? ( app-arch/zchunk )
 	zstd? ( app-arch/zstd )
 "
-DEPEND="${RDEPEND}
+DEPEND="${RDEPEND}"
+BDEPEND="
 	perl? ( dev-lang/swig:0 )
 	python? ( dev-lang/swig:0 )
 	ruby? ( dev-lang/swig:0 )
@@ -53,12 +54,14 @@ pkg_setup() {
 }
 
 src_prepare() {
-	cmake-utils_src_prepare
+	cmake_src_prepare
 
 	# The python bindings are tightly integrated w/cmake.
 	sed -i \
 		-e 's: libsolvext libsolv: -lsolv:g' \
 		bindings/python/CMakeLists.txt || die
+
+	use python && python_copy_sources
 }
 
 src_configure() {
@@ -88,7 +91,7 @@ src_configure() {
 		-DWITH_LIBXML2=ON
 		-DWITH_SYSTEM_ZCHUNK=$(usex zchunk)
 	)
-	cmake-utils_src_configure
+	cmake_src_configure
 
 	if use python ; then
 		# python_foreach_impl will create a unique BUILD_DIR for
@@ -101,26 +104,25 @@ src_configure() {
 		# Link against the common library so the bindings don't
 		# have to rebuild it.
 		LDFLAGS="-L${BUILD_DIR}/src ${LDFLAGS}" \
-		python_foreach_impl cmake-utils_src_configure
+		python_foreach_impl cmake_src_configure
 	fi
 }
 
 pysolv_phase_func() {
-	BUILD_DIR="${BUILD_DIR}/bindings/python" \
-	cmake-utils_${EBUILD_PHASE_FUNC}
+	cmake_${EBUILD_PHASE_FUNC} bindings_python
 	if [[ "${EBUILD_PHASE_FUNC}" == "src_install" ]]; then
 		python_optimize "${D}${PYTHON_SITEDIR}"
 	fi
 }
 
 src_compile() {
-	cmake-utils_src_compile
+	cmake_src_compile
 
 	use python && python_foreach_impl pysolv_phase_func
 }
 
 src_install() {
-	cmake-utils_src_install
+	cmake_src_install
 
 	use python && python_foreach_impl pysolv_phase_func
 	use perl && perl_delete_localpod
