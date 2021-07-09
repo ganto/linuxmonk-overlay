@@ -3,10 +3,10 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{7..9} )
+PYTHON_COMPAT=( python3_{8,9} )
 inherit distutils-r1
 
-DEBOPS_GIT_COMMIT="139a0f8ac621f921d20bbddd4d3c197468903f09"
+DEBOPS_GIT_COMMIT="c1a8509c1e27e7e4673835247669b6c1a141d317"
 
 DESCRIPTION="Your Debian-based data center in a box"
 HOMEPAGE="https://debops.org/"
@@ -20,7 +20,6 @@ IUSE="doc test"
 
 RDEPEND="
 	app-admin/ansible[${PYTHON_USEDEP}]
-	dev-python/cryptography[${PYTHON_USEDEP}]
 	dev-python/distro[${PYTHON_USEDEP}]
 	dev-python/dnspython[${PYTHON_USEDEP}]
 	dev-python/future[${PYTHON_USEDEP}]
@@ -30,8 +29,8 @@ RDEPEND="
 "
 DEPEND="
 	dev-python/setuptools[${PYTHON_USEDEP}]
-	dev-python/sphinx[${PYTHON_USEDEP}]
 	doc? (
+		dev-python/sphinx[${PYTHON_USEDEP}]
 		dev-python/sphinx_rtd_theme[${PYTHON_USEDEP}]
 	)
 	test? (
@@ -60,12 +59,11 @@ src_prepare() {
 }
 
 python_compile_all() {
-	pushd docs >/dev/null || die
-	sphinx-build -b man -d _build/doctrees -n -t manpages -W . _build/man || die "Failed to build man-pages"
 	if use doc; then
-		sphinx-build -b html -d _build/doctrees -n -W . _build/html || die "Failed to build documentation"
+		pushd docs || die
+		sphinx-build -d _build/doctrees . _build/html || die "Failed to build documentation"
+		popd || die
 	fi
-	popd || die >/dev/null
 }
 
 python_test() {

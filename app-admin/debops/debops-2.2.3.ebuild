@@ -3,10 +3,10 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{7..9} )
+PYTHON_COMPAT=( python3_{8,9} )
 inherit distutils-r1
 
-DEBOPS_GIT_COMMIT="bf831a8da5e0f8a3d6fa3624a1a2699d06ca6b45"
+DEBOPS_GIT_COMMIT="87ab93314a1469c326893d6f24759ebc55a17d54"
 
 DESCRIPTION="Your Debian-based data center in a box"
 HOMEPAGE="https://debops.org/"
