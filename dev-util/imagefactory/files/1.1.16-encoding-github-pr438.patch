@@ -1,0 +1,25 @@
+From c719c5eae7fab700a0590ed3b97fac6fcd52449b Mon Sep 17 00:00:00 2001
+From: Peter Robinson <pbrobinson@gmail.com>
+Date: Sat, 3 Oct 2020 16:18:02 +0100
+Subject: [PATCH] ApplicationConfiguration.py: drop encoding from json.load
+
+The encoding option was deprecated in Python 3.1 and as of 3.9 it's dropped completely
+
+Signed-off-by: Peter Robinson <pbrobinson@gmail.com>
+---
+ imgfac/ApplicationConfiguration.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/imgfac/ApplicationConfiguration.py b/imgfac/ApplicationConfiguration.py
+index 5a8fdae..8da7ec9 100644
+--- a/imgfac/ApplicationConfiguration.py
++++ b/imgfac/ApplicationConfiguration.py
+@@ -160,7 +160,7 @@ def dencode(a_dict, encoding='ascii'):
+                     return new_dict
+ 
+                 config_file = open(configuration.config)
+-                uconfig = json.load(config_file, encoding="utf-8")
++                uconfig = json.load(config_file)
+                 config_file.close()
+                 defaults = uconfig
+                 print(defaults)
