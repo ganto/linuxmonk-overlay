@@ -24,7 +24,7 @@ RDEPEND="
 "
 DEPEND="${RDEPEND}"
 BDEPEND="
-	dev-python/setuptools[${PYTHON_USEDEP}]
+	doc? ( dev-python/sphinx[${PYTHON_USEDEP}] )
 	test? (
 		${RDEPEND}
 		dev-python/ddt[${PYTHON_USEDEP}]
