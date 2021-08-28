@@ -1,8 +1,7 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
-
 EGO_VENDOR=(
 	"github.com/alecthomas/kingpin e7f8ee3d9b4b47000af44d34904a9e4f598e577f"
 	"github.com/alecthomas/template a0175ee3bccc567396460bf5acd36800cb10c49c"
@@ -18,29 +17,27 @@ EGO_VENDOR=(
 	"github.com/prometheus/common f866ba39776a736ba5d34760f5fae4ad74e63f2e"
 	"github.com/prometheus/procfs 18fdf56864f4dd3613607e581db94175f2d59f93"
 )
-
-inherit user golang-build golang-vcs-snapshot
-
+inherit golang-build golang-vcs-snapshot
 EGO_PN="github.com/kumina/postfix_exporter"
-ARCHIVE_URI="https://${EGO_PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
-KEYWORDS="~amd64"
 
 DESCRIPTION="Prometheus Exporter for Postfix"
 HOMEPAGE="https://github.com/kumina/postfix_exporter"
-SRC_URI="${ARCHIVE_URI}
+
+SRC_URI="https://github.com/kumina/postfix_exporter/archive/${PV}.tar.gz -> ${P}.tar.gz
 	${EGO_VENDOR_URI}"
-LICENSE="Apache-2.0"
+
+LICENSE="Apache-2.0 BSD MIT"
 SLOT="0"
+KEYWORDS="~amd64"
 IUSE="systemd"
 
-DEPEND="systemd? ( sys-apps/systemd )"
+COMMON_DEPEND="acct-group/postfix_exporter
+acct-user/postfix_exporter"
+DEPEND="systemd? ( sys-apps/systemd )
+	${COMMON_DEPEND}"
+RDEPEND="${COMMON_DEPEND}"
 
-RESTRICT="test"
-
-pkg_setup() {
-	enewgroup ${PN}
-	enewuser ${PN} -1 -1 -1 ${PN}
-}
+RESTRICT+=" test"
 
 src_compile() {
 	pushd src/${EGO_PN} || die
@@ -52,11 +49,8 @@ src_compile() {
 src_install() {
 	dobin src/${EGO_PN}/bin/${PN}
 	dodoc src/${EGO_PN}/{CHANGELOG,README}.md
-	local dir
-	for dir in /var/{lib,log}/${PN}; do
-		keepdir "${dir}"
-		fowners ${PN}:${PN} "${dir}"
-	done
+	keepdir /var/log/${PN}
+	fowners ${PN}:${PN} /var/log/${PN}
 	newinitd "${FILESDIR}"/${PN}.initd ${PN}
 	newconfd "${FILESDIR}"/${PN}.confd ${PN}
 	insinto /etc/logrotate.d
