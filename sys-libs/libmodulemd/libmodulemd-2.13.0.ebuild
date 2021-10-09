@@ -2,33 +2,40 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-PYTHON_COMPAT=( python3_{6..9} )
+PYTHON_COMPAT=( python3_{8..10} )
 
 inherit meson python-r1
 
 DESCRIPTION="Module metadata manipulation library"
 HOMEPAGE="https://github.com/fedora-modularity/libmodulemd"
-SRC_URI="https://github.com/fedora-modularity/${PN}/releases/download/${P}/modulemd-${PV}.tar.xz"
+SRC_URI="https://github.com/fedora-modularity/${PN}/releases/download/${PV}/modulemd-${PV}.tar.xz"
 RESTRICT="mirror"
 
 LICENSE="MIT"
 SLOT="2"
 KEYWORDS="~amd64"
-IUSE="introspection"
+IUSE="+introspection +python"
 
-RDEPEND="
+REQUIRED_USE="
+	introspection? ( python )
+	python? ( introspection ${PYTHON_REQUIRED_USE} )
+"
+
+DEPEND="
 	app-arch/rpm:=
 	dev-libs/glib
 	dev-libs/libyaml
 	sys-apps/file
 
-	${PYTHON_DEPS}
-	>=dev-python/pygobject-3[${PYTHON_USEDEP}]
-	dev-python/six[${PYTHON_USEDEP}]
-
-	introspection? ( dev-libs/gobject-introspection )
-"
-DEPEND="${RDEPEND}"
+	introspection? (
+		dev-libs/gobject-introspection
+		>=dev-python/pygobject-3[${PYTHON_USEDEP}]
+	)
+	python? (
+		${PYTHON_DEPS}
+		dev-python/six[${PYTHON_USEDEP}]
+	)"
+RDEPEND="${DEPEND}"
 BDEPEND="
 	dev-util/glib-utils
 	sys-apps/help2man
@@ -50,21 +57,32 @@ libmodulemd_src_install_internal() {
 
 src_configure() {
 	local emesonargs=(
-		-Dpython_name=${EPYTHON}
 		-Dwith_docs=false
 		-Dwith_manpages=enabled
-		-Dwith_py2=false
+		$(meson_use python with_py3)
 		$(meson_use !introspection skip_introspection)
 	)
-	python_foreach_impl meson_src_configure
+	if use python; then
+		python_foreach_impl meson_src_configure
+	else
+		meson_src_configure
+	fi
 }
 
 src_compile() {
-	python_foreach_impl meson_src_compile
+	if use python; then
+		python_foreach_impl meson_src_compile
+	else
+		meson_src_compile
+	fi
 }
 
 src_install() {
-	python_foreach_impl libmodulemd_src_install_internal
+	if use python; then
+		python_foreach_impl libmodulemd_src_install_internal
+	else
+		meson_src_install
+	fi
 
 	# Rename for slotted installation
 	mv "${D}"/usr/lib64/libmodulemd.so "${D}"/usr/lib64/libmodulemd-2.0.so
