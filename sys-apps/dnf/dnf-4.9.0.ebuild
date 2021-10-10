@@ -1,9 +1,9 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{6,7,8} )
+PYTHON_COMPAT=( python3_{8,9} )
 
 inherit cmake python-single-r1 bash-completion-r1
 
@@ -19,7 +19,7 @@ IUSE="test"
 
 LANGS=(
 	ar bg bn-IN ca cs da de el en-GB eo es eu fa fi fil fr gd gu he hi hr hu id it ja ka kk ko
-	lt ml mr ms nb nl or pa pl pt pt-BR ru sk sq sr sv th tr uk ur vi zh-CN zh-TW
+	lt ml mr ms nb nl or pa pl pt pt-BR ru si sk sq sr sv th tr uk ur vi zh-CN zh-TW
 )
 # localized help versions are installed only, when L10N var is set
 for i in "${LANGS[@]}" ; do
@@ -27,34 +27,29 @@ for i in "${LANGS[@]}" ; do
 done
 
 # the upstream app-arch/rpm uses python-single-r1 eclass and only supports one
-# python implementation, don't restrict ourselves and support multiple python
-# implementations in case rpm will ever switch to python-r1 eclass
+# python implementation
 DEPEND="
 	>=app-arch/rpm-4.14.0[python,${PYTHON_SINGLE_USEDEP}]
 	dev-db/sqlite
-	>=sys-libs/libmodulemd-1.4.0:0
+	>=sys-libs/libmodulemd-2.9.3:2
 
 	$(python_gen_cond_dep '
 		>=app-crypt/gpgme-1.10.0[python,${PYTHON_MULTI_USEDEP}]
 		>=dev-libs/libcomps-0.1.8[${PYTHON_MULTI_USEDEP}]
 		dev-python/iniparse[${PYTHON_MULTI_USEDEP}]
-		>=sys-libs/libdnf-0.54.1[${PYTHON_MULTI_USEDEP}]
-		>=sys-libs/librepo-1.7.19[${PYTHON_MULTI_USEDEP}]
+		>=sys-libs/libdnf-0.64.0[${PYTHON_MULTI_USEDEP}]
 	')
 	$(python_gen_cond_dep 'dev-python/pyliblzma[${PYTHON_MULTI_USEDEP}]' python2_7)
 "
 RDEPEND="${DEPEND}
 	!!sys-apps/yum
-	!<=sys-libs/dnf-plugins-core-4.0.16
+	!<=sys-libs/dnf-plugins-core-4.0.20
 "
 BDEPEND="
 	${PYTHON_DEPS}
 	dev-python/sphinx
 	sys-devel/gettext
-	test? (
-		${RDEPEND}
-		dev-python/nose
-	)
+	test? ( ${RDEPEND} )
 "
 
 PATCHES=( "${FILESDIR}"/4.2.6-Always-use-sphinx-build.patch )
