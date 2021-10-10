@@ -3,7 +3,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{7..9} )
+PYTHON_COMPAT=( python3_{8,9} )
 
 inherit cmake python-single-r1
 
@@ -17,7 +17,7 @@ SLOT="0"
 KEYWORDS="~amd64"
 IUSE="test"
 
-LANGS=( ca cs da de es eu fi fr hu it id ja ko nl pa pl pt pt-BR ru sk sq sr sv tr uk zh-CN zh-TW )
+LANGS=( ca cs da de es eu fi fr hu it id ja ko nl pa pl pt pt-BR ru si sk sq sr sv tr uk zh-CN zh-TW )
 
 for i in "${LANGS[@]}"; do
 	IUSE="${IUSE} l10n_${i}"
