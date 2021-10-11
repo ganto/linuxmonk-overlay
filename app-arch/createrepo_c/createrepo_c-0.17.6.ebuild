@@ -2,9 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-PYTHON_COMPAT=( python3_{6,7,8,9} )
+PYTHON_COMPAT=( python3_{8,9,10} )
 
-inherit cmake python-r1 bash-completion-r1
+inherit cmake python-r1
 
 DESCRIPTION="C implementation of createrepo"
 HOMEPAGE="https://rpm-software-management.github.io/createrepo_c"
@@ -18,7 +18,7 @@ RESTRICT="!test? ( test )"
 
 DEPEND="
 	app-arch/bzip2
-	app-arch/lzma
+	app-arch/xz-utils
 	>=app-arch/rpm-4.9.0:=
 	dev-db/sqlite:3
 	dev-libs/glib:2
