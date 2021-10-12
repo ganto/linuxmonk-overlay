@@ -1,9 +1,9 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
-USE_RUBY="ruby25 ruby26 ruby27"
+USE_RUBY="ruby26 ruby27"
 
 RUBY_FAKEGEM_RECIPE_TEST="rspec3"
 RUBY_FAKEGEM_RECIPE_DOC=""
@@ -27,8 +27,9 @@ IUSE=""
 ruby_add_rdepend "
 	>=dev-ruby/bcrypt_pbkdf-1.0.1:1
 	>=dev-ruby/bindata-2.4.3:2
-	>=dev-ruby/netaddr-1.5.1:1
-	>=dev-ruby/net-ssh-5.2.0:5
+	>=dev-ruby/ed25519-1.2.4
+	>=dev-ruby/netaddr-2.0.4:2
+	>=dev-ruby/net-ssh-6.0.2:6
 	dev-ruby/sshkey
 "
 
