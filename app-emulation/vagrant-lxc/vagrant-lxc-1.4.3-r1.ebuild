@@ -1,9 +1,9 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
-USE_RUBY="ruby25 ruby26"
+USE_RUBY="ruby26 ruby27"
 
 RUBY_FAKEGEM_RECIPE_TEST="rspec"
 RUBY_FAKEGEM_RECIPE_DOC=""
@@ -44,8 +44,8 @@ src_install() {
 	echo "Creating sudoers file"
 	# create sudoers file for vagrant-lxc-wrapper
 	dodir /etc/sudoers.d/
-	echo "# Automatically created by vagrant-lxc" > ${ED}etc/sudoers.d/vagrant-lxc
-	chmod 0440 "${ED}"etc/sudoers.d/vagrant-lxc
+	echo "# Automatically created by vagrant-lxc" > ${ED}/etc/sudoers.d/vagrant-lxc
+	chmod 0440 "${ED}"/etc/sudoers.d/vagrant-lxc
 
 	ruby-ng_src_install
 }
@@ -65,7 +65,7 @@ each_ruby_install() {
 		|| die "Generate vagrant-lxc-wrapper failed with ${RUBY}"
 	doexe vagrant-lxc-wrapper
 
-	echo "%vagrant ALL=(root) NOPASSWD: $(ruby_fakegem_gemsdir)/gems/${RUBY_FAKEGEM_NAME}-${RUBY_FAKEGEM_VERSION}/scripts/vagrant-lxc-wrapper" >> "${ED}"etc/sudoers.d/vagrant-lxc
+	echo "%vagrant ALL=(root) NOPASSWD: $(ruby_fakegem_gemsdir)/gems/${RUBY_FAKEGEM_NAME}-${RUBY_FAKEGEM_VERSION}/scripts/vagrant-lxc-wrapper" >> "${ED}"/etc/sudoers.d/vagrant-lxc
 }
 
 pkg_postinst() {
