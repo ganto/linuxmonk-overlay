@@ -1,8 +1,8 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
-USE_RUBY="ruby24 ruby25 ruby26"
+EAPI=7
+USE_RUBY="ruby26 ruby27"
 
 RUBY_FAKEGEM_RECIPE_DOC="yard"
 RUBY_FAKEGEM_EXTRADOC="README.md"
@@ -16,8 +16,6 @@ LICENSE="MIT"
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE=""
-
-PATCHES=( "${FILESDIR}"/${PV}-Follow-fog-core-best-practices.patch )
 
 ruby_add_bdepend "
 	test? ( dev-ruby/minitest
