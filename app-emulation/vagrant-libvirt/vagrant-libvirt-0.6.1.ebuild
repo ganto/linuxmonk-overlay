@@ -27,6 +27,7 @@ ruby_add_rdepend "
 	>=dev-ruby/fog-core-2.1
 	>=dev-ruby/fog-libvirt-0.6.0
 	>=dev-ruby/nokogiri-1.6.0
+	dev-ruby/rexml
 "
 
 each_ruby_install() {
