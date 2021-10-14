@@ -20,9 +20,8 @@ fi
 
 LICENSE="Apache-2.0 BSD BSD-2 ISC MIT MPL-2.0"
 SLOT="0"
-IUSE="+acct build-client pam sqlite"
+IUSE="+acct pam sqlite"
 
-BDEPEND="build-client? ( >=net-libs/nodejs-10[npm] )"
 COMMON_DEPEND="
 	acct? (
 		acct-group/git
@@ -36,7 +35,7 @@ DOCS=(
 	custom/conf/app.example.ini CONTRIBUTING.md README.md
 )
 FILECAPS=(
-	cap_net_bind_service+ep usr/bin/gitea
+	-m 711 cap_net_bind_service+ep usr/bin/gitea
 )
 
 RESTRICT="test"
@@ -67,9 +66,6 @@ src_prepare() {
 	einfo "Remove tests which depend on gitea git-repo."
 	rm ./modules/git/blob_test.go || die
 	rm ./modules/git/repo_test.go || die
-
-	# Remove already build assets (like frontend part)
-	use build-client && emake clean-all
 }
 
 src_compile() {
@@ -84,13 +80,7 @@ src_compile() {
 	)
 	[[ ${PV} != 9999* ]] && makeenv+=("DRONE_TAG=${MY_PV}")
 
-	if use build-client; then
-		# -j1 as Makefile doesn't handle dependancy correctly, and is not
-		# useful as golang compiler don't use this info.
-		env "${makeenv[@]}" emake -j1 build
-	else
-		env "${makeenv[@]}" emake backend
-	fi
+	env "${makeenv[@]}" emake backend
 }
 
 src_install() {
@@ -114,5 +104,10 @@ src_install() {
 
 pkg_postinst() {
 	fcaps_pkg_postinst
-	go-module_pkg_postinst
+	tmpfiles_process gitea.conf
+
+	ewarn "The default JWT signing algorithm changed in 1.15.0 from HS256 (symmetric) to"
+	ewarn "RS256 (asymmetric). Gitea OAuth2 tokens (and potentially client secrets) will"
+	ewarn "need to be regenerated unless you change your JWT_SIGNING_ALGORITHM back to HS256."
+	ewarn "For other breaking changes, see <https://github.com/go-gitea/gitea/releases/tag/v1.15.0>."
 }
