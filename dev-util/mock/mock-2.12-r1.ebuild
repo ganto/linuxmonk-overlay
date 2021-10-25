@@ -9,7 +9,7 @@ inherit python-single-r1 bash-completion-r1
 
 MY_PV=${PV}-1
 MY_P=${PN}-${MY_PV}
-CORE_CONFIGS_VERSION=35-1
+CORE_CONFIGS_VERSION=36.1-1
 
 DESCRIPTION="Builds RPM packages inside chroots"
 HOMEPAGE="https://github.com/rpm-software-management/mock"
@@ -27,7 +27,7 @@ RDEPEND="
 	acct-group/mock acct-user/mock
 	app-arch/createrepo_c
 	app-arch/pigz
-	app-arch/rpm[lua,python,${PYTHON_SINGLE_USEDEP},zstd]
+	app-arch/rpm[lua(+),python,${PYTHON_SINGLE_USEDEP},zstd]
 	>=app-misc/distribution-gpg-keys-1.55
 	$(python_gen_cond_dep '
 		dev-python/distro[${PYTHON_MULTI_USEDEP}]
