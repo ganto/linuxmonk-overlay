@@ -63,7 +63,7 @@ python_compile_all() {
 	pushd docs >/dev/null || die
 	sphinx-build -b man -d _build/doctrees -n -t manpages -W . _build/man || die "Failed to build man-pages"
 	if use doc; then
-		sphinx-build -b html -d _build/doctrees -n -W . _build/html || die "Failed to build documentation"
+		sphinx-build -b html -d _build/doctrees -n -W -T -vvv . _build/html || die "Failed to build documentation"
 	fi
 	popd || die >/dev/null
 }

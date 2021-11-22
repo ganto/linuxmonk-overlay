@@ -9,7 +9,7 @@ inherit python-single-r1 bash-completion-r1
 
 MY_PV=${PV}-1
 MY_P=${PN}-${MY_PV}
-CORE_CONFIGS_VERSION=36.1-1
+CORE_CONFIGS_VERSION=36.2-1
 
 DESCRIPTION="Builds RPM packages inside chroots"
 HOMEPAGE="https://github.com/rpm-software-management/mock"
