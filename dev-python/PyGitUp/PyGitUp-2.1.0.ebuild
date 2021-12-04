@@ -1,10 +1,10 @@
 # Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 DISTUTILS_USE_SETUPTOOLS=pyproject.toml
-PYTHON_COMPAT=( python3_{7..9} )
+PYTHON_COMPAT=( python3_{8..10} )
 
 inherit distutils-r1
 
@@ -17,7 +17,6 @@ SLOT="0"
 KEYWORDS="~amd64"
 
 RDEPEND="
-	>=dev-python/click-7.0[${PYTHON_USEDEP}]
 	>=dev-python/colorama-0.4.0[${PYTHON_USEDEP}]
 	>=dev-python/GitPython-3.0.0[${PYTHON_USEDEP}]
 	>=dev-python/termcolor-1.1.0[${PYTHON_USEDEP}]
