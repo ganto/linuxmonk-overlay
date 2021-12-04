@@ -1,10 +1,9 @@
 # Copyright 2020-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-PYTHON_COMPAT=( python3_{7,8} )
-
+PYTHON_COMPAT=( python3_{8..10} )
 inherit distutils-r1
 
 DESCRIPTION="Canonical JSON"
@@ -19,8 +18,7 @@ RDEPEND="
 	>=dev-python/frozendict-1.0[${PYTHON_USEDEP}]
 	>=dev-python/simplejson-3.14.0[${PYTHON_USEDEP}]
 "
-BDEPEND="${RDEPEND}"
-
-distutils_enable_tests nose
 
 DOCS=( CHANGES.md README.rst )
+
+distutils_enable_tests nose
