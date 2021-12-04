@@ -3,10 +3,10 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{7..9} )
+PYTHON_COMPAT=( python3_{8,9} )
 inherit distutils-r1
 
-KUBERNETES_BASE_COMMIT=b4d3aad42dc23e7a6c0e5c032691f8dc385a786c
+KUBERNETES_BASE_COMMIT=09dbbe521e203634154764b903208bb28cd70f9d
 
 DESCRIPTION="Kubernetes python client"
 HOMEPAGE="https://pypi.python.org/pypi/kubernetes https://github.com/kubernetes-client/python"
@@ -23,7 +23,7 @@ RDEPEND="
 	dev-python/certifi[${PYTHON_USEDEP}]
 	>=dev-python/google-auth-1.0.1[${PYTHON_USEDEP}]
 	>=dev-python/python-dateutil-2.5.3[${PYTHON_USEDEP}]
-	>=dev-python/pyyaml-3.12[${PYTHON_USEDEP}]
+	>=dev-python/pyyaml-5.4.1[${PYTHON_USEDEP}]
 	dev-python/requests[${PYTHON_USEDEP}]
 	dev-python/requests-oauthlib[${PYTHON_USEDEP}]
 	>=dev-python/six-1.9.0[${PYTHON_USEDEP}]
