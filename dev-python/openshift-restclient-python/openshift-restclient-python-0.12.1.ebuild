@@ -3,7 +3,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{7..9} )
+PYTHON_COMPAT=( python3_{8,9} )
 inherit distutils-r1
 
 MY_PN="${PN%%-restclient-python}"
@@ -36,5 +36,4 @@ python_install() {
 	# cleanup inproper packaging (see python-openshift.spec)
 	rm -r "${ED}"$(python_get_sitedir)/scripts
 	rm -r "${ED}"/usr/requirements.txt
-	rm -r "${ED}"/usr/custom_objects_spec.json
 }
