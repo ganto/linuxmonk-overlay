@@ -1,15 +1,15 @@
-# Copyright 2020 Gentoo Authors
+# Copyright 2020-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-PYTHON_COMPAT=( python3_{6,7,8} )
+PYTHON_COMPAT=( python3_{8..10} )
 
 inherit distutils-r1
 
 DESCRIPTION="Sign JSON with Ed25519 signatures"
 HOMEPAGE="https://github.com/matrix-org/python-signedjson https://pypi.org/project/signedjson/"
-SRC_URI="https://github.com/matrix-org/python-${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
+SRC_URI="mirror://pypi/${PN:0:1}/${PN}/${P}.tar.gz"
 
 LICENSE="Apache-2.0"
 SLOT="0"
@@ -24,5 +24,3 @@ RDEPEND="
 BDEPEND="${RDEPEND}"
 
 distutils_enable_tests nose
-
-S="${WORKDIR}/python-${P}"
