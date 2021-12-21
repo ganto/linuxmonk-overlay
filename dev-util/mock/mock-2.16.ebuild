@@ -1,7 +1,7 @@
 # Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 PYTHON_COMPAT=( python3_{7..9} )
 
@@ -9,7 +9,7 @@ inherit python-single-r1 bash-completion-r1
 
 MY_PV=${PV}-1
 MY_P=${PN}-${MY_PV}
-CORE_CONFIGS_VERSION=36.2-1
+CORE_CONFIGS_VERSION=36.4-1
 
 DESCRIPTION="Builds RPM packages inside chroots"
 HOMEPAGE="https://github.com/rpm-software-management/mock"
@@ -20,7 +20,8 @@ RESTRICT="mirror"
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE=""
+IUSE="test"
+RESTRICT="!test? ( test )"
 
 DEPEND=""
 RDEPEND="
@@ -28,13 +29,13 @@ RDEPEND="
 	app-arch/createrepo_c
 	app-arch/pigz
 	app-arch/rpm[lua(+),python,${PYTHON_SINGLE_USEDEP},zstd]
-	>=app-misc/distribution-gpg-keys-1.55
+	>=app-misc/distribution-gpg-keys-1.60
 	$(python_gen_cond_dep '
-		dev-python/distro[${PYTHON_MULTI_USEDEP}]
-		dev-python/jinja[${PYTHON_MULTI_USEDEP}]
-		dev-python/pyroute2[${PYTHON_MULTI_USEDEP}]
-		dev-python/requests[${PYTHON_MULTI_USEDEP}]
-		dev-python/templated-dictionary[${PYTHON_MULTI_USEDEP}]
+		dev-python/distro[${PYTHON_USEDEP}]
+		dev-python/jinja[${PYTHON_USEDEP}]
+		dev-python/pyroute2[${PYTHON_USEDEP}]
+		dev-python/requests[${PYTHON_USEDEP}]
+		dev-python/templated-dictionary[${PYTHON_USEDEP}]
 	')
 	sys-apps/iproute2
 	sys-apps/usermode
@@ -136,4 +137,8 @@ pkg_postinst() {
 	elog "To use mock as a non-root user, add yourself to the 'mock' group:"
 	elog "  usermod -aG mock youruser"
 	elog
+}
+
+src_test() {
+	mock/run-tests.sh --no-cov -vv -ra -l -Wdefault || die "Test suite failed"
 }
