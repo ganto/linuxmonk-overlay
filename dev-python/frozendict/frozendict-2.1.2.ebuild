@@ -17,3 +17,10 @@ KEYWORDS="~amd64"
 
 BDEPEND=""
 RDEPEND=""
+
+distutils_enable_tests pytest
+
+python_test() {
+	export PYTHON_PATH="./build/lib"
+	pytest -vv -ra -l -Wdefault
+}
