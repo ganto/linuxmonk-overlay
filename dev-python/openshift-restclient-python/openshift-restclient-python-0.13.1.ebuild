@@ -19,15 +19,9 @@ KEYWORDS="~amd64"
 IUSE=""
 
 RDEPEND="
-	dev-python/jinja[${PYTHON_USEDEP}]
-	dev-python/kubernetes-client-python[${PYTHON_USEDEP}]
+	>=dev-python/kubernetes-client-python-12.0[${PYTHON_USEDEP}]
 	dev-python/python-string-utils[${PYTHON_USEDEP}]
-	dev-python/requests[${PYTHON_USEDEP}]
-	dev-python/requests-oauthlib[${PYTHON_USEDEP}]
-	dev-python/ruamel-yaml[${PYTHON_USEDEP}]
 	dev-python/six[${PYTHON_USEDEP}]
 "
-
-PATCHES=( "${FILESDIR}/${MY_PN}-0.6.1-Fix-install_requires.patch" )
 
 S="${WORKDIR}/${MY_P}"
