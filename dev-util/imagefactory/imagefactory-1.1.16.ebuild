@@ -1,7 +1,7 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 PYTHON_COMPAT=( python3_{8,9} )
 DISTUTILS_SINGLE_IMPL=1
@@ -15,28 +15,21 @@ SRC_URI="https://github.com/redhat-imaging/imagefactory/archive/${P}-1.tar.gz"
 LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE="openstack rhevm test"
-RESTRICT="!test? ( test )"
+IUSE="openstack rhevm"
 
 RDEPEND="
 	app-emulation/libguestfs[python,${PYTHON_SINGLE_USEDEP}]
 	>=app-emulation/oz-0.12.0[${PYTHON_SINGLE_USEDEP}]
 	$(python_gen_cond_dep '
-		dev-libs/libxml2:2[python,${PYTHON_MULTI_USEDEP}]
-		dev-python/httplib2[${PYTHON_MULTI_USEDEP}]
-		dev-python/pycurl[${PYTHON_MULTI_USEDEP}]
-		dev-python/zope-interface[${PYTHON_MULTI_USEDEP}]
-		openstack? ( dev-python/python-glanceclient[${PYTHON_MULTI_USEDEP}] )
-		rhevm? ( dev-python/ovirt-engine-sdk-python[${PYTHON_MULTI_USEDEP}] )
+		dev-libs/libxml2:2[python,${PYTHON_USEDEP}]
+		dev-python/httplib2[${PYTHON_USEDEP}]
+		dev-python/pycurl[${PYTHON_USEDEP}]
+		dev-python/zope-interface[${PYTHON_USEDEP}]
+		openstack? ( dev-python/python-glanceclient[${PYTHON_USEDEP}] )
+		rhevm? ( dev-python/ovirt-engine-sdk-python[${PYTHON_USEDEP}] )
 	')
 "
 DEPEND="${RDEPEND}"
-BDEPEND="
-	$(python_gen_cond_dep '
-		dev-python/setuptools[${PYTHON_MULTI_USEDEP}]
-		test? ( dev-python/nose[${PYTHON_MULTI_USEDEP}] )
-	')
-"
 
 PATCHES=(
 	"${FILESDIR}"/${PN}-1.1.11-Adjust-certificate-path-for-Gentoo.patch
@@ -46,6 +39,8 @@ PATCHES=(
 )
 
 S="${WORKDIR}"/${PN}-${P}-1
+
+distutils_enable_tests nose
 
 python_test() {
 	PYTHONPATH=${BUILD_DIR}/imgfac:${BUILD_DIR}/imagefactory_plugins nosetests --verbose || die "Tests failed for ${EPYTHON}"
