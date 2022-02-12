@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -34,12 +34,11 @@ DEPEND="
 	>=sys-libs/libmodulemd-2.9.3:2
 
 	$(python_gen_cond_dep '
-		>=app-crypt/gpgme-1.10.0[python,${PYTHON_MULTI_USEDEP}]
-		>=dev-libs/libcomps-0.1.8[${PYTHON_MULTI_USEDEP}]
-		dev-python/iniparse[${PYTHON_MULTI_USEDEP}]
-		>=sys-libs/libdnf-0.64.0[${PYTHON_MULTI_USEDEP}]
+		>=app-crypt/gpgme-1.10.0[python,${PYTHON_USEDEP}]
+		>=dev-libs/libcomps-0.1.8[${PYTHON_USEDEP}]
+		dev-python/iniparse[${PYTHON_USEDEP}]
+		>=sys-libs/libdnf-0.64.0[${PYTHON_USEDEP}]
 	')
-	$(python_gen_cond_dep 'dev-python/pyliblzma[${PYTHON_MULTI_USEDEP}]' python2_7)
 "
 RDEPEND="${DEPEND}
 	!!sys-apps/yum
