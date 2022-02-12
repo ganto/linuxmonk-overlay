@@ -1,7 +1,7 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 PYTHON_COMPAT=( python3_{8,9} )
 DISTUTILS_SINGLE_IMPL=1
@@ -23,10 +23,10 @@ RESTRICT="!test? ( test )"
 
 DEPEND="
 	$(python_gen_cond_dep '
-		dev-python/libvirt-python[${PYTHON_MULTI_USEDEP}]
-		dev-python/lxml[${PYTHON_MULTI_USEDEP}]
-		dev-python/m2crypto[${PYTHON_MULTI_USEDEP}]
-		dev-python/requests[${PYTHON_MULTI_USEDEP}]
+		dev-python/libvirt-python[${PYTHON_USEDEP}]
+		dev-python/lxml[${PYTHON_USEDEP}]
+		dev-python/m2crypto[${PYTHON_USEDEP}]
+		dev-python/requests[${PYTHON_USEDEP}]
 	')
 "
 RDEPEND="${DEPEND}
@@ -38,11 +38,11 @@ RDEPEND="${DEPEND}
 "
 BDEPEND="
 	$(python_gen_cond_dep '
-		dev-python/setuptools[${PYTHON_MULTI_USEDEP}]
+		dev-python/setuptools[${PYTHON_USEDEP}]
 	')
 	test? (
 		$(python_gen_cond_dep '
-			dev-python/pytest[${PYTHON_MULTI_USEDEP}]
+			dev-python/pytest[${PYTHON_USEDEP}]
 		')
 	)
 "
@@ -64,6 +64,7 @@ PATCHES=(
 	"${FILESDIR}"/${MY_PV}-GH283-Guest-fix-to-always-use-host-passthrough-CPU-for-all-arches.patch
 	"${FILESDIR}"/${MY_PV}-GH286-Set-default-ssh-connect-timeout-to-30-seconds.patch
 	"${FILESDIR}"/${MY_PV}-Fix-API-calls-for-new-useuefi-parameter.patch
+	"${FILESDIR}"/${MY_PV}-Python3-monotonic.patch
 	"${FILESDIR}"/${MY_PV}-Fix-test-suite.patch
 	"${FILESDIR}"/${MY_PV}-Replace-genisoimage-with-mkisofs.patch
 	"${FILESDIR}"/oz-0.16.0-Read-home-directory-from-environment.patch

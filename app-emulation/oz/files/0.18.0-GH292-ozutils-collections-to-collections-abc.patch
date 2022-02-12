@@ -1,0 +1,34 @@
+From 2f81e48c478502eca3d228a67f51052201d80639 Mon Sep 17 00:00:00 2001
+From: Dan Bungert <daniel.bungert@canonical.com>
+Date: Mon, 7 Feb 2022 14:43:51 -0700
+Subject: [PATCH] ozutil: collections -> collections.abc
+
+For python 3.10, some items formerly from collections must now be
+obtained from collections.abc.  This should be backwards compatible.
+https://docs.python.org/3.5/library/collections.abc.html#collections.abc.Callable
+---
+ oz/ozutil.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/oz/ozutil.py b/oz/ozutil.py
+index 3a861be3..328421be 100644
+--- a/oz/ozutil.py
++++ b/oz/ozutil.py
+@@ -19,7 +19,7 @@
+ Miscellaneous utility functions.
+ """
+ 
+-import collections
++import collections.abc
+ try:
+     import configparser
+ except ImportError:
+@@ -536,7 +536,7 @@ def copy_modify_file(inname, outname, subfunc):
+         raise Exception("output filename is None")
+     if subfunc is None:
+         raise Exception("subfunction is None")
+-    if not isinstance(subfunc, collections.Callable):
++    if not isinstance(subfunc, collections.abc.Callable):
+         raise Exception("subfunction is not callable")
+ 
+     infile = open(inname, 'r')

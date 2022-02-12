@@ -1,0 +1,22 @@
+commit 04defe1cc590ba1c6a56f4bfcee8d0b5eaf06d6d
+Author: Reto Gantenbein <reto.gantenbein@linuxmonk.ch>
+Date:   Sat Feb 12 11:54:34 2022 +0100
+
+    Don't depend on monotonic for Python >=3.3
+
+diff --git a/oz/ozutil.py b/oz/ozutil.py
+index 3a861be..a005ac0 100644
+--- a/oz/ozutil.py
++++ b/oz/ozutil.py
+@@ -43,7 +43,10 @@ import urllib
+ 
+ import lxml.etree
+ 
+-import monotonic
++try:
++    import monotonic
++except ImportError:
++    from time import monotonic
+ 
+ import requests
+ 
