@@ -1,7 +1,7 @@
-# Copyright 2020-2021 Gentoo Authors
+# Copyright 2020-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 PYTHON_COMPAT=( python3_{8,9} )
 DISTUTILS_SINGLE_IMPL=1
@@ -27,12 +27,12 @@ RDEPEND="
 	dev-lang/perl:*
 	${PYTHON_DEPS}
 	$(python_gen_cond_dep '
-		dev-python/pybeam[${PYTHON_MULTI_USEDEP}]
-		dev-python/pyenchant[${PYTHON_MULTI_USEDEP}]
-		dev-python/pyxdg[${PYTHON_MULTI_USEDEP}]
-		dev-python/toml[${PYTHON_MULTI_USEDEP}]
-		dev-python/zstd[${PYTHON_MULTI_USEDEP}]
-		sys-apps/file[python,${PYTHON_MULTI_USEDEP}]
+		dev-python/pybeam[${PYTHON_USEDEP}]
+		dev-python/pyenchant[${PYTHON_USEDEP}]
+		dev-python/pyxdg[${PYTHON_USEDEP}]
+		dev-python/toml[${PYTHON_USEDEP}]
+		dev-python/zstd[${PYTHON_USEDEP}]
+		sys-apps/file[python,${PYTHON_USEDEP}]
 	')
 	dev-util/desktop-file-utils
 	sys-apps/groff
@@ -47,8 +47,8 @@ BDEPEND="
 		app-text/hunspell[l10n_en,l10n_cs]
 		dev-libs/appstream-glib
 		$(python_gen_cond_dep '
-			dev-python/pytest-flake8[${PYTHON_MULTI_USEDEP}]
-			dev-python/pytest-xdist[${PYTHON_MULTI_USEDEP}]
+			dev-python/pytest-flake8[${PYTHON_USEDEP}]
+			dev-python/pytest-xdist[${PYTHON_USEDEP}]
 		')
 		dev-util/checkbashisms
 	)
