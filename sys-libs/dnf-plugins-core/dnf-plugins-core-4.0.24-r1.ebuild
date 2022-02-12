@@ -1,9 +1,9 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-PYTHON_COMPAT=( python3_{8,9} )
+PYTHON_COMPAT=( python3_{8..10} )
 
 inherit cmake python-single-r1
 
@@ -27,9 +27,9 @@ CDEPEND="${PYTHON_DEPS}"
 RDEPEND="${CDEPEND}
 	>=sys-apps/dnf-4.2.22[${PYTHON_SINGLE_USEDEP}]
 	$(python_gen_cond_dep '
-		dev-python/python-dateutil[${PYTHON_MULTI_USEDEP}]
-		dev-python/dbus-python[${PYTHON_MULTI_USEDEP}]
-		sys-libs/libdnf[${PYTHON_MULTI_USEDEP}]
+		dev-python/python-dateutil[${PYTHON_USEDEP}]
+		dev-python/dbus-python[${PYTHON_USEDEP}]
+		sys-libs/libdnf[${PYTHON_USEDEP}]
 	')
 "
 DEPEND="${CDEPEND}
