@@ -1,9 +1,9 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-PYTHON_COMPAT=( python3_{8,9} )
+PYTHON_COMPAT=( python3_{8..10} )
 
 inherit cmake python-single-r1 bash-completion-r1
 
@@ -37,12 +37,12 @@ DEPEND="
 		>=app-crypt/gpgme-1.10.0[python,${PYTHON_USEDEP}]
 		>=dev-libs/libcomps-0.1.8[${PYTHON_USEDEP}]
 		dev-python/iniparse[${PYTHON_USEDEP}]
-		>=sys-libs/libdnf-0.64.0[${PYTHON_USEDEP}]
+		>=sys-libs/libdnf-0.66.0[${PYTHON_USEDEP}]
 	')
 "
 RDEPEND="${DEPEND}
 	!!sys-apps/yum
-	!<=sys-libs/dnf-plugins-core-4.0.20
+	!<=sys-libs/dnf-plugins-core-4.0.26
 "
 BDEPEND="
 	${PYTHON_DEPS}
