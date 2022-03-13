@@ -1,9 +1,9 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-PYTHON_COMPAT=( python3_{6,7,8} )
+PYTHON_COMPAT=( python3_{8..10} )
 
 inherit autotools python-r1
 
@@ -15,19 +15,21 @@ RESTRICT="mirror"
 LICENSE="LGPL-2+"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE="doc ldap python sasl selinux"
+IUSE="audit doc ldap python sasl selinux"
 
-RDEPEND="python? ( ${PYTHON_DEPS} )"
-DEPEND="${RDEPEND}
+RDEPEND="
 	>=dev-libs/glib-2.30:2
 	dev-libs/popt
+	>=sys-devel/gettext-0.18.2
+	sys-libs/pam
+	virtual/libcrypt:=
+
 	ldap? ( net-nds/openldap )
+	python? ( ${PYTHON_DEPS} )
 	sasl? ( dev-libs/cyrus-sasl )
 	selinux? ( sys-libs/libselinux )
-	>=sys-devel/gettext-0.18.2
-	sys-libs/glibc[nscd]
-	sys-libs/pam
 "
+DEPEND="${RDEPEND}"
 BDEPEND="
 	doc? ( dev-util/gtk-doc )
 	sys-devel/bison
@@ -35,10 +37,11 @@ BDEPEND="
 "
 
 src_prepare() {
-	eapply "${FILESDIR}/${PV}-Fix-errors-with-Werror-format-security.patch"
+	eapply "${FILESDIR}/${PV}-downstream_test_xcrypt.patch"
+	eapply "${FILESDIR}/${PV}-PR49_add_yescrypt.patch"
 
 	eapply_user
-	eautoreconf
+	./autogen.sh
 
 	if use python; then
 		python_copy_sources
@@ -48,6 +51,7 @@ src_prepare() {
 src_configure() {
 	local mybaseconf=(
 		--disable-static
+		$(use_with audit)
 		$(use_with ldap)
 		$(use_with sasl)
 		$(use_with selinux)
