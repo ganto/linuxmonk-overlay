@@ -1,7 +1,7 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 inherit autotools
 
@@ -12,19 +12,21 @@ SRC_URI="https://releases.pagure.org/${PN}/${P}.tar.xz"
 LICENSE="GPL-2+"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE="selinux +suid"
+IUSE="gtk selinux +suid"
 
 CDEPEND="
 	dev-libs/glib:2
 	dev-perl/XML-Parser
-	selinux? ( sys-libs/libselinux )
 	sys-libs/libuser
 	sys-libs/pam
-	>=x11-libs/gtk+-2.23:2
-	x11-libs/startup-notification
+	gtk? (
+		dev-util/desktop-file-utils
+		>=x11-libs/gtk+-2.23:2
+		x11-libs/startup-notification
+	)
+	selinux? ( sys-libs/libselinux )
 "
 DEPEND="${CDEPEND}
-	dev-util/desktop-file-utils
 	dev-util/intltool
 	sys-apps/util-linux
 	virtual/pkgconfig
@@ -34,8 +36,6 @@ RDEPEND="${CDEPEND}
 "
 
 DOCS=( AUTHORS ChangeLog NEWS README )
-
-PATCHES=( "${FILESDIR}"/${PN}-1.112-Add-sys-sysmacros-include.patch )
 
 src_prepare() {
 	default_src_prepare
@@ -48,19 +48,23 @@ src_prepare() {
 }
 
 src_configure() {
-	econf $(use_with selinux)
+	econf \
+		--without-fexecve \
+		$(use_with gtk) \
+		$(use_with selinux)
 }
 
 src_install() {
 	default_src_install
 
+	if use gtk; then
+		# make userformat symlink to usermount
+		dosym usermount /usr/bin/userformat
+		dosym usermount.1.bz2 /usr/share/man/man1/userformat.1.bz2
+	fi
 	if use suid; then
 		chmod 4711 "${D}"/usr/sbin/userhelper
 	fi
-
-	# make userformat symlink to usermount
-	dosym usermount /usr/bin/userformat
-	dosym usermount.1.bz2 /usr/share/man/man1/userformat.1.bz2
 
 	insinto /etc/security/console.apps
 	doins "${FILESDIR}"/config-util

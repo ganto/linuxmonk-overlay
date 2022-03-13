@@ -1,3 +1,0 @@
-# Reto Gantenbein <reto.gantenbein@linuxmonk.ch> (21 Apr 2019)
-# Breaks Gentoo python setup of dev-util/mock.
-=sys-apps/usermode-1.113-r1
