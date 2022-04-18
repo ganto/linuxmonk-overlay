@@ -1,0 +1,21 @@
+commit 2e49a9261195598f736ac30bccf73ee2c81ea2d6
+Author: Reto Gantenbein <reto.gantenbein@linuxmonk.ch>
+Date:   Mon Apr 18 23:13:45 2022 +0200
+
+    apt_cacher_ng: Remove reference to unknown 'global_handlers' role
+
+diff --git a/ansible/roles/apt_cacher_ng/tasks/state_present.yml b/ansible/roles/apt_cacher_ng/tasks/state_present.yml
+index 68ff5a5c6..1ea0be4e1 100644
+--- a/ansible/roles/apt_cacher_ng/tasks/state_present.yml
++++ b/ansible/roles/apt_cacher_ng/tasks/state_present.yml
+@@ -5,10 +5,6 @@
+ # Copyright (C) 2016-2017,2021 DebOps <https://debops.org/>
+ # SPDX-License-Identifier: GPL-3.0-only
+ 
+-- name: Import DebOps global handlers
+-  import_role:
+-    name: 'global_handlers'
+-
+ - name: Divert Apt-Cacher NG configuration
+   command: dpkg-divert --quiet --local --divert "/{{ item.path }}.dpkg-divert"
+            --rename "/{{ item.path }}"

@@ -1,12 +1,12 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-PYTHON_COMPAT=( python3_{8,9} )
+PYTHON_COMPAT=( python3_{8..10} )
 inherit distutils-r1
 
-DEBOPS_GIT_COMMIT="5bcb32c5c6b7237a99929c488984b9eace605209"
+DEBOPS_GIT_COMMIT="7f2e941ea2f12611917e058dcb9b6177426f2928"
 
 DESCRIPTION="Your Debian-based data center in a box"
 HOMEPAGE="https://debops.org/"
@@ -27,6 +27,7 @@ RDEPEND="
 	dev-python/netaddr[${PYTHON_USEDEP}]
 	dev-python/passlib[${PYTHON_USEDEP}]
 	dev-python/python-ldap[${PYTHON_USEDEP}]
+	dev-python/toml[${PYTHON_USEDEP}]
 "
 DEPEND="
 	dev-python/setuptools[${PYTHON_USEDEP}]
@@ -44,6 +45,7 @@ DOCS=( CHANGELOG.rst CODEOWNERS CONTRIBUTING.rst DEVELOPMENT.rst README.md Docke
 
 PATCHES=(
 	"${FILESDIR}"/${PN}-0.7.2-Skip-edit_url.patch
+	"${FILESDIR}"/${PV}-apt_cacher_ng-Remove-reference-to-global_handlers.patch
 )
 
 src_prepare() {
@@ -63,7 +65,7 @@ python_compile_all() {
 	pushd docs >/dev/null || die
 	sphinx-build -b man -d _build/doctrees -n -t manpages -W . _build/man || die "Failed to build man-pages"
 	if use doc; then
-		sphinx-build -b html -d _build/doctrees -n -W -T -vvv . _build/html || die "Failed to build documentation"
+		sphinx-build -b html -d _build/doctrees -n -W . _build/html || die "Failed to build documentation"
 	fi
 	popd || die >/dev/null
 }

@@ -1,12 +1,12 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-PYTHON_COMPAT=( python3_{8,9} )
+PYTHON_COMPAT=( python3_{8..10} )
 inherit distutils-r1
 
-DEBOPS_GIT_COMMIT="00e130829579b12bc845720346e4695ea9beff39"
+DEBOPS_GIT_COMMIT="1a6e81c67d696d4f00a048365c41139dae9d21bc"
 
 DESCRIPTION="Your Debian-based data center in a box"
 HOMEPAGE="https://debops.org/"
@@ -26,17 +26,18 @@ RDEPEND="
 	dev-python/future[${PYTHON_USEDEP}]
 	dev-python/netaddr[${PYTHON_USEDEP}]
 	dev-python/passlib[${PYTHON_USEDEP}]
+	dev-python/python-dotenv[${PYTHON_USEDEP}]
 	dev-python/python-ldap[${PYTHON_USEDEP}]
+	dev-python/toml[${PYTHON_USEDEP}]
 "
 DEPEND="
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	dev-python/sphinx[${PYTHON_USEDEP}]
-	doc? (
-		dev-python/sphinx_rtd_theme[${PYTHON_USEDEP}]
-	)
+	doc? ( dev-python/sphinx_rtd_theme[${PYTHON_USEDEP}] )
 	test? (
 		app-admin/ansible[${PYTHON_USEDEP}]
-		dev-python/nose[${PYTHON_USEDEP}]
+		dev-python/nose2[${PYTHON_USEDEP}]
+		dev-python/python-dotenv[${PYTHON_USEDEP}]
 	)
 "
 
@@ -63,7 +64,7 @@ python_compile_all() {
 	pushd docs >/dev/null || die
 	sphinx-build -b man -d _build/doctrees -n -t manpages -W . _build/man || die "Failed to build man-pages"
 	if use doc; then
-		sphinx-build -b html -d _build/doctrees -n -W . _build/html || die "Failed to build documentation"
+		sphinx-build -b html -d _build/doctrees -n -W -T -vvv . _build/html || die "Failed to build documentation"
 	fi
 	popd || die >/dev/null
 }
