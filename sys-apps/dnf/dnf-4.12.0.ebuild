@@ -37,12 +37,12 @@ DEPEND="
 		>=app-crypt/gpgme-1.10.0[python,${PYTHON_USEDEP}]
 		>=dev-libs/libcomps-0.1.8[${PYTHON_USEDEP}]
 		dev-python/iniparse[${PYTHON_USEDEP}]
-		>=sys-libs/libdnf-0.65.0[${PYTHON_USEDEP}]
+		>=sys-libs/libdnf-0.66.0[${PYTHON_USEDEP}]
 	')
 "
 RDEPEND="${DEPEND}
 	!!sys-apps/yum
-	!<=sys-libs/dnf-plugins-core-4.0.20
+	!<=sys-libs/dnf-plugins-core-4.0.26
 "
 BDEPEND="
 	${PYTHON_DEPS}
