@@ -17,7 +17,7 @@ SLOT="0"
 KEYWORDS="~amd64"
 IUSE="test"
 
-LANGS=( ca cs da de es eu fi fr hu it id ja ko nl pa pl pt pt-BR ru si sk sq sr sv tr uk zh-CN zh-TW )
+LANGS=( ca cs da de es eu fi fr hu it id ja ko mr nl pa pl pt pt-BR ru si sk sq sr sv tr uk zh-CN zh-TW )
 
 for i in "${LANGS[@]}"; do
 	IUSE="${IUSE} l10n_${i}"
@@ -25,11 +25,11 @@ done
 
 CDEPEND="${PYTHON_DEPS}"
 RDEPEND="${CDEPEND}
-	>=sys-apps/dnf-4.2.22[${PYTHON_SINGLE_USEDEP}]
+	>=sys-apps/dnf-4.11.0[${PYTHON_SINGLE_USEDEP}]
 	$(python_gen_cond_dep '
 		dev-python/python-dateutil[${PYTHON_USEDEP}]
 		dev-python/dbus-python[${PYTHON_USEDEP}]
-		sys-libs/libdnf[${PYTHON_USEDEP}]
+		>=sys-libs/libdnf-0.64.0[${PYTHON_USEDEP}]
 	')
 "
 DEPEND="${CDEPEND}
@@ -95,5 +95,6 @@ src_install() {
 pkg_postinst() {
 	elog "dnf-plugins-core includes a number of plugins which might need"
 	elog "additional runtime dependencies:"
-	elog "  local:   app-arch/createrepo_c"
+	elog "  local:       app-arch/createrepo_c"
+	elog "  modulesync:  app-arch/createrepo_c"
 }
