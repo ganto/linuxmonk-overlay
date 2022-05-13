@@ -1100,8 +1100,8 @@ src_prepare() {
 src_compile() {
 	export CGO_ENABLED=0
 	go build -v -o "${PN}" -ldflags="-s -w
-		-X blocky/cmd.version=v${PV}
-		-X blocky/cmd.buildTime=$(date '+%Y%m%d-%H%M%S')" || die "compile failed"
+		-X github.com/0xERR0R/blocky/util.Version=v${PV}
+		-X github.com/0xERR0R/blocky/util.BuildTime=$(date '+%Y%m%d-%H%M%S')" || die "compile failed"
 }
 
 src_install() {
