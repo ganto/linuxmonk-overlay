@@ -1,0 +1,7 @@
+[Unit]
+Description=check for Gentoo package updates
+
+[Service]
+ExecStart=sh -c "/usr/sbin/checkupdate -ap | mail -s \"Gentoo Package Report for $(hostname)\" root"
+Nice=19
+Type=oneshot

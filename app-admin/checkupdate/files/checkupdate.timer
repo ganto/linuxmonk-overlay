@@ -1,0 +1,9 @@
+[Unit]
+Description=check for Gentoo package updates schedule
+
+[Timer]
+OnCalendar=Sat 04:00:00
+RandomizeDelaySec=900s
+
+[Install]
+WantedBy=timers.target
