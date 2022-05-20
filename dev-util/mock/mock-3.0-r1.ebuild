@@ -3,13 +3,13 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{7..9} )
+PYTHON_COMPAT=( python3_{8,9} )
 
 inherit python-single-r1 bash-completion-r1
 
 MY_PV=${PV}-1
 MY_P=${PN}-${MY_PV}
-CORE_CONFIGS_VERSION=37.1-1
+CORE_CONFIGS_VERSION=37.4-1
 
 DESCRIPTION="Builds RPM packages inside chroots"
 HOMEPAGE="https://github.com/rpm-software-management/mock"
@@ -29,7 +29,7 @@ RDEPEND="
 	app-arch/createrepo_c
 	app-arch/pigz
 	app-arch/rpm[lua(+),python,${PYTHON_SINGLE_USEDEP},zstd]
-	>=app-misc/distribution-gpg-keys-1.60
+	>=app-misc/distribution-gpg-keys-1.71
 	$(python_gen_cond_dep '
 		dev-python/distro[${PYTHON_USEDEP}]
 		dev-python/jinja[${PYTHON_USEDEP}]
@@ -53,8 +53,8 @@ S="${WORKDIR}/mock-${MY_P}"
 src_compile() {
 	pushd mock >/dev/null || die
 	sed -i -e "s|^_MOCK_NVR = None$|_MOCK_NVR = \"${MY_P}\"|" py/mock.py
-	for i in py/mock.py py/mock-parse-buildlog.py; do
-		sed -i -e "s|^__VERSION__\s*=.*|__VERSION__=\"${PV}\"|" ${i}
+	for i in py/mockbuild/constants.py py/mock-parse-buildlog.py; do
+		sed -i -e "s|^VERSION\s*=.*|VERSION=\"${PV}\"|" ${i}
 		sed -i -e "s|^SYSCONFDIR\s*=.*|SYSCONFDIR=\"/etc\"|" ${i}
 		sed -i -e "s|^PYTHONDIR\s*=.*|PYTHONDIR=\"$(python_get_sitedir)\"|" ${i}
 		sed -i -e "s|^PKGPYTHONDIR\s*=.*|PKGPYTHONDIR=\"$(python_get_sitedir)/mockbuild\"|" ${i}
@@ -108,7 +108,6 @@ src_install() {
 
 	dobashcomp etc/bash_completion.d/mock
 	bashcomp_alias mock mock.py
-	bashcomp_alias mock mock-parse-buildlog
 	popd >/dev/null
 
 	pushd ../mock-mock-core-configs-${CORE_CONFIGS_VERSION}/mock-core-configs >/dev/null || die
