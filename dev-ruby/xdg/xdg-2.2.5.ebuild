@@ -1,8 +1,8 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
-USE_RUBY="ruby25 ruby26 ruby27"
+EAPI=8
+USE_RUBY="ruby26 ruby27 ruby30"
 
 RUBY_FAKEGEM_TASK_DOC="none"
 RUBY_FAKEGEM_EXTRADOC="DEMO.md HISTORY.md README.md"
@@ -10,7 +10,7 @@ RUBY_FAKEGEM_EXTRADOC="DEMO.md HISTORY.md README.md"
 inherit ruby-fakegem
 
 DESCRIPTION="Module for supporting the XDG Base Directory Standard"
-HOMEPAGE="http://rubyworks.github.com/xdg"
+HOMEPAGE="https://www.alchemists.io/projects/xdg/"
 
 LICENSE="BSD-2"
 SLOT="0"
