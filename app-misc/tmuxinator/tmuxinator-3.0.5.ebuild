@@ -1,8 +1,8 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
-USE_RUBY="ruby24 ruby25 ruby26 ruby27"
+EAPI=8
+USE_RUBY="ruby26 ruby27 ruby30"
 
 RUBY_FAKEGEM_TASK_DOC="none"
 
@@ -19,7 +19,7 @@ RESTRICT="test"
 
 ruby_add_rdepend "
 	>=dev-ruby/erubis-2.6
-	>=dev-ruby/thor-0.15
+	>=dev-ruby/thor-1.2.1
 	>=dev-ruby/xdg-2.2.3
 "
 
