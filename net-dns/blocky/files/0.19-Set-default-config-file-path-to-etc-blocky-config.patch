@@ -1,0 +1,19 @@
+commit 8612246adb08ec2d9f8363ee0b00e5b9cc6e173e
+Author: Reto Gantenbein <reto.gantenbein@linuxmonk.ch>
+Date:   Sat Mar 13 15:11:00 2021 +0100
+
+    Set default config file path to /etc/blocky/config.yml
+
+diff --git a/cmd/root.go b/cmd/root.go
+index dbe9adb..b70ce3c 100644
+--- a/cmd/root.go
++++ b/cmd/root.go
+@@ -22,7 +22,7 @@ var (
+ const (
+ 	defaultPort       = 4000
+ 	defaultHost       = "localhost"
+-	defaultConfigPath = "./config.yml"
++	defaultConfigPath = "/etc/blocky/config.yml"
+ )
+ 
+ // NewRootCommand creates a new root cli command instance
