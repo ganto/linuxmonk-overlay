@@ -1,17 +1,14 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-PYTHON_COMPAT=( python3_{8,9} )
+PYTHON_COMPAT=( python3_{8..10} )
 inherit distutils-r1
-
-KUBERNETES_BASE_COMMIT=09dbbe521e203634154764b903208bb28cd70f9d
 
 DESCRIPTION="Kubernetes python client"
 HOMEPAGE="https://pypi.python.org/pypi/kubernetes https://github.com/kubernetes-client/python"
-SRC_URI="https://github.com/kubernetes-client/python/archive/v${PV}.tar.gz -> ${P}.tar.gz
-	https://github.com/kubernetes-client/python-base/archive/${KUBERNETES_BASE_COMMIT}/python-base-${KUBERNETES_BASE_COMMIT:0:7}.tar.gz -> kubernetes-python-base-${KUBERNETES_BASE_COMMIT:0:7}.tar.gz"
+SRC_URI="https://github.com/kubernetes-client/python/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="Apache-1.0"
 SLOT="0"
@@ -38,8 +35,4 @@ DOCS=( CHANGELOG.md CONTRIBUTING.md README.md )
 
 S="${WORKDIR}/${P##kubernetes-client-}"
 
-src_unpack() {
-	unpack ${P}.tar.gz || die
-	cd "${S}"
-	tar -x -C kubernetes/base --strip-components=1 -f "${DISTDIR}"/kubernetes-python-base-${KUBERNETES_BASE_COMMIT:0:7}.tar.gz || die
-}
+distutils_enable_tests pytest
