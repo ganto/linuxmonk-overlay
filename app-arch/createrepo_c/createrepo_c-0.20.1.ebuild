@@ -1,7 +1,7 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 PYTHON_COMPAT=( python3_{8,9,10} )
 
 inherit cmake python-r1
@@ -13,7 +13,7 @@ SRC_URI="https://github.com/rpm-software-management/${PN}/archive/${PV}.tar.gz -
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE="doc drpm python modulemd test zchunk"
+IUSE="doc drpm legacyhashes python modulemd test zchunk"
 RESTRICT="!test? ( test )"
 
 DEPEND="
@@ -58,6 +58,7 @@ src_configure() {
 		local mycmakeargs=(
 			-DENABLE_DRPM=$(usex drpm)
 			-DENABLE_PYTHON=ON
+			-DWITH_LEGACY_HASHES=$(usex legacyhashes)
 			-DWITH_LIBMODULEMD=$(usex modulemd)
 			-DWITH_ZCHUNK=$(usex zchunk)
 			-Wno-dev
@@ -71,6 +72,7 @@ src_configure() {
 		local mycmakeargs=(
 			-DENABLE_DRPM=$(usex drpm)
 			-DENABLE_PYTHON=OFF
+			-DWITH_LEGACY_HASHES=$(usex legacyhashes)
 			-DWITH_LIBMODULEMD=$(usex modulemd)
 			-DWITH_ZCHUNK=$(usex zchunk)
 			-Wno-dev
