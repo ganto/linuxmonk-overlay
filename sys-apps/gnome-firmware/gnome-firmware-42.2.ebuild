@@ -1,13 +1,13 @@
-# Copyright 2020 Gentoo Authors
+# Copyright 2020-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 inherit gnome2-utils meson xdg
 
 DESCRIPTION="Graphical utility to query and update firmware on devices"
-HOMEPAGE="https://gitlab.gnome.org/hughsie/gnome-firmware-updater"
-SRC_URI="https://gitlab.gnome.org/hughsie/${PN}-updater/-/archive/${PV}/${PN}-updater-${PV}.tar.bz2"
+HOMEPAGE="https://gitlab.gnome.org/World/gnome-firmware"
+SRC_URI="https://gitlab.gnome.org/World/${PN}/-/archive/${PV}/${P}.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
@@ -18,22 +18,20 @@ REQUIRED_USE="|| ( elogind systemd )"
 RDEPEND="
 	dev-libs/appstream-glib
 	>=dev-libs/libxmlb-0.1.7
-	>=net-libs/libsoup-2.51.92
-	>=sys-apps/fwupd-1.2.10
-	>=x11-libs/gtk+-3.11.2:3
-	elogind? ( >=sys-auth/elogind-211 )
-	systemd? ( >=sys-apps/systemd-211 )
+	>=gui-libs/gtk-4.2:4
+	gui-libs/libadwaita:1
+	>=sys-apps/fwupd-1.7.5
+	x11-themes/hicolor-icon-theme
+	elogind? ( sys-auth/elogind )
+	systemd? ( sys-apps/systemd )
 "
 DEPEND="${RDEPEND}
 	sys-devel/gettext
 "
 
-S="${WORKDIR}"/${PN}-updater-${PV}
-
 src_configure() {
 	local emesonargs=(
-		-Dconsolekit=false
-		-Dman=false
+		-Dman=true
 		$(meson_use elogind)
 		$(meson_use systemd)
 	)
