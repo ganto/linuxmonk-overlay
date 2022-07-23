@@ -34,6 +34,7 @@ RDEPEND="
 		dev-python/zstandard[${PYTHON_USEDEP}]
 		sys-apps/file[python,${PYTHON_USEDEP}]
 	')
+	dev-util/checkbashisms
 	dev-util/desktop-file-utils
 	sys-apps/groff
 	sys-devel/binutils:*
@@ -50,7 +51,6 @@ BDEPEND="
 			dev-python/pytest-flake8[${PYTHON_USEDEP}]
 			dev-python/pytest-xdist[${PYTHON_USEDEP}]
 		')
-		dev-util/checkbashisms
 	)
 "
 
@@ -61,4 +61,11 @@ python_prepare_all() {
 	sed -i -e "s/ --cov=rpmlint//" setup.cfg || die
 
 	distutils-r1_python_prepare_all
+}
+
+python_install_all() {
+	distutils-r1_python_install_all
+
+	insinto /etc/xdg/rpmlint
+	doins "${FILESDIR}"/*.toml
 }
