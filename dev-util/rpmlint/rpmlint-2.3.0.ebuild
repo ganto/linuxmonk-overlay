@@ -3,7 +3,7 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8,9} )
+PYTHON_COMPAT=( python3_{8..10} )
 DISTUTILS_SINGLE_IMPL=1
 
 inherit distutils-r1
@@ -31,7 +31,7 @@ RDEPEND="
 		dev-python/pyenchant[${PYTHON_USEDEP}]
 		dev-python/pyxdg[${PYTHON_USEDEP}]
 		dev-python/toml[${PYTHON_USEDEP}]
-		dev-python/zstd[${PYTHON_USEDEP}]
+		dev-python/zstandard[${PYTHON_USEDEP}]
 		sys-apps/file[python,${PYTHON_USEDEP}]
 	')
 	dev-util/desktop-file-utils
