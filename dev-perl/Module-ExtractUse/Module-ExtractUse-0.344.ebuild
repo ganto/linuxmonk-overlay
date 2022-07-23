@@ -1,7 +1,7 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=8
 
 DIST_AUTHOR=DOMM
 inherit perl-module
@@ -14,7 +14,7 @@ IUSE="test"
 
 RDEPEND="
 	>=dev-perl/Parse-RecDescent-1.967.9
-	>=dev-perl/Pod-Strip-1.00
+	dev-perl/Pod-Strip
 	virtual/perl-Pod-Escapes
 	virtual/perl-Pod-Simple
 "
@@ -30,5 +30,6 @@ DEPEND="
 		dev-perl/UNIVERSAL-require
 	)
 "
+BDEPEND="dev-perl/Module-Build"
 
 SRC_TEST="do"
