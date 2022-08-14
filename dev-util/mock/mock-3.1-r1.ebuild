@@ -9,7 +9,7 @@ inherit python-single-r1 bash-completion-r1
 
 MY_PV=${PV}-1
 MY_P=${PN}-${MY_PV}
-CORE_CONFIGS_VERSION=37.4-1
+CORE_CONFIGS_VERSION=37.6-1
 
 DESCRIPTION="Builds RPM packages inside chroots"
 HOMEPAGE="https://github.com/rpm-software-management/mock"
@@ -29,7 +29,7 @@ RDEPEND="
 	app-arch/createrepo_c
 	app-arch/pigz
 	app-arch/rpm[lua(+),python,${PYTHON_SINGLE_USEDEP},zstd]
-	>=app-misc/distribution-gpg-keys-1.71
+	>=app-misc/distribution-gpg-keys-1.74
 	$(python_gen_cond_dep '
 		dev-python/distro[${PYTHON_USEDEP}]
 		dev-python/jinja[${PYTHON_USEDEP}]
@@ -45,7 +45,6 @@ RDEPEND="
 
 PATCHES=(
 	"${FILESDIR}"/2.8-Adjust-CLI-tools-default-path.patch
-	"${FILESDIR}"/2.2-Use-tar-instead-of-gtar.patch
 )
 
 S="${WORKDIR}/mock-${MY_P}"
