@@ -3,7 +3,7 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8,9} )
+PYTHON_COMPAT=( python3_{8..10} )
 
 inherit cmake python-r1
 
@@ -20,15 +20,15 @@ IUSE="doc test python zchunk"
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
 DEPEND="app-crypt/gpgme
-	>=dev-libs/glib-2.26.0
+	>=dev-libs/glib-2.28.0
 	dev-libs/libxml2
 	dev-libs/openssl:0
 	>=net-misc/curl-7.52.0
 	sys-apps/attr
 	python? (
+		app-crypt/gpgme[python,${PYTHON_USEDEP}]
 		${PYTHON_DEPS}
 		dev-python/flask[${PYTHON_USEDEP}]
-		dev-python/pygpgme[${PYTHON_USEDEP}]
 		dev-python/pyxattr[${PYTHON_USEDEP}]
 	)
 	zchunk? ( >=app-arch/zchunk-0.9.11 )
