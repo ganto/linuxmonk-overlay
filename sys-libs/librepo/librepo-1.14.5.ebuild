@@ -10,7 +10,7 @@ inherit cmake python-r1
 DESCRIPTION="Repodata downloading library"
 HOMEPAGE="https://github.com/rpm-software-management/librepo"
 SRC_URI="https://github.com/rpm-software-management/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
-RESTRICT="mirror"
+RESTRICT="mirror !test? ( test )"
 
 LICENSE="LGPL-2+"
 SLOT="0"
