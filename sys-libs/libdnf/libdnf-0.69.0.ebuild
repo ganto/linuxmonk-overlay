@@ -10,12 +10,13 @@ inherit cmake python-r1
 DESCRIPTION="Library providing simplified C and Python API to libsolv"
 HOMEPAGE="https://github.com/rpm-software-management/libdnf"
 SRC_URI="https://github.com/rpm-software-management/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
-RESTRICT="mirror"
+RESTRICT="mirror !test? ( test )"
 
 LICENSE="LGPL-2+"
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE="test"
+REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 DEPEND="
 	app-crypt/gpgme
