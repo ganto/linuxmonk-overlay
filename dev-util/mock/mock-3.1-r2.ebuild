@@ -5,11 +5,11 @@ EAPI=8
 
 PYTHON_COMPAT=( python3_{8..10} )
 
-inherit python-single-r1 bash-completion-r1
+inherit pam python-single-r1 bash-completion-r1
 
 MY_PV=${PV}-1
 MY_P=${PN}-${MY_PV}
-CORE_CONFIGS_VERSION=37.6-1
+CORE_CONFIGS_VERSION=37.8-1
 
 DESCRIPTION="Builds RPM packages inside chroots"
 HOMEPAGE="https://github.com/rpm-software-management/mock"
@@ -21,15 +21,17 @@ LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE="test"
+REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 RESTRICT="!test? ( test )"
 
 DEPEND=""
 RDEPEND="
+	${PYTHON_DEPS}
 	acct-group/mock acct-user/mock
 	app-arch/createrepo_c
 	app-arch/pigz
 	app-arch/rpm[lua(+),python,${PYTHON_SINGLE_USEDEP},zstd]
-	>=app-misc/distribution-gpg-keys-1.74
+	>=app-misc/distribution-gpg-keys-1.77
 	$(python_gen_cond_dep '
 		dev-python/distro[${PYTHON_USEDEP}]
 		dev-python/jinja[${PYTHON_USEDEP}]
@@ -81,8 +83,7 @@ src_install() {
 	exeinto /usr/libexec/mock
 	doexe create_default_route_in_container.sh
 
-	insinto /etc/pam.d
-	doins etc/pam/*
+	dopamd etc/pam/*
 
 	insinto /etc/mock
 	doins etc/mock/*
@@ -101,8 +102,8 @@ src_install() {
 	insinto /usr/share/cheat
 	newins docs/mock.cheat mock
 
-	install -d -m 2775 -g mock "${EROOT%/}/var/lib/mock"
-	install -d -m 2775 -g mock "${EROOT%/}/var/cache/mock"
+	diropts -m 2775 -g mock
+	dodir /var/lib/mock /var/cache/mock
 	keepdir /var/lib/mock /var/cache/mock
 
 	dobashcomp etc/bash_completion.d/mock
