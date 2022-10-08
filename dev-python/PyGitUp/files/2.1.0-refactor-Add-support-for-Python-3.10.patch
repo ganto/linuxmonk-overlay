@@ -1,0 +1,96 @@
+From 175a8fa41b726aa1caccd561dac500fcc588b042 Mon Sep 17 00:00:00 2001
+From: Hugo van Kemenade <hugovk@users.noreply.github.com>
+Date: Sat, 23 Jul 2022 22:38:40 +0300
+Subject: [PATCH] refactor: add support for Python 3.10 (#111)
+
+* Add support for Python 3.10
+* Upgrade Python syntax with pyupgrade --py37-plus
+---
+ .github/workflows/ci-workflow.yml       | 6 +++---
+ PyGitUp/gitup.py                        | 4 ++--
+ PyGitUp/tests/__init__.py               | 2 +-
+ PyGitUp/tests/test_separate_worktree.py | 2 +-
+ pyproject.toml                          | 1 +
+ 5 files changed, 8 insertions(+), 7 deletions(-)
+
+diff --git a/.github/workflows/ci-workflow.yml b/.github/workflows/ci-workflow.yml
+index 4a866b5..744e934 100644
+--- a/.github/workflows/ci-workflow.yml
++++ b/.github/workflows/ci-workflow.yml
+@@ -12,13 +12,13 @@ jobs:
+     runs-on: ${{ matrix.os }}
+     strategy:
+       matrix:
+-        python-version: [3.7, 3.8, 3.9]
++        python-version: ["3.7", "3.8", "3.9", "3.10"]
+         os: [ubuntu-latest, macos-latest, windows-latest]
+ 
+     steps:
+-    - uses: actions/checkout@v2
++    - uses: actions/checkout@v3
+     - name: Set up Python ${{ matrix.python-version }}
+-      uses: actions/setup-python@v2
++      uses: actions/setup-python@v4
+       with:
+         python-version: ${{ matrix.python-version }}
+     - name: Install dependencies
+diff --git a/PyGitUp/gitup.py b/PyGitUp/gitup.py
+index c86b3e9..e956b71 100644
+--- a/PyGitUp/gitup.py
++++ b/PyGitUp/gitup.py
+@@ -290,7 +290,7 @@ def rebase_all_branches(self):
+                     # we get a detached head after doing our rebase *confused*.
+                     # Running self.repo.active_branch would fail.
+                     or not self.repo.active_branch.name == original_branch.name):
+-                print(colored('returning to {}'.format(original_branch.name),
++                print(colored(f'returning to {original_branch.name}',
+                               'magenta'))
+                 original_branch.checkout()
+ 
+@@ -470,7 +470,7 @@ def load_config(self):
+ 
+     def config(self, key):
+         """ Get a git-up-specific config value. """
+-        return self.git.config('git-up.{}'.format(key))
++        return self.git.config(f'git-up.{key}')
+ 
+     def is_prune(self):
+         """
+diff --git a/PyGitUp/tests/__init__.py b/PyGitUp/tests/__init__.py
+index c78cb5c..424fc2b 100644
+--- a/PyGitUp/tests/__init__.py
++++ b/PyGitUp/tests/__init__.py
+@@ -57,7 +57,7 @@ def update_file(repo, commit_message='', counter=[0], filename=testfile_name):
+     counter[0] += 1  # See: http://stackoverflow.com/a/279592/997063
+ 
+     path_file = join(repo.working_dir, filename)
+-    contents = 'line 1\nline 2\ncounter: {}'.format(counter[0])
++    contents = f'line 1\nline 2\ncounter: {counter[0]}'
+     write_file(path_file, contents)
+ 
+     repo.index.add([path_file])
+diff --git a/PyGitUp/tests/test_separate_worktree.py b/PyGitUp/tests/test_separate_worktree.py
+index 2da12d0..97fce15 100644
+--- a/PyGitUp/tests/test_separate_worktree.py
++++ b/PyGitUp/tests/test_separate_worktree.py
+@@ -9,7 +9,7 @@
+ 
+ test_name = 'worktree'
+ repo_path = join(basepath, test_name + os.sep)
+-worktree_dir = '{}_worktree'.format(test_name)
++worktree_dir = f'{test_name}_worktree'
+ worktree_path = join(basepath, worktree_dir)
+ 
+ 
+diff --git a/pyproject.toml b/pyproject.toml
+index addb054..2da703b 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -22,6 +22,7 @@ classifiers = [
+     "Programming Language :: Python :: 3.7",
+     "Programming Language :: Python :: 3.8",
+     "Programming Language :: Python :: 3.9",
++    "Programming Language :: Python :: 3.10",
+     "Topic :: Software Development :: Version Control",
+     "Topic :: Utilities",
+ ]

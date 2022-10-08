@@ -1,9 +1,9 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
-DISTUTILS_USE_SETUPTOOLS=pyproject.toml
+DISTUTILS_USE_PEP517=poetry
 PYTHON_COMPAT=( python3_{8..10} )
 
 inherit distutils-r1
@@ -23,5 +23,10 @@ RDEPEND="
 "
 
 DOCS=( README.rst )
+
+PATCHES=(
+	"${FILESDIR}"/2.1.0-refactor-Add-support-for-Python-3.10.patch
+	"${FILESDIR}"/2.1.0-build-use-lighter-poetry-core.patch
+)
 
 distutils_enable_tests pytest
