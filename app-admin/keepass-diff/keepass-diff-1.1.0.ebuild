@@ -71,7 +71,7 @@ inherit cargo
 
 DESCRIPTION="This CLI-tool reads two Keepass (.kdbx) files and prints their differences."
 HOMEPAGE="https://narigo.github.io/keepass-diff/ https://github.com/Narigo/keepass-diff"
-SRC_URI="https://github.com/Narigo/${PN}/archive/refs/tags/${PV}.tar.gz
+SRC_URI="https://github.com/Narigo/${PN}/archive/refs/tags/${PV}.tar.gz -> ${P}.tar.gz
 	$(cargo_crate_uris ${CRATES})"
 RESTRICT="mirror"
 LICENSE="0BSD Apache-2.0 BSD-2 BSD CC0-1.0 MIT Unlicense ZLIB"
