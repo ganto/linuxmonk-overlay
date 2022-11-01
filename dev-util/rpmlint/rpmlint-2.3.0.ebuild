@@ -31,7 +31,7 @@ RDEPEND="
 		dev-python/pyenchant[${PYTHON_USEDEP}]
 		dev-python/pyxdg[${PYTHON_USEDEP}]
 		dev-python/toml[${PYTHON_USEDEP}]
-		dev-python/zstandard[${PYTHON_USEDEP}]
+		dev-python/python-zstandard[${PYTHON_USEDEP}]
 		sys-apps/file[python,${PYTHON_USEDEP}]
 	')
 	dev-util/checkbashisms
