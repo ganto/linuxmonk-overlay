@@ -1,9 +1,11 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8..10} )
+DISTUTILS_USE_PEP517=setuptools
+PYTHON_COMPAT=( python3_{8..11} )
+
 inherit distutils-r1
 
 DESCRIPTION="Utility functions for strings checking and manipulation"
@@ -16,11 +18,7 @@ KEYWORDS="~amd64"
 
 BDEPEND="dev-python/wheel[${PYTHON_USEDEP}]"
 
-DOCS=( README.md )
-
 src_prepare() {
 	default
 	sed -i '/data_files/d' setup.py
 }
-
-distutils_enable_tests unittest
