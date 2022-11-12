@@ -3,9 +3,9 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{8..11} )
 
-USE_RUBY="ruby25 ruby26 ruby27 ruby30"
+USE_RUBY="ruby27 ruby30 ruby31"
 RUBY_OPTIONAL=yes
 
 inherit cmake python-r1 ruby-ng perl-module multilib
