@@ -10,6 +10,7 @@
 		<remote-id type="github">oVirt/ovirt-engine-sdk</remote-id>
 	</upstream>
 	<longdescription lang="en">
-		This project contains the Python SDK for the oVirt Engine API.
+		This project contains the Python SDK for the oVirt Engine API. Note
+		that most of the code of this SDK is automatically generated.
 	</longdescription>
 </pkgmetadata>
