@@ -3,7 +3,7 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{8..11} )
 
 inherit cmake python-r1
 
@@ -45,10 +45,7 @@ BDEPEND="
 	virtual/pkgconfig
 	test? (
 		${RDEPEND}
-		python? (
-			dev-python/nose[${PYTHON_USEDEP}]
-			dev-python/requests[${PYTHON_USEDEP}]
-		)
+		python? ( dev-python/requests[${PYTHON_USEDEP}] )
 	)
 "
 
