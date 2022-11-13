@@ -1,0 +1,1484 @@
+commit b34f7f7c50958a08cba2c783cf6d0b7cf0906858
+Author: Tomas Halman <thalman@redhat.com>
+Date:   Fri Sep 23 14:08:21 2022 +0200
+
+    Correct popt memory handling
+    
+    In the code of libusers we use popt library but we release popt context
+    too early. In older versions, popt leaked memory, so it worked anyway.
+    
+    With this patch poptFeeContext() call is moved to the end of main()
+    function.
+    
+    The patch also unifies the way utilities terminate in case of an error.
+    
+    Resolves: https://bugzilla.redhat.com/show_bug.cgi?id=2125904
+
+diff --git a/apps/lchage.c b/apps/lchage.c
+index 1a4f048..3f637e7 100644
+--- a/apps/lchage.c
++++ b/apps/lchage.c
+@@ -71,13 +71,14 @@ main(int argc, const char **argv)
+ 	long shadowMin = INVALID_LONG, shadowMax = INVALID_LONG,
+ 	     shadowLastChange = INVALID_LONG, shadowInactive = INVALID_LONG,
+ 	     shadowExpire = INVALID_LONG, shadowWarning = INVALID_LONG;
+-	const char *user;
+-	struct lu_context *ctx;
+-	struct lu_ent *ent;
++	const char *user = NULL;
++	struct lu_context *ctx = NULL;
++	struct lu_ent *ent = NULL;
+ 	struct lu_error *error = NULL;
+ 	int interactive = FALSE;
+ 	int list_only = FALSE;
+ 	int c;
++	int result = 0;
+ 
+ 	poptContext popt;
+ 	struct poptOption options[] = {
+@@ -118,7 +119,8 @@ main(int argc, const char **argv)
+ 		fprintf(stderr, _("Error parsing arguments: %s.\n"),
+ 			poptStrerror(c));
+ 		poptPrintUsage(popt, stderr, 0);
+-		exit(1);
++		result = 1;
++		goto done;
+ 	}
+ 	user = poptGetArg(popt);
+ 
+@@ -126,11 +128,10 @@ main(int argc, const char **argv)
+ 	if (user == NULL) {
+ 		fprintf(stderr, _("No user name specified.\n"));
+ 		poptPrintUsage(popt, stderr, 0);
+-		return 1;
++		result = 1;
++		goto done;
+ 	}
+ 
+-	poptFreeContext(popt);
+-
+ 	/* Start up the library. */
+ 	ctx = lu_start(user, lu_user, NULL, NULL,
+ 		       interactive ? lu_prompt_console :
+@@ -138,7 +139,8 @@ main(int argc, const char **argv)
+ 	if (ctx == NULL) {
+ 		fprintf(stderr, _("Error initializing %s: %s.\n"), PACKAGE,
+ 			lu_strerror(error));
+-		return 1;
++		result = 1;
++		goto done;
+ 	}
+ 
+ 	ent = lu_ent_new();
+@@ -146,7 +148,8 @@ main(int argc, const char **argv)
+ 	/* Look up information about the user. */
+ 	if (lu_user_lookup_name(ctx, user, ent, &error) == FALSE) {
+ 		fprintf(stderr, _("User %s does not exist.\n"), user);
+-		return 2;
++		result = 2;
++		goto done;
+ 	}
+ 
+ 	if (list_only) {
+@@ -242,7 +245,8 @@ main(int argc, const char **argv)
+ 				  "%s\n"), user, lu_strerror(error));
+ 			lu_audit_logger(AUDIT_USER_MGMT, "change-age", user,
+ 				AUDIT_NO_ID, 0);
+-			return 3;
++			result = 3;
++			goto done;
+ 		}
+ 		lu_audit_logger(AUDIT_USER_MGMT, "change-age", user,
+ 				AUDIT_NO_ID, 1);
+@@ -250,9 +254,12 @@ main(int argc, const char **argv)
+ 		lu_nscd_flush_cache(LU_NSCD_CACHE_PASSWD);
+ 	}
+ 
+-	lu_ent_free(ent);
++ done:
++	if (ent) lu_ent_free(ent);
+ 
+-	lu_end(ctx);
++	if (ctx) lu_end(ctx);
++
++	poptFreeContext(popt);
+ 
+-	return 0;
++	return result;
+ }
+diff --git a/apps/lchfn.c b/apps/lchfn.c
+index 137f85f..4c86979 100644
+--- a/apps/lchfn.c
++++ b/apps/lchfn.c
+@@ -41,11 +41,12 @@ main(int argc, const char **argv)
+ {
+ 	const char *user, *gecos;
+ 	const char *name, *office, *officephone, *homephone;
+-	struct lu_context *ctx;
++	struct lu_context *ctx = NULL;
+ 	struct lu_error *error = NULL;
+-	struct lu_ent *ent;
++	struct lu_ent *ent = NULL;
+ 	int interactive = FALSE;
+ 	int c;
++	int result = 0;
+ 	struct lu_prompt prompts[7];
+ 	poptContext popt;
+ 	struct poptOption options[] = {
+@@ -53,7 +54,7 @@ main(int argc, const char **argv)
+ 		 N_("prompt for all information"), NULL},
+ 		POPT_AUTOHELP POPT_TABLEEND
+ 	};
+-	char **fields, *p;
++	char **fields = NULL, *p;
+ 	size_t fields_len;
+ 	size_t pcount, i;
+ 
+@@ -70,7 +71,8 @@ main(int argc, const char **argv)
+ 		fprintf(stderr, _("Error parsing arguments: %s.\n"),
+ 			poptStrerror(c));
+ 		poptPrintUsage(popt, stderr, 0);
+-		exit(1);
++		result = 1;
++		goto done;
+ 	}
+ 	user = poptGetArg(popt);
+ 
+@@ -86,11 +88,11 @@ main(int argc, const char **argv)
+ 			fprintf(stderr, _("No user name specified, no name "
+ 				"for uid %d.\n"), getuid());
+ 			poptPrintUsage(popt, stderr, 0);
+-			exit(1);
++			result = 1;
++			goto done;
+ 		}
+ 	}
+ 
+-	poptFreeContext(popt);
+ 
+ 	/* Give the user some idea of what's going on. */
+ 	g_print(_("Changing finger information for %s.\n"), user);
+@@ -102,7 +104,8 @@ main(int argc, const char **argv)
+ 	if (ctx == NULL) {
+ 		fprintf(stderr, _("Error initializing %s: %s.\n"), PACKAGE,
+ 			lu_strerror(error));
+-		return 1;
++		result = 1;
++		goto done;
+ 	}
+ 
+ 	/* Authenticate the user to the "chfn" service. */
+@@ -112,7 +115,8 @@ main(int argc, const char **argv)
+ 	ent = lu_ent_new();
+ 	if (lu_user_lookup_name(ctx, user, ent, &error) == FALSE) {
+ 		fprintf(stderr, _("User %s does not exist.\n"), user);
+-		exit(1);
++		result = 1;
++		goto done;
+ 	}
+ 
+ 	/* Read the user's GECOS information. */
+@@ -206,7 +210,8 @@ main(int argc, const char **argv)
+ 	if (lu_prompt_console(prompts, pcount, NULL, &error) == FALSE) {
+ 		fprintf(stderr,
+ 			_("Finger information not changed:  input error.\n"));
+-		exit(1);
++		result = 1;
++		goto done;
+ 	}
+ 
+ 	/* Now iterate over the answers and figure things out. */
+@@ -272,14 +277,18 @@ main(int argc, const char **argv)
+ 	} else {
+ 		fprintf(stderr, _("Finger information not changed: %s.\n"),
+ 			lu_strerror(error));
+-		return 1;
++		result = 1;
++		goto done;
+ 	}
+ 
++ done:
+ 	g_strfreev(fields);
+ 
+-	lu_ent_free(ent);
++	if (ent) lu_ent_free(ent);
++
++	if (ctx) lu_end(ctx);
+ 
+-	lu_end(ctx);
++	poptFreeContext(popt);
+ 
+-	return 0;
++	return result;
+ }
+diff --git a/apps/lchsh.c b/apps/lchsh.c
+index 555ed2e..629aba4 100644
+--- a/apps/lchsh.c
++++ b/apps/lchsh.c
+@@ -33,12 +33,13 @@ int
+ main(int argc, const char **argv)
+ {
+ 	const char *user;
+-	struct lu_context *ctx;
++	struct lu_context *ctx = NULL;
+ 	struct lu_error *error = NULL;
+-	struct lu_ent *ent;
++	struct lu_ent *ent = NULL;
+ 	char *shell;
+ 	int interactive = FALSE;
+ 	int c;
++	int result = 0;
+ 	poptContext popt;
+ 	struct poptOption options[] = {
+ 		{"interactive", 'i', POPT_ARG_NONE, &interactive, 0,
+@@ -59,7 +60,8 @@ main(int argc, const char **argv)
+ 		fprintf(stderr, _("Error parsing arguments: %s.\n"),
+ 			poptStrerror(c));
+ 		poptPrintUsage(popt, stderr, 0);
+-		exit(1);
++		result = 1;
++		goto done;
+ 	}
+ 	user = poptGetArg(popt);
+ 
+@@ -75,12 +77,11 @@ main(int argc, const char **argv)
+ 			fprintf(stderr, _("No user name specified, no name for "
+ 				"uid %d.\n"), getuid());
+ 			poptPrintUsage(popt, stderr, 0);
+-			exit(1);
++			result = 1;
++			goto done;
+ 		}
+ 	}
+ 
+-	poptFreeContext(popt);
+-
+ 	/* Give the user some idea of what's going on. */
+ 	g_print(_("Changing shell for %s.\n"), user);
+ 
+@@ -91,7 +92,8 @@ main(int argc, const char **argv)
+ 	if (ctx == NULL) {
+ 		fprintf(stderr, _("Error initializing %s: %s.\n"), PACKAGE,
+ 			lu_strerror(error));
+-		return 1;
++		result = 1;
++		goto done;
+ 	}
+ 
+ 	/* Authenticate the user if we need to. */
+@@ -101,7 +103,8 @@ main(int argc, const char **argv)
+ 	ent = lu_ent_new();
+ 	if (lu_user_lookup_name(ctx, user, ent, &error) == FALSE) {
+ 		fprintf(stderr, _("User %s does not exist.\n"), user);
+-		exit(1);
++		result = 1;
++		goto done;
+ 	}
+ 
+ 	/* Read the user's shell. */
+@@ -123,7 +126,8 @@ main(int argc, const char **argv)
+ 				lu_strerror(error));
+ 			lu_audit_logger(AUDIT_USER_MGMT, "change-shell", user,
+ 				AUDIT_NO_ID, 0);
+-			return 1;
++			result = 1;
++			goto done;
+ 		}
+ 		/* Modify the in-memory structure's shell attribute. */
+ 		lu_ent_set_string(ent, LU_LOGINSHELL, prompts[0].value);
+@@ -142,13 +146,17 @@ main(int argc, const char **argv)
+ 				lu_strerror(error));
+ 			lu_audit_logger(AUDIT_USER_MGMT, "change-shell", user,
+ 				AUDIT_NO_ID, 0);
+-			return 1;
++			result = 1;
++			goto done;
+ 		}
+ 	}
+ 
+-	lu_ent_free(ent);
++ done:
++	if (ent) lu_ent_free(ent);
+ 
+-	lu_end(ctx);
++	if (ctx) lu_end(ctx);
++
++	poptFreeContext(popt);
+ 
+-	return 0;
++	return result;
+ }
+diff --git a/apps/lgroupadd.c b/apps/lgroupadd.c
+index 3fa2a1d..f6fe0cc 100644
+--- a/apps/lgroupadd.c
++++ b/apps/lgroupadd.c
+@@ -34,12 +34,13 @@ main(int argc, const char **argv)
+ {
+ 	const char *name, *gid_number_str = NULL;
+ 	gid_t gidNumber = LU_VALUE_INVALID_ID;
+-	struct lu_context *ctx;
+-	struct lu_ent *ent;
++	struct lu_context *ctx = NULL;
++	struct lu_ent *ent = NULL;
+ 	struct lu_error *error = NULL;
+ 	int interactive = FALSE;
+ 	int system_account = FALSE;
+ 	int c;
++	int result = 0;
+ 
+ 	poptContext popt;
+ 	struct poptOption options[] = {
+@@ -65,7 +66,8 @@ main(int argc, const char **argv)
+ 		fprintf(stderr, _("Error parsing arguments: %s.\n"),
+ 			poptStrerror(c));
+ 		poptPrintUsage(popt, stderr, 0);
+-		exit(1);
++		result = 1;
++		goto done;
+ 	}
+ 	name = poptGetArg(popt);
+ 
+@@ -73,7 +75,8 @@ main(int argc, const char **argv)
+ 	if (name == NULL) {
+ 		fprintf(stderr, _("No group name specified.\n"));
+ 		poptPrintUsage(popt, stderr, 0);
+-		return 1;
++		result = 1;
++		goto done;
+ 	}
+ 
+ 	if (gid_number_str != NULL) {
+@@ -87,13 +90,12 @@ main(int argc, const char **argv)
+ 			fprintf(stderr, _("Invalid group ID %s\n"),
+ 				gid_number_str);
+ 			poptPrintUsage(popt, stderr, 0);
+-			return 1;
++			result = 1;
++			goto done;
+ 		}
+ 		gidNumber = val;
+ 	}
+ 
+-	poptFreeContext(popt);
+-
+ 	/* Start up the library. */
+ 	ctx = lu_start(NULL, 0, NULL, NULL,
+ 		       interactive ? lu_prompt_console :
+@@ -101,7 +103,8 @@ main(int argc, const char **argv)
+ 	if (ctx == NULL) {
+ 		fprintf(stderr, _("Error initializing %s: %s.\n"), PACKAGE,
+ 			lu_strerror(error));
+-		return 1;
++		result = 1;
++		goto done;
+ 	}
+ 
+ 	/* Create a group entity object holding sensible defaults for a
+@@ -120,17 +123,21 @@ main(int argc, const char **argv)
+ 			lu_strerror(error));
+ 		lu_audit_logger(AUDIT_ADD_GROUP, "add-group", name,
+ 				AUDIT_NO_ID, 0);
+-		return 2;
++		result = 2;
++		goto done;
+ 	}
+ 
+ 	lu_nscd_flush_cache(LU_NSCD_CACHE_GROUP);
+ 
+-	lu_ent_free(ent);
+-
+-	lu_end(ctx);
+-
+ 	lu_audit_logger(AUDIT_ADD_GROUP, "add-group", name,
+ 				AUDIT_NO_ID, 1);
+ 
+-	return 0;
++ done:
++	if (ent) lu_ent_free(ent);
++
++	if (ctx) lu_end(ctx);
++
++	poptFreeContext(popt);
++
++	return result;
+ }
+diff --git a/apps/lgroupdel.c b/apps/lgroupdel.c
+index c5ccbed..564f0f5 100644
+--- a/apps/lgroupdel.c
++++ b/apps/lgroupdel.c
+@@ -30,12 +30,13 @@
+ int
+ main(int argc, const char **argv)
+ {
+-	struct lu_context *ctx;
+-	struct lu_ent *ent;
++	struct lu_context *ctx = NULL;
++	struct lu_ent *ent = NULL;
+ 	struct lu_error *error = NULL;
+ 	const char *group;
+ 	int interactive = FALSE;
+ 	int c;
++	int result = 0;
+ 
+ 	poptContext popt;
+ 	struct poptOption options[] = {
+@@ -57,7 +58,8 @@ main(int argc, const char **argv)
+ 		fprintf(stderr, _("Error parsing arguments: %s.\n"),
+ 			poptStrerror(c));
+ 		poptPrintUsage(popt, stderr, 0);
+-		exit(1);
++		result = 1;
++		goto done;
+ 	}
+ 	group = poptGetArg(popt);
+ 
+@@ -65,11 +67,10 @@ main(int argc, const char **argv)
+ 	if (group == NULL) {
+ 		fprintf(stderr, _("No group name specified.\n"));
+ 		poptPrintUsage(popt, stderr, 0);
+-		return 1;
++		result = 1;
++		goto done;
+ 	}
+ 
+-	poptFreeContext(popt);
+-
+ 	/* Start up the library. */
+ 	ctx = lu_start(NULL, 0, NULL, NULL,
+ 		       interactive ? lu_prompt_console :
+@@ -77,14 +78,16 @@ main(int argc, const char **argv)
+ 	if (ctx == NULL) {
+ 		fprintf(stderr, _("Error initializing %s: %s.\n"), PACKAGE,
+ 			lu_strerror(error));
+-		return 1;
++		result = 1;
++		goto done;
+ 	}
+ 
+ 	/* Look up the group structure. */
+ 	ent = lu_ent_new();
+ 	if (lu_group_lookup_name(ctx, group, ent, &error) == FALSE) {
+ 		fprintf(stderr, _("Group %s does not exist.\n"), group);
+-		return 2;
++		result = 2;
++		goto done;
+ 	}
+ 
+ 	/* Delete the group. */
+@@ -93,17 +96,21 @@ main(int argc, const char **argv)
+ 			group, lu_strerror(error));
+ 		lu_audit_logger(AUDIT_DEL_GROUP, "delete-group", group,
+ 				AUDIT_NO_ID, 0);
+-		return 3;
++		result = 3;
++		goto done;
+ 	}
+ 
+ 	lu_nscd_flush_cache(LU_NSCD_CACHE_GROUP);
+ 
+-	lu_ent_free(ent);
+-
+-	lu_end(ctx);
+-
+ 	lu_audit_logger(AUDIT_DEL_GROUP, "delete-group", group,
+ 			AUDIT_NO_ID, 1);
+ 
+-	return 0;
++ done:
++	if (ent) lu_ent_free(ent);
++
++	if (ctx) lu_end(ctx);
++
++	poptFreeContext(popt);
++
++	return result;
+ }
+diff --git a/apps/lgroupmod.c b/apps/lgroupmod.c
+index 20be85f..35b6f34 100644
+--- a/apps/lgroupmod.c
++++ b/apps/lgroupmod.c
+@@ -39,14 +39,15 @@ main(int argc, const char **argv)
+ 	char **admins, **members;
+ 	gid_t gidNumber = LU_VALUE_INVALID_ID;
+ 	gid_t oldGidNumber = LU_VALUE_INVALID_ID;
+-	struct lu_context *ctx;
+-	struct lu_ent *ent;
++	struct lu_context *ctx = NULL;
++	struct lu_ent *ent = NULL, *user_ent;
+ 	struct lu_error *error = NULL;
+ 	GPtrArray *users = NULL;
+ 	GValue val;
+ 	int change = FALSE, lock = FALSE, unlock = FALSE;
+ 	int interactive = FALSE;
+ 	int c;
++	int result = 0;
+ 
+ 	poptContext popt;
+ 	struct poptOption options[] = {
+@@ -85,14 +86,16 @@ main(int argc, const char **argv)
+ 		fprintf(stderr, _("Error parsing arguments: %s.\n"),
+ 			poptStrerror(c));
+ 		poptPrintUsage(popt, stderr, 0);
+-		exit(1);
++		result = 1;
++		goto done;
+ 	}
+ 	group = poptGetArg(popt);
+ 
+ 	if (group == NULL) {
+ 		fprintf(stderr, _("No group name specified.\n"));
+ 		poptPrintUsage(popt, stderr, 0);
+-		return 1;
++		result = 1;
++		goto done;
+ 	}
+ 	if (gid_number_str != NULL) {
+ 		intmax_t val;
+@@ -105,32 +108,34 @@ main(int argc, const char **argv)
+ 			fprintf(stderr, _("Invalid group ID %s\n"),
+ 				gid_number_str);
+ 			poptPrintUsage(popt, stderr, 0);
+-			return 1;
++			result = 1;
++			goto done;
+ 		}
+ 		gidNumber = val;
+ 	}
+ 
+-	poptFreeContext(popt);
+-
+ 	ctx = lu_start(NULL, 0, NULL, NULL,
+ 		       interactive ? lu_prompt_console :
+ 		       lu_prompt_console_quiet, NULL, &error);
+ 	if (ctx == NULL) {
+ 		fprintf(stderr, _("Error initializing %s: %s.\n"), PACKAGE,
+ 			lu_strerror(error));
+-		return 1;
++		result = 1;
++		goto done;
+ 	}
+ 
+ 	if (lock && unlock) {
+ 		fprintf(stderr, _("Both -L and -U specified.\n"));
+-		return 2;
++		result = 2;
++		goto done;
+ 	}
+ 
+ 	ent = lu_ent_new();
+ 
+ 	if (lu_group_lookup_name(ctx, group, ent, &error) == FALSE) {
+ 		fprintf(stderr, _("Group %s does not exist.\n"), group);
+-		return 3;
++		result = 3;
++		goto done;
+ 	}
+ 
+ 	if (userPassword) {
+@@ -141,7 +146,8 @@ main(int argc, const char **argv)
+ 			lu_audit_logger(AUDIT_GRP_CHAUTHTOK,
+ 					"changing-group-passwd", group,
+ 					AUDIT_NO_ID, 0);
+-			return 4;
++			result = 4;
++			goto done;
+ 		}
+ 		lu_audit_logger(AUDIT_GRP_CHAUTHTOK,
+ 				"changing-group-passwd", group,
+@@ -156,7 +162,8 @@ main(int argc, const char **argv)
+ 			lu_audit_logger(AUDIT_GRP_CHAUTHTOK,
+ 					"changing-group-passwd", group,
+ 					AUDIT_NO_ID, 0);
+-			return 5;
++			result = 5;
++			goto done;
+ 		}
+ 		lu_audit_logger(AUDIT_GRP_CHAUTHTOK,
+ 				"changing-group-passwd", group,
+@@ -171,7 +178,8 @@ main(int argc, const char **argv)
+ 			lu_audit_logger(AUDIT_GRP_MGMT,
+ 					"changing-group-lock", group,
+ 					AUDIT_NO_ID, 0);
+-			return 6;
++			result = 6;
++			goto done;
+ 		}
+ 		lu_audit_logger(AUDIT_GRP_MGMT,
+ 				"changing-group-lock", group,
+@@ -186,7 +194,8 @@ main(int argc, const char **argv)
+ 			lu_audit_logger(AUDIT_GRP_MGMT,
+ 					"changing-group-lock", group,
+ 					AUDIT_NO_ID, 0);
+-			return 7;
++			result = 7;
++			goto done;
+ 		}
+ 		lu_audit_logger(AUDIT_GRP_MGMT,
+ 				"changing-group-lock", group,
+@@ -268,7 +277,8 @@ main(int argc, const char **argv)
+ 		lu_audit_logger(AUDIT_GRP_MGMT,
+ 				"changing-group-members", group,
+ 				AUDIT_NO_ID, 0);
+-		return 8;
++		result = 8;
++		goto done;
+ 	}
+ 	lu_audit_logger(AUDIT_GRP_MGMT,
+ 			"changing-group-members", group,
+@@ -289,15 +299,14 @@ main(int argc, const char **argv)
+ 			lu_audit_logger(AUDIT_GRP_MGMT,
+ 				"changing-group-id", group,
+ 				AUDIT_NO_ID, 0);
+-			return 8;
++			result = 8;
++			goto done;
+ 		}
+ 		lu_audit_logger(AUDIT_GRP_MGMT,
+ 			"changing-group-id", group,
+ 			AUDIT_NO_ID, 1);
+ 	}
+ 
+-	lu_ent_free(ent);
+-
+ 	lu_nscd_flush_cache(LU_NSCD_CACHE_GROUP);
+ 
+ 	if (oldGidNumber != LU_VALUE_INVALID_ID &&
+@@ -305,22 +314,27 @@ main(int argc, const char **argv)
+ 		size_t i;
+ 
+ 		for (i = 0; i < users->len; i++) {
+-			ent = g_ptr_array_index(users, i);
+-			if (lu_ent_get_first_id(ent, LU_GIDNUMBER)
++			user_ent = g_ptr_array_index(users, i);
++			if (lu_ent_get_first_id(user_ent, LU_GIDNUMBER)
+ 			    == oldGidNumber) {
+-				lu_ent_set_id(ent, LU_GIDNUMBER, gidNumber);
+-				lu_user_modify(ctx, ent, &error);
++				lu_ent_set_id(user_ent, LU_GIDNUMBER, gidNumber);
++				lu_user_modify(ctx, user_ent, &error);
+ 				if (error != NULL)
+ 					lu_error_free(&error);
+ 			}
+-			lu_ent_free(ent);
++			lu_ent_free(user_ent);
+ 		}
+ 		g_ptr_array_free(users, TRUE);
+ 
+ 		lu_nscd_flush_cache(LU_NSCD_CACHE_PASSWD);
+ 	}
+ 
+-	lu_end(ctx);
++ done:
++	if (ent) lu_ent_free(ent);
++
++	if (ctx) lu_end(ctx);
++
++	poptFreeContext(popt);
+ 
+-	return 0;
++	return result;
+ }
+diff --git a/apps/lid.c b/apps/lid.c
+index 4b8afd9..f4687b2 100644
+--- a/apps/lid.c
++++ b/apps/lid.c
+@@ -103,12 +103,13 @@ int
+ main(int argc, const char **argv)
+ {
+ 	const char *name;
+-	struct lu_context *ctx;
++	struct lu_context *ctx = NULL;
+ 	struct lu_error *error = NULL;
+-	struct lu_ent *ent;
++	struct lu_ent *ent = NULL;
+ 	int interactive = FALSE;
+ 	int groupflag = FALSE, nameonly = FALSE;
+ 	int c;
++	int result = 0;
+ 	poptContext popt;
+ 	struct poptOption options[] = {
+ 		{"interactive", 'i', POPT_ARG_NONE, &interactive, 0,
+@@ -133,7 +134,8 @@ main(int argc, const char **argv)
+ 		fprintf(stderr, _("Error parsing arguments: %s.\n"),
+ 			poptStrerror(c));
+ 		poptPrintUsage(popt, stderr, 0);
+-		exit(1);
++		result = 1;
++		goto done;
+ 	}
+ 	name = poptGetArg(popt);
+ 
+@@ -150,7 +152,8 @@ main(int argc, const char **argv)
+ 				fprintf(stderr, _("No group name specified, "
+ 					"no name for gid %d.\n"), getgid());
+ 				poptPrintUsage(popt, stderr, 0);
+-				exit(1);
++				result = 1;
++				goto done;
+ 			}
+ 		} else {
+ 			struct passwd *pwd;
+@@ -165,20 +168,20 @@ main(int argc, const char **argv)
+ 					"no name for uid %d.\n"),
+ 					getuid());
+ 				poptPrintUsage(popt, stderr, 0);
+-				exit(1);
++				result = 1;
++				goto done;
+ 			}
+ 		}
+ 	}
+ 
+-	poptFreeContext(popt);
+-
+ 	ctx = lu_start(name, groupflag ? lu_user : lu_group, NULL, NULL,
+ 		       interactive ? lu_prompt_console :
+ 		       lu_prompt_console_quiet, NULL, &error);
+ 	if (ctx == NULL) {
+ 		fprintf(stderr, _("Error initializing %s: %s.\n"), PACKAGE,
+ 			lu_strerror(error));
+-		return 1;
++		result = 1;
++		goto done;
+ 	}
+ 
+ 	ent = lu_ent_new();
+@@ -190,9 +193,9 @@ main(int argc, const char **argv)
+ 			lu_error_free(&error);
+ 		} else
+ 			fprintf(stderr, _("%s does not exist\n"), name);
+-		return 1;
++		result = 1;
++		goto done;
+ 	}
+-	lu_ent_free(ent);
+ 
+ 	if (nameonly)
+ 		do_nameonly(ctx, name,
+@@ -207,7 +210,12 @@ main(int argc, const char **argv)
+ 				LU_GROUPNAME, LU_GIDNUMBER, "gid");
+ 	}
+ 
+-	lu_end(ctx);
++ done:
++	if (ent) lu_ent_free(ent);
++
++	if (ctx) lu_end(ctx);
++
++	poptFreeContext(popt);
+ 
+-	return 0;
++	return result;
+ }
+diff --git a/apps/lnewusers.c b/apps/lnewusers.c
+index 1a5a5cb..2089850 100644
+--- a/apps/lnewusers.c
++++ b/apps/lnewusers.c
+@@ -31,11 +31,12 @@
+ int
+ main(int argc, const char **argv)
+ {
+-	struct lu_context *ctx;
++	struct lu_context *ctx = NULL;
+ 	struct lu_error *error = NULL;
+-	struct lu_ent *ent, *groupEnt;
++	struct lu_ent *ent = NULL, *groupEnt = NULL;
+ 	int interactive = FALSE, nocreatehome = FALSE, nocreatemail = FALSE;
+ 	int c;
++	int result = 0;
+ 	char *file = NULL;
+ 	FILE *fp = stdin;
+ 	char buf[LINE_MAX];
+@@ -66,11 +67,10 @@ main(int argc, const char **argv)
+ 		fprintf(stderr, _("Error parsing arguments: %s.\n"),
+ 			poptStrerror(c));
+ 		poptPrintUsage(popt, stderr, 0);
+-		exit(1);
++		result = 1;
++		goto done;
+ 	}
+ 
+-	poptFreeContext(popt);
+-
+ 	/* Start up the library. */
+ 	ctx = lu_start(NULL, lu_user, NULL, NULL,
+ 		       interactive ? lu_prompt_console :
+@@ -78,7 +78,8 @@ main(int argc, const char **argv)
+ 	if (ctx == NULL) {
+ 		fprintf(stderr, _("Error initializing %s: %s.\n"), PACKAGE,
+ 			lu_strerror(error));
+-		return 1;
++		result = 1;
++		goto done;
+ 	}
+ 
+ 	/* Open the file we're going to look at. */
+@@ -87,7 +88,8 @@ main(int argc, const char **argv)
+ 		if (fp == NULL) {
+ 			fprintf(stderr, _("Error opening `%s': %s.\n"),
+ 				file, strerror(errno));
+-			return 2;
++			result = 2;
++			goto done;
+ 		}
+ 	} else {
+ 		fp = stdin;
+@@ -305,10 +307,13 @@ main(int argc, const char **argv)
+ 		lu_ent_clear_all(groupEnt);
+ 	}
+ 
+-	lu_ent_free(groupEnt);
+-	lu_ent_free(ent);
++ done:
++	if (groupEnt) lu_ent_free(groupEnt);
++	if (ent) lu_ent_free(ent);
+ 
+-	lu_end(ctx);
++	if (ctx) lu_end(ctx);
++
++	poptFreeContext(popt);
+ 
+-	return 0;
++	return result;
+ }
+diff --git a/apps/lpasswd.c b/apps/lpasswd.c
+index 64f0b87..fb7ed94 100644
+--- a/apps/lpasswd.c
++++ b/apps/lpasswd.c
+@@ -32,12 +32,13 @@
+ int
+ main(int argc, const char **argv)
+ {
+-	struct lu_context *ctx;
+-	struct lu_ent *ent;
++	struct lu_context *ctx = NULL;
++	struct lu_ent *ent = NULL;
+ 	struct lu_error *error = NULL;
+ 	char *password = NULL, *cryptedPassword = NULL;
+ 	const char *user;
+ 	int c;
++	int result = 0;
+ 	int plain_fd = -1, crypted_fd = -1;
+ 	int interactive = 0, groupflag = 0;
+ 	poptContext popt;
+@@ -71,7 +72,8 @@ main(int argc, const char **argv)
+ 		fprintf(stderr, _("Error parsing arguments: %s.\n"),
+ 			poptStrerror(c));
+ 		poptPrintUsage(popt, stderr, 0);
+-		exit(1);
++		result = 1;
++		goto done;
+ 	}
+ 	user = poptGetArg(popt);
+ 
+@@ -84,19 +86,19 @@ main(int argc, const char **argv)
+ 		} else {
+ 			fprintf(stderr, _("No user name specified.\n"));
+ 			poptPrintUsage(popt, stderr, 0);
+-			return 1;
++			result = 1;
++			goto done;
+ 		}
+ 	}
+ 
+-	poptFreeContext(popt);
+-
+ 	ctx = lu_start(user, groupflag ? lu_group : lu_user, NULL, NULL,
+ 		       interactive ? lu_prompt_console :
+ 		       lu_prompt_console_quiet, NULL, &error);
+ 	if (ctx == NULL) {
+ 		fprintf(stderr, _("Error initializing %s: %s.\n"), PACKAGE,
+ 			lu_strerror(error));
+-		return 1;
++		result = 1;
++		goto done;
+ 	}
+ 
+ 	lu_authenticate_unprivileged(ctx, user, "passwd");
+@@ -132,7 +134,8 @@ main(int argc, const char **argv)
+ 				} else {
+ 					fprintf(stderr, _("Password change "
+ 						"canceled.\n"));
+-					return 1;
++					result = 1;
++					goto done;
+ 				}
+ 			}
+ 			if (error) {
+@@ -146,12 +149,14 @@ main(int argc, const char **argv)
+ 	if (!groupflag) {
+ 		if (lu_user_lookup_name(ctx, user, ent, &error) == FALSE) {
+ 			fprintf(stderr, _("User %s does not exist.\n"), user);
+-			return 2;
++			result = 2;
++			goto done;
+ 		}
+ 	} else {
+ 		if (lu_group_lookup_name(ctx, user, ent, &error) == FALSE) {
+ 			fprintf(stderr, _("Group %s does not exist.\n"), user);
+-			return 2;
++			result = 2;
++			goto done;
+ 		}
+ 	}
+ 
+@@ -164,7 +169,8 @@ main(int argc, const char **argv)
+ 			fprintf(stderr,
+ 				_("Error reading from file descriptor %d.\n"),
+ 				plain_fd);
+-			return 1;
++			result = 1;
++			goto done;
+ 		}
+ 		while ((i > 0) &&
+ 		       ((buf[i - 1] == '\r') || (buf[i - 1] == '\n')))
+@@ -181,7 +187,8 @@ main(int argc, const char **argv)
+ 			fprintf(stderr,
+ 				_("Error reading from file descriptor %d.\n"),
+ 				crypted_fd);
+-			return 1;
++			result = 1;
++			goto done;
+ 		}
+ 		while ((i > 0) &&
+ 		       ((buf[i - 1] == '\r') || (buf[i - 1] == '\n')))
+@@ -203,7 +210,8 @@ main(int argc, const char **argv)
+ 			fprintf(stderr, _("Error setting password for user "
+ 					  "%s: %s.\n"), user,
+ 				lu_strerror(error));
+-			return 3;
++			result = 3;
++			goto done;
+ 		}
+ 		lu_nscd_flush_cache(LU_NSCD_CACHE_PASSWD);
+ 	} else {
+@@ -212,16 +220,20 @@ main(int argc, const char **argv)
+ 			fprintf(stderr, _("Error setting password for group "
+ 					  "%s: %s.\n"), user,
+ 				lu_strerror(error));
+-			return 3;
++			result = 3;
++			goto done;
+ 		}
+ 		lu_nscd_flush_cache(LU_NSCD_CACHE_GROUP);
+ 	}
+ 
+-	lu_ent_free(ent);
++	fprintf(stderr, _("Password changed.\n"));
++
++ done:
++	if (ent) lu_ent_free(ent);
+ 
+-	lu_end(ctx);
++	if (ctx) lu_end(ctx);
+ 
+-	fprintf(stderr, _("Password changed.\n"));
++	poptFreeContext(popt);
+ 
+-	return 0;
++	return result;
+ }
+diff --git a/apps/luseradd.c b/apps/luseradd.c
+index 9d7f4f1..4bff528 100644
+--- a/apps/luseradd.c
++++ b/apps/luseradd.c
+@@ -38,14 +38,15 @@ main(int argc, const char **argv)
+ 		   *uid_number_str = NULL, *commonName = NULL,
+ 		   *givenName = NULL, *surname = NULL, *roomNumber = NULL,
+ 		   *telephoneNumber = NULL, *homePhone = NULL;
+-	struct lu_context *ctx;
+-	struct lu_ent *ent, *groupEnt;
++	struct lu_context *ctx = NULL;
++	struct lu_ent *ent = NULL, *groupEnt = NULL;
+ 	struct lu_error *error = NULL;
+ 	uid_t uidNumber = LU_VALUE_INVALID_ID;
+ 	gid_t gidNumber;
+ 	int dont_create_group = FALSE, dont_create_home = FALSE,
+ 	    system_account = FALSE, interactive = FALSE, create_group;
+ 	int c;
++	int result = 0;
+ 	intmax_t imax;
+ 	char *p;
+ 
+@@ -103,7 +104,8 @@ main(int argc, const char **argv)
+ 		fprintf(stderr, _("Error parsing arguments: %s.\n"),
+ 			poptStrerror(c));
+ 		poptPrintUsage(popt, stderr, 0);
+-		exit(1);
++		result = 1;
++		goto done;
+ 	}
+ 
+ 	/* Force certain flags one way or another. */
+@@ -117,7 +119,8 @@ main(int argc, const char **argv)
+ 	if (name == NULL) {
+ 		fprintf(stderr, _("No user name specified.\n"));
+ 		poptPrintUsage(popt, stderr, 0);
+-		return 1;
++		result = 1;
++		goto done;
+ 	}
+ 	if (uid_number_str != NULL) {
+ 		errno = 0;
+@@ -128,13 +131,12 @@ main(int argc, const char **argv)
+ 			fprintf(stderr, _("Invalid user ID %s\n"),
+ 				uid_number_str);
+ 			poptPrintUsage(popt, stderr, 0);
+-			return 1;
++			result = 1;
++			goto done;
+ 		}
+ 		uidNumber = imax;
+ 	}
+ 
+-	poptFreeContext(popt);
+-
+ 	/* Initialize the library. */
+ 	ctx = lu_start(NULL, 0, NULL, NULL,
+ 		       interactive ? lu_prompt_console :
+@@ -142,7 +144,8 @@ main(int argc, const char **argv)
+ 	if (ctx == NULL) {
+ 		fprintf(stderr, _("Error initializing %s: %s.\n"), PACKAGE,
+ 			lu_strerror(error));
+-		return 1;
++		result = 1;
++		goto done;
+ 	}
+ 
+ 	/* Select a group name for the user to be in. */
+@@ -163,7 +166,8 @@ main(int argc, const char **argv)
+ 			if (gidNumber == LU_VALUE_INVALID_ID) {
+ 				fprintf(stderr, _("Invalid group ID %s\n"),
+ 					gid);
+-				return 1;
++				result = 1;
++				goto done;
+ 			}
+ 		} else
+ 			/* It's not a number, so it's a group name. */
+@@ -188,7 +192,8 @@ main(int argc, const char **argv)
+ 		} else {
+ 			fprintf(stderr, _("Group %jd does not exist\n"),
+ 				(intmax_t)gidNumber);
+-			return 1;
++			result = 1;
++			goto done;
+ 		}
+ 	}
+ 
+@@ -209,10 +214,10 @@ main(int argc, const char **argv)
+ 			if (error) {
+ 				lu_error_free(&error);
+ 			}
+-			lu_end(ctx);
+ 			lu_audit_logger(AUDIT_ADD_GROUP, "add-group", name,
+ 					AUDIT_NO_ID, 0);
+-			return 1;
++			result = 1;
++			goto done;
+ 		}
+ 		lu_audit_logger(AUDIT_ADD_GROUP, "add-group", name,
+ 				AUDIT_NO_ID, 1);
+@@ -226,8 +231,8 @@ main(int argc, const char **argv)
+ 		if (error) {
+ 			lu_error_free(&error);
+ 		}
+-		lu_end(ctx);
+-		return 1;
++		result = 1;
++		goto done;
+ 	}
+ 	g_assert(gidNumber != LU_VALUE_INVALID_ID);
+ 
+@@ -266,7 +271,8 @@ main(int argc, const char **argv)
+ 		lu_audit_logger(AUDIT_ADD_USER, "add-user", name,
+ 					AUDIT_NO_ID, 0);
+ 
+-		return 3;
++		result = 3;
++		goto done;
+ 	}
+         lu_nscd_flush_cache(LU_NSCD_CACHE_PASSWD);
+ 	lu_audit_logger(AUDIT_ADD_USER, "add-user", name, AUDIT_NO_ID, 1);
+@@ -292,7 +298,8 @@ main(int argc, const char **argv)
+ 				homeDirectory, lu_strerror(error));
+ 			lu_audit_logger(AUDIT_USER_MGMT, "add-home-dir", name,
+ 				uidNumber, 0);
+-			return 7;
++			result = 7;
++			goto done;
+ 		}
+ 		lu_audit_logger(AUDIT_USER_MGMT, "add-home-dir", name,
+ 				uidNumber, 1);
+@@ -301,7 +308,8 @@ main(int argc, const char **argv)
+ 		if (lu_mail_spool_create(ctx, ent, &error) != TRUE) {
+ 			fprintf(stderr, _("Error creating mail spool: %s\n"),
+ 				lu_strerror(error));
+-			return 8;
++			result = 8;
++			goto done;
+ 		}
+ 	}
+ 
+@@ -314,7 +322,8 @@ main(int argc, const char **argv)
+ 			fprintf(stderr, _("Error setting password for user "
+ 					  "%s: %s.\n"), name,
+ 				lu_strerror(error));
+-			return 3;
++			result = 3;
++			goto done;
+ 		}
+ 	}
+ 	if (cryptedUserPassword != NULL) {
+@@ -325,16 +334,20 @@ main(int argc, const char **argv)
+ 				lu_strerror(error));
+ 			lu_audit_logger(AUDIT_USER_CHAUTHTOK, "updating-password",
+ 					name, uidNumber, 0);
+-			return 3;
++			result = 3;
++			goto done;
+ 		}
+ 		lu_audit_logger(AUDIT_USER_CHAUTHTOK, "updating-password",
+ 					name, uidNumber, 1);
+ 	}
+ 	lu_nscd_flush_cache(LU_NSCD_CACHE_PASSWD);
+ 
+-	lu_ent_free(ent);
++ done:
++	if (ent) lu_ent_free(ent);
+ 
+-	lu_end(ctx);
++	if (ctx) lu_end(ctx);
++
++	poptFreeContext(popt);
+ 
+-	return 0;
++	return result;
+ }
+diff --git a/apps/luserdel.c b/apps/luserdel.c
+index 7e20fa7..e797c33 100644
+--- a/apps/luserdel.c
++++ b/apps/luserdel.c
+@@ -32,13 +32,14 @@
+ int
+ main(int argc, const char **argv)
+ {
+-	struct lu_context *ctx;
+-	struct lu_ent *ent;
++	struct lu_context *ctx = NULL;
++	struct lu_ent *ent = NULL;
+ 	struct lu_error *error = NULL;
+ 	const char *user;
+ 	int interactive = FALSE;
+ 	int remove_home = 0, dont_remove_group = 0;
+ 	int c;
++	int result = 0;
+ 
+ 	poptContext popt;
+ 	struct poptOption options[] = {
+@@ -63,32 +64,34 @@ main(int argc, const char **argv)
+ 		fprintf(stderr, _("Error parsing arguments: %s.\n"),
+ 			poptStrerror(c));
+ 		poptPrintUsage(popt, stderr, 0);
+-		exit(1);
++		result = 1;
++		goto done;
+ 	}
+ 	user = poptGetArg(popt);
+ 
+ 	if (user == NULL) {
+ 		fprintf(stderr, _("No user name specified.\n"));
+ 		poptPrintUsage(popt, stderr, 0);
+-		return 1;
++		result = 1;
++		goto done;
+ 	}
+ 
+-	poptFreeContext(popt);
+-
+ 	ctx = lu_start(NULL, 0, NULL, NULL,
+ 		       interactive ? lu_prompt_console :
+ 		       lu_prompt_console_quiet, NULL, &error);
+ 	if (ctx == NULL) {
+ 		fprintf(stderr, _("Error initializing %s: %s.\n"), PACKAGE,
+ 			lu_strerror(error));
+-		return 1;
++		result = 1;
++		goto done;
+ 	}
+ 
+ 	ent = lu_ent_new();
+ 
+ 	if (lu_user_lookup_name(ctx, user, ent, &error) == FALSE) {
+ 		fprintf(stderr, _("User %s does not exist.\n"), user);
+-		return 2;
++		result = 2;
++		goto done;
+ 	}
+ 
+ 	if (lu_user_delete(ctx, ent, &error) == FALSE) {
+@@ -96,7 +99,8 @@ main(int argc, const char **argv)
+ 			user, lu_strerror(error));
+ 		lu_audit_logger(AUDIT_DEL_USER, "delete-user", user,
+ 				AUDIT_NO_ID, 0);
+-		return 3;
++		result = 3;
++		goto done;
+ 	}
+ 	lu_audit_logger(AUDIT_DEL_USER, "delete-user", user,
+ 			AUDIT_NO_ID, 1);
+@@ -112,19 +116,22 @@ main(int argc, const char **argv)
+ 		if (gid == LU_VALUE_INVALID_ID) {
+ 			fprintf(stderr, _("%s did not have a gid number.\n"),
+ 				user);
+-			return 4;
++			result = 4;
++			goto done;
+ 		}
+ 		group_ent = lu_ent_new();
+ 		if (lu_group_lookup_id(ctx, gid, group_ent, &error) == FALSE) {
+ 			fprintf(stderr, _("No group with GID %jd exists, not "
+ 					  "removing.\n"), (intmax_t)gid);
+-			return 5;
++			result = 5;
++			goto done;
+ 		}
+ 		tmp = lu_ent_get_first_string(group_ent, LU_GROUPNAME);
+ 		if (tmp == NULL) {
+ 			fprintf(stderr, _("Group with GID %jd did not have a "
+ 					  "group name.\n"), (intmax_t)gid);
+-			return 6;
++			result = 6;
++			goto done;
+ 		}
+ 		if (strcmp(tmp, user) == 0) {
+ 			if (lu_group_delete(ctx, group_ent, &error) == FALSE) {
+@@ -134,7 +141,8 @@ main(int argc, const char **argv)
+ 				lu_audit_logger_with_group (AUDIT_DEL_GROUP,
+ 					"delete-group", user, AUDIT_NO_ID,
+ 					tmp, 0);
+-				return 7;
++				result = 7;
++				goto done;
+ 			}
+ 		}
+ 		lu_audit_logger_with_group (AUDIT_DEL_GROUP,
+@@ -152,7 +160,8 @@ main(int argc, const char **argv)
+ 			lu_audit_logger(AUDIT_USER_MGMT,
+ 					"deleting-home-directory", user,
+ 					AUDIT_NO_ID, 0);
+-			return 9;
++			result = 9;
++			goto done;
+ 		}
+ 		lu_audit_logger(AUDIT_USER_MGMT, "deleting-home-directory", user,
+ 				AUDIT_NO_ID, 1);
+@@ -161,13 +170,17 @@ main(int argc, const char **argv)
+ 		if (lu_mail_spool_remove(ctx, ent, &error) != TRUE) {
+ 			fprintf(stderr, _("Error removing mail spool: %s"),
+ 				lu_strerror(error));
+-			return 1;
++			result = 1;
++			goto done;
+ 		}
+ 	}
+ 
+-	lu_ent_free(ent);
++ done:
++	if (ent) lu_ent_free(ent);
+ 
+-	lu_end(ctx);
++	if (ctx) lu_end(ctx);
++
++	poptFreeContext(popt);
+ 
+-	return 0;
++	return result;
+ }
+diff --git a/apps/lusermod.c b/apps/lusermod.c
+index 95cff85..aaa896e 100644
+--- a/apps/lusermod.c
++++ b/apps/lusermod.c
+@@ -41,14 +41,15 @@ main(int argc, const char **argv)
+ 	char *old_uid, *oldHomeDirectory;
+ 	uid_t uidNumber = LU_VALUE_INVALID_ID;
+ 	gid_t gidNumber = LU_VALUE_INVALID_ID;
+-	struct lu_context *ctx;
+-	struct lu_ent *ent;
++	struct lu_context *ctx = NULL;
++	struct lu_ent *ent = NULL;
+ 	struct lu_error *error = NULL;
+ 	GPtrArray *groups = NULL;
+ 	GValue *value;
+ 	int change, move_home = FALSE, lock = FALSE, unlock = FALSE;
+ 	int interactive = FALSE;
+ 	int c;
++	int result = 0;
+ 
+ 	poptContext popt;
+ 	struct poptOption options[] = {
+@@ -104,7 +105,8 @@ main(int argc, const char **argv)
+ 		fprintf(stderr, _("Error parsing arguments: %s.\n"),
+ 			poptStrerror(c));
+ 		poptPrintUsage(popt, stderr, 0);
+-		exit(1);
++		result = 1;
++		goto done;
+ 	}
+ 
+ 	/* We need to have been passed a user name on the command-line.  We
+@@ -114,7 +116,8 @@ main(int argc, const char **argv)
+ 	if (user == NULL) {
+ 		fprintf(stderr, _("No user name specified.\n"));
+ 		poptPrintUsage(popt, stderr, 0);
+-		return 1;
++		result = 1;
++		goto done;
+ 	}
+ 	if (gid_number_str != NULL) {
+ 		intmax_t val;
+@@ -127,7 +130,8 @@ main(int argc, const char **argv)
+ 			fprintf(stderr, _("Invalid group ID %s\n"),
+ 				gid_number_str);
+ 			poptPrintUsage(popt, stderr, 0);
+-			return 1;
++			result = 1;
++			goto done;
+ 		}
+ 		gidNumber = val;
+ 	}
+@@ -142,13 +146,12 @@ main(int argc, const char **argv)
+ 			fprintf(stderr, _("Invalid user ID %s\n"),
+ 				uid_number_str);
+ 			poptPrintUsage(popt, stderr, 0);
+-			return 1;
++			result = 1;
++			goto done;
+ 		}
+ 		uidNumber = val;
+ 	}
+ 
+-	poptFreeContext(popt);
+-
+ 	/* Start up the library. */
+ 	ctx = lu_start(NULL, 0, NULL, NULL,
+ 		       interactive ? lu_prompt_console :
+@@ -156,20 +159,23 @@ main(int argc, const char **argv)
+ 	if (ctx == NULL) {
+ 		fprintf(stderr, _("Error initializing %s: %s.\n"), PACKAGE,
+ 			lu_strerror(error));
+-		return 1;
++		result = 1;
++		goto done;
+ 	}
+ 
+ 	/* Sanity-check arguments. */
+ 	if (lock && unlock) {
+ 		fprintf(stderr, _("Both -L and -U specified.\n"));
+-		return 2;
++		result = 2;
++		goto done;
+ 	}
+ 
+ 	/* Look up the user's record. */
+ 	ent = lu_ent_new();
+ 	if (lu_user_lookup_name(ctx, user, ent, &error) == FALSE) {
+ 		fprintf(stderr, _("User %s does not exist.\n"), user);
+-		return 3;
++		result = 3;
++		goto done;
+ 	}
+ 
+ 	/* If the user's password needs to be changed, try to change it. */
+@@ -182,7 +188,8 @@ main(int argc, const char **argv)
+ 			lu_audit_logger(AUDIT_USER_CHAUTHTOK,
+ 					"updating-password", user,
+ 					uidNumber, 0);
+-			return 5;
++			result = 5;
++			goto done;
+ 		}
+ 		lu_audit_logger(AUDIT_USER_CHAUTHTOK, "updating-password",
+ 				user, uidNumber, 0);
+@@ -200,7 +207,8 @@ main(int argc, const char **argv)
+ 			lu_audit_logger(AUDIT_USER_CHAUTHTOK,
+ 					"updating-password", user,
+ 					uidNumber, 0);
+-			return 6;
++			result = 6;
++			goto done;
+ 		}
+ 		lu_audit_logger(AUDIT_USER_CHAUTHTOK, "updating-password",
+ 				user, uidNumber, 0);
+@@ -215,7 +223,8 @@ main(int argc, const char **argv)
+ 			lu_audit_logger(AUDIT_USER_CHAUTHTOK,
+ 					"locking-account", user,
+ 					uidNumber, 0);
+-			return 7;
++			result = 7;
++			goto done;
+ 		}
+ 		lu_audit_logger(AUDIT_USER_CHAUTHTOK, "locking-account",
+ 				user, uidNumber, 0);
+@@ -228,7 +237,8 @@ main(int argc, const char **argv)
+ 			lu_audit_logger(AUDIT_USER_CHAUTHTOK,
+ 					"unlocking-account", user,
+ 					uidNumber, 0);
+-			return 8;
++			result = 8;
++			goto done;
+ 		}
+ 		lu_audit_logger(AUDIT_USER_CHAUTHTOK, "unlocking-account",
+ 				user, uidNumber, 0);
+@@ -297,7 +307,8 @@ main(int argc, const char **argv)
+ 			lu_audit_logger(AUDIT_USER_MGMT,
+ 					"modify-account", user,
+ 					uidNumber, 0);
+-		return 9;
++		result = 9;
++		goto done;
+ 	}
+ 	lu_audit_logger(AUDIT_USER_MGMT, "modify-account",
+ 			user, uidNumber, 1);
+@@ -373,12 +384,14 @@ main(int argc, const char **argv)
+ 		if (oldHomeDirectory == NULL) {
+ 			fprintf(stderr, _("No old home directory for %s.\n"),
+ 				user);
+-			return 10;
++			result = 10;
++			goto done;
+ 		}
+ 		if (homeDirectory == NULL) {
+ 			fprintf(stderr, _("No new home directory for %s.\n"),
+ 				user);
+-			return 11;
++			result = 11;
++			goto done;
+ 		}
+ 		if (lu_homedir_move(oldHomeDirectory, homeDirectory,
+ 				    &error) == FALSE) {
+@@ -387,16 +400,20 @@ main(int argc, const char **argv)
+ 				lu_strerror(error));
+ 			lu_audit_logger(AUDIT_USER_MGMT, "moving-home-dir",
+ 					user, uidNumber, 0);
+-			return 12;
++			result = 12;
++			goto done;
+ 		}
+ 		lu_audit_logger(AUDIT_USER_MGMT, "moving-home-dir",
+ 				user, uidNumber, 1);
+ 	}
+ 	g_free(oldHomeDirectory);
+ 
+-	lu_ent_free(ent);
++ done:
++	if (ent) lu_ent_free(ent);
+ 
+-	lu_end(ctx);
++	if (ctx) lu_end(ctx);
++
++	poptFreeContext(popt);
+ 
+-	return 0;
++	return result;
+ }

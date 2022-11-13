@@ -3,9 +3,9 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{8..11} )
 
-inherit autotools python-r1
+inherit python-r1
 
 DESCRIPTION="A user and group account administration library"
 HOMEPAGE="https://pagure.io/libuser"
@@ -16,6 +16,7 @@ LICENSE="LGPL-2+"
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE="audit doc ldap python sasl selinux"
+REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 RDEPEND="
 	>=dev-libs/glib-2.30:2
@@ -31,6 +32,7 @@ RDEPEND="
 "
 DEPEND="${RDEPEND}"
 BDEPEND="
+	app-text/linuxdoc-tools
 	doc? ( dev-util/gtk-doc )
 	sys-devel/bison
 	virtual/pkgconfig
@@ -39,6 +41,7 @@ BDEPEND="
 src_prepare() {
 	eapply "${FILESDIR}/${PV}-downstream_test_xcrypt.patch"
 	eapply "${FILESDIR}/${PV}-PR49_add_yescrypt.patch"
+	eapply "${FILESDIR}/${PV}-PR55-popt.patch"
 
 	eapply_user
 	./autogen.sh
