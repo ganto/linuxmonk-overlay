@@ -3,6 +3,7 @@
 
 EAPI=8
 
+DISTUTILS_USE_PEP517=setuptools
 PYTHON_COMPAT=( python3_{8..10} )
 
 inherit pam python-single-r1 bash-completion-r1
@@ -20,9 +21,7 @@ RESTRICT="mirror"
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE="test"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
-RESTRICT="!test? ( test )"
 
 DEPEND=""
 RDEPEND="
