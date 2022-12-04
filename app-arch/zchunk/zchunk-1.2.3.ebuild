@@ -8,12 +8,15 @@ inherit meson
 DESCRIPTION="Compressed file format that allows easy deltas"
 HOMEPAGE="https://github.com/zchunk/zchunk"
 SRC_URI="https://github.com/zchunk/zchunk/archive/${PV}.tar.gz -> ${P}.tar.gz"
-RESTRICT="mirror"
+RESTRICT="
+	mirror
+	!test? ( test )
+"
 
 LICENSE="BSD MIT"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE="curl"
+IUSE="curl test"
 
 DEPEND="
 	app-arch/zstd
@@ -32,6 +35,8 @@ src_prepare() {
 
 src_configure() {
 	local emesonargs=(
+		-Ddocs=true
+		$(meson_use test tests)
 		$(meson_feature curl with-curl)
 		-Dwith-openssl=enabled
 		-Dwith-zstd=enabled
