@@ -20,10 +20,24 @@ upstream:
 # optional: timeout to query the upstream resolver. Default: 2s
 upstreamTimeout: 2s
 
+# optional: If true, blocky will fail to start unless at least one upstream server per group is reachable. Default: false
+startVerifyUpstream: true
+
+# optional: Determines how blocky will create outgoing connections. This impacts both upstreams, and lists.
+# accepted: dual, v4, v6
+# default: dual
+connectIPVersion: dual
+
 # optional: custom IP address(es) for domain name (with all sub-domains). Multiple addresses must be separated by a comma
 # example: query "printer.lan" or "my.printer.lan" will return 192.168.178.3
 customDNS:
   #customTTL: 1h
+  # optional: if true (default), return empty result for unmapped query types (for example TXT, MX or AAAA if only IPv4 address is defined).
+  # if false, queries with unmapped types will be forwarded to the upstream resolver
+  filterUnmappedTypes: true
+  # optional: replace domain in the query with other domain before resolver lookup in the mapping
+  #rewrite:
+  #  example.com: printer.lan
   #mapping:
   #  printer.lan: 192.168.178.3,2001:0db8:85a3:08d3:1319:8a2e:0370:7344
 
@@ -32,12 +46,16 @@ customDNS:
 # Example: Query client.fritz.box will ask DNS server 192.168.178.1.
 # This is necessary for local network, to resolve clients by host name
 conditional:
+  # optional: if false (default), return empty result if after rewrite, the mapped resolver returned an empty answer. If true, the original query will be sent to the upstream resolver
+  # Example: The query "blog.example.com" will be rewritten to "blog.fritz.box" and also redirected to the resolver at 192.168.178.1. If not found and if `fallbackUpstream` was set to `true`, the original query "blog.example.com" will be sent upstream.
+  # Usage: One usecase when having split DNS for internal and external (internet facing) users, but not all subdomains are listed in the internal domain.
+  fallbackUpstream: false
   # optional: replace domain in the query with other domain before resolver lookup in the mapping
   #rewrite:
   #  example.com: fritz.box
   #mapping:
-  #  fritz.box: udp:192.168.178.1
-  #  lan.net: udp:192.168.178.1,udp:192.168.178.2
+  #  fritz.box: 192.168.178.1
+  #  lan.net: 192.168.178.1,192.168.178.2
 
 # optional: use black and white lists to block queries (for example ads, trackers, adult pages etc.)
 blocking:
@@ -96,8 +114,8 @@ blocking:
   downloadAttempts: 5
   # optional: Time between the download attempts. Default: 1s
   downloadCooldown: 10s
-  # optional: if true, application startup will fail if at least one list can't be downloaded / opened. Default: false
-  failStartOnListError: false
+  # optional: if failOnError, application startup will fail if at least one list can't be downloaded / opened. Default: blocking
+  startStrategy: failOnError
 
 # optional: configuration for caching of DNS responses
 caching:
@@ -110,7 +128,7 @@ caching:
   # If 0, use TTL
   # If > 0, use this value, if TTL is greater
   # Default: 0
-  maxTime: -1
+  maxTime: 0
   # Max number of cache entries (responses) to be kept in cache (soft limit). Useful on systems with limited amount of RAM.
   # Default (0): unlimited
   maxItemsCount: 0
@@ -127,6 +145,9 @@ caching:
   # Max number of domains to be kept in cache for prefetching (soft limit). Useful on systems with limited amount of RAM.
   # Default (0): unlimited
   prefetchMaxItemsCount: 0
+  # Time how long negative results (NXDOMAIN response or empty result) are cached. A value of -1 will disable caching for negative results.
+  # Default: 30m
+  cacheTimeNegative: -1
 
 # optional: configuration of client name resolution
 clientLookup:
@@ -181,19 +202,25 @@ redis:
 # optional: DNS listener port(s) and bind ip address(es), default 53 (UDP and TCP). Example: 53, :53, "127.0.0.1:5353,[::1]:5353"
 port: 53
 # optional: Port(s) and bind ip address(es) for DoT (DNS-over-TLS) listener. Example: 853, 127.0.0.1:853
-#tlsPort: 53
+#tlsPort: 853
 # optional: HTTPS listener port(s) and bind ip address(es), default empty = no http listener.
 # If > 0, will be used for prometheus metrics, pprof, REST API, DoH... Example: 443, :443, 127.0.0.1:443
 httpPort: 4000
 #httpsPort: 443
-# mandatory, if https port > 0: path to cert and key file for SSL encryption
+# optional: Minimal TLS version that the DoH and DoT server will use
+minTlsServeVersion: 1.2
+# if https port > 0: path to cert and key file for SSL encryption. if not set, self-signed certificate will be generated
 #certFile: server.crt
 #keyFile: server.key
-# optional: use this DNS server to resolve blacklist urls and upstream DNS servers.
-# Useful if no DNS resolver is configured and blocky needs to resolve a host name. Format net:IP:port, net must be udp or tcp
-bootstrapDns: tcp:1.1.1.1
-# optional: Drop all AAAA query if set to true. Default: false
-disableIPv6: false
+# optional: use this DNS server to resolve blacklist urls and upstream DNS servers. Useful if no DNS resolver is configured and blocky needs to resolve a host name.
+# Format net:IP:port, net must be udp or tcp
+bootstrapDns: tcp+udp:1.1.1.1
+
+#filtering:
+# optional: drop all queries with following query types. Default: empty
+  #queryTypes:
+  #  - AAAA
+
 # optional: if path defined, use this file for query resolution (A, AAAA and rDNS). Default: empty
 hostsFile:
   # optional: Path to hosts file (e.g. /etc/hosts on Linux)
@@ -202,6 +229,8 @@ hostsFile:
   #hostsTTL: 60m
   # optional: Time between hosts file refresh, default: 1h
   #refreshPeriod: 30m
+  # optional: Whether loopback hosts addresses (127.0.0.0/8 and ::1) should be filtered or not, default: false
+  #filterLoopback: true
 # optional: Log level (one from debug, info, warn, error). Default: info
 logLevel: info
 # optional: Log format (text or json). Default: text
@@ -210,3 +239,8 @@ logFormat: text
 logTimestamp: false
 # optional: obfuscate log output (replace all alphanumeric characters with *) for user sensitive data like request domains or responses to increase privacy. Default: false
 logPrivacy: false
+
+# optional: add EDE error codes to dns response
+ede: 
+  # enabled if true, Default: false
+  #enable: true

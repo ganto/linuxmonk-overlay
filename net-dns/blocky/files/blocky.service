@@ -9,6 +9,7 @@ ConditionPathExists=/etc/blocky/config.yml
 [Service]
 AmbientCapabilities=CAP_NET_BIND_SERVICE
 CapabilityBoundingSet=CAP_NET_BIND_SERVICE
+Environment="BLOCKY_CONFIG_FILE=/etc/blocky/config.yml"
 ExecStart=/usr/bin/blocky serve
 LockPersonality=yes
 MemoryDenyWriteExecute=yes
