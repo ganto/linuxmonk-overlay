@@ -10,7 +10,7 @@ inherit distutils-r1
 
 DESCRIPTION="A Python implementation of git up"
 HOMEPAGE="https://github.com/msiemens/PyGitUp"
-SRC_URI="https://github.com/msiemens/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
+SRC_URI="https://github.com/msiemens/${PN}/archive/v${PV}.tar.gz -> ${P}.gh.tar.gz"
 
 LICENSE="blackshades"
 SLOT="0"
@@ -19,14 +19,9 @@ KEYWORDS="~amd64"
 RDEPEND="
 	>=dev-python/colorama-0.4.0[${PYTHON_USEDEP}]
 	>=dev-python/GitPython-3.0.0[${PYTHON_USEDEP}]
-	>=dev-python/termcolor-1.1.0[${PYTHON_USEDEP}]
+	>=dev-python/termcolor-2.0.0[${PYTHON_USEDEP}]
 "
 
 DOCS=( README.rst )
-
-PATCHES=(
-	"${FILESDIR}"/2.1.0-refactor-Add-support-for-Python-3.10.patch
-	"${FILESDIR}"/2.1.0-build-use-lighter-poetry-core.patch
-)
 
 distutils_enable_tests pytest
