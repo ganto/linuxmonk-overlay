@@ -1,0 +1,36 @@
+From ea9b7994fa8ae704bda4efb3bab33ce4b50762a3 Mon Sep 17 00:00:00 2001
+From: CyrIng <labs@cyring.fr>
+Date: Sun, 25 Dec 2022 05:19:29 +0000
+Subject: [PATCH] Fixed conditional build linked to CONFIG_PM_SLEEP (issue
+ #383)
+
+---
+ corefreqk.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/corefreqk.c b/corefreqk.c
+index ac9fefe..787c17a 100644
+--- a/corefreqk.c
++++ b/corefreqk.c
+@@ -22095,7 +22095,9 @@ static int CoreFreqK_HotPlug_CPU_Online(unsigned int cpu)
+    }
+ 
+ 	/* Start the collect timer dedicated to this CPU iff not STR resuming */
++#ifdef CONFIG_PM_SLEEP
+    if (CoreFreqK.ResumeFromSuspend == false)
++#endif /* CONFIG_PM_SLEEP */
+    {
+     if (Arch[PUBLIC(RO(Proc))->ArchID].Timer != NULL) {
+ 	Arch[PUBLIC(RO(Proc))->ArchID].Timer(cpu);
+@@ -22143,7 +22145,10 @@ static int CoreFreqK_HotPlug_CPU_Offline(unsigned int cpu)
+ 	BITSET(LOCKLESS, PUBLIC(RO(Core, AT(cpu)))->OffLine, OS);
+ 
+ 	/*		Seek for an alternate Service Processor.	*/
+-   if (CoreFreqK.ResumeFromSuspend == false) {
++#ifdef CONFIG_PM_SLEEP
++   if (CoreFreqK.ResumeFromSuspend == false)
++#endif /* CONFIG_PM_SLEEP */
++   {
+     if ((cpu == PUBLIC(RO(Proc))->Service.Core)
+      || (cpu == PUBLIC(RO(Proc))->Service.Thread))
+     {

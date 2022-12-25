@@ -1,0 +1,33 @@
+commit 50bbbd20ee56c75026fd46e82dc92a06998b90e8
+Author: Reto Gantenbein <reto.gantenbein@linuxmonk.ch>
+Date:   Sun Dec 25 13:06:52 2022 +0100
+
+    Add separate target to build kernel module
+
+diff --git a/Makefile b/Makefile
+index 29bd4ce..e4a68f8 100644
+--- a/Makefile
++++ b/Makefile
+@@ -82,8 +82,11 @@ LAYOUT += -D UI_TRANSPARENCY=$(UI_TRANSPARENCY)
+ endif
+ 
+ .PHONY: all
+-all: corefreqd corefreq-cli
+-	$(MAKE) -j1 -C $(KERNELDIR) M=$(PWD) modules
++all: corefreqd corefreq-cli module
++
++.PHONY: module
++module:
++	$(MAKE) -C $(KERNELDIR) M=$(PWD) modules
+ 
+ .PHONY: install
+ install: module-install
+@@ -92,7 +95,7 @@ install: module-install
+ 		$(PREFIX)/lib/systemd/system/corefreqd.service
+ 
+ .PHONY: module-install
+-module-install:
++module-install: module
+ 	$(MAKE) -C $(KERNELDIR) M=$(PWD) modules_install
+ 
+ .PHONY: clean
