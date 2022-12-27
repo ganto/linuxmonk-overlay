@@ -3,12 +3,17 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8..10} )
+DISTUTILS_USE_PEP517=setuptools
+PYTHON_COMPAT=( python3_{8..11} )
+
 inherit distutils-r1
 
 DESCRIPTION="Kubernetes python client"
-HOMEPAGE="https://pypi.python.org/pypi/kubernetes https://github.com/kubernetes-client/python"
-SRC_URI="https://github.com/kubernetes-client/python/archive/v${PV}.tar.gz -> ${P}.tar.gz"
+HOMEPAGE="
+	https://github.com/kubernetes-client/python
+	https://pypi.python.org/pypi/kubernetes
+"
+SRC_URI="https://github.com/kubernetes-client/python/archive/v${PV}.tar.gz -> ${P}.gh.tar.gz"
 
 LICENSE="Apache-1.0"
 SLOT="0"
@@ -25,10 +30,7 @@ RDEPEND="
 	dev-python/requests-oauthlib[${PYTHON_USEDEP}]
 	>=dev-python/six-1.9.0[${PYTHON_USEDEP}]
 	>=dev-python/urllib3-1.24.2[${PYTHON_USEDEP}]
-	>=dev-python/websocket-client-0.32.0[${PYTHON_USEDEP}]
-	!~dev-python/websocket-client-0.40.0[${PYTHON_USEDEP}]
-	!=dev-python/websocket-client-0.41*[${PYTHON_USEDEP}]
-	!=dev-python/websocket-client-0.42*[${PYTHON_USEDEP}]
+	dev-python/websocket-client[${PYTHON_USEDEP}]
 "
 
 DOCS=( CHANGELOG.md CONTRIBUTING.md README.md )
