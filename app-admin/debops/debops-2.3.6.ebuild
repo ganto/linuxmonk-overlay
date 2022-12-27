@@ -3,15 +3,20 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8..10} )
+DISTUTILS_USE_PEP517=setuptools
+PYTHON_COMPAT=( python3_{8..11} )
+
 inherit distutils-r1
 
-DEBOPS_GIT_COMMIT="26f6d38a72c1eca024bead46caaaf81099305ad4"
+DEBOPS_GIT_COMMIT="7cbe1842a7fb892340139ae804cb4e71a6088be3"
 
 DESCRIPTION="Your Debian-based data center in a box"
 HOMEPAGE="https://debops.org/"
-SRC_URI="https://github.com/debops/debops/archive/v${PV}.tar.gz -> ${P}.tar.gz"
-RESTRICT="mirror"
+SRC_URI="https://github.com/debops/debops/archive/v${PV}.tar.gz -> ${P}.gh.tar.gz"
+RESTRICT="
+	mirror
+	!test? ( test )
+"
 
 LICENSE="GPL-3+"
 SLOT="0"
@@ -24,6 +29,7 @@ RDEPEND="
 	dev-python/distro[${PYTHON_USEDEP}]
 	dev-python/dnspython[${PYTHON_USEDEP}]
 	dev-python/future[${PYTHON_USEDEP}]
+	dev-python/jinja[${PYTHON_USEDEP}]
 	dev-python/netaddr[${PYTHON_USEDEP}]
 	dev-python/passlib[${PYTHON_USEDEP}]
 	dev-python/python-ldap[${PYTHON_USEDEP}]
@@ -45,6 +51,7 @@ DOCS=( CHANGELOG.rst CODEOWNERS CONTRIBUTING.rst DEVELOPMENT.rst README.md Docke
 
 PATCHES=(
 	"${FILESDIR}"/${PN}-0.7.2-Skip-edit_url.patch
+	"${FILESDIR}"/2.2.8-Fix-merge-issue.patch
 )
 
 src_prepare() {
@@ -64,7 +71,7 @@ python_compile_all() {
 	pushd docs >/dev/null || die
 	sphinx-build -b man -d _build/doctrees -n -t manpages -W . _build/man || die "Failed to build man-pages"
 	if use doc; then
-		sphinx-build -b html -d _build/doctrees -n -W . _build/html || die "Failed to build documentation"
+		sphinx-build -b html -d _build/doctrees -n -W -T -vvv . _build/html || die "Failed to build documentation"
 	fi
 	popd || die >/dev/null
 }

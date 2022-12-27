@@ -1,0 +1,15 @@
+--- ansible/roles/ipxe/tasks/debian_netboot.yml.orig	2022-12-27 08:56:25.151638502 +0100
++++ ansible/roles/ipxe/tasks/debian_netboot.yml	2022-12-27 08:56:33.565619509 +0100
+@@ -81,12 +81,8 @@
+     dest: '{{ ipxe__debian_netboot_src + "/" + item.release + "/non-free/"
+               + item.firmware_version + "/firmware.cpio.gz" }}'
+     checksum: '{{ item.firmware_checksum | d(omit) }}'
+-<<<<<<< HEAD
+-  loop: '{{ ipxe__debian_netboot_combined_release_map | parse_kv_items }}'
+-=======
+     mode: '0644'
+   loop: '{{ ipxe__debian_netboot_combined_release_map | debops.debops.parse_kv_items }}'
+->>>>>>> 720ffba19 ([ci] Fix issues found by ansible-lint v6.0.0)
+   when: ipxe__debian_netboot_firmware|bool and item.name|d() and item.state|d('present') not in [ 'absent', 'ignore' ] and
+         item.release in ipxe__debian_netboot_releases and item.firmware_version|d()
+   register: ipxe__register_get_firmware

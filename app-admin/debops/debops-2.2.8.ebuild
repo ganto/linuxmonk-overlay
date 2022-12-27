@@ -3,15 +3,20 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8..10} )
+DISTUTILS_USE_PEP517=setuptools
+PYTHON_COMPAT=( python3_{8..11} )
+
 inherit distutils-r1
 
-DEBOPS_GIT_COMMIT="1a6e81c67d696d4f00a048365c41139dae9d21bc"
+DEBOPS_GIT_COMMIT="50b7de4f7960d95e7c7160951eb0a5e0dfb3ead2"
 
 DESCRIPTION="Your Debian-based data center in a box"
 HOMEPAGE="https://debops.org/"
-SRC_URI="https://github.com/debops/debops/archive/v${PV}.tar.gz -> ${P}.tar.gz"
-RESTRICT="mirror"
+SRC_URI="https://github.com/debops/debops/archive/v${PV}.tar.gz -> ${P}.gh.tar.gz"
+RESTRICT="
+	mirror
+	!test? ( test )
+"
 
 LICENSE="GPL-3+"
 SLOT="0"
@@ -24,20 +29,21 @@ RDEPEND="
 	dev-python/distro[${PYTHON_USEDEP}]
 	dev-python/dnspython[${PYTHON_USEDEP}]
 	dev-python/future[${PYTHON_USEDEP}]
+	dev-python/jinja[${PYTHON_USEDEP}]
 	dev-python/netaddr[${PYTHON_USEDEP}]
 	dev-python/passlib[${PYTHON_USEDEP}]
-	dev-python/python-dotenv[${PYTHON_USEDEP}]
 	dev-python/python-ldap[${PYTHON_USEDEP}]
 	dev-python/toml[${PYTHON_USEDEP}]
 "
 DEPEND="
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	dev-python/sphinx[${PYTHON_USEDEP}]
-	doc? ( dev-python/sphinx_rtd_theme[${PYTHON_USEDEP}] )
+	doc? (
+		dev-python/sphinx_rtd_theme[${PYTHON_USEDEP}]
+	)
 	test? (
 		app-admin/ansible[${PYTHON_USEDEP}]
-		dev-python/nose2[${PYTHON_USEDEP}]
-		dev-python/python-dotenv[${PYTHON_USEDEP}]
+		dev-python/nose[${PYTHON_USEDEP}]
 	)
 "
 
@@ -45,6 +51,7 @@ DOCS=( CHANGELOG.rst CODEOWNERS CONTRIBUTING.rst DEVELOPMENT.rst README.md Docke
 
 PATCHES=(
 	"${FILESDIR}"/${PN}-0.7.2-Skip-edit_url.patch
+	"${FILESDIR}"/${PV}-Fix-merge-issue.patch
 )
 
 src_prepare() {
@@ -64,7 +71,7 @@ python_compile_all() {
 	pushd docs >/dev/null || die
 	sphinx-build -b man -d _build/doctrees -n -t manpages -W . _build/man || die "Failed to build man-pages"
 	if use doc; then
-		sphinx-build -b html -d _build/doctrees -n -W -T -vvv . _build/html || die "Failed to build documentation"
+		sphinx-build -b html -d _build/doctrees -n -W . _build/html || die "Failed to build documentation"
 	fi
 	popd || die >/dev/null
 }

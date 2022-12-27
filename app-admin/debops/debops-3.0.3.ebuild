@@ -3,15 +3,20 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8..10} )
+DISTUTILS_USE_PEP517=setuptools
+PYTHON_COMPAT=( python3_{8..11} )
+
 inherit distutils-r1
 
-DEBOPS_GIT_COMMIT="f47e9907c5bd3e6e2d623664ebb2350470362bf1"
+DEBOPS_GIT_COMMIT="b67c9316f608e4ec76db7d08e1d3ca0176c666f8"
 
 DESCRIPTION="Your Debian-based data center in a box"
 HOMEPAGE="https://debops.org/"
-SRC_URI="https://github.com/debops/debops/archive/v${PV}.tar.gz -> ${P}.tar.gz"
-RESTRICT="mirror"
+SRC_URI="https://github.com/debops/debops/archive/v${PV}.tar.gz -> ${P}.gh.tar.gz"
+RESTRICT="
+	mirror
+	!test? ( test )
+"
 
 LICENSE="GPL-3+"
 SLOT="0"
@@ -24,20 +29,21 @@ RDEPEND="
 	dev-python/distro[${PYTHON_USEDEP}]
 	dev-python/dnspython[${PYTHON_USEDEP}]
 	dev-python/future[${PYTHON_USEDEP}]
+	dev-python/jinja[${PYTHON_USEDEP}]
 	dev-python/netaddr[${PYTHON_USEDEP}]
 	dev-python/passlib[${PYTHON_USEDEP}]
+	dev-python/python-dotenv[${PYTHON_USEDEP}]
 	dev-python/python-ldap[${PYTHON_USEDEP}]
 	dev-python/toml[${PYTHON_USEDEP}]
 "
 DEPEND="
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	dev-python/sphinx[${PYTHON_USEDEP}]
-	doc? (
-		dev-python/sphinx_rtd_theme[${PYTHON_USEDEP}]
-	)
+	doc? ( dev-python/sphinx_rtd_theme[${PYTHON_USEDEP}] )
 	test? (
 		app-admin/ansible[${PYTHON_USEDEP}]
-		dev-python/nose[${PYTHON_USEDEP}]
+		dev-python/nose2[${PYTHON_USEDEP}]
+		dev-python/python-dotenv[${PYTHON_USEDEP}]
 	)
 "
 
