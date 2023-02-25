@@ -4,7 +4,7 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517=setuptools
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{8..11} )
 
 inherit pam python-single-r1 bash-completion-r1
 
@@ -30,7 +30,7 @@ RDEPEND="
 	app-arch/createrepo_c
 	app-arch/pigz
 	app-arch/rpm[lua(+),python,${PYTHON_SINGLE_USEDEP},zstd]
-	>=app-misc/distribution-gpg-keys-1.77
+	>=app-misc/distribution-gpg-keys-1.84
 	$(python_gen_cond_dep '
 		dev-python/distro[${PYTHON_USEDEP}]
 		dev-python/jinja[${PYTHON_USEDEP}]
