@@ -3,8 +3,9 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{9..11} )
 DISTUTILS_SINGLE_IMPL=1
+DISTUTILS_USE_PEP517=setuptools
 
 inherit distutils-r1
 
@@ -30,8 +31,9 @@ RDEPEND="
 		dev-python/pybeam[${PYTHON_USEDEP}]
 		dev-python/pyenchant[${PYTHON_USEDEP}]
 		dev-python/pyxdg[${PYTHON_USEDEP}]
-		dev-python/toml[${PYTHON_USEDEP}]
-		dev-python/python-zstandard[${PYTHON_USEDEP}]
+		dev-python/tomli[${PYTHON_USEDEP}]
+		dev-python/tomli-w[${PYTHON_USEDEP}]
+		dev-python/zstandard[${PYTHON_USEDEP}]
 		sys-apps/file[python,${PYTHON_USEDEP}]
 	')
 	dev-util/checkbashisms
@@ -48,7 +50,6 @@ BDEPEND="
 		app-text/hunspell[l10n_en,l10n_cs]
 		dev-libs/appstream-glib
 		$(python_gen_cond_dep '
-			dev-python/pytest-flake8[${PYTHON_USEDEP}]
 			dev-python/pytest-xdist[${PYTHON_USEDEP}]
 		')
 	)
