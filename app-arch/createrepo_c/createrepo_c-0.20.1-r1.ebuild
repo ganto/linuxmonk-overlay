@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
-PYTHON_COMPAT=( python3_{8,9,10} )
+PYTHON_COMPAT=( python3_{9..11} )
 
 inherit cmake python-r1
 
@@ -40,17 +40,16 @@ BDEPEND="
 		app-doc/doxygen
 		$(python_gen_any_dep 'dev-python/sphinx[${PYTHON_USEDEP}]')
 	)
-	test? (
-		${RDEPEND}
-		dev-libs/check
-		$(python_gen_any_dep 'dev-python/nose[${PYTHON_USEDEP}]')
-	)
+	test? ( ${RDEPEND} )
 "
-
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
+PATCHES=(
+	"${FILESDIR}"/${PN}-0.20.1-Include-rpm-rpmstring.h-for-rasprintf.patch
+)
+
 python_check_deps() {
-	has_version "dev-python/sphinx[${PYTHON_USEDEP}]"
+	python_has_version "dev-python/sphinx[${PYTHON_USEDEP}]"
 }
 
 src_configure() {
@@ -111,10 +110,8 @@ src_compile() {
 src_test() {
 	if use python; then
 		_python_obtain_impls
-		multibuild_for_best_variant run_in_build_dir tests/run_gtester.sh || die "Failed to run C unittests"
 		python_foreach_impl run_in_build_dir cmake_src_test
 	else
-		run_in_build_dir tests/run_gtester.sh || die "Failed to run C unittests"
 		cmake_src_test
 	fi
 }
