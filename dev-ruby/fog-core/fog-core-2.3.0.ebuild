@@ -1,8 +1,8 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
-USE_RUBY="ruby25 ruby26 ruby27"
+EAPI=7
+USE_RUBY="ruby26 ruby27"
 
 RUBY_FAKEGEM_RECIPE_DOC="yard"
 RUBY_FAKEGEM_EXTRADOC="CONTRIBUTING.md CONTRIBUTORS.md README.md changelog.md"
@@ -26,7 +26,7 @@ ruby_add_bdepend "
 
 ruby_add_rdepend "
 	dev-ruby/builder:*
-	>=dev-ruby/excon-0.58
+	>=dev-ruby/excon-0.71
 	=dev-ruby/formatador-0.2*
 	dev-ruby/mime-types:*
 "
