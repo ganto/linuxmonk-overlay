@@ -1,8 +1,8 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
-USE_RUBY="ruby25 ruby26 ruby27"
+EAPI=8
+USE_RUBY="ruby27 ruby30"
 
 RUBY_FAKEGEM_RECIPE_TEST="rake"
 RUBY_FAKEGEM_RECIPE_DOC=""
@@ -34,6 +34,6 @@ all_ruby_prepare() {
 	# Handle minitest ourselves to avoid bundler dependency.
 	sed -i -e '1igem "minitest", "~> 5.0"' test/*_test.rb || die
 
-	# loosen dependencies                                                                                                                                               
+	# loosen dependencies
 	sed -e '/multi_json/s/~>/>=/' -i ${PN}.gemspec || die
 }
