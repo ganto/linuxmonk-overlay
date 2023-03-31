@@ -1,9 +1,9 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-USE_RUBY="ruby25 ruby26"
+USE_RUBY="ruby27 ruby30"
 
 # Depends on unreleased vagrant-spec gem
 RUBY_FAKEGEM_RECIPE_TEST="none"
@@ -22,21 +22,14 @@ SLOT="0"
 KEYWORDS="~amd64"
 IUSE=""
 
-PATCHES=(
-	# Enable QEMU Session by default
-	# https://github.com/vagrant-libvirt/vagrant-libvirt/pull/969
-	"${FILESDIR}"/0.0.45-enable-qemu-session-by-default.patch
-
-	# Halt a domain before packaging it as a box to avoid hard to debug issues.
-	# https://github.com/vagrant-libvirt/vagrant-libvirt/pull/1034.
-	"${FILESDIR}"/0003-Halt-a-domain-before-packaging-it-as-a-box.patch
-)
-
 ruby_add_rdepend "
-	>=app-emulation/vagrant-1.9.1
+	>=app-emulation/vagrant-2.2.7
+	dev-ruby/diffy
 	>=dev-ruby/fog-core-2.1
 	>=dev-ruby/fog-libvirt-0.6.0
 	>=dev-ruby/nokogiri-1.6.0
+	dev-ruby/rexml
+	dev-ruby/xml-simple
 "
 
 each_ruby_install() {
