@@ -1,17 +1,22 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-PYTHON_COMPAT=( python3_{8,9} )
+DISTUTILS_USE_PEP517=setuptools
+PYTHON_COMPAT=( python3_{9..11} )
+
 inherit distutils-r1
 
-DEBOPS_GIT_COMMIT="c1a8509c1e27e7e4673835247669b6c1a141d317"
+DEBOPS_GIT_COMMIT="ecf4fa5f146e55463138e5c5fa36823928f6f691"
 
 DESCRIPTION="Your Debian-based data center in a box"
 HOMEPAGE="https://debops.org/"
-SRC_URI="https://github.com/debops/debops/archive/v${PV}.tar.gz -> ${P}.tar.gz"
-RESTRICT="mirror"
+SRC_URI="https://github.com/debops/debops/archive/v${PV}.tar.gz -> ${P}.gh.tar.gz"
+RESTRICT="
+	mirror
+	!test? ( test )
+"
 
 LICENSE="GPL-3+"
 SLOT="0"
@@ -20,18 +25,21 @@ IUSE="doc test"
 
 RDEPEND="
 	app-admin/ansible[${PYTHON_USEDEP}]
+	dev-python/cryptography[${PYTHON_USEDEP}]
 	dev-python/distro[${PYTHON_USEDEP}]
 	dev-python/dnspython[${PYTHON_USEDEP}]
 	dev-python/future[${PYTHON_USEDEP}]
+	dev-python/jinja[${PYTHON_USEDEP}]
 	dev-python/netaddr[${PYTHON_USEDEP}]
 	dev-python/passlib[${PYTHON_USEDEP}]
 	dev-python/python-ldap[${PYTHON_USEDEP}]
+	dev-python/toml[${PYTHON_USEDEP}]
 "
 DEPEND="
 	dev-python/setuptools[${PYTHON_USEDEP}]
+	dev-python/sphinx[${PYTHON_USEDEP}]
 	doc? (
-		dev-python/sphinx[${PYTHON_USEDEP}]
-		dev-python/sphinx_rtd_theme[${PYTHON_USEDEP}]
+		dev-python/sphinx-rtd-theme[${PYTHON_USEDEP}]
 	)
 	test? (
 		app-admin/ansible[${PYTHON_USEDEP}]
@@ -41,9 +49,7 @@ DEPEND="
 
 DOCS=( CHANGELOG.rst CODEOWNERS CONTRIBUTING.rst DEVELOPMENT.rst README.md Dockerfile Vagrantfile )
 
-PATCHES=(
-	"${FILESDIR}"/${PN}-0.7.2-Skip-edit_url.patch
-)
+PATCHES=( "${FILESDIR}"/${PN}-0.7.2-Skip-edit_url.patch )
 
 src_prepare() {
 	default
@@ -59,11 +65,12 @@ src_prepare() {
 }
 
 python_compile_all() {
+	pushd docs >/dev/null || die
+	sphinx-build -b man -d _build/doctrees -n -t manpages -W . _build/man || die "Failed to build man-pages"
 	if use doc; then
-		pushd docs || die
-		sphinx-build -d _build/doctrees . _build/html || die "Failed to build documentation"
-		popd || die
+		sphinx-build -b html -d _build/doctrees -n -W -T -vvv . _build/html || die "Failed to build documentation"
 	fi
+	popd || die >/dev/null
 }
 
 python_test() {

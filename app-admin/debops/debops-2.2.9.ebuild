@@ -3,15 +3,20 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8..10} )
+DISTUTILS_USE_PEP517=setuptools
+PYTHON_COMPAT=( python3_{9..11} )
+
 inherit distutils-r1
 
-DEBOPS_GIT_COMMIT="7f2e941ea2f12611917e058dcb9b6177426f2928"
+DEBOPS_GIT_COMMIT="75f834a7e2cede37e47ed26c6c9b3d89783f05cb"
 
 DESCRIPTION="Your Debian-based data center in a box"
 HOMEPAGE="https://debops.org/"
-SRC_URI="https://github.com/debops/debops/archive/v${PV}.tar.gz -> ${P}.tar.gz"
-RESTRICT="mirror"
+SRC_URI="https://github.com/debops/debops/archive/v${PV}.tar.gz -> ${P}.gh.tar.gz"
+RESTRICT="
+	mirror
+	!test? ( test )
+"
 
 LICENSE="GPL-3+"
 SLOT="0"
@@ -24,6 +29,7 @@ RDEPEND="
 	dev-python/distro[${PYTHON_USEDEP}]
 	dev-python/dnspython[${PYTHON_USEDEP}]
 	dev-python/future[${PYTHON_USEDEP}]
+	dev-python/jinja[${PYTHON_USEDEP}]
 	dev-python/netaddr[${PYTHON_USEDEP}]
 	dev-python/passlib[${PYTHON_USEDEP}]
 	dev-python/python-ldap[${PYTHON_USEDEP}]
@@ -33,7 +39,7 @@ DEPEND="
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	dev-python/sphinx[${PYTHON_USEDEP}]
 	doc? (
-		dev-python/sphinx_rtd_theme[${PYTHON_USEDEP}]
+		dev-python/sphinx-rtd-theme[${PYTHON_USEDEP}]
 	)
 	test? (
 		app-admin/ansible[${PYTHON_USEDEP}]
@@ -43,10 +49,7 @@ DEPEND="
 
 DOCS=( CHANGELOG.rst CODEOWNERS CONTRIBUTING.rst DEVELOPMENT.rst README.md Dockerfile Vagrantfile )
 
-PATCHES=(
-	"${FILESDIR}"/${PN}-0.7.2-Skip-edit_url.patch
-	"${FILESDIR}"/${PV}-apt_cacher_ng-Remove-reference-to-global_handlers.patch
-)
+PATCHES=( "${FILESDIR}"/${PN}-0.7.2-Skip-edit_url.patch )
 
 src_prepare() {
 	default
