@@ -1,0 +1,51 @@
+From 4477dea908ae3bae117fe3fa65d599f4ea52fd3b Mon Sep 17 00:00:00 2001
+From: Adam Williamson <awilliam@redhat.com>
+Date: Thu, 24 Feb 2022 08:06:22 -0800
+Subject: [PATCH] Revert "Don't write kickstart so initial-setup won't think
+ root pw is set"
+
+This reverts commit ef55a6402143f810b7c221c2763b7eb52b4b8261.
+It turns out to make things worse: the idea was that by not
+writing the kickstart, initial-setup would correctly require
+a root password to be set or admin account created, but in fact
+it causes initial-setup not to run at all, because it assumes
+the kickstart will always be present. See:
+https://bugzilla.redhat.com/show_bug.cgi?id=2057600
+---
+ oz/Fedora.py | 4 ----
+ oz/RedHat.py | 4 ----
+ 2 files changed, 8 deletions(-)
+
+diff --git a/oz/Fedora.py b/oz/Fedora.py
+index 7ab800b..58557d7 100644
+--- a/oz/Fedora.py
++++ b/oz/Fedora.py
+@@ -293,10 +293,6 @@ class FedoraGuest(oz.RedHat.RedHatLinuxCDYumGuest):
+             # out the method completely
+             if not self.config.brokenisomethod:
+                 initrdline += " inst.method=cdrom:/dev/cdrom"
+-        # don't write the kickstart to the image, or else initial-setup
+-        # will think a root password has been set:
+-        # https://bugzilla.redhat.com/show_bug.cgi?id=2015490
+-        initrdline += " inst.nosave=output_ks"
+         self._modify_isolinux(initrdline)
+ 
+     def generate_diskimage(self, size=10, force=False):
+diff --git a/oz/RedHat.py b/oz/RedHat.py
+index 868b549..af00c11 100644
+--- a/oz/RedHat.py
++++ b/oz/RedHat.py
+@@ -79,10 +79,6 @@ Subsystem	sftp	/usr/libexec/openssh/sftp-server
+                                         self.tdl.distro + self.tdl.update + self.tdl.arch + "-ramdisk")
+ 
+         self.cmdline = "inst.method=" + self.url + " inst.ks=file:/ks.cfg"
+-        # don't write the kickstart to the image, or else initial-setup
+-        # will think a root password has been set:
+-        # https://bugzilla.redhat.com/show_bug.cgi?id=2015490
+-        self.cmdline += " inst.nosave=output_ks"
+         if self.tdl.kernel_param:
+             self.cmdline += " " + self.tdl.kernel_param
+ 
+-- 
+2.35.1
+

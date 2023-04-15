@@ -1,10 +1,11 @@
-# Copyright 1999-2022 Gentoo Authors
+# Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{9..11} )
 DISTUTILS_SINGLE_IMPL=1
+DISTUTILS_USE_PEP517=setuptools
 
 inherit distutils-r1
 
@@ -39,8 +40,10 @@ PATCHES=(
 	"${FILESDIR}"/0.17.0-Python3-monotonic.patch
 	"${FILESDIR}"/0.17.0-Fix-API-calls-for-new-useuefi-parameter.patch
 	"${FILESDIR}"/0.17.0-Fix-test-suite.patch
-	"${FILESDIR}"/${PV}-GH292-ozutils-collections-to-collections-abc.patch
-	"${FILESDIR}"/${PV}-Replace-genisoimage-with-mkisofs.patch
+	"${FILESDIR}"/0.18.0-GH292-ozutils-collections-to-collections-abc.patch
+	"${FILESDIR}"/0.18.0-Replace-genisoimage-with-mkisofs.patch
+	"${FILESDIR}"/0.18.1-GH296-Enable-USB-controller-and-keyboard-for-aarch64.patch
+	"${FILESDIR}"/0.18.1-GH297-Revert-Don-t-write-kickstart.patch
 )
 
 S="${WORKDIR}/${MY_P}"
