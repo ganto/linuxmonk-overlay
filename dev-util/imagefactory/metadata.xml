@@ -6,8 +6,9 @@
 		<name>Reto Gantenbein</name>
 	</maintainer>
 	<upstream>
-		<doc>http://imgfac.org/documentation</doc>
 		<bugs-to>https://github.com/redhat-imaging/imagefactory/issues</bugs-to>
+		<doc>http://imgfac.org/documentation</doc>
+		<remote-id type="github">redhat-imaging/imagefactory</remote-id>
 	</upstream>
 	<longdescription lang="en">
 		imagefactory allows the creation of system images for multiple
