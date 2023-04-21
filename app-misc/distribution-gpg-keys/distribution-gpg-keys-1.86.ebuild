@@ -1,4 +1,4 @@
-# Copyright 1999-2022 Gentoo Authors
+# Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -24,6 +24,6 @@ src_install() {
 	if use copr ; then
 		doins -r keys/*
 	else
-		doins -r keys/{adobe,alma,amazon-linux,anolis,bluejeans,brave,calcforge,centos,circle,datto,dell,dropbox,elastic,epel,eurolinux,fedora,google,intel,ius,jpackage,mageia,mariadb,microsoft,mysql,navy,openeuler,openmandriva,opensuse,oraclelinux,postgresql,qubes,redhat,remi,rocky,rosa,rpmfusion,scientific-linux,skype,suse,teamviewer,unitedrpms,virtualbox,zimbra,zoom}
+		doins -r keys/{adobe,alma,amazon-linux,anolis,anydesk,bacula,bluejeans,brave,calcforge,centos,circle,datto,dell,dropbox,elastic,epel,eurolinux,fedora,google-cloud,google,intel,ius,jenkins,jpackage,mageia,mariadb,microsoft,mysql,navy,openeuler,openmandriva,opensuse,oraclelinux,postgresql,qubes,redhat,remi,rocky,rosa,rpmfusion,scientific-linux,skype,smeserver,suse,teamviewer,unitedrpms,virtualbox,zimbra,zoom}
 	fi
 }
