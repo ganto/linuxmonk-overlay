@@ -1,4 +1,4 @@
-# Copyright 1999-2022 Gentoo Authors
+# Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -32,7 +32,7 @@ done
 DEPEND="
 	>=app-arch/rpm-4.14.0[python,${PYTHON_SINGLE_USEDEP}]
 	dev-db/sqlite
-	>=sys-libs/libmodulemd-2.9.3:2
+	>=sys-libs/libmodulemd-2.9.3
 
 	$(python_gen_cond_dep '
 		>=app-crypt/gpgme-1.10.0[python,${PYTHON_USEDEP}]
