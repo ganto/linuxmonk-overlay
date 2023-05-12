@@ -1,4 +1,4 @@
-# Copyright 1999-2022 Gentoo Authors
+# Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -28,7 +28,7 @@ DEPEND="
 	sys-apps/file
 	sys-libs/zlib:=
 	drpm? ( >=app-arch/drpm-0.4.0 )
-	modulemd? ( >=sys-libs/libmodulemd-2.3:2 )
+	modulemd? ( >=sys-libs/libmodulemd-2.3 )
 	zchunk? ( app-arch/zchunk )
 "
 RDEPEND="
@@ -43,10 +43,6 @@ BDEPEND="
 	test? ( ${RDEPEND} )
 "
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
-
-PATCHES=(
-	"${FILESDIR}"/${PN}-0.20.1-Include-rpm-rpmstring.h-for-rasprintf.patch
-)
 
 python_check_deps() {
 	python_has_version "dev-python/sphinx[${PYTHON_USEDEP}]"
