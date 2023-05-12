@@ -28,7 +28,7 @@ DEPEND="
 
 	>=app-arch/rpm-4.15.0:=
 	>=app-arch/zchunk-0.9.11
-	>=sys-libs/libmodulemd-2.13.0:2
+	>=sys-libs/libmodulemd-2.13.0
 	>=sys-libs/librepo-1.13.1
 	>=dev-libs/libsolv-0.7.21[python,${PYTHON_USEDEP},rpm]
 "
