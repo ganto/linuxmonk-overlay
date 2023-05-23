@@ -1,0 +1,71 @@
+commit bf3e4b48e66c941f01a3b06b55dc09577c74f9c7
+Author: Reto Gantenbein <reto.gantenbein@linuxmonk.ch>
+Date:   Sat Apr 4 17:32:56 2020 +0200
+
+    Adjust CLI tools default path for Gentoo
+
+diff --git a/mock/docs/site-defaults.cfg b/mock/docs/site-defaults.cfg
+index 9a9c427c..8fbf4396 100644
+--- a/mock/docs/site-defaults.cfg
++++ b/mock/docs/site-defaults.cfg
+@@ -116,7 +116,7 @@
+ 
+ # rpmbuild/rpm executable path if you need to use different version that the
+ #config_opts['rpmbuild_command'] = '/usr/bin/rpmbuild'
+-#config_opts['rpm_command'] = '/bin/rpm'
++#config_opts['rpm_command'] = '/usr/bin/rpm'
+ 
+ # By default a Yum/DNF update is performed before each rebuild
+ # config_opts['update_before_build'] = True
+diff --git a/mock/py/mockbuild/config.py b/mock/py/mockbuild/config.py
+index f15f51c7..e5c75753 100644
+--- a/mock/py/mockbuild/config.py
++++ b/mock/py/mockbuild/config.py
+@@ -316,7 +316,7 @@ def setup_default_config_opts():
+     config_opts['microdnf_builddep_opts'] = []
+     config_opts['microdnf_common_opts'] = []
+ 
+-    config_opts['rpm_command'] = '/bin/rpm'
++    config_opts['rpm_command'] = '/usr/bin/rpm'
+     config_opts['rpmbuild_command'] = '/usr/bin/rpmbuild'
+     config_opts['user_agent'] = "Mock ({{ root }}; {{ target_arch }})"
+     config_opts['opstimeout'] = 0
+diff --git a/mock/py/mockbuild/file_util.py b/mock/py/mockbuild/file_util.py
+index 04f5dd6e..18c3d900 100644
+--- a/mock/py/mockbuild/file_util.py
++++ b/mock/py/mockbuild/file_util.py
+@@ -100,7 +100,7 @@ def is_in_dir(path, directory):
+ 
+ 
+ def get_fs_type(path):
+-    cmd = ['/bin/stat', '-f', '-L', '-c', '%T', path]
++    cmd = ['/usr/bin/stat', '-f', '-L', '-c', '%T', path]
+     p = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE,
+                          universal_newlines=True)
+     p.wait()
+diff --git a/mock/py/mockbuild/plugins/hw_info.py b/mock/py/mockbuild/plugins/hw_info.py
+index d24d6a41..6e9a4098 100644
+--- a/mock/py/mockbuild/plugins/hw_info.py
++++ b/mock/py/mockbuild/plugins/hw_info.py
+@@ -42,7 +42,7 @@ class HwInfo(object):
+         out.write("CPU info:\n")
+         out.write(output)
+ 
+-        cmd = ["/bin/free"]
++        cmd = ["/usr/bin/free"]
+         output = mockbuild.util.do(cmd, shell=False, returnOutput=True, raiseExc=False)
+         out.write("\n\nMemory:\n")
+         out.write(output)
+diff --git a/mock/py/mockbuild/plugins/root_cache.py b/mock/py/mockbuild/plugins/root_cache.py
+index 94031f1c..7a4c57da 100644
+--- a/mock/py/mockbuild/plugins/root_cache.py
++++ b/mock/py/mockbuild/plugins/root_cache.py
+@@ -36,7 +36,7 @@ class RootCache(object):
+         self.rootCacheFile = os.path.join(self.rootSharedCachePath, "cache.tar")
+         self.rootCacheLock = None
+         self.compressProgram = self.root_cache_opts['compress_program']
+-        if self.compressProgram == 'pigz' and not os.path.exists('/bin/pigz'):
++        if self.compressProgram == 'pigz' and not os.path.exists('/usr/bin/pigz'):
+             getLog().warning("specified 'pigz' as the root cache compress program but not available; using gzip")
+             self.compressProgram = 'gzip'
+ 
