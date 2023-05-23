@@ -1,9 +1,9 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-USE_RUBY="ruby26 ruby27"
+USE_RUBY="ruby30"
 
 # Depends on unreleased vagrant-spec gem
 RUBY_FAKEGEM_RECIPE_TEST="none"
@@ -24,10 +24,12 @@ IUSE=""
 
 ruby_add_rdepend "
 	>=app-emulation/vagrant-2.2.7
+	dev-ruby/diffy
 	>=dev-ruby/fog-core-2.1
 	>=dev-ruby/fog-libvirt-0.6.0
 	>=dev-ruby/nokogiri-1.6.0
 	dev-ruby/rexml
+	dev-ruby/xml-simple
 "
 
 each_ruby_install() {
