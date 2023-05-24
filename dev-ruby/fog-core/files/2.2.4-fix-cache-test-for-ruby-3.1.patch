@@ -1,0 +1,23 @@
+From a662135d701ad79f543bbaa190e573ae56a5d049 Mon Sep 17 00:00:00 2001
+From: geemus <geemus@gmail.com>
+Date: Mon, 24 Jan 2022 20:31:35 -0600
+Subject: [PATCH] fix cache test for ruby 3.1+
+
+YAML.load apparently now returns nil, so check for falsy
+---
+ spec/core/cache_spec.rb | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/spec/core/cache_spec.rb b/spec/core/cache_spec.rb
+index e761972..8c6fe0c 100644
+--- a/spec/core/cache_spec.rb
++++ b/spec/core/cache_spec.rb
+@@ -87,7 +87,7 @@ def initialize(opts = {})
+       f.write(data)
+     }
+ 
+-    assert_equal false, Fog::Cache.load_cache(path)
++    assert !Fog::Cache.load_cache(path)
+   end
+ 
+   it "must have a namespace_prefix configurable" do

@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
-USE_RUBY="ruby27 ruby30"
+USE_RUBY="ruby30 ruby31"
 
 RUBY_FAKEGEM_RECIPE_DOC="yard"
 RUBY_FAKEGEM_EXTRADOC="CONTRIBUTING.md CONTRIBUTORS.md README.md changelog.md"
@@ -30,6 +30,8 @@ ruby_add_rdepend "
 	>=dev-ruby/formatador-0.2
 	dev-ruby/mime-types:*
 "
+
+PATCHES=( "${FILESDIR}"/2.2.4-fix-cache-test-for-ruby-3.1.patch )
 
 all_ruby_prepare() {
 	# Remove Bundler
