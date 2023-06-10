@@ -79,10 +79,9 @@ src_install() {
 	cmake_src_install
 	python_optimize "${ED}"/$(python_get_sitedir)
 
-	mv "${ED}"/usr/bin/dnf-3 "${ED}"/usr/bin/dnf
+	dosym ./dnf-3 /usr/bin/dnf
+	dosym ./dnf-3 /usr/bin/yum
 	mv "${ED}"/usr/bin/dnf-automatic-3 "${ED}"/usr/bin/dnf-automatic
-
-	dosym dnf /usr/bin/yum
 
 	keepdir /var/lib/dnf/{history,yumdb}
 	dodir /var/log/dnf
