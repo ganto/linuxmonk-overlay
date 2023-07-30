@@ -80,6 +80,7 @@ src_install() {
 	python_optimize "${ED}"/$(python_get_sitedir)
 
 	dosym ./dnf-3 /usr/bin/dnf
+	dosym ./dnf-3 /usr/bin/dnf4
 	dosym ./dnf-3 /usr/bin/yum
 	mv "${ED}"/usr/bin/dnf-automatic-3 "${ED}"/usr/bin/dnf-automatic
 
