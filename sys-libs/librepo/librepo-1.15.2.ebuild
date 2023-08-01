@@ -1,9 +1,9 @@
-# Copyright 1999-2022 Gentoo Authors
+# Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( python3_{10,11} )
 
 inherit cmake python-r1
 
@@ -12,7 +12,7 @@ HOMEPAGE="https://github.com/rpm-software-management/librepo"
 SRC_URI="https://github.com/rpm-software-management/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
 RESTRICT="mirror !test? ( test )"
 
-LICENSE="LGPL-2+"
+LICENSE="LGPL-2.1+"
 SLOT="0"
 KEYWORDS="~amd64"
 
@@ -20,7 +20,7 @@ IUSE="doc test python zchunk"
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
 DEPEND="app-crypt/gpgme
-	>=dev-libs/glib-2.28.0
+	>=dev-libs/glib-2.66.0
 	dev-libs/libxml2
 	dev-libs/openssl:0
 	>=net-misc/curl-7.52.0
