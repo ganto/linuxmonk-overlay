@@ -1,14 +1,14 @@
-# Copyright 1999-2022 Gentoo Authors
+# Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
 DISTUTILS_USE_PEP517=setuptools
-PYTHON_COMPAT=( python3_{9..11} )
+PYTHON_COMPAT=( python3_{10,11} )
 
 inherit distutils-r1
 
-DEBOPS_GIT_COMMIT="ecf4fa5f146e55463138e5c5fa36823928f6f691"
+DEBOPS_GIT_COMMIT="8a288aceb1605c46eaa3a020ca81b21a08db5729"
 
 DESCRIPTION="Your Debian-based data center in a box"
 HOMEPAGE="https://debops.org/"
@@ -32,24 +32,25 @@ RDEPEND="
 	dev-python/jinja[${PYTHON_USEDEP}]
 	dev-python/netaddr[${PYTHON_USEDEP}]
 	dev-python/passlib[${PYTHON_USEDEP}]
+	dev-python/python-dotenv[${PYTHON_USEDEP}]
 	dev-python/python-ldap[${PYTHON_USEDEP}]
-	dev-python/toml[${PYTHON_USEDEP}]
 "
 DEPEND="
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	dev-python/sphinx[${PYTHON_USEDEP}]
-	doc? (
-		dev-python/sphinx-rtd-theme[${PYTHON_USEDEP}]
-	)
+	doc? ( dev-python/sphinx-rtd-theme[${PYTHON_USEDEP}] )
 	test? (
 		app-admin/ansible[${PYTHON_USEDEP}]
-		dev-python/nose[${PYTHON_USEDEP}]
+		dev-python/nose2[${PYTHON_USEDEP}]
+		dev-python/python-dotenv[${PYTHON_USEDEP}]
 	)
 "
 
 DOCS=( CHANGELOG.rst CODEOWNERS CONTRIBUTING.rst DEVELOPMENT.rst README.md Dockerfile Vagrantfile )
 
-PATCHES=( "${FILESDIR}"/${PN}-0.7.2-Skip-edit_url.patch )
+PATCHES=(
+	"${FILESDIR}"/${PN}-0.7.2-Skip-edit_url.patch
+)
 
 src_prepare() {
 	default
