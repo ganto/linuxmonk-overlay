@@ -6,10 +6,10 @@
 		<name>Reto Gantenbein</name>
 	</maintainer>
 	<upstream>
-		<remote-id type="pypi">ruamel.yaml</remote-id>
+		<remote-id type="pypi">python-string-utils</remote-id>
+		<remote-id type="github">daveoncode/python-string-utils</remote-id>
 	</upstream>
 	<longdescription lang="en">
-		ruamel.yaml is a YAML parser/emitter that supports roundtrip preservation of
-		comments, seq/map flow style, and map key order.
+		A handy Python library to validate, manipulate and generate strings.
 	</longdescription>
 </pkgmetadata>
