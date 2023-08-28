@@ -3,24 +3,24 @@
 
 EAPI=8
 
-USE_RUBY="ruby27 ruby30"
+USE_RUBY="ruby31"
 
-RUBY_FAKEGEM_RECIPE_TEST=""
-RUBY_FAKEGEM_RECIPE_DOC=""
+RUBY_FAKEGEM_RECIPE_TEST="none"
+RUBY_FAKEGEM_RECIPE_DOC="none"
 RUBY_FAKEGEM_EXTRAINSTALL="locales"
 RUBY_FAKEGEM_EXTRADOC="CHANGELOG.md README.md"
 
 inherit ruby-fakegem
 
 DESCRIPTION="Vagrant plugin that manages the /etc/hosts file on guest machines"
-HOMEPAGE="https://github.com/smdahlen/vagrant-hostmanager"
+HOMEPAGE="https://github.com/devopsgroup-io/vagrant-hostmanager"
 
 LICENSE="MIT"
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE=""
 
-ruby_add_rdepend ">=app-emulation/vagrant-1.8.0"
+ruby_add_rdepend ">=app-emulation/vagrant-2.3.7"
 
 all_ruby_prepare() {
 	# remove bundler support
