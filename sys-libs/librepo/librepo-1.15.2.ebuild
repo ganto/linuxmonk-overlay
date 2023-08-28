@@ -22,7 +22,7 @@ REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 DEPEND="app-crypt/gpgme
 	>=dev-libs/glib-2.66.0
 	dev-libs/libxml2
-	dev-libs/openssl:0
+	dev-libs/openssl:0=
 	>=net-misc/curl-7.52.0
 	sys-apps/attr
 	python? (
