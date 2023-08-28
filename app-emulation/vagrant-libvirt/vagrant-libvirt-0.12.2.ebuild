@@ -3,7 +3,7 @@
 
 EAPI=8
 
-USE_RUBY="ruby30"
+USE_RUBY="ruby31"
 
 # Depends on unreleased vagrant-spec gem
 RUBY_FAKEGEM_RECIPE_TEST="none"
