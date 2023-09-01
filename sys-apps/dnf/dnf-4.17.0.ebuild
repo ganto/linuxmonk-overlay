@@ -30,15 +30,14 @@ done
 # the upstream app-arch/rpm uses python-single-r1 eclass and only supports one
 # python implementation
 DEPEND="
-	>=app-arch/rpm-4.14.0[python,${PYTHON_SINGLE_USEDEP}]
+	>=app-arch/rpm-4.18.0[python,${PYTHON_SINGLE_USEDEP}]
 	dev-db/sqlite
 	>=sys-libs/libmodulemd-2.9.3
 
 	$(python_gen_cond_dep '
-		>=app-crypt/gpgme-1.10.0[python,${PYTHON_USEDEP}]
 		>=dev-libs/libcomps-0.1.8[${PYTHON_USEDEP}]
 		dev-python/iniparse[${PYTHON_USEDEP}]
-		>=sys-libs/libdnf-0.66.0[${PYTHON_USEDEP}]
+		>=sys-libs/libdnf-0.71.0[${PYTHON_USEDEP}]
 	')
 "
 RDEPEND="${DEPEND}
@@ -80,6 +79,7 @@ src_install() {
 	python_optimize "${ED}"/$(python_get_sitedir)
 
 	dosym ./dnf-3 /usr/bin/dnf
+	dosym ./dnf-3 /usr/bin/dnf4
 	dosym ./dnf-3 /usr/bin/yum
 	mv "${ED}"/usr/bin/dnf-automatic-3 "${ED}"/usr/bin/dnf-automatic
 
