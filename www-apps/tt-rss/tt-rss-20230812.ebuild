@@ -9,6 +9,7 @@ DESCRIPTION="Tiny Tiny RSS - A web-based news feed (RSS/Atom) aggregator using A
 HOMEPAGE="https://tt-rss.org/"
 SRC_URI="https://linuxmonk.ch/packages/distfiles/${P}.tar.gz" # Upstream git frontend blocks wget?
 LICENSE="GPL-3"
+SLOT="${PV}"
 KEYWORDS="~amd64"
 IUSE="+acl daemon gd +mysqli postgres"
 REQUIRED_USE="|| ( mysqli postgres )"
