@@ -4,13 +4,13 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517=setuptools
-PYTHON_COMPAT=( python3_{9..11} )
+PYTHON_COMPAT=( python3_{10,11} )
 
 inherit pam python-single-r1 bash-completion-r1
 
 MY_PV=${PV}-1
 MY_P=${PN}-${MY_PV}
-CORE_CONFIGS_VERSION=38.6-1
+CORE_CONFIGS_VERSION=39.1-1
 
 DESCRIPTION="Builds RPM packages inside chroots"
 HOMEPAGE="https://github.com/rpm-software-management/mock"
@@ -30,8 +30,9 @@ RDEPEND="
 	app-arch/createrepo_c
 	app-arch/pigz
 	app-arch/rpm[lua(+),python,${PYTHON_SINGLE_USEDEP},zstd]
-	>=app-misc/distribution-gpg-keys-1.85
+	>=app-misc/distribution-gpg-keys-1.96
 	$(python_gen_cond_dep '
+		dev-python/backoff[${PYTHON_USEDEP}]
 		dev-python/distro[${PYTHON_USEDEP}]
 		dev-python/jinja[${PYTHON_USEDEP}]
 		dev-python/pyroute2[${PYTHON_USEDEP}]
@@ -39,6 +40,7 @@ RDEPEND="
 		dev-python/templated-dictionary[${PYTHON_USEDEP}]
 	')
 	sys-apps/iproute2
+	sys-apps/shadow
 	sys-apps/usermode
 	>=sys-apps/dnf-4.15.1-r1[${PYTHON_SINGLE_USEDEP}]
 	sys-libs/dnf-plugins-core
