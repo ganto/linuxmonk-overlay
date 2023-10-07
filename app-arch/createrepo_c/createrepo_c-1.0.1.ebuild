@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
-PYTHON_COMPAT=( python3_{10,11} )
+PYTHON_COMPAT=( python3_{10..12} )
 
 inherit cmake python-r1
 
@@ -13,11 +13,11 @@ SRC_URI="https://github.com/rpm-software-management/${PN}/archive/${PV}.tar.gz -
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE="doc drpm legacyhashes python modulemd test zchunk zstd"
+IUSE="doc drpm legacy python modulemd test zchunk zstd"
 RESTRICT="!test? ( test )"
 
 DEPEND="
-	app-arch/bzip2
+	app-arch/bzip2:=
 	app-arch/xz-utils
 	>=app-arch/rpm-4.9.0:=
 	dev-db/sqlite:3
@@ -54,8 +54,11 @@ src_configure() {
 		local mycmakeargs=(
 			-DENABLE_DRPM=$(usex drpm)
 			-DENABLE_PYTHON=ON
-			-DWITH_LEGACY_HASHES=$(usex legacyhashes)
+			# Upstream enables some 'Legacy' stuff by default, let's put that behind a USE flag
+			-DENABLE_LEGACY_WEAKDEPS=$(usex legacy ON OFF)
+			-DWITH_LEGACY_HASHES=$(usex legacy ON OFF)
 			-DWITH_LIBMODULEMD=$(usex modulemd)
+			-DWITH_SANITIZERS=OFF
 			-DWITH_ZCHUNK=$(usex zchunk)
 			-DWITH_ZSTD=$(usex zstd)
 			-Wno-dev
@@ -69,8 +72,11 @@ src_configure() {
 		local mycmakeargs=(
 			-DENABLE_DRPM=$(usex drpm)
 			-DENABLE_PYTHON=OFF
-			-DWITH_LEGACY_HASHES=$(usex legacyhashes)
+			# Upstream enables some 'Legacy' stuff by default, let's put that behind a USE flag
+			-DENABLE_LEGACY_WEAKDEPS=$(usex legacy ON OFF)
+			-DWITH_LEGACY_HASHES=$(usex legacy ON OFF)
 			-DWITH_LIBMODULEMD=$(usex modulemd)
+			-DWITH_SANITIZERS=OFF
 			-DWITH_ZCHUNK=$(usex zchunk)
 			-DWITH_ZSTD=$(usex zstd)
 			-Wno-dev

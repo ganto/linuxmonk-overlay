@@ -17,7 +17,7 @@
 	<use>
 		<flag name="drpm">Enable delta RPM support through
 			<pkg>app-arch/drpm</pkg></flag>
-		<flag name="legacyhashes">Build with SHA-1 and MD5 support</flag>
+		<flag name="legacy">Build with support for legacy weakdeps and hashes (not recommended!)</flag>
 		<flag name="modulemd">Support RPM modules metadata through
 			<pkg>sys-libs/libmodulemd</pkg></flag>
 		<flag name="zchunk">Build with zchunk support through
