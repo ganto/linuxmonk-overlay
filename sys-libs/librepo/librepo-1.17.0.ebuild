@@ -16,17 +16,18 @@ LICENSE="LGPL-2.1+"
 SLOT="0"
 KEYWORDS="~amd64"
 
-IUSE="doc test python zchunk"
+IUSE="doc +gpgme test python zchunk"
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
-DEPEND="app-crypt/gpgme
+DEPEND="
 	>=dev-libs/glib-2.66.0
 	dev-libs/libxml2
 	dev-libs/openssl:0=
 	>=net-misc/curl-7.52.0
 	sys-apps/attr
+	gpgme? ( app-crypt/gpgme )
+	!gpgme? ( >=app-arch/rpm-4.18.0 )
 	python? (
-		app-crypt/gpgme[python,${PYTHON_USEDEP}]
 		${PYTHON_DEPS}
 		dev-python/flask[${PYTHON_USEDEP}]
 		dev-python/pyxattr[${PYTHON_USEDEP}]
@@ -58,7 +59,9 @@ src_configure() {
 	local mycmakeargs=(
 		-DENABLE_DOCS=$(usex doc)
 		-DENABLE_PYTHON=$(usex python)
+		-DENABLE_SELINUX=OFF
 		-DENABLE_TESTS=$(usex test)
+		-DUSE_GPGME=$(usex gpgme)
 		-DWITH_ZCHUNK=$(usex zchunk)
 	)
 	if use python; then
