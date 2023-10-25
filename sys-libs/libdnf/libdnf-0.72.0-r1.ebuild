@@ -19,8 +19,8 @@ IUSE="test"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 LANGS=(
-	as bg bn bn_IN ca cs da de el es eu fa fi fil fr fur gu hi hu ia id is it ja ka kn ko mai ml
-	mr nb nl or pa pl pt pt_BR ru si sk sq sr sv ta te th tr uk zh_CN zh_TW
+	as bg bn ca cs da de el es eu fa fi fil fr fur gu hi hu ia id is it ja ka kn ko mai ml
+	mr nb nl or pa pl pt ru si sk sq sr sv ta te th tr uk
 )
 # localized help versions are installed only, when L10N var is set
 for i in "${LANGS[@]}" ; do
@@ -91,14 +91,13 @@ src_test() {
 src_install() {
 	libdnf_src_install_internal() {
 		cmake_src_install
-		rm -rf "${D}"/$(python_get_sitedir)/hawkey/test
 		python_optimize "${D}"/$(python_get_sitedir)/${PN}
 		python_optimize "${D}"/$(python_get_sitedir)/hawkey
 	}
 	python_foreach_impl libdnf_src_install_internal
 
 	# clean unneeded language documentation
-	rm -rf "${ED}"/usr/share/locale/sr@latin
+	rm -rf "${ED}"/usr/share/locale/{bn_IN,pt_BR,sr@latin,zh_CN,zh_TW}
 	for i in ${LANGS[@]}; do
 		use l10n_${i} || rm -rf "${ED}"/usr/share/locale/${i/-/_}
 	done
