@@ -69,9 +69,9 @@ src_compile() {
 }
 
 src_test() {
-	python_setup
-	DESTDIR="${WORKDIR}-test-${EPYTHON}" cmake_src_install
-	PYTHONPATH="${WORKDIR}-test-${EPYTHON}"/$(python_get_sitedir) nosetests -s tests || die "tests failed with ${EPYTHON}"
+	pushd "${BUILD_DIR}" || die "change to build directory failed"
+	cmake_src_test -VV
+	popd
 }
 
 src_install() {
