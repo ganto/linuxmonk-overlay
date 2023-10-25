@@ -24,6 +24,6 @@ src_install() {
 	if use copr ; then
 		doins -r keys/*
 	else
-		doins -r keys/{adobe,alma,amazon-linux,anolis,anydesk,azure-linux,bacula,bluejeans,brave,calcforge,centos,circle,datto,dell,docker,dropbox,elastic,epel,eurolinux,fedora,google-cloud,google,intel,ius,jenkins,jpackage,mageia,mariadb,microsoft,mullvad,mysql,navy,openeuler,openmandriva,opensuse,oraclelinux,postgresql,qubes,redhat,remi,rocky,rosa,rpmfusion,scientific-linux,skype,smeserver,suse,teamviewer,unitedrpms,virtualbox,zimbra,zoom}
+		doins -r keys/{adobe,alma,amazon-linux,anolis,anydesk,azure-linux,bacula,bluejeans,brave,calcforge,centos,circle,datto,dell,docker,dropbox,elastic,epel,eurolinux,fedora,google-cloud,google,intel,ius,jenkins,jpackage,kubernetes,mageia,mariadb,microsoft,mullvad,mysql,navy,openeuler,openmandriva,opensuse,oraclelinux,postgresql,qubes,redhat,remi,rocky,rosa,rpmfusion,scientific-linux,skype,smeserver,suse,teamviewer,unitedrpms,virtualbox,zimbra,zoom}
 	fi
 }
