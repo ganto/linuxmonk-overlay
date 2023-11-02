@@ -13,24 +13,23 @@ SRC_URI="https://github.com/rpm-software-management/${PN}/archive/${PV}.tar.gz -
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE="doc drpm legacy python modulemd test zchunk zstd"
+IUSE="doc drpm legacy python modulemd test zchunk"
 RESTRICT="!test? ( test )"
 
 DEPEND="
 	app-arch/bzip2:=
 	app-arch/xz-utils
+	app-arch/zstd
 	>=app-arch/rpm-4.9.0:=
 	dev-db/sqlite:3
 	dev-libs/glib:2
 	dev-libs/libxml2
 	dev-libs/openssl:=
 	net-misc/curl
-	sys-apps/file
 	sys-libs/zlib:=
 	drpm? ( >=app-arch/drpm-0.4.0 )
 	modulemd? ( >=sys-libs/libmodulemd-2.3 )
 	zchunk? ( app-arch/zchunk )
-	zstd? ( app-arch/zstd )
 "
 RDEPEND="
 	python? ( ${PYTHON_DEPS} )
@@ -60,7 +59,6 @@ src_configure() {
 			-DWITH_LIBMODULEMD=$(usex modulemd)
 			-DWITH_SANITIZERS=OFF
 			-DWITH_ZCHUNK=$(usex zchunk)
-			-DWITH_ZSTD=$(usex zstd)
 			-Wno-dev
 		)
 		cmake_src_configure
@@ -78,7 +76,6 @@ src_configure() {
 			-DWITH_LIBMODULEMD=$(usex modulemd)
 			-DWITH_SANITIZERS=OFF
 			-DWITH_ZCHUNK=$(usex zchunk)
-			-DWITH_ZSTD=$(usex zstd)
 			-Wno-dev
 		)
 		cmake_src_configure
