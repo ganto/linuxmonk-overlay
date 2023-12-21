@@ -23,13 +23,12 @@ SLOT="0"
 KEYWORDS="~amd64"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
-DEPEND=""
 RDEPEND="
 	${PYTHON_DEPS}
 	acct-group/mock acct-user/mock
 	app-arch/createrepo_c
 	app-arch/pigz
-	app-arch/rpm[lua(+),python,${PYTHON_SINGLE_USEDEP},zstd]
+	app-arch/rpm[python,${PYTHON_SINGLE_USEDEP},zstd(+)]
 	>=app-misc/distribution-gpg-keys-1.98
 	$(python_gen_cond_dep '
 		dev-python/backoff[${PYTHON_USEDEP}]
