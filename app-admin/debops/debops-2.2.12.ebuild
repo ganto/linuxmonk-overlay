@@ -8,7 +8,7 @@ PYTHON_COMPAT=( python3_{10,11} )
 
 inherit distutils-r1
 
-DEBOPS_GIT_COMMIT="0547b8ffa7e09ad7112123c0ce535c253a47da38"
+DEBOPS_GIT_COMMIT="382a544e5f2b034f47d6130e063d91ff4821297b"
 
 DESCRIPTION="Your Debian-based data center in a box"
 HOMEPAGE="https://debops.org/"
