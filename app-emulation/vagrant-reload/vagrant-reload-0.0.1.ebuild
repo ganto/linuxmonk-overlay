@@ -34,12 +34,12 @@ pkg_postinst() {
 	# register plugin
 	ruby -e '\
 		require "vagrant/plugin/manager"; \
-		Vagrant::Plugin::StateFile.new(Pathname.new(File.expand_path "/var/lib/vagrant/plugins.json")).add_plugin "vagrant-hostmanager";'
+		Vagrant::Plugin::StateFile.new(Pathname.new(File.expand_path "/var/lib/vagrant/plugins.json")).add_plugin "vagrant-reload";'
 }
 
 pkg_prerm() {
 	# un-register plugin
 	ruby -e '\
 		require "vagrant/plugin/manager"; \
-		Vagrant::Plugin::StateFile.new(Pathname.new(File.expand_path "/var/lib/vagrant/plugins.json")).remove_plugin "vagrant-hostmanager";'
+		Vagrant::Plugin::StateFile.new(Pathname.new(File.expand_path "/var/lib/vagrant/plugins.json")).remove_plugin "vagrant-reload";'
 }
