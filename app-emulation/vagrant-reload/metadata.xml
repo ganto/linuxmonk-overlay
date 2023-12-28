@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<upstream>
+		<bugs-to>https://github.com/aidanns/vagrant-reload/issues</bugs-to>
+		<remote-id type="github">aidanns/vagrant-reload</remote-id>
+	</upstream>
+	<longdescription lang="en">
+		This is a Vagrant 1.2+ plugin that adds a reload provisioning step that can
+		be used to do a reload on a VM during provisioning.
+	</longdescription>
+</pkgmetadata>
