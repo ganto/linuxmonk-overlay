@@ -1,4 +1,4 @@
-# Copyright 1999-2023 Gentoo Authors
+# Copyright 1999-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -37,7 +37,7 @@ DEPEND="
 	$(python_gen_cond_dep '
 		>=dev-libs/libcomps-0.1.8[${PYTHON_USEDEP}]
 		dev-python/iniparse[${PYTHON_USEDEP}]
-		>=sys-libs/libdnf-0.71.1[${PYTHON_USEDEP}]
+		>=sys-libs/libdnf-0.73.0[${PYTHON_USEDEP}]
 	')
 "
 RDEPEND="${DEPEND}
@@ -82,6 +82,9 @@ src_install() {
 	dosym ./dnf-3 /usr/bin/dnf4
 	dosym ./dnf-3 /usr/bin/yum
 	mv "${ED}"/usr/bin/dnf-automatic-3 "${ED}"/usr/bin/dnf-automatic
+
+	dosym ./dnf-3 /usr/share/bash-completion/completions/dnf
+	dosym ./dnf-3 /usr/share/bash-completion/completions/dnf4
 
 	keepdir /var/lib/dnf/{history,yumdb}
 	dodir /var/log/dnf
