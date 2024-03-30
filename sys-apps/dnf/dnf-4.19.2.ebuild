@@ -37,7 +37,7 @@ DEPEND="
 	$(python_gen_cond_dep '
 		>=dev-libs/libcomps-0.1.8[${PYTHON_USEDEP}]
 		dev-python/iniparse[${PYTHON_USEDEP}]
-		>=sys-libs/libdnf-0.73.0[${PYTHON_USEDEP}]
+		>=sys-libs/libdnf-0.73.1[${PYTHON_USEDEP}]
 	')
 "
 RDEPEND="${DEPEND}
