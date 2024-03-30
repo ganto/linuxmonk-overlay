@@ -1,10 +1,10 @@
-# Copyright 1999-2022 Gentoo Authors
+# Copyright 1999-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
 DISTUTILS_USE_PEP517=setuptools
-PYTHON_COMPAT=( python3_{9..11} )
+PYTHON_COMPAT=( python3_{9..12} )
 
 inherit distutils-r1
 
@@ -37,11 +37,13 @@ BDEPEND="
 PATCHES=(
 	"${FILESDIR}"/1.7.0-setup-py-Avoid-enum34-dependency.patch
 	"${FILESDIR}"/1.7.0-setup-py-Remove-ddt-dependency-only-used-for-testing.patch
+	"${FILESDIR}"/1.7.0-Fix-running-tests-without-mock-installed-systemwide.patch
 	"${FILESDIR}"/1.7.0-Support-collections-abc-in-Python-3-8.patch
+	"${FILESDIR}"/1.7.0-tests-Replace-deprecated-assertEquals.patch
 )
 
 python_compile_all() {
-	distutils-r1_python_compile
+	esetup.py build
 	use doc && emake docs
 }
 

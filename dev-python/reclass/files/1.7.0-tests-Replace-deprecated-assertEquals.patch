@@ -1,0 +1,231 @@
+commit b5abfc11b62c87252aca5d48f43b5338dbd3db1b
+Author: Reto Gantenbein <reto.gantenbein@linuxmonk.ch>
+Date:   Sat Mar 2 23:22:57 2024 +0100
+
+    tests: Replace deprecated assertEquals
+
+diff --git a/reclass/values/tests/test_compitem.py b/reclass/values/tests/test_compitem.py
+index c3ee690..0c1b79a 100644
+--- a/reclass/values/tests/test_compitem.py
++++ b/reclass/values/tests/test_compitem.py
+@@ -30,7 +30,7 @@ class TestCompItem(unittest.TestCase):
+         composite = CompItem([val1], SETTINGS)
+ 
+         self.assertTrue(composite.has_references)
+-        self.assertEquals(composite.get_references(), expected_refs)
++        self.assertEqual(composite.get_references(), expected_refs)
+ 
+     def test_assembleRefs_one_item_with_two_refs(self):
+         val1 = Value('${foo}${bar}',  SETTINGS, '')
+@@ -39,7 +39,7 @@ class TestCompItem(unittest.TestCase):
+         composite = CompItem([val1], SETTINGS)
+ 
+         self.assertTrue(composite.has_references)
+-        self.assertEquals(composite.get_references(), expected_refs)
++        self.assertEqual(composite.get_references(), expected_refs)
+ 
+     def test_assembleRefs_two_items_one_with_one_ref_one_without(self):
+         val1 = Value('${foo}bar',  SETTINGS, '')
+@@ -49,7 +49,7 @@ class TestCompItem(unittest.TestCase):
+         composite = CompItem([val1, val2], SETTINGS)
+ 
+         self.assertTrue(composite.has_references)
+-        self.assertEquals(composite.get_references(), expected_refs)
++        self.assertEqual(composite.get_references(), expected_refs)
+ 
+     def test_assembleRefs_two_items_both_with_one_ref(self):
+         val1 = Value('${foo}',  SETTINGS, '')
+@@ -59,7 +59,7 @@ class TestCompItem(unittest.TestCase):
+         composite = CompItem([val1, val2], SETTINGS)
+ 
+         self.assertTrue(composite.has_references)
+-        self.assertEquals(composite.get_references(), expected_refs)
++        self.assertEqual(composite.get_references(), expected_refs)
+ 
+     def test_assembleRefs_two_items_with_two_refs(self):
+         val1 = Value('${foo}${baz}',  SETTINGS, '')
+@@ -69,7 +69,7 @@ class TestCompItem(unittest.TestCase):
+         composite = CompItem([val1, val2], SETTINGS)
+ 
+         self.assertTrue(composite.has_references)
+-        self.assertEquals(composite.get_references(), expected_refs)
++        self.assertEqual(composite.get_references(), expected_refs)
+ 
+     def test_string_representation(self):
+         composite = CompItem(Value(1, SETTINGS, ''), SETTINGS)
+@@ -77,14 +77,14 @@ class TestCompItem(unittest.TestCase):
+ 
+         result = str(composite)
+ 
+-        self.assertEquals(result, expected)
++        self.assertEqual(result, expected)
+ 
+     def test_render_single_item(self):
+         val1 = Value('${foo}',  SETTINGS, '')
+ 
+         composite = CompItem([val1], SETTINGS)
+ 
+-        self.assertEquals(1, composite.render({'foo': 1}, None))
++        self.assertEqual(1, composite.render({'foo': 1}, None))
+ 
+ 
+     def test_render_multiple_items(self):
+@@ -93,7 +93,7 @@ class TestCompItem(unittest.TestCase):
+ 
+         composite = CompItem([val1, val2], SETTINGS)
+ 
+-        self.assertEquals('12', composite.render({'foo': 1, 'bar': 2}, None))
++        self.assertEqual('12', composite.render({'foo': 1, 'bar': 2}, None))
+ 
+     def test_merge_over_merge_scalar(self):
+         val1 = Value(None, SETTINGS, '')
+@@ -102,7 +102,7 @@ class TestCompItem(unittest.TestCase):
+ 
+         result = composite.merge_over(scalar)
+ 
+-        self.assertEquals(result, composite)
++        self.assertEqual(result, composite)
+ 
+     def test_merge_over_merge_composite(self):
+         val1 = Value(None, SETTINGS, '')
+@@ -112,7 +112,7 @@ class TestCompItem(unittest.TestCase):
+ 
+         result = composite2.merge_over(composite1)
+ 
+-        self.assertEquals(result, composite2)
++        self.assertEqual(result, composite2)
+ 
+     def test_merge_other_types_not_allowed(self):
+         other = type('Other', (object,), {'type': 34})
+diff --git a/reclass/values/tests/test_item.py b/reclass/values/tests/test_item.py
+index 4b91f6e..00b11d5 100644
+--- a/reclass/values/tests/test_item.py
++++ b/reclass/values/tests/test_item.py
+@@ -22,7 +22,7 @@ class TestItemWithReferences(unittest.TestCase):
+ 
+         iwr = ItemWithReferences([phonyitem], {})
+ 
+-        self.assertEquals(iwr.get_references(), [1])
++        self.assertEqual(iwr.get_references(), [1])
+         self.assertTrue(iwr.allRefs)
+ 
+     def test_assembleRef_partial(self):
+@@ -33,7 +33,7 @@ class TestItemWithReferences(unittest.TestCase):
+ 
+         iwr = ItemWithReferences([phonyitem], {})
+ 
+-        self.assertEquals(iwr.get_references(), [1])
++        self.assertEqual(iwr.get_references(), [1])
+         self.assertFalse(iwr.allRefs)
+ 
+ 
+@@ -42,7 +42,7 @@ class TestContainerItem(unittest.TestCase):
+     def test_render(self):
+         container = ContainerItem('foo', SETTINGS)
+ 
+-        self.assertEquals(container.render(None, None), 'foo')
++        self.assertEqual(container.render(None, None), 'foo')
+ 
+ if __name__ == '__main__':
+     unittest.main()
+diff --git a/reclass/values/tests/test_listitem.py b/reclass/values/tests/test_listitem.py
+index 618b779..009f384 100644
+--- a/reclass/values/tests/test_listitem.py
++++ b/reclass/values/tests/test_listitem.py
+@@ -18,7 +18,7 @@ class TestListItem(unittest.TestCase):
+ 
+         result = listitem2.merge_over(listitem1)
+ 
+-        self.assertEquals(result.contents, expected.contents)
++        self.assertEqual(result.contents, expected.contents)
+ 
+     def test_merge_other_types_not_allowed(self):
+         other = type('Other', (object,), {'type': 34})
+diff --git a/reclass/values/tests/test_parser_functions.py b/reclass/values/tests/test_parser_functions.py
+index a660c76..1b5e01f 100644
+--- a/reclass/values/tests/test_parser_functions.py
++++ b/reclass/values/tests/test_parser_functions.py
+@@ -94,7 +94,7 @@ class TestRefParser(unittest.TestCase):
+ 
+         result = pf.listify(parser.parseString(instring).asList())
+ 
+-        self.assertEquals(expected, result)
++        self.assertEqual(expected, result)
+ 
+ 
+ @ddt.ddt
+@@ -109,7 +109,7 @@ class TestSimpleRefParser(unittest.TestCase):
+ 
+         result = pf.listify(parser.parseString(instring).asList())
+ 
+-        self.assertEquals(expected, result)
++        self.assertEqual(expected, result)
+ 
+ 
+ if __name__ == '__main__':
+diff --git a/reclass/values/tests/test_refitem.py b/reclass/values/tests/test_refitem.py
+index 6581478..02bd9f5 100644
+--- a/reclass/values/tests/test_refitem.py
++++ b/reclass/values/tests/test_refitem.py
+@@ -23,7 +23,7 @@ class TestRefItem(unittest.TestCase):
+ 
+         iwr = RefItem([phonyitem], {})
+ 
+-        self.assertEquals(iwr.get_references(), ['foo', 'bar'])
++        self.assertEqual(iwr.get_references(), ['foo', 'bar'])
+         self.assertTrue(iwr.allRefs)
+ 
+     def test_assembleRefs_failedrefs(self):
+@@ -34,7 +34,7 @@ class TestRefItem(unittest.TestCase):
+ 
+         iwr = RefItem([phonyitem], {})
+ 
+-        self.assertEquals(iwr.get_references(), ['foo'])
++        self.assertEqual(iwr.get_references(), ['foo'])
+         self.assertFalse(iwr.allRefs)
+ 
+     def test__resolve_ok(self):
+@@ -42,7 +42,7 @@ class TestRefItem(unittest.TestCase):
+ 
+         result = reference._resolve('foo:bar', {'foo':{'bar': 1}})
+ 
+-        self.assertEquals(result, 1)
++        self.assertEqual(result, 1)
+ 
+     def test__resolve_fails(self):
+         refitem = RefItem('', Settings({'delimiter': ':'}))
+diff --git a/reclass/values/tests/test_scaitem.py b/reclass/values/tests/test_scaitem.py
+index b6d038d..6cf5032 100644
+--- a/reclass/values/tests/test_scaitem.py
++++ b/reclass/values/tests/test_scaitem.py
+@@ -17,7 +17,7 @@ class TestScaItem(unittest.TestCase):
+ 
+         result = scalar2.merge_over(scalar1)
+ 
+-        self.assertEquals(result.contents, scalar2.contents)
++        self.assertEqual(result.contents, scalar2.contents)
+ 
+     def test_merge_over_merge_composite(self):
+         scalar1 = CompItem(Value(1, SETTINGS, ''), SETTINGS)
+@@ -25,7 +25,7 @@ class TestScaItem(unittest.TestCase):
+ 
+         result = scalar2.merge_over(scalar1)
+ 
+-        self.assertEquals(result.contents, scalar2.contents)
++        self.assertEqual(result.contents, scalar2.contents)
+ 
+     def test_merge_other_types_not_allowed(self):
+         other = type('Other', (object,), {'type': 34})
+diff --git a/reclass/values/tests/test_value.py b/reclass/values/tests/test_value.py
+index a06d220..4c9d8ee 100644
+--- a/reclass/values/tests/test_value.py
++++ b/reclass/values/tests/test_value.py
+@@ -41,7 +41,7 @@ class TestValue(unittest.TestCase):
+         s = 'my cat likes to hide in boxes'
+         tv = Value(s, SETTINGS, '')
+         self.assertFalse(tv.has_references)
+-        self.assertEquals(tv.render(CONTEXT, None), s)
++        self.assertEqual(tv.render(CONTEXT, None), s)
+ 
+     def _test_solo_ref(self, key):
+         s = _var(key)
