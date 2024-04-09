@@ -1,9 +1,0 @@
-[Unit]
-Requires=libvirtd.service
-After=libvirtd.service
-
-[Service]
-Type=forking
-ExecStart=/usr/bin/imagefactoryd 
-ExecStop=killall imagefactoryd
-PIDFile=/var/run/imagefactoryd.pid

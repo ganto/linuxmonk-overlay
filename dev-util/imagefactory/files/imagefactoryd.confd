@@ -1,5 +1,0 @@
-# Imagefactory configuration
-# http://aeolusproject.org
-
-# Default command-line options when starting imagefactoryd
-IMAGEFACTORYD_ARGS="--debug"
