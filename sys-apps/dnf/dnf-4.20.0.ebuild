@@ -10,13 +10,13 @@ inherit cmake python-single-r1 tmpfiles
 DESCRIPTION="DNF is a package manager based on yum and libsolv"
 HOMEPAGE="https://github.com/rpm-software-management/dnf"
 SRC_URI="https://github.com/rpm-software-management/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
-RESTRICT="mirror !test? ( test )"
-
 LICENSE="GPL-2+"
+
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE="test"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
+RESTRICT="mirror !test? ( test )"
 
 LANGS=(
 	ar be bg bn bn-IN ca cs da de el en-GB eo es eu fa fi fil fr gd gu he hi hr hu id it ja ka kk ko
@@ -37,7 +37,7 @@ DEPEND="
 	$(python_gen_cond_dep '
 		>=dev-libs/libcomps-0.1.8[${PYTHON_USEDEP}]
 		dev-python/iniparse[${PYTHON_USEDEP}]
-		>=sys-libs/libdnf-0.73.0[${PYTHON_USEDEP}]
+		>=sys-libs/libdnf-0.73.1[${PYTHON_USEDEP}]
 	')
 "
 RDEPEND="${DEPEND}
@@ -82,6 +82,15 @@ src_install() {
 	dosym ./dnf-3 /usr/bin/dnf4
 	dosym ./dnf-3 /usr/bin/yum
 	mv "${ED}"/usr/bin/dnf-automatic-3 "${ED}"/usr/bin/dnf-automatic
+
+	dosym ./dnf-3 /usr/share/bash-completion/completions/dnf
+	dosym ./dnf-3 /usr/share/bash-completion/completions/dnf4
+
+	for file in "${ED}"/usr/share/man/man[578]/dnf4[-.]*; do
+		dir=$(dirname "${file##${ED}}")
+		filename=$(basename "${file}")
+		dosym "${filename}" "${dir}/${filename/dnf4/dnf}"
+	done
 
 	keepdir /var/lib/dnf/{history,yumdb}
 	dodir /var/log/dnf
