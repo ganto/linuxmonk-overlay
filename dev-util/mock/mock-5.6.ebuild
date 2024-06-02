@@ -10,7 +10,7 @@ inherit pam python-single-r1 bash-completion-r1
 
 MY_PV=${PV}-1
 MY_P=${PN}-${MY_PV}
-CORE_CONFIGS_VERSION=40.3-1
+CORE_CONFIGS_VERSION=40.4-1
 
 DESCRIPTION="Builds RPM packages inside chroots"
 HOMEPAGE="
@@ -83,7 +83,11 @@ src_prepare() {
 	popd >/dev/null
 }
 
-src_compile() { :; }
+src_compile() {
+	pushd mock >/dev/null || die
+	./precompile-bash-completion "mock.complete"
+	popd >/dev/null
+}
 
 src_install() {
 	pushd mock >/dev/null || die
@@ -122,8 +126,10 @@ src_install() {
 	dodir /var/lib/mock /var/cache/mock
 	keepdir /var/lib/mock /var/cache/mock
 
-	dobashcomp etc/bash_completion.d/mock
+	newbashcomp mock.complete mock
 	bashcomp_alias mock mock.py
+	bashcomp_alias mock mock-parse-buildlog
+	bashcomp_alias mock mock-parse-buildlog.py
 	popd >/dev/null
 
 	pushd ../mock-mock-core-configs-${CORE_CONFIGS_VERSION}/mock-core-configs >/dev/null || die
