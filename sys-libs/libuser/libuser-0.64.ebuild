@@ -1,22 +1,23 @@
-# Copyright 1999-2022 Gentoo Authors
+# Copyright 1999-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( python3_{10..12} )
 
 inherit python-r1
 
 DESCRIPTION="A user and group account administration library"
 HOMEPAGE="https://pagure.io/libuser"
-SRC_URI="https://releases.pagure.org/${PN}/${P}.tar.xz"
-RESTRICT="mirror"
+SRC_URI="https://pagure.io/libuser/archive/${P}/libuser-${P}.tar.gz"
+S="${WORKDIR}/libuser-${P}"
 
 LICENSE="LGPL-2+"
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE="audit doc ldap python sasl selinux"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
+RESTRICT="mirror"
 
 RDEPEND="
 	>=dev-libs/glib-2.30:2
@@ -39,11 +40,7 @@ BDEPEND="
 "
 
 src_prepare() {
-	eapply "${FILESDIR}/${PV}-downstream_test_xcrypt.patch"
-	eapply "${FILESDIR}/${PV}-PR49_add_yescrypt.patch"
-	eapply "${FILESDIR}/${PV}-PR55-popt.patch"
-
-	eapply_user
+	default
 	./autogen.sh
 
 	if use python; then
@@ -91,10 +88,6 @@ src_compile() {
 
 	if use python; then
 		compile_py() {
-			local CFLAGS=${CFLAGS}
-
-			python_is_python3 || CFLAGS+=" -fno-strict-aliasing"
-
 			cd "${BUILD_DIR}"
 			# couldn't figure out how to only compile the python parts,
 			# therefore everything is compiled again
