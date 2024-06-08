@@ -4,7 +4,7 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517=setuptools
-PYTHON_COMPAT=( python3_{10,11} )
+PYTHON_COMPAT=( python3_{10..12} )
 
 inherit distutils-r1
 
@@ -14,11 +14,11 @@ HOMEPAGE="
 	https://pypi.python.org/pypi/kubernetes
 "
 SRC_URI="https://github.com/kubernetes-client/python/archive/v${PV}.tar.gz -> ${P}.gh.tar.gz"
+S="${WORKDIR}/${P##kubernetes-client-}"
 
 LICENSE="Apache-1.0"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE=""
 
 DEPEND="dev-python/setuptools[${PYTHON_USEDEP}]"
 RDEPEND="
@@ -35,7 +35,5 @@ RDEPEND="
 "
 
 DOCS=( CHANGELOG.md CONTRIBUTING.md README.md )
-
-S="${WORKDIR}/${P##kubernetes-client-}"
 
 distutils_enable_tests pytest
