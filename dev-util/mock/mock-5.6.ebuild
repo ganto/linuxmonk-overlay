@@ -21,14 +21,17 @@ SRC_URI="
 	https://github.com/rpm-software-management/${PN}/archive/${MY_P}.tar.gz
 	https://github.com/rpm-software-management/${PN}/archive/${PN}-core-configs-${CORE_CONFIGS_VERSION}.tar.gz
 "
-RESTRICT="mirror"
+S="${WORKDIR}/mock-${MY_P}"
 
 LICENSE="GPL-2+"
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE="test"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
-RESTRICT="!test? ( test )"
+RESTRICT="
+	mirror
+	!test? ( test )
+"
 
 RDEPEND="
 	${PYTHON_DEPS}
@@ -61,8 +64,6 @@ PATCHES=(
 	"${FILESDIR}"/4.0-Adjust-CLI-tools-default-path.patch
 )
 
-S="${WORKDIR}/mock-${MY_P}"
-
 src_prepare() {
 	default
 
@@ -85,7 +86,9 @@ src_prepare() {
 
 src_compile() {
 	pushd mock >/dev/null || die
-	./precompile-bash-completion "mock.complete"
+	# TODO: this fails when being executed through portage
+	#./precompile-bash-completion "mock.complete" || die "Failed to generate bash-completion"
+	cp "${FILESDIR}"/mock.complete .
 	popd >/dev/null
 }
 
