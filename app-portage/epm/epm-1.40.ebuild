@@ -1,9 +1,9 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=8
 
-inherit eutils prefix
+inherit prefix
 
 DESCRIPTION="rpm workalike for Gentoo Linux"
 HOMEPAGE="https://github.com/fuzzyray/epm"
@@ -23,7 +23,7 @@ src_unpack() {
 }
 
 src_prepare() {
-	epatch "${FILESDIR}"/${P}-prefix.patch
+	eapply -p0 "${FILESDIR}"/${P}-prefix.patch
 	default
 	eprefixify epm
 }
