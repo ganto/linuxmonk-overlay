@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<longdescription lang="en">
+		jless is a command-line JSON viewer. Use it as a replacement for whatever
+		combination of less, jq, cat and your editor you currently use for viewing
+		JSON files.
+	</longdescription>
+	<upstream>
+		<bugs-to>https://github.com/PaulJuliusMartinez/jless/issues</bugs-to>
+		<remote-id type="github">PaulJuliusMartinez/jless</remote-id>
+	</upstream>
+</pkgmetadata>
