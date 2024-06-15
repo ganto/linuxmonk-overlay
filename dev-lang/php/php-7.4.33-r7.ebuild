@@ -19,7 +19,7 @@ LICENSE="PHP-3.01
 	gd? ( gd )
 	unicode? ( BSD-2 LGPL-2.1 )"
 
-SLOT="$(ver_cut 1-2)"
+SLOT="7.4"
 KEYWORDS="~amd64"
 
 # We can build the following SAPIs in the given order
