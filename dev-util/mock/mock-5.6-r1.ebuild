@@ -10,7 +10,7 @@ inherit pam python-single-r1 bash-completion-r1
 
 MY_PV=${PV}-1
 MY_P=${PN}-${MY_PV}
-CORE_CONFIGS_VERSION=40.4-1
+CORE_CONFIGS_VERSION=40.6-1
 
 DESCRIPTION="Builds RPM packages inside chroots"
 HOMEPAGE="
@@ -39,7 +39,6 @@ RDEPEND="
 	app-arch/createrepo_c
 	app-arch/pigz
 	app-arch/rpm[python,${PYTHON_SINGLE_USEDEP},zstd(+)]
-	>=app-misc/distribution-gpg-keys-1.98
 	$(python_gen_cond_dep '
 		dev-python/backoff[${PYTHON_USEDEP}]
 		dev-python/distro[${PYTHON_USEDEP}]
@@ -49,6 +48,7 @@ RDEPEND="
 	    dev-python/rpmautospec-core[${PYTHON_USEDEP}]
 		dev-python/templated-dictionary[${PYTHON_USEDEP}]
 	')
+	>=dev-util/distribution-gpg-keys-1.104
 	sys-apps/iproute2
 	sys-apps/shadow
 	sys-apps/usermode
