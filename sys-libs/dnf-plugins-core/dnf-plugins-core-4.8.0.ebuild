@@ -10,13 +10,13 @@ inherit cmake python-single-r1
 DESCRIPTION="Core DNF plugins"
 HOMEPAGE="https://github.com/rpm-software-management/dnf-plugins-core"
 SRC_URI="https://github.com/rpm-software-management/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
-RESTRICT="mirror !test? ( test )"
-
 LICENSE="GPL-2+"
+
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE="test"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
+RESTRICT="mirror !test? ( test )"
 
 LANGS=( bg ca cs da de es eu fi fr hu it id ja ka ko mr nl pa pl pt pt-BR ru si sk sq sr sv tr uk zh-CN zh-TW )
 
@@ -46,7 +46,11 @@ src_prepare() {
 }
 
 src_configure() {
-	mycmakeargs=( -DPYTHON_DESIRED:str=3 -Wno-dev )
+	mycmakeargs=(
+		-DPYTHON_DESIRED:str=3
+		-DWITHOUT_DEBUG:str=1
+		-Wno-dev
+	)
 	cmake_src_configure
 }
 
@@ -72,8 +76,7 @@ src_install() {
 			needs-restarting offline-distrosync offline-upgrade \
 			package-cleanup repo-graph repoclosure repodiff repomanage \
 			repoquery reposync repotrack system-upgrade yum-builddep \
-			yum-config-manager yum-debug-dump yum-debug-restore \
-			yumdownloader; do
+			yum-config-manager yumdownloader; do
 		dosym ../libexec/dnf-utils /usr/bin/${util}
 	done
 
@@ -82,8 +85,14 @@ src_install() {
 	for util in find-repos-of-install repoquery repotrack; do
 		dosym dnf-utils.1 /usr/share/man/man1/${util}.1
 	done
-	for util in dnf-offline-upgrade dnf-offline-distrosync; do
-		dosym dnf-system-upgrade.8 /usr/share/man/man8/${util}.8
+	for util in dnf4-offline-upgrade dnf4-offline-distrosync; do
+		dosym dnf4-system-upgrade.8 /usr/share/man/man8/${util}.8
+	done
+
+	for file in "${ED}"/usr/share/man/man[578]/dnf4[-.]*; do
+		dir=$(dirname "${file##${ED}}")
+		filename=$(basename "${file}")
+		dosym "${filename}" "${dir}/${filename/dnf4/dnf}"
 	done
 
 	# cleanup leaked build files
