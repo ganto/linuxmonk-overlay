@@ -3,20 +3,23 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( python3_{10..13} )
 
 inherit cmake python-r1
 
 DESCRIPTION="Library providing simplified C and Python API to libsolv"
 HOMEPAGE="https://github.com/rpm-software-management/libdnf"
 SRC_URI="https://github.com/rpm-software-management/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
-RESTRICT="mirror !test? ( test )"
 
 LICENSE="LGPL-2+"
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE="test"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
+RESTRICT="
+	mirror
+	!test? ( test )
+"
 
 LANGS=(
 	as bg bn ca cs da de el es eu fa fi fil fr fur gu hi hu ia id is it ja ka kn ko mai ml
