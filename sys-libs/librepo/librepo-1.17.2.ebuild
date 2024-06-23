@@ -10,7 +10,6 @@ inherit cmake python-r1
 DESCRIPTION="Repodata downloading library"
 HOMEPAGE="https://github.com/rpm-software-management/librepo"
 SRC_URI="https://github.com/rpm-software-management/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
-RESTRICT="mirror !test? ( test )"
 
 LICENSE="LGPL-2.1+"
 SLOT="0"
@@ -18,6 +17,11 @@ KEYWORDS="~amd64"
 
 IUSE="doc +gpgme test python zchunk"
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
+
+RESTRICT="
+	mirror
+	!test? ( test )
+"
 
 DEPEND="
 	>=dev-libs/glib-2.66.0
@@ -38,7 +42,7 @@ RDEPEND="${DEPEND}"
 BDEPEND="
 	dev-libs/check
 	doc? (
-		app-doc/doxygen
+		app-text/doxygen
 		$(python_gen_cond_dep '
 			dev-python/sphinx[${PYTHON_USEDEP}]
 		')
