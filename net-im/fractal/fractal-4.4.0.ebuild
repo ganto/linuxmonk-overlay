@@ -319,7 +319,7 @@ IUSE=""
 RESTRICT="mirror"
 
 DEPEND="
-	dev-libs/openssl
+	dev-libs/openssl:0=
 
 	>=dev-libs/glib-2.56
 	>=x11-libs/cairo-1.16

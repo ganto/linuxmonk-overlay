@@ -1,10 +1,10 @@
-# Copyright 1999-2023 Gentoo Authors
+# Copyright 1999-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
 DISTUTILS_USE_PEP517=setuptools
-PYTHON_COMPAT=( python3_{10,11} )
+PYTHON_COMPAT=( python3_{10..12} )
 
 inherit distutils-r1
 
@@ -13,22 +13,21 @@ DEBOPS_GIT_COMMIT="6a5383a45319404c06464d7159bf19fee1dc315c"
 DESCRIPTION="Your Debian-based data center in a box"
 HOMEPAGE="https://debops.org/"
 SRC_URI="https://github.com/debops/debops/archive/v${PV}.tar.gz -> ${P}.gh.tar.gz"
-RESTRICT="
-	mirror
-	!test? ( test )
-"
 
 LICENSE="GPL-3+"
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE="doc test"
+RESTRICT="
+	mirror
+	!test? ( test )
+"
 
 RDEPEND="
 	app-admin/ansible[${PYTHON_USEDEP}]
 	dev-python/cryptography[${PYTHON_USEDEP}]
 	dev-python/distro[${PYTHON_USEDEP}]
 	dev-python/dnspython[${PYTHON_USEDEP}]
-	dev-python/future[${PYTHON_USEDEP}]
 	dev-python/jinja[${PYTHON_USEDEP}]
 	dev-python/netaddr[${PYTHON_USEDEP}]
 	dev-python/passlib[${PYTHON_USEDEP}]
