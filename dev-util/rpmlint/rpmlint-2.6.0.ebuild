@@ -60,7 +60,7 @@ distutils_enable_tests pytest
 
 python_prepare_all() {
 	# remove pytest-cov dep
-	sed -i -e "s/ --cov=rpmlint//" setup.cfg || die
+	sed -i -e "/--cov=rpmlint/d" pytest.ini || die
 
 	distutils-r1_python_prepare_all
 }
