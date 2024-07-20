@@ -68,6 +68,7 @@ src_install() {
 	cmake_src_install
 
 	if use doc; then
+		dodoc -r examples
 		local HTML_DOCS=( "${BUILD_DIR}"/doc/html/. )
 		einstalldocs
 	fi
