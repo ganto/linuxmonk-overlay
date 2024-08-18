@@ -40,7 +40,7 @@ DEPEND="
 	>=app-arch/rpm-4.15.0:=
 	>=app-arch/zchunk-0.9.11
 	>=sys-libs/libmodulemd-2.13.0
-	>=dev-libs/librepo-1.15.0[gpgme(+)]
+	>=dev-libs/librepo-1.18.0[gpgme(+)]
 	>=dev-libs/libsolv-0.7.21[python,${PYTHON_USEDEP},rpm]
 "
 RDEPEND="${PYTHON_DEPS}
