@@ -46,7 +46,11 @@ src_prepare() {
 }
 
 src_configure() {
-	mycmakeargs=( -DPYTHON_DESIRED:str=3 -Wno-dev )
+	mycmakeargs=(
+		-DPYTHON_DESIRED:str=3
+		-DWITHOUT_DEBUG:str=1
+		-Wno-dev
+	)
 	cmake_src_configure
 }
 
@@ -72,8 +76,7 @@ src_install() {
 			needs-restarting offline-distrosync offline-upgrade \
 			package-cleanup repo-graph repoclosure repodiff repomanage \
 			repoquery reposync repotrack system-upgrade yum-builddep \
-			yum-config-manager yum-debug-dump yum-debug-restore \
-			yumdownloader; do
+			yum-config-manager yumdownloader; do
 		dosym ../libexec/dnf-utils /usr/bin/${util}
 	done
 
