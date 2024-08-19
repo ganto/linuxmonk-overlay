@@ -3,10 +3,12 @@
 
 EAPI=8
 
+MY_P="${P}-1"
+
 DESCRIPTION="Collection of GPG keys used in Linux distributions"
-HOMEPAGE="https://github.com/xsuchy/distribution-gpg-keys"
-SRC_URI="https://github.com/xsuchy/${PN}/archive/${P}-1.tar.gz"
-S="${WORKDIR}/distribution-gpg-keys-${P}-1"
+HOMEPAGE="https://github.com/rpm-software-management/distribution-gpg-keys"
+SRC_URI="https://github.com/rpm-software-management/${PN}/archive/${MY_P}.tar.gz"
+S="${WORKDIR}/${PN}-${MY_P}"
 
 LICENSE="CC0-1.0"
 SLOT="0"
@@ -22,6 +24,6 @@ src_prepare() {
 }
 
 src_install() {
-	insinto /usr/share/${PN}
+	insinto "/usr/share/${PN}"
 	doins -r keys/*
 }
