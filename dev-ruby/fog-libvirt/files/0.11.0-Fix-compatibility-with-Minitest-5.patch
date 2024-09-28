@@ -1,0 +1,48 @@
+From 7c69a82b8af3ab50946511b16cdca004324bc318 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?V=C3=ADt=20Ondruch?= <vondruch@redhat.com>
+Date: Wed, 2 Aug 2023 12:37:30 +0200
+Subject: [PATCH] Fix compatibility with Minitest 5+
+
+The `MiniTest` was renamed to `Minitest`:
+
+https://github.com/minitest/minitest/commit/9a57c520ceac76abfe6105866f8548a94eb357b6
+
+And the `MiniTest` constant is now loaded just when `MT_COMPAT`
+environment variable is set:
+
+https://github.com/minitest/minitest/commit/a2c6c18570f6f0a1bf6af70fe3b6d9599a13fdd6
+---
+ minitests/server/server_test.rb | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/minitests/server/server_test.rb b/minitests/server/server_test.rb
+index 6ed647e..62cf16c 100644
+--- a/minitests/server/server_test.rb
++++ b/minitests/server/server_test.rb
+@@ -36,8 +36,8 @@ class ServerTest < Minitest::Test
+   end
+ 
+   def test_ssh_ip_command_success
+-    fog_ssh = MiniTest::Mock.new
+-    result = MiniTest::Mock.new
++    fog_ssh = Minitest::Mock.new
++    result = Minitest::Mock.new
+     result.expect(:status, 0)
+     result.expect(:stdout, "any_ip")
+     fog_ssh.expect(:run, [result], [String])
+@@ -49,10 +49,10 @@ class ServerTest < Minitest::Test
+   end
+ 
+   def test_local_ip_command_success
+-    proc_info = MiniTest::Mock.new
++    proc_info = Minitest::Mock.new
+     proc_info.expect(:each_line, "127.0.0.1")
+     proc_info.expect(:pid, 0)
+-    status = MiniTest::Mock.new
++    status = Minitest::Mock.new
+     status.expect(:exitstatus, 0)
+     Process.stubs(:waitpid2).returns([0, status])
+     IO.stub(:popen, true, proc_info) do
+-- 
+2.41.0
+
