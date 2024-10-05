@@ -10,7 +10,7 @@ inherit pam python-single-r1 bash-completion-r1
 
 MY_PV=${PV}-1
 MY_P=${PN}-${MY_PV}
-CORE_CONFIGS_VERSION=41.2-1
+CORE_CONFIGS_VERSION=41.4-1
 
 DESCRIPTION="Builds RPM packages inside chroots"
 HOMEPAGE="
@@ -45,8 +45,8 @@ RDEPEND="
 		dev-python/jinja[${PYTHON_USEDEP}]
 		dev-python/pyroute2[${PYTHON_USEDEP}]
 		dev-python/requests[${PYTHON_USEDEP}]
-	    dev-python/rpmautospec-core[${PYTHON_USEDEP}]
-		dev-python/templated-dictionary[${PYTHON_USEDEP}]
+		dev-python/rpmautospec-core[${PYTHON_USEDEP}]
+		>=dev-python/templated-dictionary-1.5[${PYTHON_USEDEP}]
 	')
 	>=dev-util/distribution-gpg-keys-1.105
 	sys-apps/iproute2
@@ -57,6 +57,7 @@ RDEPEND="
 "
 BDEPEND="
 	${PYTHON_DEPS}
+	dev-python/argparse-manpage
 	test? ( $(python_gen_cond_dep 'dev-python/pytest[${PYTHON_USEDEP}]') )
 "
 
@@ -89,12 +90,14 @@ src_compile() {
 	# TODO: this fails when being executed through portage
 	#./precompile-bash-completion "mock.complete" || die "Failed to generate bash-completion"
 	cp "${FILESDIR}/mock-${PV}.complete" mock.complete
+	argparse-manpage --pyfile ./py/mock-hermetic-repo.py --function _argparser > mock-hermetic-repo.1
 	popd >/dev/null
 }
 
 src_install() {
 	pushd mock >/dev/null || die
 	python_scriptinto /usr/bin
+	python_newscript py/mock-hermetic-repo.py mock-hermetic-repo
 	python_newscript py/mock-parse-buildlog.py mock-parse-buildlog
 	dobin mockchain
 
@@ -119,8 +122,8 @@ src_install() {
 
 	python_domodule py/mockbuild
 
-	doman docs/mock.1 docs/mock-parse-buildlog.1
-	dodoc README.md docs/site-defaults.cfg
+	doman docs/mock.1 docs/mock-parse-buildlog.1 mock-hermetic-repo.1
+	dodoc README.md docs/site-defaults.cfg docs/buildroot-lock-schema-*.json
 
 	insinto /usr/share/cheat
 	newins docs/mock.cheat mock
