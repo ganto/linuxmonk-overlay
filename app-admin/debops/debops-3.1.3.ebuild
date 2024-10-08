@@ -8,7 +8,7 @@ PYTHON_COMPAT=( python3_{10..12} )
 
 inherit distutils-r1
 
-DEBOPS_GIT_COMMIT="777d9214078351b6fcf1f49d2a8533a97054b8de"
+DEBOPS_GIT_COMMIT="73f7bbab50fe7721481d9f6a37d0b413372a4ea8"
 
 DESCRIPTION="Your Debian-based data center in a box"
 HOMEPAGE="https://debops.org/"
@@ -25,29 +25,35 @@ RESTRICT="
 
 RDEPEND="
 	app-admin/ansible[${PYTHON_USEDEP}]
-	dev-python/cryptography[${PYTHON_USEDEP}]
-	dev-python/distro[${PYTHON_USEDEP}]
 	dev-python/dnspython[${PYTHON_USEDEP}]
-	dev-python/jinja[${PYTHON_USEDEP}]
+	dev-python/GitPython[${PYTHON_USEDEP}]
 	dev-python/netaddr[${PYTHON_USEDEP}]
 	dev-python/passlib[${PYTHON_USEDEP}]
 	dev-python/python-ldap[${PYTHON_USEDEP}]
+	dev-python/pyopenssl[${PYTHON_USEDEP}]
+
+	dev-python/distro[${PYTHON_USEDEP}]
+	dev-python/jinja[${PYTHON_USEDEP}]
+	dev-python/python-dotenv[${PYTHON_USEDEP}]
+	dev-python/pyyaml[${PYTHON_USEDEP}]
+	dev-python/pyxdg[${PYTHON_USEDEP}]
 "
 DEPEND="
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	dev-python/sphinx[${PYTHON_USEDEP}]
-	doc? (
-		dev-python/sphinx-rtd-theme[${PYTHON_USEDEP}]
-	)
+	doc? ( dev-python/sphinx-rtd-theme[${PYTHON_USEDEP}] )
 	test? (
 		app-admin/ansible[${PYTHON_USEDEP}]
 		dev-python/nose2[${PYTHON_USEDEP}]
+		dev-python/python-dotenv[${PYTHON_USEDEP}]
 	)
 "
 
 DOCS=( CHANGELOG.rst CODEOWNERS CONTRIBUTING.rst DEVELOPMENT.rst README.md Dockerfile Vagrantfile )
 
-PATCHES=( "${FILESDIR}"/${PN}-0.7.2-Skip-edit_url.patch )
+PATCHES=(
+	"${FILESDIR}"/${PN}-0.7.2-Skip-edit_url.patch
+)
 
 src_prepare() {
 	default
@@ -59,7 +65,7 @@ src_prepare() {
 		docs/conf.py
 
 	# fix tests
-	sed -i -e "s/nose2-3/nose2/g" Makefile
+	sed -i -e "s/nose2-3/nosetests/g" Makefile
 }
 
 python_compile_all() {
