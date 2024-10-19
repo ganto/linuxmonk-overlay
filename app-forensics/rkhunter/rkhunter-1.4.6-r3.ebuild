@@ -1,15 +1,16 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=8
 
 inherit bash-completion-r1
 
 DESCRIPTION="Rootkit Hunter scans for known and unknown rootkits, backdoors, and sniffers"
-HOMEPAGE="http://rkhunter.sf.net/"
+HOMEPAGE="https://rkhunter.sf.net/"
 SRC_URI="mirror://sourceforge/${PN}/${P}.tar.gz"
+SRC_URI+=" https://dev.gentoo.org/~sam/distfiles/${CATEGORY}/${PN}/${P}-grep-3.8.patch.xz"
 
-LICENSE="GPL-2"
+LICENSE="GPL-2+"
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE=""
@@ -25,6 +26,7 @@ S="${WORKDIR}/${P}/files"
 PATCHES=(
 	"${FILESDIR}/${PN}-1.4.6-conf.patch"
 	"${FILESDIR}/${PN}-1.4.6-no-insecure-web.patch"
+	"${WORKDIR}/${PN}-1.4.6-grep-3.8.patch"
 	"${FILESDIR}/${PN}-1.4.6-drop-libkeyutils-check.patch"
 	"${FILESDIR}/${PN}-1.4.6-ssh.d.patch"
 )
