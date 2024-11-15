@@ -42,7 +42,7 @@ RDEPEND="
 	$(python_gen_cond_dep '
 		dev-python/backoff[${PYTHON_USEDEP}]
 		dev-python/distro[${PYTHON_USEDEP}]
-		dev-python/jinja[${PYTHON_USEDEP}]
+		dev-python/jinja2[${PYTHON_USEDEP}]
 		dev-python/pyroute2[${PYTHON_USEDEP}]
 		dev-python/requests[${PYTHON_USEDEP}]
 		dev-python/rpmautospec-core[${PYTHON_USEDEP}]
