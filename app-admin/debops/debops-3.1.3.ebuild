@@ -33,7 +33,7 @@ RDEPEND="
 	dev-python/pyopenssl[${PYTHON_USEDEP}]
 
 	dev-python/distro[${PYTHON_USEDEP}]
-	dev-python/jinja[${PYTHON_USEDEP}]
+	dev-python/jinja2[${PYTHON_USEDEP}]
 	dev-python/python-dotenv[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
 	dev-python/pyxdg[${PYTHON_USEDEP}]
