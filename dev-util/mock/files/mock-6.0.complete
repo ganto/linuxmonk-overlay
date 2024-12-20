@@ -57,6 +57,7 @@ echo '
 --help
 --version
 --rebuild
+--calculate-build-dependencies
 --chain
 --buildsrpm
 --debug-config
@@ -65,6 +66,7 @@ echo '
 --chroot
 --clean
 --scrub
+--scrub-all-chroots
 --init
 --installdeps
 --install
@@ -108,10 +110,13 @@ echo '
 --config-opts
 --rpmbuild_timeout
 --unpriv
+--chroot
 --cwd
 --spec
 --sources
+--buildsrpm
 --symlink-dereference
+--buildsrpm
 --short-circuit
 --rpmbuild-opts
 --enablerepo
@@ -136,8 +141,11 @@ echo '
 --bootstrap-chroot
 --no-bootstrap-chroot
 --use-bootstrap-image
+--bootstrap-chroot
 --no-bootstrap-image
+--buildroot-image
 --additional-package
+--hermetic-build
 '
 return
     _parse_help "$1"
