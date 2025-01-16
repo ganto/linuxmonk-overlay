@@ -10,12 +10,12 @@ inherit pam python-single-r1 bash-completion-r1
 
 MY_PV=${PV}-1
 MY_P=${PN}-${MY_PV}
-CORE_CONFIGS_VERSION=41.4-1
+CORE_CONFIGS_VERSION=42.1-1
 
 DESCRIPTION="Builds RPM packages inside chroots"
 HOMEPAGE="
 	https://rpm-software-management.github.io/mock/
-	https://github.com/rpm-software-management/mock
+	https://github.com/rpm-software-management/mock/
 "
 SRC_URI="
 	https://github.com/rpm-software-management/${PN}/archive/${MY_P}.tar.gz
@@ -48,17 +48,18 @@ RDEPEND="
 		dev-python/rpmautospec-core[${PYTHON_USEDEP}]
 		>=dev-python/templated-dictionary-1.5[${PYTHON_USEDEP}]
 	')
-	>=dev-util/distribution-gpg-keys-1.105
+	>=dev-util/distribution-gpg-keys-1.107
 	sys-apps/iproute2
 	sys-apps/shadow
 	sys-apps/usermode
-	>=sys-apps/dnf-4.15.1-r1[${PYTHON_SINGLE_USEDEP}]
-	sys-libs/dnf-plugins-core
 "
 BDEPEND="
 	${PYTHON_DEPS}
-	dev-python/argparse-manpage
-	test? ( $(python_gen_cond_dep 'dev-python/pytest[${PYTHON_USEDEP}]') )
+	$(python_gen_cond_dep 'dev-python/argparse-manpage[${PYTHON_USEDEP}]')
+	test? ( $(python_gen_cond_dep '
+		dev-python/jsonschema[${PYTHON_USEDEP}]
+		dev-python/pytest[${PYTHON_USEDEP}]
+	') )
 "
 
 PATCHES=(
@@ -90,7 +91,7 @@ src_compile() {
 	# TODO: this fails when being executed through portage
 	#./precompile-bash-completion "mock.complete" || die "Failed to generate bash-completion"
 	cp "${FILESDIR}/mock-${PV}.complete" mock.complete
-	argparse-manpage --pyfile ./py/mock-hermetic-repo.py --function _argparser > mock-hermetic-repo.1
+	argparse-manpage --pyfile py/mock-hermetic-repo.py --function _argparser > mock-hermetic-repo.1 || die
 	popd >/dev/null
 }
 
@@ -105,9 +106,6 @@ src_install() {
 	python_newscript py/mock.py mock
 
 	dosym consolehelper /usr/bin/mock
-
-	exeinto /usr/libexec/mock
-	doexe create_default_route_in_container.sh
 
 	dopamd etc/pam/*
 
