@@ -116,7 +116,7 @@ COMMON_DEPEND="
 	truetype? ( =media-libs/freetype-2* )
 	unicode? ( dev-libs/oniguruma:= )
 	webp? ( media-libs/libwebp:0= )
-	xml? ( <dev-libs/libxml2-2.12.0 )
+	xml? ( <dev-libs/libxml2-2.13.0 )
 	xpm? ( x11-libs/libXpm )
 	xslt? ( dev-libs/libxslt )
 	zip? ( >=dev-libs/libzip-1.2.0:= )
@@ -154,6 +154,15 @@ PATCHES=(
 	"${FILESDIR}"/php-7.4.33-CVE-2024-2756.patch
 	"${FILESDIR}"/php-7.4.33-CVE-2024-3096.patch
 	"${FILESDIR}"/php-7.4.33-CVE-2024-1874.patch
+	"${FILESDIR}"/php-7.4.33-GHSA-9pqp-7h25-4f32.patch
+	"${FILESDIR}"/php-7.4.33-GHSA-94p6-54jq-9mwp.patch
+	"${FILESDIR}"/php-7.4.33-GHSA-865w-9rf3-2wh5.patch
+	"${FILESDIR}"/php-7.4.33-GHSA-5hqh-c84r-qjcv.patch
+	"${FILESDIR}"/php-7.4.33-GHSA-c5f2-jwm7-mmq2.patch
+	"${FILESDIR}"/php-7.4.33-GHSA-g665-fm4p-vhff.patch
+	"${FILESDIR}"/php-7.4.33-GHSA-r977-prxv-hc43.patch
+	"${FILESDIR}"/php-7.4.33-GHSA-4w77-75f9-2c8w.patch
+	"${FILESDIR}"/php-7.4.33-Fix-libxml2-2.12-build.patch
 )
 
 php_install_ini() {

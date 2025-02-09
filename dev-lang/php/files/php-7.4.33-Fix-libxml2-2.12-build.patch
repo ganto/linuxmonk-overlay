@@ -1,0 +1,95 @@
+commit 8a95e616b91ac0eeedba90a61e36e652919763f2
+Author: Niels Dossche <7771979+nielsdos@users.noreply.github.com>
+Date:   Fri Nov 17 19:45:40 2023 +0100
+
+    Fix GH-12702: libxml2 2.12.0 issue building from src
+    
+    Fixes GH-12702.
+    
+    Co-authored-by: nono303 <github@nono303.net>
+
+diff --git a/ext/dom/document.c b/ext/dom/document.c
+index 989b5b3dd2..8b0f66a4e6 100644
+--- a/ext/dom/document.c
++++ b/ext/dom/document.c
+@@ -25,6 +25,7 @@
+ #if HAVE_LIBXML && HAVE_DOM
+ #include "php_dom.h"
+ #include <libxml/SAX.h>
++#include <libxml/xmlsave.h>
+ #ifdef LIBXML_SCHEMAS_ENABLED
+ #include <libxml/relaxng.h>
+ #include <libxml/xmlschemas.h>
+diff --git a/ext/libxml/php_libxml.h b/ext/libxml/php_libxml.h
+index 92028d5703..6f3295b524 100644
+--- a/ext/libxml/php_libxml.h
++++ b/ext/libxml/php_libxml.h
+@@ -37,6 +37,7 @@ extern zend_module_entry libxml_module_entry;
+ 
+ #include "zend_smart_str.h"
+ #include <libxml/tree.h>
++#include <libxml/parser.h>
+ 
+ #define LIBXML_SAVE_NOEMPTYTAG 1<<2
+
+commit 0a39890c967aa57225bb6bdf4821aff7a3a3c082
+Author: Niels Dossche <7771979+nielsdos@users.noreply.github.com>
+Date:   Fri Dec 1 18:03:35 2023 +0100
+
+    Fix libxml2 2.12 build due to API breaks
+    
+    See https://github.com/php/php-src/actions/runs/7062192818/job/19225478601
+
+diff --git a/ext/libxml/libxml.c b/ext/libxml/libxml.c
+index d343135b98..b54ab40953 100644
+--- a/ext/libxml/libxml.c
++++ b/ext/libxml/libxml.c
+@@ -530,7 +530,11 @@ static int _php_libxml_free_error(xmlErrorPtr error)
+ 	return 1;
+ }
+ 
+-static void _php_list_set_error_structure(xmlErrorPtr error, const char *msg)
++#if LIBXML_VERSION >= 21200
++static void _php_list_set_error_structure(const xmlError *error, const char *msg)
++#else
++static void _php_list_set_error_structure(xmlError *error, const char *msg)
++#endif
+ {
+ 	xmlError error_copy;
+ 	int ret;
+@@ -782,7 +786,11 @@ PHP_LIBXML_API void php_libxml_ctx_warning(void *ctx, const char *msg, ...)
+ 	va_end(args);
+ }
+ 
++#if LIBXML_VERSION >= 21200
++PHP_LIBXML_API void php_libxml_structured_error_handler(void *userData, const xmlError *error)
++#else
+ PHP_LIBXML_API void php_libxml_structured_error_handler(void *userData, xmlErrorPtr error)
++#endif
+ {
+ 	_php_list_set_error_structure(error, NULL);
+ 
+@@ -1061,9 +1069,7 @@ static PHP_FUNCTION(libxml_use_internal_errors)
+    Retrieve last error from libxml */
+ static PHP_FUNCTION(libxml_get_last_error)
+ {
+-	xmlErrorPtr error;
+-
+-	error = xmlGetLastError();
++	const xmlError *error = xmlGetLastError();
+ 
+ 	if (error) {
+ 		object_init_ex(return_value, libxmlerror_class_entry);
+diff --git a/ext/soap/php_sdl.c b/ext/soap/php_sdl.c
+index 26a23f57db..3df532a2d6 100644
+--- a/ext/soap/php_sdl.c
++++ b/ext/soap/php_sdl.c
+@@ -333,7 +333,7 @@ static void load_wsdl_ex(zval *this_ptr, char *struri, sdlCtx *ctx, int include)
+ 	sdl_restore_uri_credentials(ctx);
+ 
+ 	if (!wsdl) {
+-		xmlErrorPtr xmlErrorPtr = xmlGetLastError();
++		const xmlError *xmlErrorPtr = xmlGetLastError();
+ 
+ 		if (xmlErrorPtr) {
+ 			soap_error2(E_ERROR, "Parsing WSDL: Couldn't load from '%s' : %s", struri, xmlErrorPtr->message);
