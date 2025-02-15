@@ -11,12 +11,13 @@ inherit distutils-r1
 DESCRIPTION="A recursive external node classifier for automation tools"
 HOMEPAGE="https://github.com/salt-formulas/reclass"
 SRC_URI="https://github.com/salt-formulas/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
-RESTRICT="!test? ( test ) mirror"
 
 LICENSE="Artistic-2"
 SLOT="0"
 KEYWORDS="~amd64"
+
 IUSE="doc test"
+RESTRICT="!test? ( test ) mirror"
 
 RDEPEND="
 	dev-python/pyparsing[${PYTHON_USEDEP}]

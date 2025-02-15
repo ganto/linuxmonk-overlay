@@ -1,0 +1,65 @@
+From 7d2999e87de2a18bb3d1df5a59efa31668d9f157 Mon Sep 17 00:00:00 2001
+From: Alexander Sulfrian <alexander@sulfrian.net>
+Date: Thu, 13 Feb 2025 17:51:52 +0100
+Subject: [PATCH] Replace distutils.version with packaging.version
+
+distutils was removed in Python 3.12. It was only used to compare the pygit2
+version. This replaces it with Version from packaging.
+---
+ reclass/storage/yaml_git/__init__.py | 8 ++++++--
+ requirements.txt                     | 1 +
+ setup.py                             | 1 +
+ 3 files changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/reclass/storage/yaml_git/__init__.py b/reclass/storage/yaml_git/__init__.py
+index 1053a951..c4230637 100644
+--- a/reclass/storage/yaml_git/__init__.py
++++ b/reclass/storage/yaml_git/__init__.py
+@@ -8,12 +8,16 @@
+ from __future__ import unicode_literals
+ 
+ import collections
+-import distutils.version
+ import errno
+ import fcntl
+ import os
+ import time
+ 
++try:
++    from distutils.version import LooseVersion as Version
++except ModuleNotFoundError:
++    from packaging.version import Version
++
+ # Squelch warning on centos7 due to upgrading cffi
+ # see https://github.com/saltstack/salt/pull/39871
+ import warnings
+@@ -146,7 +150,7 @@ def _init_repo(self, uri):
+                 creds = pygit2.KeypairFromAgent(user)
+ 
+             pygit2_version = pygit2.__version__
+-            if distutils.version.LooseVersion(pygit2_version) >= distutils.version.LooseVersion('0.23.2'):
++            if Version(pygit2_version) >= Version('0.23.2'):
+                 self.remotecallbacks = pygit2.RemoteCallbacks(credentials=creds)
+                 self.credentials = None
+             else:
+diff --git a/requirements.txt b/requirements.txt
+index 5a81c5e6..84f9ac02 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -3,3 +3,4 @@ pyyaml
+ six
+ enum34 ; python_version<'3.4'
+ ddt
++packaging ; python_version>'3.12'
+diff --git a/setup.py b/setup.py
+index 87051272..f58915d8 100644
+--- a/setup.py
++++ b/setup.py
+@@ -45,6 +45,7 @@
+     install_requires = ['pyparsing', 'pyyaml', 'six', 'ddt'], #FIXME pygit2 (require libffi-dev, libgit2-dev 0.26.x )
+     extras_require = {
+         ":python_version<'3.4'": ['enum34'],
++        ":python_version>'3.12'": ['packaging'],
+     },
+ 
+     classifiers=[
