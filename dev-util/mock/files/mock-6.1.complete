@@ -143,6 +143,7 @@ echo '
 --use-bootstrap-image
 --bootstrap-chroot
 --no-bootstrap-image
+--buildroot-image
 --additional-package
 --hermetic-build
 '
