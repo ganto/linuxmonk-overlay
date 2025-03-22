@@ -1,0 +1,57 @@
+From 1cc5a1353d32a1a1bb22b83bb2ab0103f34836d3 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Miro=20Hron=C4=8Dok?= <miro@hroncok.cz>
+Date: Wed, 11 Dec 2024 12:16:11 +0100
+Subject: [PATCH] Return self from iter(iterator)
+
+Fixes https://bugzilla.redhat.com/2331665
+---
+ libcomps/src/python/src/pycomps_sequence.c |  2 +-
+ libcomps/src/python/tests/test_libcomps.py | 22 ++++++++++++++++++++++
+ 2 files changed, 23 insertions(+), 1 deletion(-)
+
+diff --git a/libcomps/src/python/src/pycomps_sequence.c b/libcomps/src/python/src/pycomps_sequence.c
+index 9b42341..17f8f72 100644
+--- a/src/python/src/pycomps_sequence.c
++++ b/src/python/src/pycomps_sequence.c
+@@ -754,7 +754,7 @@ PyTypeObject PyCOMPS_SeqIterType = {
+     0,                          /* tp_clear */
+     0,                          /* tp_richcompare */
+     0,                          /* tp_weaklistoffset */
+-    PyCOMPSSeq_getiter,         /* tp_iter */
++    PyObject_SelfIter,          /* tp_iter */
+     PyCOMPSSeq_iternext,         /* tp_iternext */
+     PyCOMPSSeqIter_methods,         /* tp_methods */
+     PyCOMPSSeqIter_members,         /* tp_members */
+diff --git a/libcomps/src/python/tests/test_libcomps.py b/libcomps/src/python/tests/test_libcomps.py
+index 64c2b59..b645567 100755
+--- a/src/python/tests/test_libcomps.py
++++ b/src/python/tests/test_libcomps.py
+@@ -139,6 +139,28 @@ def test_iter_environments(self):
+         self.comps.xml_str()
+         self.comps.xml_f(self.tmp_file)
+ 
++    def test_iter_iter_environments(self):
++        it1 = iter(self.comps.environments)
++        it2 = iter(it1)
++        it3 = iter(it1)
++        it4 = iter(it2)
++        self.assertIs(it1, it2)
++        self.assertIs(it1, it3)
++        self.assertIs(it1, it4)
++        del it1
++        next(it2)
++
++    def test_iter_iter_langpacks(self):
++        it1 = iter(self.comps.langpacks)
++        it2 = iter(it1)
++        it3 = iter(it1)
++        it4 = iter(it2)
++        self.assertIs(it1, it2)
++        self.assertIs(it1, it3)
++        self.assertIs(it1, it4)
++        del it1
++        next(it2)
++
+     def test_duplicate_groups(self):
+         self.comps = libcomps.Comps()
+ 

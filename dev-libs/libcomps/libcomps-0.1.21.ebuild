@@ -1,21 +1,22 @@
-# Copyright 1999-2023 Gentoo Authors
+# Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( python3_{10..13} )
 
 inherit cmake python-r1
 
 DESCRIPTION="Comps XML file manipulation library"
 HOMEPAGE="https://github.com/rpm-software-management/libcomps"
 SRC_URI="https://github.com/rpm-software-management/${PN}/archive/${PV}.tar.gz -> ${P}.gh.tar.gz"
-RESTRICT="mirror"
 
 LICENSE="GPL-2+"
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE="test"
+
+S="${WORKDIR}/${P}/libcomps"
 RESTRICT="
 	mirror
 	!test? ( test )
@@ -32,7 +33,7 @@ DEPEND="${RDEPEND}
 	test? ( dev-python/pytest[${PYTHON_USEDEP}] )
 "
 
-S="${WORKDIR}/${P}/libcomps"
+PATCHES="${FILESDIR}/${PV}-Return-self-from-iter.patch"
 
 src_configure() {
 	python_foreach_impl cmake_src_configure
