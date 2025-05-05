@@ -1,8 +1,8 @@
-# Copyright 1999-2024 Gentoo Authors
+# Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
-USE_RUBY="ruby31 ruby32 ruby33"
+USE_RUBY="ruby32 ruby33"
 
 RUBY_FAKEGEM_RECIPE_DOC="yard"
 RUBY_FAKEGEM_EXTRADOC="CONTRIBUTING.md CONTRIBUTORS.md README.md changelog.md"
@@ -25,15 +25,11 @@ ruby_add_bdepend "
 
 ruby_add_rdepend "
 	dev-ruby/builder:*
-	>=dev-ruby/excon-0.71
+	dev-ruby/excon:1
 	>=dev-ruby/formatador-0.2
+	<dev-ruby/formatador-2.0
 	dev-ruby/mime-types:*
 "
-
-PATCHES=(
-	"${FILESDIR}"/2.2.4-fix-cache-test-for-ruby-3.1.patch
-	"${FILESDIR}"/2.3.0-Fix-compatibility-with-Minitest-5.19.patch
-)
 
 all_ruby_prepare() {
 	# Remove Bundler
