@@ -1,8 +1,8 @@
-# Copyright 1999-2024 Gentoo Authors
+# Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
-USE_RUBY="ruby31 ruby32 ruby33"
+USE_RUBY="ruby32 ruby33"
 
 RUBY_FAKEGEM_RECIPE_TEST="rake"
 RUBY_FAKEGEM_RECIPE_DOC=""
@@ -31,8 +31,4 @@ all_ruby_prepare() {
 	# Remove Bundler
 	rm Gemfile || die
 	sed -i -e '/[Bb]undler/d' Rakefile || die
-
-	# We don't have Turn in Gentoo (neither we really need it).
-	sed -i '/require.*turn/ s/^/#/' spec/minitest_helper.rb
-	sed -i '/Turn/,/end/ s/^/#/' spec/minitest_helper.rb
 }
