@@ -1,8 +1,8 @@
-# Copyright 1999-2024 Gentoo Authors
+# Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
-USE_RUBY="ruby31 ruby32"
+USE_RUBY="ruby32 ruby33"
 
 RUBY_FAKEGEM_RECIPE_DOC="yard"
 RUBY_FAKEGEM_EXTRADOC="README.md"
@@ -18,7 +18,7 @@ KEYWORDS="~amd64"
 
 ruby_add_bdepend "
 	test? ( dev-ruby/minitest
-			>=dev-ruby/mocha-1.13.0:1.0
+			dev-ruby/mocha:2
 			>=dev-ruby/shindo-0.3.4 )
 "
 
@@ -29,8 +29,6 @@ ruby_add_rdepend "
 	dev-ruby/json:*
 	>=dev-ruby/ruby-libvirt-0.7.0
 "
-
-PATCHES=( "${FILESDIR}"/0.11.0-Fix-compatibility-with-Minitest-5.patch )
 
 all_ruby_prepare() {
 	# Remove Bundler
