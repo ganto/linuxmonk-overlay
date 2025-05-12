@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<upstream>
+		<remote-id type="github">jpeddicord/askalono</remote-id>
+	</upstream>
+	<longdescription lang="en">
+		Command-line tool to help detect license texts. It's designed to be fast,
+		accurate, and to support a wide variety of license texts.
+	</longdescription>
+</pkgmetadata>
