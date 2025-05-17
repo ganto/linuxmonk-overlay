@@ -11,6 +11,10 @@
 		will then be converted to text and the YAML-code goes into literal
 		blocks.
 	</longdescription>
+	<upstream>
+		<remote-id type="github">htgoebel/yaml2rst</remote-id>
+		<remote-id type="pypi">yaml2rst</remote-id>
+	</upstream>
 	<use>
 		<flag name="examples">Install example files</flag>
 	</use>
