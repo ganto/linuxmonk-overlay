@@ -124,6 +124,17 @@ blocking:
       # optional: timeout for list download (each url). Use large values for big lists or slow internet connections
       # default: 5s
       timeout: 4m
+      # optional: timeout for list write to disk (each url). Use larger values for big lists or in constrained environments
+      # default: 20s
+      writeTimeout: 60s
+      # optional: timeout for reading the download (each url). Use large values for big lists or in constrained environments
+      # To disable this timeout, set to 0.
+      # default: 20s
+      readTimeout: 60s
+      # optional: timeout for reading request headers for the download (each url). Use large values for slow internet connections
+      # to disable, set to -1.
+      # default: 20s
+      readHeaderTimeout: 60s
       # optional: Maximum download attempts
       # default: 3
       attempts: 5
@@ -197,7 +208,7 @@ prometheus:
 
 # optional: write query information (question, answer, client, duration etc.) to daily csv file
 queryLog:
-  # optional one of: mysql, postgresql, csv, csv-client. If empty, log to console
+  # optional one of: mysql, postgresql, timescale, csv, csv-client. If empty, log to console
   type: csv
   # directory (should be mounted as volume in docker) for csv, db connection string for mysql/postgresql
   target: /var/log/blocky/
@@ -258,9 +269,9 @@ bootstrapDns:
       - 185.95.218.42
 
 # optional: drop all queries with following query types. Default: empty
-#filtering:
-  #queryTypes:
-  #  - AAAA
+filtering:
+  queryTypes:
+    - AAAA
 
 # optional: return NXDOMAIN for queries that are not FQDNs.
 fqdnOnly:
@@ -270,17 +281,17 @@ fqdnOnly:
 # optional: if path defined, use this file for query resolution (A, AAAA and rDNS). Default: empty
 hostsFile:
   # optional: Hosts files to parse
-  #sources:
-  #  - /etc/hosts
-  #  - https://example.com/hosts
-  #  - |
-  #    # inline hosts
-  #    127.0.0.1 example.com
+  sources:
+    - /etc/hosts
+    - https://example.com/hosts
+    - |
+      # inline hosts
+      127.0.0.1 example.com
   # optional: TTL, default: 1h
-  #hostsTTL: 30m
+  hostsTTL: 30m
   # optional: Whether loopback hosts addresses (127.0.0.0/8 and ::1) should be filtered or not
   # default: false
-  #filterLoopback: true
+  filterLoopback: true
   # optional: Configure how sources are loaded
   loading:
     # optional: file refresh period in duration format.
@@ -315,9 +326,9 @@ ports:
   # optional: DNS listener port(s) and bind ip address(es), default 53 (UDP and TCP). Example: 53, :53, "127.0.0.1:5353,[::1]:5353"
   dns: 53
   # optional: Port(s) and bind ip address(es) for DoT (DNS-over-TLS) listener. Example: 853, 127.0.0.1:853
-  #tls: 853
+  tls: 853
   # optional: Port(s) and optional bind ip address(es) to serve HTTPS used for prometheus metrics, pprof, REST API, DoH... If you wish to specify a specific IP, you can do so such as 192.168.0.1:443. Example: 443, :443, 127.0.0.1:443,[::1]:443
-  #https: 443
+  https: 443
   # optional: Port(s) and optional bind ip address(es) to serve HTTP used for prometheus metrics, pprof, REST API, DoH... If you wish to specify a specific IP, you can do so such as 192.168.0.1:4000. Example: 4000, :4000, 127.0.0.1:4000,[::1]:4000
   http: 4000
 
@@ -328,20 +339,21 @@ log:
   # optional: Log format (text or json). Default: text
   format: text
   # optional: log timestamps. Default: true
-  timestamp: false
+  timestamp: true
   # optional: obfuscate log output (replace all alphanumeric characters with *) for user sensitive data like request domains or responses to increase privacy. Default: false
   privacy: false
 
 # optional: add EDE error codes to dns response
 ede:
   # enabled if true, Default: false
-  #enable: true
+  enable: true
 
 # optional: configure optional Special Use Domain Names (SUDN)
 specialUseDomains:
   # optional: block recomended private TLDs
   # default: true
   rfc6762-appendixG: true
+  enable: true
 
 # optional: configure extended client subnet (ECS) support
 ecs:
