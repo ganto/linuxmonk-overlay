@@ -1,10 +1,10 @@
-# Copyright 1999-2024 Gentoo Authors
+# Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
 DISTUTILS_USE_PEP517=setuptools
-PYTHON_COMPAT=( python3_{10..13} )
+PYTHON_COMPAT=( python3_{12,13} )
 
 inherit distutils-r1
 
@@ -32,6 +32,7 @@ RDEPEND="
 	>=dev-python/six-1.9.0[${PYTHON_USEDEP}]
 	>=dev-python/urllib3-1.24.2[${PYTHON_USEDEP}]
 	dev-python/websocket-client[${PYTHON_USEDEP}]
+	dev-python/durationpy[${PYTHON_USEDEP}]
 "
 
 DOCS=( CHANGELOG.md CONTRIBUTING.md README.md )
