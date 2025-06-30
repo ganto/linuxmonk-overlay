@@ -1,10 +1,10 @@
-# Copyright 2021-2024 Gentoo Authors
+# Copyright 2021-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
 DISTUTILS_USE_PEP517=setuptools
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( python3_{11..14} )
 
 inherit distutils-r1
 
@@ -22,12 +22,7 @@ KEYWORDS="~amd64"
 RDEPEND="
 	>=dev-python/construct-2.9[${PYTHON_USEDEP}]
 	<dev-python/construct-2.11[${PYTHON_USEDEP}]
-	dev-python/six[${PYTHON_USEDEP}]
 "
-BDEPEND="${RDEPEND}
-	test? (
-		dev-python/wheel[${PYTHON_USEDEP}]
-	)
-"
+BDEPEND="${RDEPEND}"
 
-distutils_enable_tests setup.py
+distutils_enable_tests pytest
