@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person" proxied="yes">
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<longdescription>
+		Nginx virtual host traffic status module.
+	</longdescription>
+	<upstream>
+		<bugs-to>https://github.com/vozlt/nginx-module-vts/issues</bugs-to>
+		<remote-id type="github">vozlt/nginx-module-vts</remote-id>
+	</upstream>
+</pkgmetadata>
