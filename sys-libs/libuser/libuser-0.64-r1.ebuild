@@ -1,9 +1,9 @@
-# Copyright 1999-2024 Gentoo Authors
+# Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( python3_{11..13} )
 
 inherit python-r1
 
@@ -34,10 +34,15 @@ RDEPEND="
 DEPEND="${RDEPEND}"
 BDEPEND="
 	app-text/linuxdoc-tools
-	doc? ( dev-util/gtk-doc )
+	dev-util/gtk-doc
 	sys-devel/bison
 	virtual/pkgconfig
 "
+
+PATCHES=(
+	"${FILESDIR}/${PV}-tests-use-crypt_r-with-Python-3.13.patch"
+	"${FILESDIR}/${PV}-editlocation.patch"
+)
 
 src_prepare() {
 	default
