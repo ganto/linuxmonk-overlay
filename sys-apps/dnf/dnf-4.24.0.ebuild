@@ -1,9 +1,9 @@
-# Copyright 1999-2024 Gentoo Authors
+# Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( python3_{10..13} )
 
 inherit cmake python-single-r1 tmpfiles
 
@@ -37,7 +37,7 @@ DEPEND="
 	$(python_gen_cond_dep '
 		>=dev-libs/libcomps-0.1.8[${PYTHON_USEDEP}]
 		dev-python/iniparse[${PYTHON_USEDEP}]
-		>=sys-libs/libdnf-0.73.1[${PYTHON_USEDEP}]
+		>=sys-libs/libdnf-0.75.0[${PYTHON_USEDEP}]
 	')
 "
 RDEPEND="${DEPEND}
