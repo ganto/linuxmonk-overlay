@@ -6,8 +6,9 @@ upstreams:
     strategy: fast
   groups:
     # these external DNS resolvers will be used. Blocky picks 2 random resolvers from the list for each query
-    # format for resolver: [net:]host:[port][/path]. net could be empty (default, shortcut for tcp+udp), tcp+udp, tcp, udp, tcp-tls or https (DoH).
+    # format for resolver: [net:]host:[port][/path][#commonname]. net could be empty (default, shortcut for tcp+udp), tcp+udp, tcp, udp, tcp-tls or https (DoH).
     # If port is empty, default port will be used (53 for udp and tcp, 853 for tcp-tls, 443 for https (Doh))
+    # alternative format: DNS Stamp (sdns://...) - compact format that encodes all parameters including optional certificate hashes for automatic certificate pinning
     # this configuration is mandatory, please define at least one external DNS resolver
     default:
       # example for tcp+udp IPv4 server (https://digitalcourage.de/)
@@ -18,6 +19,10 @@ upstreams:
       #- tcp-tls:fdns1.dismail.de:853
       # example for DNS-over-HTTPS (DoH)
       #- https://dns.digitale-gesellschaft.ch/dns-query
+      # example for DNS Stamp format (Plain DNS - Google 8.8.8.8)
+      #- sdns://AAcAAAAAAAAABzguOC44Ljg
+      # example for DNS Stamp format (DoH - Digitale Gesellschaft)
+      #- sdns://AgcAAAAAAAAADTE4NS45NS4yMTguNDKg9_WvKIAeh31986K-KP4UnzJ0p-0p8Tb9UDzjmMuoCw2g9XV9eG8XP2q1MZfsnCKQisBtKuTqoqW29Y678AOXod-gs14FlQz72CWfk3W6EBhwuMPEwOxaUpdX5jFn6d4mqeig7PBiC_ww1ETe9Xetxlw3UFpzui0v2eb_QcPtOtDWWg-gouMnQ2N22OdkBavp_siMtB3i1NA1DU6CkqUxGMS431ugkHjSGlbA4IkdkGIhtpkjMb3RcXLrDzPdoH1cZcbhTDmg1q1wTTQXThIIyVKqq5g16xwGaw3No7Ta1A9FE-jhglqgsl8vNpZ_c5TwmTeIWzM_qjVtcZ_qzzjM6fA1UADz4XSg5kS6aWPjNf52XLmXaxKxDrVClLQkd3ZMyzo6zKOssvygKq4_t78F5MgcQZTcpEUR1PmvMEeG7BrnIYQJz2Kgg1Wg1h2W6_s_oZCW4sAC42A79_2q77InBNqGaAYrvobtS5MgnUgyu0yNdyB7Jd4XWSaC78PKRfV53GZKDtXySPXJM5gcZG5zLmRpZ2l0YWxlLWdlc2VsbHNjaGFmdC5jaAovZG5zLXF1ZXJ5
     # optional: use client name (with wildcard support: * - sequence of any characters, [0-9] - range)
     # or single ip address / client subnet as CIDR notation
     #laptop*:
@@ -323,14 +328,26 @@ hostsFile:
 
 # optional: ports configuration
 ports:
-  # optional: DNS listener port(s) and bind ip address(es), default 53 (UDP and TCP). Example: 53, :53, "127.0.0.1:5353,[::1]:5353"
-  dns: 53
-  # optional: Port(s) and bind ip address(es) for DoT (DNS-over-TLS) listener. Example: 853, 127.0.0.1:853
+  # optional: DNS listener port(s) and bind ip address(es)
+  # default: 53 (UDP and TCP)
+  # example: [53, :53, 127.0.0.1:53, [::1]:53]
+  dns:
+    - 53
+    #- localhost:5353
+  # optional: Port(s) and bind ip address(es) for DoT (DNS-over-TLS) listener.
+  #           Supports the same formats as `dns` above.
+  # default: none
+  # example: [853, :853, 127.0.0.1:853, [::1]:853]
   tls: 853
-  # optional: Port(s) and optional bind ip address(es) to serve HTTPS used for prometheus metrics, pprof, REST API, DoH... If you wish to specify a specific IP, you can do so such as 192.168.0.1:443. Example: 443, :443, 127.0.0.1:443,[::1]:443
+  # optional: Port(s) and optional bind ip address(es) to serve HTTPS used for prometheus metrics, pprof, REST API, DoH...
+  # example: [443, :443, 127.0.0.1:443, [::1]:443]
   https: 443
-  # optional: Port(s) and optional bind ip address(es) to serve HTTP used for prometheus metrics, pprof, REST API, DoH... If you wish to specify a specific IP, you can do so such as 192.168.0.1:4000. Example: 4000, :4000, 127.0.0.1:4000,[::1]:4000
+  # optional: Port(s) and optional bind ip address(es) to serve HTTP used for prometheus metrics, pprof, REST API, DoH...
+  # example: [4000, :4000, 127.0.0.1:4000, [::1]:4000]
   http: 4000
+  # optional: URL path for DoH queries.
+  # default: /dns-query
+  #dohPath: /dns-query
 
 # optional: logging configuration
 log:
@@ -361,3 +378,70 @@ ecs:
   useAsClient: true
   # optional: if the request contains a ecs option it will be forwarded to the upstream resolver
   forward: true
+
+# optional: DNSSEC validation configuration
+# DNSSEC (Domain Name System Security Extensions) provides cryptographic authentication
+# of DNS data to protect against cache poisoning and man-in-the-middle attacks
+dnssec:
+  # Enable DNSSEC validation. When enabled, Blocky will:
+  # - Set the DNSSEC OK (DO) bit on upstream queries
+  # - Validate cryptographic signatures (RRSIG) in DNS responses
+  # - Verify the chain of trust from root to queried domain
+  # - Validate authenticated denial of existence (NSEC/NSEC3 for NXDOMAIN/NODATA)
+  # - Validate wildcard expansions per RFC 4035 §5.3.4
+  # - Return SERVFAIL for responses with invalid DNSSEC signatures (Bogus)
+  # - Set the Authenticated Data (AD) flag only after successful validation
+  #
+  # default: false
+  validate: true
+
+  # Maximum domain label depth for chain of trust validation
+  # Prevents DoS with deeply nested domains (e.g., a.b.c.d.e.f.g.h.i.j.example.com)
+  # default: 10
+  maxChainDepth: 10
+
+  # How long to cache validation results (in hours)
+  # Improves performance by avoiding repeated validation of the same domains
+  # default: 1
+  cacheExpirationHours: 1
+
+  # Maximum upstream DNS queries per validation request
+  # Protects against DoS attacks with queries requiring many upstream lookups
+  # (e.g., deeply nested delegation chains requiring DNSKEY + DS queries per level)
+  # Validation will fail if budget is exhausted
+  # default: 30
+  maxUpstreamQueries: 30
+
+  # Maximum NSEC3 hash iterations allowed during validation
+  # NSEC3 is used for authenticated denial of existence in DNSSEC zones
+  # Higher iteration counts increase CPU cost, making DoS attacks possible
+  # RFC 5155 §10.3 recommends rejecting responses with excessive iterations
+  # default: 150
+  maxNSEC3Iterations: 150
+
+  # Clock skew tolerance in seconds for signature timestamp validation
+  # Allows validation to succeed even if the system clock is off by this amount
+  # RFC 6781 §4.1.2 recommends accounting for clock skew in deployment environments
+  # This is especially important for:
+  # - Virtual machines (clock drift after suspend/resume)
+  # - Containers (clock sync with host)
+  # - IoT/embedded devices (no NTP, battery-backed RTC)
+  # - Systems during NTP synchronization
+  # Default matches industry standard validators (Unbound, BIND)
+  # - 300 (5 minutes): Conservative, handles typical NTP drift
+  # - 3600 (1 hour): Lenient, handles timezone/DST issues (default)
+  # - 7200 (2 hours): Very lenient, for systems with significant clock problems
+  # default: 3600 (1 hour)
+  clockSkewToleranceSec: 3600
+
+  # optional: Custom trust anchors (DNSKEY records) for DNSSEC validation
+  # By default, Blocky uses the latest IANA root trust anchors (KSK-2017 and KSK-2024)
+  # Only override this for testing, private zones, or lab environments
+  # Format: DNS record format (DNSKEY or DS records)
+  # WARNING: Specifying custom trust anchors replaces the default root trust anchors
+  # default: [] (use built-in root trust anchors)
+  trustAnchors:
+    # Example: Custom DNSKEY record for a private zone
+    - "example.com. 86400 IN DNSKEY 257 3 8 AwEAAaz/tAm8yTn4Mfeh5eyI96WSVexTBAvkMgJzkKTO..."
+    # Example: DS record format (for parent zone validation)
+    - "subdomain.example.com. 3600 IN DS 12345 8 2 1234567890ABCDEF..."
