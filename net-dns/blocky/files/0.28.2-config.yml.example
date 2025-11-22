@@ -59,8 +59,10 @@ customDNS:
 # Example: Query client.fritz.box will ask DNS server 192.168.178.1.
 # This is necessary for local network, to resolve clients by host name
 conditional:
-  # optional: if false (default), return empty result if after rewrite, the mapped resolver returned an empty answer. If true, the original query will be sent to the upstream resolver
-  # Example: The query "blog.example.com" will be rewritten to "blog.fritz.box" and also redirected to the resolver at 192.168.178.1. If not found and if `fallbackUpstream` was set to `true`, the original query "blog.example.com" will be sent upstream.
+  # optional: if false (default), return empty result if after rewrite, the mapped resolver returned an empty answer.
+  # If true, the original query will be sent to the upstream resolver
+  # Example: The query "blog.example.com" will be rewritten to "blog.fritz.box" and also redirected to the resolver at 192.168.178.1.
+  # If not found and if `fallbackUpstream` was set to `true`, the original query "blog.example.com" will be sent upstream.
   # Usage: One usecase when having split DNS for internal and external (internet facing) users, but not all subdomains are listed in the internal domain.
   fallbackUpstream: false
   # optional: replace domain in the query with other domain before resolver lookup in the mapping
@@ -199,7 +201,8 @@ clientLookup:
   singleNameOrder:
     - 2
     - 1
-  # optional: custom mapping of client name to IP addresses. Useful if reverse DNS does not work properly or just to have custom client names.
+  # optional: custom mapping of client name to IP addresses.
+  # Useful if reverse DNS does not work properly or just to have custom client names.
   clients:
   #  laptop:
   #    - 192.168.178.29
@@ -225,7 +228,9 @@ queryLog:
   creationAttempts: 1
   # optional: Time between the creation attempts, default: 2s
   creationCooldown: 2s
-  # optional: Which fields should be logged. You can choose one or more from: clientIP, clientName, responseReason, responseAnswer, question, duration. If not defined, it logs all fields
+  # optional: Which fields should be logged.
+  # You can choose one or more from: clientIP, clientName, responseReason, responseAnswer, question, duration.
+  # If not defined, it logs all fields
   #fields:
   #  - clientIP
   #  - duration
@@ -265,7 +270,8 @@ minTlsServeVersion: 1.2
 #certFile: server.crt
 #keyFile: server.key
 
-# optional: use these DNS servers to resolve denylist urls and upstream DNS servers. It is useful if no system DNS resolver is configured, and/or to encrypt the bootstrap queries.
+# optional: use these DNS servers to resolve denylist urls and upstream DNS servers.
+# It is useful if no system DNS resolver is configured, and/or to encrypt the bootstrap queries.
 bootstrapDns:
   - tcp+udp:1.1.1.1
   - https://1.1.1.1/dns-query
@@ -357,7 +363,8 @@ log:
   format: text
   # optional: log timestamps. Default: true
   timestamp: true
-  # optional: obfuscate log output (replace all alphanumeric characters with *) for user sensitive data like request domains or responses to increase privacy. Default: false
+  # optional: obfuscate log output (replace all alphanumeric characters with *) for user sensitive data like request domains or responses to increase privacy.
+  # Default: false
   privacy: false
 
 # optional: add EDE error codes to dns response
