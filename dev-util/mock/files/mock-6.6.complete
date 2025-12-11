@@ -99,7 +99,7 @@ echo '
 --arch
 --forcearch
 --target
--D
+--define
 --macro-file
 --with
 --without
