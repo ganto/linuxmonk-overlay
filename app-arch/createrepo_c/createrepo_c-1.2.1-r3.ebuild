@@ -15,6 +15,8 @@ SRC_URI="
 		-> ${PN}-1.2.1-r2-cmake4.patch
 	https://github.com/rpm-software-management/createrepo_c/commit/0a2da7c87ae9b7e3e11e77416a8e75633d4608a0.patch
 		-> ${PN}-1.2.1-r3-conditional-deps.patch
+	https://github.com/rpm-software-management/createrepo_c/commit/908e3a4a5909ab107da41c2631a06c6b23617f3c.patch
+		-> ${PN}-1.2.1-r3-fix-doxygen-deps.patch
 "
 
 LICENSE="GPL-2"
@@ -54,6 +56,7 @@ PATCHES=(
 	"${DISTDIR}/${PN}-1.2.1-r2-cmake4.patch"
 	"${DISTDIR}/${PN}-1.2.1-r2-rpm6compat.patch"
 	"${DISTDIR}/${PN}-1.2.1-r3-conditional-deps.patch"
+	"${DISTDIR}/${PN}-1.2.1-r3-fix-doxygen-deps.patch"
 )
 
 src_configure() {
