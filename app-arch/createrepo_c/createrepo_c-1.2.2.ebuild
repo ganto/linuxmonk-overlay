@@ -7,17 +7,7 @@ inherit cmake
 
 DESCRIPTION="C implementation of createrepo"
 HOMEPAGE="https://rpm-software-management.github.io/createrepo_c"
-SRC_URI="
-	https://github.com/rpm-software-management/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz
-	https://github.com/rpm-software-management/createrepo_c/commit/4e37bc582b1673ff767dbd0b570ef1c8871d3e8c.patch
-		-> ${PN}-1.2.1-r2-rpm6compat.patch
-	https://github.com/rpm-software-management/createrepo_c/commit/89fa02828cdaf1c710c38bde5fcbcf59538a9cce.patch
-		-> ${PN}-1.2.1-r2-cmake4.patch
-	https://github.com/rpm-software-management/createrepo_c/commit/0a2da7c87ae9b7e3e11e77416a8e75633d4608a0.patch
-		-> ${PN}-1.2.1-r3-conditional-deps.patch
-	https://github.com/rpm-software-management/createrepo_c/commit/908e3a4a5909ab107da41c2631a06c6b23617f3c.patch
-		-> ${PN}-1.2.1-r3-fix-doxygen-deps.patch
-"
+SRC_URI="https://github.com/rpm-software-management/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
@@ -52,15 +42,9 @@ DEPEND="
 
 RDEPEND="${DEPEND}"
 
-PATCHES=(
-	"${DISTDIR}/${PN}-1.2.1-r2-cmake4.patch"
-	"${DISTDIR}/${PN}-1.2.1-r2-rpm6compat.patch"
-	"${DISTDIR}/${PN}-1.2.1-r3-conditional-deps.patch"
-	"${DISTDIR}/${PN}-1.2.1-r3-fix-doxygen-deps.patch"
-)
-
 src_configure() {
 	local mycmakeargs=(
+		-DBUILD_DOC_C=$(usex doc ON OFF)
 		-DENABLE_DRPM=$(usex drpm ON OFF)
 		# As best I can tell, this enables distribution as a wheel. No need for this on gentoo!
 		-DENABLE_PYTHON=OFF
@@ -80,7 +64,7 @@ src_compile() {
 	cmake_src_compile
 	# Tests have a magic target!
 	use test && cmake_src_compile tests
-	use doc && cmake_src_compile doc-c
+	use doc && cmake_src_compile doc
 }
 
 src_test() {
