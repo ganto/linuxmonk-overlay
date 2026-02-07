@@ -1,11 +1,11 @@
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
 DISTUTILS_USE_PEP517=setuptools
 DISTUTILS_EXT=1
-PYTHON_COMPAT=( python3_{10..13} )
+PYTHON_COMPAT=( python3_{10..14} )
 
 inherit distutils-r1
 
@@ -17,7 +17,10 @@ HOMEPAGE="
 	https://www.ovirt.org/
 	https://github.com/oVirt/python-ovirt-engine-sdk4
 "
-SRC_URI="https://github.com/oVirt/python-ovirt-engine-sdk4/archive/${PV}/${MY_P}.tar.gz -> ${MY_P}.gh.tar.gz"
+SRC_URI="
+	https://github.com/oVirt/python-ovirt-engine-sdk4/archive/${PV}/${MY_P}.tar.gz
+	-> ${MY_P}.gh.tar.gz
+"
 S="${WORKDIR}/${MY_P}"
 
 LICENSE="Apache-2.0"
@@ -28,7 +31,6 @@ IUSE="examples"
 DEPEND="
 	dev-libs/libxml2
 	dev-python/pycurl[${PYTHON_USEDEP}]
-	dev-python/six[${PYTHON_USEDEP}]
 "
 RDEPEND="${DEPEND}"
 
