@@ -4,13 +4,13 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517=setuptools
-PYTHON_COMPAT=( python3_{11..13} )
+PYTHON_COMPAT=( python3_{11..14} )
 
 inherit pam python-single-r1 bash-completion-r1
 
 MY_PV=${PV}-1
 MY_P=${PN}-${MY_PV}
-CORE_CONFIGS_VERSION=43.5-1
+CORE_CONFIGS_VERSION=44.1-1
 
 DESCRIPTION="Builds RPM packages inside chroots"
 HOMEPAGE="
@@ -48,7 +48,7 @@ RDEPEND="
 		dev-python/rpmautospec-core[${PYTHON_USEDEP}]
 		>=dev-python/templated-dictionary-1.5[${PYTHON_USEDEP}]
 	')
-	>=dev-util/distribution-gpg-keys-1.116
+	>=dev-util/distribution-gpg-keys-1.117
 	sys-apps/iproute2
 	sys-apps/shadow
 	sys-apps/usermode
