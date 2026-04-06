@@ -1,9 +1,9 @@
-# Copyright 1999-2024 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
-USE_RUBY="ruby31 ruby32 ruby33"
+USE_RUBY="ruby32 ruby33"
 
 # Depends on unreleased vagrant-spec gem
 RUBY_FAKEGEM_RECIPE_TEST="none"
@@ -30,6 +30,12 @@ ruby_add_rdepend "
 	dev-ruby/rexml
 	dev-ruby/xml-simple
 "
+
+PATCHES=(
+	"${FILESDIR}"/vagrant-libvirt-0.12.2-Fix-REXML-3-4-2-compatibility.patch
+	"${FILESDIR}"/vagrant-libvirt-0.12.2-Remove-config-unsupported-by-fog-libvirt.patch
+	"${FILESDIR}"/vagrant-libvirt-0.12.2-Replace-CGI.parse-with-URI-equivalent.patch
+)
 
 each_ruby_install() {
 	each_fakegem_install

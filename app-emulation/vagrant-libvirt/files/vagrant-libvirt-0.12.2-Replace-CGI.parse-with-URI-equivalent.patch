@@ -1,0 +1,41 @@
+From dfb9fd59bd6eca13f4e22e5038247473f9cd108d Mon Sep 17 00:00:00 2001
+From: Jarek Prokop <jprokop@redhat.com>
+Date: Tue, 16 Dec 2025 12:18:01 +0100
+Subject: [PATCH] Replace CGI.parse with URI equivalent.
+
+For Ruby 4.0 compatibility, where CGI is no longer a part
+of the upstream Ruby distribution.
+
+Replace the CGI.parse with URI.decode_www_form and some filtering
+on top so that the replacement keeps existing behavior.
+---
+ lib/vagrant-libvirt/config.rb | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/lib/vagrant-libvirt/config.rb b/lib/vagrant-libvirt/config.rb
+index cdee174..96261ca 100644
+--- a/lib/vagrant-libvirt/config.rb
++++ b/lib/vagrant-libvirt/config.rb
+@@ -1,6 +1,6 @@
+ # frozen_string_literal: true
+ 
+-require 'cgi'
++require 'uri'
+ 
+ require 'vagrant'
+ require 'vagrant/action/builtin/mixin_synced_folders'
+@@ -1335,8 +1335,12 @@ module VagrantPlugins
+         @username = nil if @username == UNSET_VALUE
+         @username = uri.user if uri.user
+         if uri.query
+-          params = CGI.parse(uri.query)
+-          @id_ssh_key_file = params['keyfile'].first if params.has_key?('keyfile')
++          params = URI
++            .decode_www_form(uri.query)
++            .select { |k, v| k == 'keyfile' }
++            .map { |_,v| v }
++            .first
++          @id_ssh_key_file = params if params
+         end
+ 
+         finalize_id_ssh_key_file

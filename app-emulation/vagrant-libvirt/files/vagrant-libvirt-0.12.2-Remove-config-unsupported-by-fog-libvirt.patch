@@ -1,0 +1,31 @@
+From 5bb08ec8150ee3ceca74c772f4c72b49b61f988f Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Janek=20Ziele=C5=BAnicki?= <janek.zieleznicki@gmail.com>
+Date: Mon, 18 Nov 2024 19:16:07 +0100
+Subject: [PATCH 1/2] Remove config unsupported by fog-libvirt
+
+fog-libvirt dropped support for libvirt < 1.2.8 in version v0.13.0
+This config is no longer supported nor needed
+---
+ lib/vagrant-libvirt/driver.rb | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/lib/vagrant-libvirt/driver.rb b/lib/vagrant-libvirt/driver.rb
+index 73f0f7a45..90e0e6118 100644
+--- a/lib/vagrant-libvirt/driver.rb
++++ b/lib/vagrant-libvirt/driver.rb
+@@ -32,14 +32,9 @@ def connection
+         config = @machine.provider_config
+         uri = config.uri
+ 
+-        # Setup command for retrieving IP address for newly created machine
+-        # with some MAC address. Get it from dnsmasq leases table
+-        ip_command = %q( awk "/$mac/ {print \$1}" /proc/net/arp )
+-
+         conn_attr = {
+           provider: 'libvirt',
+           libvirt_uri: uri,
+-          libvirt_ip_command: ip_command,
+         }
+         conn_attr[:libvirt_username] = config.username if config.username
+         conn_attr[:libvirt_password] = config.password if config.password
+

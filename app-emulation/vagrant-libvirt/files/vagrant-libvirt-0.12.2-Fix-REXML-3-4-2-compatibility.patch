@@ -1,0 +1,116 @@
+From ec4daf33cf6135f9a29c48a61dd8a6e8b9bf0dc1 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?V=C3=ADt=20Ondruch?= <vondruch@redhat.com>
+Date: Fri, 31 Oct 2025 17:35:48 +0100
+Subject: [PATCH] Fix REXML 3.4.2+ compatibility
+
+REXML 3.4.2+ deprecated accepting array as an element in `XPath.match`
+[[1]]. This led to test errors such as:
+
+~~~
+  3) VagrantPlugins::ProviderLibvirt::Action::ResolveDiskSettings#call when vm box is in use when box metadata is not available when multiple volumes in domain config should populate domain volumes with devices
+     Failure/Error:
+       expect(env[:domain_volumes]).to match(
+         [
+           hash_including(
+             device: 'vda',
+             absolute_path: '/var/lib/libvirt/images/vagrant-test_default.img'
+           ),
+           hash_including(
+             device: 'vdb',
+             absolute_path: '/var/lib/libvirt/images/vagrant-test_default_1.img'
+           ),
+       expected [{absolute_path: "/var/lib/libvirt/images/vagrant-test_default.img", bus: "virtio", cache: "default", device: "vda", name: "vagrant-test_default.img"}] to match [#<RSpec::Mocks::ArgumentMatchers::HashIncludingMatcher:0x00007fff921b3db8 @expected={device: "vda", absolute_path: "/var/lib/libvirt/images/vagrant-test_default.img"}>, #<RSpec::Mocks::ArgumentMatchers::HashIncludingMatcher:0x00007fff921b3d40 @expected={device: "vdb", absolute_path: "/var/lib/libvirt/images/vagrant-test_default_1.img"}>, #<RSpec::Mocks::ArgumentMatchers::HashIncludingMatcher:0x00007fff921b3cc8 @expected={device: "vdc", absolute_path: "/var/lib/libvirt/images/vagrant-test_default_2.img"}>]
+       Diff:
+       @@ -1,4 +1,6 @@
+       -[hash_including(device: "vda", absolute_path: "/var/lib/libvirt/images/vagrant-test_default.img"),
+       - hash_including(device: "vdb", absolute_path: "/var/lib/libvirt/images/vagrant-test_default_1.img"),
+       - hash_including(device: "vdc", absolute_path: "/var/lib/libvirt/images/vagrant-test_default_2.img")]
+       +[{absolute_path: "/var/lib/libvirt/images/vagrant-test_default.img",
+       +  bus: "virtio",
+       +  cache: "default",
+       +  device: "vda",
+       +  name: "vagrant-test_default.img"}]
+     # ./spec/unit/action/resolve_disk_settings_spec.rb:200:in 'block (6 levels) in <top (required)>'
+     # ./spec/support/unit_context.rb:51:in 'block (3 levels) in <top (required)>'
+     # ./spec/support/unit_context.rb:43:in 'block (2 levels) in <top (required)>'
+     # ./spec/support/unit_context.rb:51:in 'block (3 levels) in <top (required)>'
+     # ./spec/support/unit_context.rb:43:in 'block (2 levels) in <top (required)>'
+~~~
+
+This changes the logic in a way, that XPath is matching against whole
+XML document, instead of array of XML elements.
+
+[1]: https://github.com/ruby/rexml/pull/252
+---
+ lib/vagrant-libvirt/action/destroy_domain.rb        | 10 ++++++----
+ lib/vagrant-libvirt/action/resolve_disk_settings.rb |  9 +++++----
+ 2 files changed, 11 insertions(+), 8 deletions(-)
+
+diff --git a/lib/vagrant-libvirt/action/destroy_domain.rb b/lib/vagrant-libvirt/action/destroy_domain.rb
+index 4d6cc6ee8..fba6aee6d 100644
+--- a/lib/vagrant-libvirt/action/destroy_domain.rb
++++ b/lib/vagrant-libvirt/action/destroy_domain.rb
+@@ -59,7 +59,7 @@ def call(env)
+             domain_xml = libvirt_domain.xml_desc(1)
+             xml_descr = REXML::Document.new(domain_xml)
+             disks_xml = REXML::XPath.match(xml_descr, '/domain/devices/disk[@device="disk"]')
+-            have_aliases = !(REXML::XPath.match(disks_xml, './alias[@name="ua-box-volume-0"]').first).nil?
++            have_aliases = !REXML::XPath.match(xml_descr, '/domain/devices/disk[@device="disk"]/alias[@name="ua-box-volume-0"]').first.nil?
+             if !have_aliases
+               env[:ui].warn(I18n.t('vagrant_libvirt.domain_xml.obsolete_method'))
+             end
+@@ -73,7 +73,9 @@ def call(env)
+             # the additional storage devices are.
+             detected_box_volumes = 0
+             if have_aliases
+-              REXML::XPath.match(disks_xml, './alias[contains(@name, "ua-box-volume-")]').each do |box_disk|
++              REXML::XPath.match(xml_descr,
++                                 '/domain/devices/disk[@device="disk"]/alias[contains(@name, "ua-box-volume-")]'
++              ).each do  |box_disk|
+                 diskname = box_disk.parent.elements['source'].attributes['file'].rpartition('/').last
+                 detected_box_volumes += 1
+ 
+@@ -130,13 +132,13 @@ def call(env)
+               # look for exact match using aliases which will be used
+               # for subsequent domain creations
+               if have_aliases
+-                domain_disk = REXML::XPath.match(disks_xml, './alias[@name="ua-disk-volume-' + index.to_s + '"]').first
++                domain_disk = REXML::XPath.match(xml_descr, '/domain/devices/disk[@device="disk"]/alias[@name="ua-disk-volume-' + index.to_s + '"]').first
+                 domain_disk = domain_disk.parent if !domain_disk.nil?
+               else
+                 # otherwise fallback to find the disk by device if specified by user
+                 # and finally index counting with offset and hope the match is correct
+                 if !disk[:device].nil?
+-                  domain_disk = REXML::XPath.match(disks_xml, './target[@dev="' + disk[:device] + '"]').first
++                  domain_disk = REXML::XPath.match(xml_descr, '/domain/devices/disk[@device="disk"]/target[@dev="' + disk[:device] + '"]').first
+                   domain_disk = domain_disk.parent if !domain_disk.nil?
+                 else
+                   domain_disk = disks_xml[offset + index]
+diff --git a/lib/vagrant-libvirt/action/resolve_disk_settings.rb b/lib/vagrant-libvirt/action/resolve_disk_settings.rb
+index f1a3f6755..add3e1021 100644
+--- a/lib/vagrant-libvirt/action/resolve_disk_settings.rb
++++ b/lib/vagrant-libvirt/action/resolve_disk_settings.rb
+@@ -50,18 +50,19 @@ def call(env)
+               domain_xml = libvirt_domain.xml_desc(1)
+               xml_descr = REXML::Document.new(domain_xml)
+               domain_name = xml_descr.elements['domain'].elements['name'].text
+-              disks_xml = REXML::XPath.match(xml_descr, '/domain/devices/disk[@device="disk"]')
+-              have_aliases = !REXML::XPath.match(disks_xml, './alias[@name="ua-box-volume-0"]').first.nil?
++              have_aliases = !REXML::XPath.match(xml_descr, '/domain/devices/disk[@device="disk"]/alias[@name="ua-box-volume-0"]').first.nil?
+               env[:ui].warn(I18n.t('vagrant_libvirt.domain_xml.obsolete_method')) unless have_aliases
+ 
+               if have_aliases
+-                REXML::XPath.match(disks_xml,
+-                                   './alias[contains(@name, "ua-box-volume-")]').each_with_index do |alias_xml, idx|
++                REXML::XPath.match(xml_descr,
++                                   '/domain/devices/disk[@device="disk"]/alias[contains(@name, "ua-box-volume-")]'
++                ).each_with_index do |alias_xml, idx|
+                   domain_volumes.push(volume_from_xml(alias_xml.parent, domain_name, idx))
+                 end
+               else
+                 # fallback to try and infer which boxes are box images, as they are listed first
+                 # as soon as there is no match, can exit
++                disks_xml = REXML::XPath.match(xml_descr, '/domain/devices/disk[@device="disk"]')
+                 disks_xml.each_with_index do |box_disk_xml, idx|
+                   diskname = box_disk_xml.elements['source'].attributes['file'].rpartition('/').last
+ 
