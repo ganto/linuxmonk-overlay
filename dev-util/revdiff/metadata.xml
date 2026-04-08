@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<upstream>
+		<remote-id type="github">umputun/revdiff</remote-id>
+	</upstream>
+	<longdescription lang="en">
+		TUI for reviewing diffs, files, and documents with inline annotations.
+		Outputs structured annotations to stdout on quit, making it easy to pipe
+		results into AI agents, scripts, or other tools.
+	</longdescription>
+</pkgmetadata>
