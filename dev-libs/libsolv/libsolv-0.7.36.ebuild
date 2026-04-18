@@ -1,31 +1,34 @@
-# Copyright 1999-2023 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( python3_{10..14} )
 
-USE_RUBY="ruby31 ruby32"
+USE_RUBY="ruby32 ruby33 ruby34 ruby40"
 RUBY_OPTIONAL=yes
 
 inherit cmake python-r1 ruby-ng perl-module
 
 DESCRIPTION="Library for solving packages and reading repositories"
-HOMEPAGE="https://doc.opensuse.org/projects/libzypp/HEAD/ https://github.com/openSUSE/libsolv"
-SRC_URI="https://github.com/openSUSE/libsolv/archive/${PV}.tar.gz -> ${P}.tar.gz"
-RESTRICT="mirror"
+HOMEPAGE="https://github.com/openSUSE/libsolv"
+SRC_URI="https://github.com/openSUSE/libsolv/archive/refs/tags/${PV}.tar.gz -> ${P}.tar.gz"
+
+# The ruby-ng eclass is stupid and breaks this for no good reason.
+S="${WORKDIR}/all/${P}"
 
 LICENSE="BSD"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE="bzip2 lzma perl python rpm ruby tcl zstd zchunk"
+IUSE="bzip2 expat lzma perl python rpm ruby tcl zstd zchunk"
+RESTRICT="mirror"
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
 RDEPEND="
-	dev-libs/expat
-	dev-libs/libxml2
-	sys-libs/zlib
+	virtual/zlib
 	bzip2? ( app-arch/bzip2 )
+	expat? ( dev-libs/expat )
+	!expat? ( dev-libs/libxml2 )
 	lzma? ( app-arch/xz-utils )
 	perl? ( dev-lang/perl:= )
 	python? ( ${PYTHON_DEPS} )
@@ -33,7 +36,7 @@ RDEPEND="
 	ruby? ( $(ruby_implementations_depend) )
 	tcl? ( dev-lang/tcl:0= )
 	zchunk? ( app-arch/zchunk )
-	zstd? ( app-arch/zstd )
+	zstd? ( app-arch/zstd:= )
 "
 DEPEND="${RDEPEND}"
 BDEPEND="
@@ -45,8 +48,10 @@ BDEPEND="
 	virtual/pkgconfig
 "
 
-# The ruby-ng eclass is stupid and breaks this for no good reason.
-S="${WORKDIR}/all/${P}"
+PATCHES=(
+	"${FILESDIR}"/0.7.36-Python-Provide-dist-info-metadata.patch
+	"${FILESDIR}"/0.7.36-Add-INSTALLER-to-Python-metadata.patch
+)
 
 pkg_setup() {
 	use perl && perl_set_version
@@ -54,6 +59,8 @@ pkg_setup() {
 }
 
 src_prepare() {
+	# remove forced CFLAGS -g -O2; bug 936869
+	sed "/CMAKE_C_FLAGS_${CMAKE_BUILD_TYPE^^}/d" -i CMakeLists.txt || die
 	cmake_src_prepare
 
 	# The python bindings are tightly integrated w/cmake.
@@ -89,7 +96,7 @@ src_configure() {
 		-DENABLE_ZSTD_COMPRESSION=$(usex zstd)
 		-DMULTI_SEMANTICS=ON
 		-DUSE_VENDORDIRS=ON
-		-DWITH_LIBXML2=ON
+		-DWITH_LIBXML2=$(usex !expat)
 		-DWITH_SYSTEM_ZCHUNK=$(usex zchunk)
 	)
 	cmake_src_configure
@@ -110,10 +117,12 @@ src_configure() {
 }
 
 pysolv_phase_func() {
+	pushd "${BUILD_DIR}"
 	cmake_${EBUILD_PHASE_FUNC} bindings_python
 	if [[ "${EBUILD_PHASE_FUNC}" == "src_install" ]]; then
 		python_optimize "${D}${PYTHON_SITEDIR}"
 	fi
+	popd
 }
 
 src_compile() {
