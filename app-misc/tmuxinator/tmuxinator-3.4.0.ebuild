@@ -2,11 +2,11 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
-USE_RUBY="ruby32 ruby33 ruby34"
+USE_RUBY="ruby32 ruby33 ruby34 ruby40"
 
 RUBY_FAKEGEM_TASK_DOC="none"
 
-inherit bash-completion-r1 ruby-fakegem
+inherit ruby-fakegem shell-completion
 
 DESCRIPTION="Manage complex tmux sessions easily"
 HOMEPAGE="https://github.com/tmuxinator/tmuxinator"
@@ -30,6 +30,5 @@ all_ruby_install() {
 	dosym tmuxinator "$(get_bashcompdir)"/mux
 	dosym tmuxinator.fish /usr/share/fish/completions/mux.fish
 
-	insinto /usr/share/zsh/site-functions
-	newins completion/tmuxinator.zsh _mux
+	newzshcomp completion/tmuxinator.zsh _mux
 }
