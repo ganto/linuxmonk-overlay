@@ -19,6 +19,8 @@ upstreams:
       #- tcp-tls:fdns1.dismail.de:853
       # example for DNS-over-HTTPS (DoH)
       #- https://dns.digitale-gesellschaft.ch/dns-query
+      # example for DNS-over-QUIC (DoQ) - also accepts quic://dns.adguard.com
+      #- quic:dns.adguard.com
       # example for DNS Stamp format (Plain DNS - Google 8.8.8.8)
       #- sdns://AAcAAAAAAAAABzguOC44Ljg
       # example for DNS Stamp format (DoH - Digitale Gesellschaft)
@@ -33,6 +35,12 @@ upstreams:
   strategy: parallel_best
   # optional: timeout to query the upstream resolver. Default: 2s
   timeout: 2s
+  # optional: QUIC-specific settings (only relevant when quic: upstreams are configured)
+  quic:
+    # optional: maximum idle timeout before closing connection. Default: 30s
+    maxIdleTimeout: 30s
+    # optional: keep-alive interval to maintain connection. Default: 15s
+    keepAlivePeriod: 15s
   # optional: HTTP User Agent when connecting to upstreams. Default: none
   userAgent: "0xERR0R/blocky"
 
@@ -111,6 +119,25 @@ blocking:
     #  - ads
     #192.168.178.1/24:
     #  - special
+  # optional: define named schedules to control when list groups are active
+  #schedules:
+  #  workhours:
+      # required: allowed values mon, tue, wed, thu, fri, sat, sun
+  #    weekdays: [mon, tue, wed, thu, fri]
+      # optional: HH:MM (24h). Must be set together with end.
+  #    start: "08:00"
+      # optional: HH:MM (24h). If start > end, schedule spans overnight.
+  #    end: "18:00"
+  #  weekend:
+      # full-day schedule on selected weekdays (omit start/end)
+  #    weekdays: [sat, sun]
+  # optional: map list group name to one or more schedule names
+  # if omitted for a list, that list is always active
+  # if multiple schedules are set, they are combined with OR logic
+  #listSchedules:
+  #  special:
+  #    - workhours
+  #    - weekend
   # which response will be sent, if query is blocked:
   # zeroIp: 0.0.0.0 will be returned (default)
   # nxDomain: return NXDOMAIN as return code
@@ -355,6 +382,11 @@ ports:
   # default: /dns-query
   #dohPath: /dns-query
 
+# optional: configuration for DOH  over HTTP/3
+http3:
+  # optional: serve DNS-over-HTTPS over HTTP/3 (RFC 9114). Default: false
+  #enable: true
+
 # optional: logging configuration
 log:
   # optional: Log level (one from trace, debug, info, warn, error). Default: info
@@ -452,3 +484,56 @@ dnssec:
     - "example.com. 86400 IN DNSKEY 257 3 8 AwEAAaz/tAm8yTn4Mfeh5eyI96WSVexTBAvkMgJzkKTO..."
     # Example: DS record format (for parent zone validation)
     - "subdomain.example.com. 3600 IN DS 12345 8 2 1234567890ABCDEF..."
+
+# optional: DNS64 configuration
+# DNS64 (RFC 6147) allows IPv6-only clients to access IPv4-only services by
+# synthesizing AAAA (IPv6) records from A (IPv4) records. This is critical for
+# IPv6-only networks (cellular, IoT, modern datacenters) that need to reach
+# legacy IPv4-only destinations.
+dns64:
+  # Enable DNS64 synthesis
+  # WARNING: Do NOT enable if filtering.queryTypes contains AAAA, as all AAAA
+  # queries will be filtered before reaching DNS64 (making DNS64 ineffective)
+  # default: false
+  enable: false
+
+  # optional: DNS64 prefixes for IPv4-to-IPv6 address synthesis
+  # Multiple prefixes allow for load balancing or redundancy across multiple
+  # NAT64 gateways. DNS64 will synthesize one AAAA record per prefix per A record.
+  #
+  # Format: IPv6 prefix in CIDR notation
+  # Valid prefix lengths (per RFC 6052): /32, /40, /48, /56, /64, /96
+  # - /96 is most common (well-known prefix 64:ff9b::/96)
+  # - Shorter prefixes (/32, /40, etc.) allow more flexibility in address assignment
+  #
+  # default: [64:ff9b::/96] (RFC 6052 well-known prefix)
+  #
+  # IMPORTANT: Prefixes must not overlap. Overlapping prefixes will be rejected.
+  prefixes:
+    - 64:ff9b::/96
+
+  # optional: DNS64 exclusion set
+  # DNS64 will NOT synthesize AAAA records if the response already contains
+  # AAAA records that are NOT in the exclusion set.
+  #
+  # If not specified (recommended), uses default exclusion set:
+  # - IPv4-mapped IPv6 addresses (::ffff:0:0/96) - RFC 6147 requirement
+  # - Loopback address (::1/128) - RFC 6147 recommendation
+  # - Link-local addresses (fe80::/10) - RFC 6147 recommendation
+  # - Configured DNS64 prefixes - prevents synthesis loops
+  #
+  # Custom exclusion set (advanced use only):
+  # WARNING: If you configure a custom exclusion set, you are responsible for
+  # including all necessary ranges. The configured prefixes are NOT automatically
+  # added when using a custom exclusion set.
+  #
+  # default: [::ffff:0:0/96, ::1/128, fe80::/10] + configured prefixes
+  #
+  # Example custom exclusion set:
+  # exclusionSet:
+  #   - ::ffff:0:0/96  # IPv4-mapped (REQUIRED by RFC)
+  #   - ::1/128        # Loopback (recommended)
+  #   - fe80::/10      # Link-local (recommended)
+  #   - 64:ff9b::/96   # Your configured prefix (recommended to prevent loops)
+  #   - 2001:db8::/32  # Custom exclusion range
+  #
