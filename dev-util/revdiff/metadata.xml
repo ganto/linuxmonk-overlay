@@ -5,6 +5,9 @@
 		<email>reto.gantenbein@linuxmonk.ch</email>
 		<name>Reto Gantenbein</name>
 	</maintainer>
+	<use>
+		<flag name="plugins">Install agent integration plugins and skills for Codex, Claude, OpenCode, and Pi</flag>
+	</use>
 	<upstream>
 		<remote-id type="github">umputun/revdiff</remote-id>
 	</upstream>
