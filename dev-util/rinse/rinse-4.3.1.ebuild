@@ -9,6 +9,8 @@ DESCRIPTION="Bootstrap a minimal RPM based distribution"
 HOMEPAGE="https://salsa.debian.org/debian/rinse"
 SRC_URI="http://httpredir.debian.org/debian/pool/main/r/${PN}/${MY_P}.tar.xz"
 
+S="${WORKDIR}/${PN}"
+
 LICENSE="|| ( Artistic GPL-1+ )"
 SLOT="0"
 KEYWORDS="~amd64"
@@ -27,18 +29,15 @@ BDEPEND="${DEPEND}
 "
 
 PATCHES=(
-	"${FILESDIR}"/3.5.1-Change-lib-paths-to-libexec.patch
-	"${FILESDIR}"/3.5.1-Dont-compress-manpage.patch
-	"${FILESDIR}"/3.5.1-rinse-Dont-resolve-dirs-at-runtime.patch
+	"${FILESDIR}"/4.3.1-Change-lib-paths-to-libexec.patch
+	"${FILESDIR}"/4.3.1-Dont-compress-manpage.patch
 )
-
-S="${WORKDIR}/${PN}"
 
 src_prepare() {
 	default
 
-	# remove failing test
-	rm tests/no-tabs.t
+	# urls.t only strips http:// not https://, so HTTPS entries cause false failures
+	rm tests/urls.t
 }
 
 src_compile() { :; }

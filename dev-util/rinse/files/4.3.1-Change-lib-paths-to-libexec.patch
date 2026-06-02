@@ -1,14 +1,6 @@
-commit db2042c49022c07accf66af48397e8989f664c0a
-Author: Reto Gantenbein <reto.gantenbein@linuxmonk.ch>
-Date:   Mon Dec 28 14:21:05 2020 +0100
-
-    Change lib paths to libexec
-
-diff --git a/Makefile b/Makefile
-index f66817b..fd5fb4e 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -53,17 +53,17 @@ install: fixupperms
+@@ -55,17 +55,17 @@
  	mkdir -p ${PREFIX}/usr/share/bash-completion/completions
  	mkdir -p ${PREFIX}/etc/rinse
  	mkdir -p ${PREFIX}/usr/sbin
@@ -31,7 +23,7 @@ index f66817b..fd5fb4e 100644
  	cp -p misc/rinse ${PREFIX}/usr/share/bash-completion/completions
  	pod2man --release=${VERSION} --official --section=8 ./bin/rinse ./bin/rinse.8
  	gzip --force -9 bin/rinse.8
-@@ -110,6 +110,6 @@ uninstall:
+@@ -112,6 +112,6 @@
  	rm -f  ${PREFIX}/etc/rinse/*.conf
  	rm -f  ${PREFIX}/etc/rinse/*.packages
  	rm -rf ${PREFIX}/var/cache/rinse
@@ -39,11 +31,9 @@ index f66817b..fd5fb4e 100644
 +	rm -rf ${PREFIX}/usr/libexec/rinse
  	rm -f  ${PREFIX}/etc/bash_completion.d/rinse
  
-diff --git a/bin/rinse b/bin/rinse
-index 676ee86..66eeb9f 100755
 --- a/bin/rinse
 +++ b/bin/rinse
-@@ -31,7 +31,7 @@ rinse - RPM Installation Entity.
+@@ -31,7 +31,7 @@
     --before-post-install Additionally run the specified script before
                           the post install script.
     --post-install        Run the given post-install script instead of the
@@ -52,7 +42,7 @@ index 676ee86..66eeb9f 100755
  
    Misc Options:
  
-@@ -46,7 +46,7 @@ rinse - RPM Installation Entity.
+@@ -46,7 +46,7 @@
                           (Default is to read it from /etc/rinse/rinse.conf)
     --list-distributions  Show installable distributions.
     --print-uris          Only show the RPMs which should be downloaded.
@@ -61,16 +51,16 @@ index 676ee86..66eeb9f 100755
     --verbose             Enable verbose output.
  
  =cut
-@@ -247,7 +247,7 @@ $CONFIG{ 'config' }    = "$configdir/rinse.conf";
+@@ -240,7 +240,7 @@
+ $CONFIG{ 'pkgs-dir' }  = $configdir;
+ $CONFIG{ 'config' }    = "$configdir/rinse.conf";
  
- my $scriptsdir = "$Bin/../scripts";
- if ( !-d $scriptsdir ) {
--  $scriptsdir = "/usr/lib/rinse";
-+  $scriptsdir = "/usr/libexec/rinse";
- }
+-my $scriptsdir = "/usr/lib/rinse";
++my $scriptsdir = "/usr/libexec/rinse";
  $CONFIG{ 'scripts-dir' } = $scriptsdir;
  
-@@ -1339,8 +1339,8 @@ sub postInstallationCustomization {
+ #
+@@ -1337,8 +1337,8 @@
      # common files.
      #
      my @scripts;
