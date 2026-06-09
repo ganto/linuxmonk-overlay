@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<upstream>
+		<bugs-to>https://github.com/ogulcancelik/herdr/issues</bugs-to>
+		<remote-id type="github">ogulcancelik/herdr</remote-id>
+	</upstream>
+	<longdescription lang="en">
+		herdr is a terminal workspace manager and agent multiplexer for AI coding
+		agents. It provides a TUI interface for managing multiple AI agent sessions
+		(such as Claude Code, Codex, and Cursor) simultaneously within a single
+		terminal window.
+	</longdescription>
+</pkgmetadata>
