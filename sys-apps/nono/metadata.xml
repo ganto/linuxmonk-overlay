@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<upstream>
+		<bugs-to>https://github.com/always-further/nono/issues</bugs-to>
+		<remote-id type="github">always-further/nono</remote-id>
+	</upstream>
+	<longdescription lang="en">
+		nono is a lightweight sandbox for running AI coding agents (Claude Code,
+		Codex, GitHub Copilot, and others) with least-privilege access. It uses
+		Linux landlock to enforce capability-based syscall restrictions with zero
+		setup and zero latency — no daemons, containers, or VMs required.
+	</longdescription>
+</pkgmetadata>
