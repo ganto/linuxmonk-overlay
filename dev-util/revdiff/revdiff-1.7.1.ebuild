@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
-inherit go-module
+inherit go-module shell-completion
 
 DESCRIPTION="TUI for reviewing diffs, files, and documents with inline annotations"
 HOMEPAGE="https://github.com/umputun/revdiff"
@@ -11,8 +11,8 @@ HOMEPAGE="https://github.com/umputun/revdiff"
 EGO_SUM=(
 	"github.com/alecthomas/assert/v2 v2.11.0"
 	"github.com/alecthomas/assert/v2 v2.11.0/go.mod"
-	"github.com/alecthomas/chroma/v2 v2.24.1"
-	"github.com/alecthomas/chroma/v2 v2.24.1/go.mod"
+	"github.com/alecthomas/chroma/v2 v2.26.1"
+	"github.com/alecthomas/chroma/v2 v2.26.1/go.mod"
 	"github.com/alecthomas/repr v0.5.2"
 	"github.com/alecthomas/repr v0.5.2/go.mod"
 	"github.com/atotto/clipboard v0.1.4"
@@ -39,8 +39,8 @@ EGO_SUM=(
 	"github.com/clipperhouse/uax29/v2 v2.7.0/go.mod"
 	"github.com/davecgh/go-spew v1.1.1"
 	"github.com/davecgh/go-spew v1.1.1/go.mod"
-	"github.com/dlclark/regexp2 v1.12.0"
-	"github.com/dlclark/regexp2 v1.12.0/go.mod"
+	"github.com/dlclark/regexp2/v2 v2.1.1"
+	"github.com/dlclark/regexp2/v2 v2.1.1/go.mod"
 	"github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f"
 	"github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f/go.mod"
 	"github.com/hexops/gotextdiff v1.0.3"
@@ -53,8 +53,8 @@ EGO_SUM=(
 	"github.com/mattn/go-isatty v0.0.22/go.mod"
 	"github.com/mattn/go-localereader v0.0.1"
 	"github.com/mattn/go-localereader v0.0.1/go.mod"
-	"github.com/mattn/go-runewidth v0.0.23"
-	"github.com/mattn/go-runewidth v0.0.23/go.mod"
+	"github.com/mattn/go-runewidth v0.0.24"
+	"github.com/mattn/go-runewidth v0.0.24/go.mod"
 	"github.com/muesli/ansi v0.0.0-20230316100256-276c6243b2f6"
 	"github.com/muesli/ansi v0.0.0-20230316100256-276c6243b2f6/go.mod"
 	"github.com/muesli/cancelreader v0.2.2"
@@ -92,16 +92,25 @@ KEYWORDS="~amd64"
 IUSE="+plugins"
 RESTRICT="mirror strip"
 
+PATCHES=( "${FILESDIR}/${PV}-skip-git-vcs-detection-test.patch" )
+
 BDEPEND=">=dev-lang/go-1.26:="
 
 src_compile() {
-	export CGO_ENABLED=0
 	go build -v -o "${PN}" -ldflags="-s -w -X main.revision=v${PV}" ./app || die "compile failed"
+}
+
+src_test() {
+	go test -timeout 120s ./... || die "tests failed"
 }
 
 src_install() {
 	dobin "${PN}"
 	dodoc CHANGELOG.md CONTRIBUTING.md README.md docs/ARCHITECTURE.md
+
+	newbashcomp completions/revdiff.bash revdiff
+	dofishcomp completions/revdiff.fish
+	newzshcomp completions/revdiff.zsh _revdiff
 
 	if use plugins; then
 		insinto "/usr/share/${PN}/plugins"
