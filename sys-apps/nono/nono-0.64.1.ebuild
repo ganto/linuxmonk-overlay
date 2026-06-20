@@ -18,10 +18,8 @@ CRATES="
 	anstyle@1.0.14
 	anyhow@1.0.102
 	arrayvec@0.7.6
-	asn1-rs-derive@0.5.1
 	asn1-rs-derive@0.6.0
 	asn1-rs-impl@0.2.0
-	asn1-rs@0.6.2
 	asn1-rs@0.7.2
 	astral-reqwest-middleware@0.5.1
 	async-broadcast@0.7.2
@@ -56,13 +54,13 @@ CRATES="
 	bytecount@0.6.9
 	bytes@1.11.1
 	cbc@0.1.2
-	cbindgen@0.29.2
+	cbindgen@0.29.4
 	cc@1.2.61
 	cesu8@1.1.0
 	cfg-if@1.0.4
 	cfg_aliases@0.2.1
 	chacha20@0.10.0
-	chrono@0.4.44
+	chrono@0.4.45
 	cipher@0.4.4
 	clap@4.6.1
 	clap_builder@4.6.0
@@ -96,7 +94,6 @@ CRATES="
 	dbus-secret-service@4.1.0
 	dbus@0.9.11
 	der-parser@10.0.0
-	der-parser@9.0.0
 	der@0.7.10
 	der_derive@0.7.3
 	deranged@0.5.8
@@ -144,7 +141,7 @@ CRATES="
 	getrandom@0.3.4
 	getrandom@0.4.2
 	globset@0.4.18
-	h2@0.4.13
+	h2@0.4.14
 	hashbrown@0.15.5
 	hashbrown@0.16.1
 	hashbrown@0.17.0
@@ -161,7 +158,7 @@ CRATES="
 	hybrid-array@0.4.11
 	hyper-rustls@0.27.9
 	hyper-util@0.1.20
-	hyper@1.9.0
+	hyper@1.10.1
 	iana-time-zone-haiku@0.1.2
 	iana-time-zone@0.1.65
 	icu_collections@2.2.0
@@ -174,7 +171,7 @@ CRATES="
 	id-arena@2.3.0
 	idna@1.1.0
 	idna_adapter@1.2.2
-	ignore@0.4.25
+	ignore@0.4.26
 	indexmap@2.14.0
 	inout@0.1.4
 	ipnet@2.12.0
@@ -207,7 +204,7 @@ CRATES="
 	linux-raw-sys@0.12.1
 	litemap@0.8.2
 	lock_api@0.4.14
-	log@0.4.29
+	log@0.4.32
 	lru-slab@0.1.2
 	matchers@0.2.0
 	memchr@2.8.0
@@ -223,13 +220,12 @@ CRATES="
 	num-bigint@0.4.6
 	num-cmp@0.1.0
 	num-complex@0.4.6
-	num-conv@0.2.1
+	num-conv@0.2.2
 	num-integer@0.1.46
 	num-iter@0.1.45
 	num-rational@0.4.2
 	num-traits@0.2.19
 	num@0.4.3
-	oid-registry@0.7.1
 	oid-registry@0.8.1
 	olpc-cjson@0.1.4
 	once_cell@1.21.4
@@ -370,9 +366,9 @@ CRATES="
 	thiserror@1.0.69
 	thiserror@2.0.18
 	thread_local@1.1.9
-	time-core@0.1.8
-	time-macros@0.2.27
-	time@0.3.47
+	time-core@0.1.9
+	time-macros@0.2.29
+	time@0.3.49
 	tinystr@0.8.3
 	tinyvec@1.11.0
 	tinyvec_macros@0.1.1
@@ -402,9 +398,9 @@ CRATES="
 	try-lock@0.2.5
 	typed-path@0.9.3
 	typenum@1.20.0
-	typify-impl@0.6.2
-	typify-macro@0.6.2
-	typify@0.6.2
+	typify-impl@0.7.0
+	typify-macro@0.7.0
+	typify@0.7.0
 	uds_windows@1.2.1
 	unarray@0.1.4
 	unicode-general-category@1.1.0
@@ -447,7 +443,7 @@ CRATES="
 	web-time@1.1.0
 	webpki-root-certs@1.0.7
 	webpki-roots@1.0.7
-	which@8.0.2
+	which@8.0.3
 	winapi-util@0.1.11
 	windows-core@0.62.2
 	windows-implement@0.60.2
@@ -497,7 +493,6 @@ CRATES="
 	wit-parser@0.244.0
 	writeable@0.6.3
 	x509-cert@0.2.5
-	x509-parser@0.16.0
 	x509-parser@0.18.1
 	x509-tsp@0.1.0
 	xdg-home@1.3.0
@@ -511,8 +506,8 @@ CRATES="
 	zerocopy@0.8.48
 	zerofrom-derive@0.1.7
 	zerofrom@0.1.7
-	zeroize@1.8.2
-	zeroize_derive@1.4.3
+	zeroize@1.9.0
+	zeroize_derive@1.5.0
 	zerotrie@0.2.4
 	zerovec-derive@0.11.3
 	zerovec@0.11.6
