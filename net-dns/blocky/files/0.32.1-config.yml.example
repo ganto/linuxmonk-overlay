@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/0xERR0R/blocky/main/docs/config.schema.json
 upstreams:
   init:
     # Configure startup behavior.
@@ -175,6 +176,11 @@ blocking:
       # optional: Time between the download attempts
       # default: 500ms
       cooldown: 10s
+      # optional directory for an on-disk download cache. When set, blocky uses HTTP
+      # conditional requests (it skips re-downloading unchanged lists) and serves a
+      # source from disk when its host is temporarily unreachable. When unset (default),
+      # downloads are fully stateless (nothing is written to disk).
+      # cachePath: /var/cache/blocky/lists
     # optional: Maximum number of lists to process in parallel.
     # default: 4
     concurrency: 16
@@ -243,12 +249,14 @@ prometheus:
 
 # optional: write query information (question, answer, client, duration etc.) to daily csv file
 queryLog:
-  # optional one of: mysql, postgresql, timescale, csv, csv-client. If empty, log to console
+  # optional one of: mysql, postgresql, timescale, sqlite, csv, csv-client. If empty, log to console
   type: csv
-  # directory (should be mounted as volume in docker) for csv, db connection string for mysql/postgresql
+  # directory (should be mounted as volume in docker) for csv, db connection string for mysql/postgresql,
+  # or a database file path for sqlite (the directory should be mounted as a volume in docker)
   target: /var/log/blocky/
   #mysql target: db_user:db_password@tcp(db_host_or_ip:3306)/db_name?charset=utf8mb4&parseTime=True&loc=Local
   #postgresql target: postgres://user:password@db_host_or_ip:5432/db_name
+  #sqlite target: /var/lib/blocky/querylog.db   # WAL mode is enabled automatically
   # if > 0, deletes log files which are older than ... days
   logRetentionDays: 7
   # optional: Max attempts to create specific query log writer, default: 3
@@ -266,11 +274,13 @@ queryLog:
 
 # optional: Blocky can synchronize its cache and blocking state between multiple instances through redis.
 redis:
-  # Server address and port or master name if sentinel is used
+  # Server address and port, a unix socket path (starting with /), or master name if sentinel is used
   #address: redismaster
   # Username if necessary
   #username: usrname
   # Password if necessary
+  # To load from a file instead:
+  #   password: file:/run/secrets/redis_password
   #password: passwd
   # Database, default: 0
   #database: 2
@@ -299,17 +309,66 @@ minTlsServeVersion: 1.2
 
 # optional: use these DNS servers to resolve denylist urls and upstream DNS servers.
 # It is useful if no system DNS resolver is configured, and/or to encrypt the bootstrap queries.
+# If not set, the operating system resolver (/etc/resolv.conf on Linux) is used.
 bootstrapDns:
   - tcp+udp:1.1.1.1
   - https://1.1.1.1/dns-query
   - upstream: https://dns.digitale-gesellschaft.ch/dns-query
     ips:
       - 185.95.218.42
+  # optional: read nameservers from a resolv.conf file instead of listing them inline.
+  # Useful where DHCP-provided resolvers live outside /etc/resolv.conf (e.g. OpenWrt's /tmp/resolv.conf.auto).
+  # - resolvFile: /tmp/resolv.conf.auto
 
 # optional: drop all queries with following query types. Default: empty
 filtering:
   queryTypes:
     - AAAA
+
+# optional: DNS rebinding protection. When enabled, answers from the general
+# upstreams containing private, loopback, link-local or unspecified IPs are
+# dropped. allowedDomains exempts split-horizon domains (incl. subdomains).
+rebindingProtection:
+  enable: true
+  allowedDomains:
+    - intranet.example.com
+
+# optional: per-client DNS query rate limiting at the head of the resolver chain.
+# Intended for misbehaving clients, runaway scripts, and low-volume amplification
+# abuse — NOT a DDoS defense (run fail2ban or crowdsec at the firewall for that).
+# When a client exceeds its bucket, the query is dropped silently (no UDP response,
+# no DNS error) so the amplification ratio against a spoofed-source attacker is zero.
+# A WARN log line is emitted (throttled to <= 1 line per bucket per second) so
+# fail2ban can match against it. See docs/configuration.md for the full sample filter.
+rateLimit:
+  # enable rate limiting. default: false
+  enable: false
+  # sustained queries per second allowed per client bucket. Must be > 0 when enabled.
+  # default: 0
+  rate: 50
+  # token bucket capacity — i.e. the maximum number of queries a previously
+  # idle client may spend at once before being throttled to `rate` qps.
+  # Example: with rate=100 and burst=200, a client may fire 200 queries
+  # instantly, then is limited to 100/sec; after 2 seconds idle they
+  # regain a full 200-query burst. Must be >= rate when set explicitly.
+  # default: 0 — falls back to rate × 2 if left at zero
+  burst: 100
+  # IPv4 aggregation prefix length. Clients sharing the same /ipv4Prefix share
+  # one bucket. Use 32 to limit per single address, 24 to limit per /24 subnet, etc.
+  # default: 32
+  ipv4Prefix: 32
+  # IPv6 aggregation prefix length. Defaults to /64 — the standard boundary for
+  # abuse mitigation, since a single subscriber typically gets a /64 from their ISP.
+  # default: 64
+  ipv6Prefix: 64
+  # optional: list of CIDRs or bare IPs that bypass the limiter entirely.
+  # Useful for trusted internal networks and monitoring probes.
+  # Accepts IPv4/IPv6 CIDR notation or single addresses.
+  # default: [] (no bypass)
+  allowlist:
+    - 10.0.0.0/8
+    - 192.168.0.0/16
+    - 127.0.0.1
 
 # optional: return NXDOMAIN for queries that are not FQDNs.
 fqdnOnly:
@@ -347,6 +406,11 @@ hostsFile:
       # optional: Time between the download attempts
       # default: 500ms
       cooldown: 10s
+      # optional directory for an on-disk download cache. When set, blocky uses HTTP
+      # conditional requests (it skips re-downloading unchanged lists) and serves a
+      # source from disk when its host is temporarily unreachable. When unset (default),
+      # downloads are fully stateless (nothing is written to disk).
+      # cachePath: /var/cache/blocky/lists
     # optional: Maximum number of files to process in parallel.
     # default: 4
     concurrency: 16
@@ -381,6 +445,16 @@ ports:
   # optional: URL path for DoH queries.
   # default: /dns-query
   #dohPath: /dns-query
+  # optional: allow binding the DNS/DoT listeners to addresses not yet assigned to an interface
+  #           (Linux only, via IP_FREEBIND; e.g. Tailscale/WireGuard/VRRP addresses brought up after
+  #           startup). No effect on wildcard binds; ignored with a warning on non-Linux platforms.
+  # default: false
+  freeBind: false
+  # optional: require and parse HAProxy PROXY protocol headers on the listed TCP listener families
+  #           (any of: dns, http, https, tls). Enable only when Blocky is reachable only through a
+  #           trusted proxy.
+  # default: empty
+  proxyProtocol: []
 
 # optional: configuration for DOH  over HTTP/3
 http3:
