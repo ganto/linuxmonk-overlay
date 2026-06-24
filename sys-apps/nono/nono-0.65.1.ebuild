@@ -11,6 +11,7 @@ CRATES="
 	allocator-api2@0.2.21
 	ambient-id@0.0.11
 	android_system_properties@0.1.5
+	anes@0.1.6
 	anstream@1.0.0
 	anstyle-parse@1.0.0
 	anstyle-query@1.1.5
@@ -53,6 +54,7 @@ CRATES="
 	bumpalo@3.20.2
 	bytecount@0.6.9
 	bytes@1.11.1
+	cast@0.3.0
 	cbc@0.1.2
 	cbindgen@0.29.4
 	cc@1.2.61
@@ -61,6 +63,9 @@ CRATES="
 	cfg_aliases@0.2.1
 	chacha20@0.10.0
 	chrono@0.4.45
+	ciborium-io@0.2.2
+	ciborium-ll@0.2.2
+	ciborium@0.2.2
 	cipher@0.4.4
 	clap@4.6.1
 	clap_builder@4.6.0
@@ -84,10 +89,13 @@ CRATES="
 	cpufeatures@0.2.17
 	cpufeatures@0.3.0
 	crc32fast@1.5.0
+	criterion-plot@0.5.0
+	criterion@0.5.1
 	crmf@0.2.0
 	crossbeam-deque@0.8.6
 	crossbeam-epoch@0.9.18
 	crossbeam-utils@0.8.21
+	crunchy@0.2.4
 	crypto-common@0.1.7
 	crypto-common@0.2.1
 	data-encoding@2.11.0
@@ -106,6 +114,7 @@ CRATES="
 	dns-lookup@2.1.1
 	dunce@1.0.5
 	dyn-clone@1.0.20
+	either@1.15.0
 	email_address@0.2.9
 	endi@1.1.1
 	enumflags2@0.7.12
@@ -142,6 +151,7 @@ CRATES="
 	getrandom@0.4.2
 	globset@0.4.18
 	h2@0.4.14
+	half@2.7.1
 	hashbrown@0.15.5
 	hashbrown@0.16.1
 	hashbrown@0.17.0
@@ -177,8 +187,10 @@ CRATES="
 	ipnet@2.12.0
 	iri-string@0.7.12
 	is-docker@0.2.0
+	is-terminal@0.4.17
 	is-wsl@0.4.0
 	is_terminal_polyfill@1.70.2
+	itertools@0.10.5
 	itoa@1.0.18
 	jiff-static@0.2.24
 	jiff-tzdb-platform@0.1.3
@@ -230,6 +242,7 @@ CRATES="
 	olpc-cjson@0.1.4
 	once_cell@1.21.4
 	once_cell_polyfill@1.70.2
+	oorandom@11.1.5
 	open@5.3.4
 	openssl-probe@0.2.1
 	option-ext@0.2.0
@@ -258,7 +271,7 @@ CRATES="
 	proc-macro2@1.0.106
 	proptest@1.11.0
 	quick-error@1.2.3
-	quinn-proto@0.11.14
+	quinn-proto@0.11.15
 	quinn-udp@0.5.14
 	quinn@0.11.9
 	quote@1.0.45
@@ -280,8 +293,8 @@ CRATES="
 	ref-cast@1.0.25
 	referencing@0.46.5
 	regex-automata@0.4.14
-	regex-syntax@0.8.10
-	regex@1.12.3
+	regex-syntax@0.8.11
+	regex@1.12.4
 	regress@0.11.1
 	reqwest@0.12.28
 	reqwest@0.13.3
@@ -333,16 +346,23 @@ CRATES="
 	signal-hook-registry@1.4.8
 	signature@2.2.0
 	sigstore-bundle@0.8.0
+	sigstore-bundle@0.9.0
 	sigstore-crypto@0.8.0
+	sigstore-crypto@0.9.0
 	sigstore-fulcio@0.8.0
 	sigstore-merkle@0.8.0
+	sigstore-merkle@0.9.0
 	sigstore-oidc@0.8.0
 	sigstore-rekor@0.8.0
+	sigstore-rekor@0.9.0
 	sigstore-sign@0.8.0
 	sigstore-trust-root@0.8.0
+	sigstore-trust-root@0.9.0
 	sigstore-tsa@0.8.0
+	sigstore-tsa@0.9.0
 	sigstore-types@0.8.0
-	sigstore-verify@0.8.0
+	sigstore-types@0.9.0
+	sigstore-verify@0.9.0
 	simd-adler32@0.3.9
 	simd_cesu8@1.1.1
 	simdutf8@0.1.5
@@ -357,7 +377,7 @@ CRATES="
 	static_assertions@1.1.0
 	strsim@0.11.1
 	subtle@2.6.1
-	syn@2.0.117
+	syn@2.0.118
 	sync_wrapper@1.0.2
 	synstructure@0.13.2
 	tempfile@3.27.0
@@ -370,6 +390,7 @@ CRATES="
 	time-macros@0.2.29
 	time@0.3.49
 	tinystr@0.8.3
+	tinytemplate@1.2.1
 	tinyvec@1.11.0
 	tinyvec_macros@0.1.1
 	tls_codec@0.4.2
@@ -532,6 +553,16 @@ KEYWORDS="~amd64"
 RESTRICT="mirror"
 
 BDEPEND="dev-build/cmake"
+
+# non_tty_* tests fail in sandbox (/dev/tty absent); child_chaining test fails
+# because portage build path exceeds SUN_LEN limit for Unix sockets.
+CARGO_SKIP_TESTS=(
+	terminal_approval::tests::non_tty_
+	tool_sandbox::linux::tests::child_chaining_caps_do_not_grant_runtime_launch_specs
+	alias_inventory_script_passes
+	lint_docs_script_passes
+	test_open_url_helper_binary_succeeds_with_valid_supervisor
+)
 
 DOCS=( README.md )
 
