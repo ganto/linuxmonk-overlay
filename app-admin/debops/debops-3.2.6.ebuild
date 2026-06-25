@@ -4,11 +4,11 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517=setuptools
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( python3_{10..14} )
 
 inherit distutils-r1
 
-DEBOPS_GIT_COMMIT="1e1414b731fc37fbbefe21b97b57f4507e973924"
+DEBOPS_GIT_COMMIT="56a5563d97ea0ddd78329dcd471b306951308045"
 
 DESCRIPTION="Your Debian-based data center in a box"
 HOMEPAGE="https://debops.org/"
@@ -26,7 +26,7 @@ RESTRICT="
 RDEPEND="
 	>=app-admin/ansible-2.16[${PYTHON_USEDEP}]
 	dev-python/dnspython[${PYTHON_USEDEP}]
-	dev-python/GitPython[${PYTHON_USEDEP}]
+	dev-python/gitpython[${PYTHON_USEDEP}]
 	dev-python/netaddr[${PYTHON_USEDEP}]
 	dev-python/passlib[${PYTHON_USEDEP}]
 	dev-python/python-ldap[${PYTHON_USEDEP}]
@@ -70,9 +70,9 @@ src_prepare() {
 
 python_compile_all() {
 	pushd docs >/dev/null || die
-	sphinx-build -b man -d _build/doctrees -n -t manpages -W . _build/man || die "Failed to build man-pages"
+	sphinx-build -b man -d _build/doctrees -n -t manpages . _build/man || die "Failed to build man-pages"
 	if use doc; then
-		sphinx-build -b html -d _build/doctrees -n -W -T -vvv . _build/html || die "Failed to build documentation"
+		sphinx-build -b html -d _build/doctrees -n -T -vvv . _build/html || die "Failed to build documentation"
 	fi
 	popd || die >/dev/null
 }
