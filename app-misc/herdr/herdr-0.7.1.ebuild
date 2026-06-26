@@ -340,6 +340,11 @@ src_compile() {
 	cargo_src_compile
 }
 
+src_test() {
+	# Upstream's full integration suite is written for cargo-nextest isolation.
+	RUST_TEST_THREADS=1 cargo_src_test --bin herdr
+}
+
 src_install() {
 	cargo_src_install
 	dodoc "${DOCS[@]}"
