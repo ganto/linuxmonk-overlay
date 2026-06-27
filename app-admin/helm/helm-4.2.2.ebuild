@@ -16,20 +16,20 @@ LICENSE="Apache-2.0"
 # Dependent licenses
 LICENSE+=" Apache-2.0 BSD BSD-2 ISC MIT MPL-2.0"
 SLOT="0"
-KEYWORDS="amd64 ~arm64 ~loong ~riscv"
+KEYWORDS="~amd64"
 RESTRICT="test"
 
 BDEPEND=">=dev-lang/go-1.26.0"
 
 src_compile() {
-	emake \
-		GOFLAGS="${GOFLAGS}" \
-		LDFLAGS="" \
-		GIT_COMMIT=${GIT_COMMIT} \
-		GIT_SHA=${GIT_COMMIT::8} \
-		GIT_TAG=v${PV} \
-		GIT_DIRTY=clean \
-		build
+	local ldflags=(
+		-X "helm.sh/helm/v4/internal/version.version=v${PV}"
+		-X "helm.sh/helm/v4/internal/version.gitCommit=${GIT_COMMIT}"
+		-X "helm.sh/helm/v4/internal/version.gitTreeState=clean"
+	)
+	mkdir -p bin || die
+	go build ${GOFLAGS} -trimpath -ldflags "${ldflags[*]}" \
+		-o bin/${PN} ./cmd/helm || die
 
 	if ! tc-is-cross-compiler; then
 		einfo "generating shell completion files"
