@@ -92,7 +92,7 @@ KEYWORDS="~amd64"
 IUSE="+plugins"
 RESTRICT="mirror strip"
 
-PATCHES=( "${FILESDIR}/${PV}-skip-git-vcs-detection-test.patch" )
+PATCHES=( "${FILESDIR}/skip-git-vcs-detection-test.patch" )
 
 BDEPEND=">=dev-lang/go-1.26:="
 
