@@ -6,8 +6,8 @@
 		<name>Reto Gantenbein</name>
 	</maintainer>
 	<upstream>
-		<bugs-to>https://github.com/always-further/nono/issues</bugs-to>
-		<remote-id type="github">always-further/nono</remote-id>
+		<bugs-to>https://github.com/nolabs-ai/nono/issues</bugs-to>
+		<remote-id type="github">nolabs-ai/nono</remote-id>
 	</upstream>
 	<longdescription lang="en">
 		nono is a lightweight sandbox for running AI coding agents (Claude Code,
