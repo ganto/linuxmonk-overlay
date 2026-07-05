@@ -21,6 +21,11 @@ ruby_add_rdepend "
 	>=dev-ruby/thor-1.4.0
 "
 
+all_ruby_prepare() {
+	sed -i -e 's/complete -F _tmuxinator tmuxinator$/complete -F _tmuxinator tmuxinator mux/' \
+		completion/tmuxinator.bash || die
+}
+
 all_ruby_install() {
 	all_fakegem_install
 
