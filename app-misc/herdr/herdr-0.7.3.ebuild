@@ -7,6 +7,7 @@ CRATES="
 	adler2@2.0.1
 	aho-corasick@1.1.4
 	allocator-api2@0.2.21
+	anstyle@1.0.14
 	anyhow@1.0.102
 	atomic@0.6.1
 	autocfg@1.5.0
@@ -26,6 +27,10 @@ CRATES="
 	cfg-if@1.0.4
 	cfg_aliases@0.1.1
 	cfg_aliases@0.2.1
+	clap@4.6.1
+	clap_builder@4.6.0
+	clap_complete@4.6.5
+	clap_lex@1.1.0
 	compact_str@0.9.0
 	convert_case@0.10.0
 	cpufeatures@0.2.17
@@ -40,13 +45,14 @@ CRATES="
 	darling_macro@0.23.0
 	deltae@0.3.2
 	deranged@0.5.8
-	derive_more@2.1.1
 	derive_more-impl@2.1.1
+	derive_more@2.1.1
 	digest@0.10.7
 	dispatch2@0.3.1
 	doctest-file@1.1.1
 	document-features@0.2.12
 	downcast-rs@1.2.1
+	dyn-clone@1.0.20
 	either@1.15.0
 	equivalent@1.0.2
 	errno@0.3.14
@@ -104,8 +110,8 @@ CRATES="
 	num-derive@0.4.2
 	num-traits@0.2.19
 	num_threads@0.1.7
-	objc2@0.6.4
 	objc2-encode@4.1.0
+	objc2@0.6.4
 	once_cell@1.21.4
 	ordered-float@4.6.0
 	parking_lot@0.12.5
@@ -122,7 +128,6 @@ CRATES="
 	pin-project-lite@0.2.17
 	png@0.17.16
 	portable-atomic@1.13.1
-	portable-pty@0.9.0
 	powerfmt@0.2.0
 	prettyplease@0.2.37
 	proc-macro2@1.0.106
@@ -131,26 +136,31 @@ CRATES="
 	r-efi@6.0.0
 	rand@0.8.5
 	rand_core@0.6.4
-	ratatui@0.30.0
 	ratatui-core@0.1.0
 	ratatui-crossterm@0.1.0
 	ratatui-macros@0.7.0
 	ratatui-termwiz@0.1.0
 	ratatui-widgets@0.3.0
+	ratatui@0.30.0
 	recvmsg@1.0.0
 	redox_syscall@0.5.18
-	regex@1.12.3
+	ref-cast-impl@1.0.25
+	ref-cast@1.0.25
 	regex-automata@0.4.14
 	regex-syntax@0.8.10
+	regex@1.12.3
 	rustc_version@0.4.1
 	rustix@1.1.4
 	rustversion@1.0.22
 	ryu@1.0.23
+	schemars@1.2.1
+	schemars_derive@1.2.1
 	scopeguard@1.2.0
 	semver@1.0.27
 	serde@1.0.228
 	serde_core@1.0.228
 	serde_derive@1.0.228
+	serde_derive_internals@0.29.1
 	serde_json@1.0.149
 	serde_spanned@0.6.9
 	serial2@0.2.34
@@ -158,9 +168,9 @@ CRATES="
 	sharded-slab@0.1.7
 	shared_library@0.1.9
 	shell-words@1.1.1
-	signal-hook@0.3.18
 	signal-hook-mio@0.2.5
 	signal-hook-registry@1.4.8
+	signal-hook@0.3.18
 	simd-adler32@0.3.9
 	siphasher@1.0.2
 	smallvec@1.15.1
@@ -173,24 +183,24 @@ CRATES="
 	terminfo@0.9.0
 	termios@0.3.3
 	termwiz@0.23.3
-	thiserror@1.0.69
-	thiserror@2.0.18
 	thiserror-impl@1.0.69
 	thiserror-impl@2.0.18
+	thiserror@1.0.69
+	thiserror@2.0.18
 	thread_local@1.1.9
-	time@0.3.47
 	time-core@0.1.8
-	tokio@1.50.0
+	time@0.3.47
 	tokio-macros@2.6.1
+	tokio@1.50.0
 	toml@0.8.23
 	toml_datetime@0.6.11
 	toml_edit@0.22.27
 	toml_write@0.1.2
-	tracing@0.1.44
 	tracing-attributes@0.1.31
 	tracing-core@0.1.36
 	tracing-log@0.2.0
 	tracing-subscriber@0.3.23
+	tracing@0.1.44
 	typenum@1.19.0
 	ucd-trie@0.1.7
 	unicode-ident@1.0.24
@@ -208,31 +218,31 @@ CRATES="
 	wasi@0.11.1+wasi-snapshot-preview1
 	wasip2@1.0.2+wasi-0.2.9
 	wasip3@0.4.0+wasi-0.3.0-rc-2026-01-06
-	wasm-bindgen@0.2.114
-	wasm-bindgen-macro@0.2.114
 	wasm-bindgen-macro-support@0.2.114
+	wasm-bindgen-macro@0.2.114
 	wasm-bindgen-shared@0.2.114
+	wasm-bindgen@0.2.114
 	wasm-encoder@0.244.0
 	wasm-metadata@0.244.0
 	wasmparser@0.244.0
 	wezterm-bidi@0.2.3
 	wezterm-blob-leases@0.1.1
 	wezterm-color-types@0.3.0
-	wezterm-dynamic@0.2.1
 	wezterm-dynamic-derive@0.1.1
+	wezterm-dynamic@0.2.1
 	wezterm-input-types@0.1.0
 	widestring@1.2.1
-	winapi@0.3.9
 	winapi-i686-pc-windows-gnu@0.4.0
 	winapi-x86_64-pc-windows-gnu@0.4.0
+	winapi@0.3.9
 	windows-link@0.2.1
 	windows-sys@0.61.2
 	winnow@0.7.15
 	winreg@0.10.1
-	wit-bindgen@0.51.0
 	wit-bindgen-core@0.51.0
-	wit-bindgen-rust@0.51.0
 	wit-bindgen-rust-macro@0.51.0
+	wit-bindgen-rust@0.51.0
+	wit-bindgen@0.51.0
 	wit-component@0.244.0
 	wit-parser@0.244.0
 	zmij@1.0.21
