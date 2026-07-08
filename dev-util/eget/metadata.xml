@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<upstream>
+		<remote-id type="github">inherelab/eget</remote-id>
+	</upstream>
+	<longdescription lang="en">
+		eget locates, downloads, and extracts prebuilt binaries from GitHub,
+		GitLab, Gitea/Forgejo, and SourceForge releases. It filters release
+		assets by OS/arch, verifies SHA-256 checksums, extracts common
+		archive formats, and can manage a set of frequently used tools with
+		add/list/update/uninstall commands. This is a fork of
+		zyedidia/eget with additional features.
+	</longdescription>
+</pkgmetadata>
