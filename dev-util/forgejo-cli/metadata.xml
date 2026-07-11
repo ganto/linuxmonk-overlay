@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>reto.gantenbein@linuxmonk.ch</email>
+		<name>Reto Gantenbein</name>
+	</maintainer>
+	<upstream>
+		<remote-id type="codeberg">forgejo-contrib/forgejo-cli</remote-id>
+	</upstream>
+	<longdescription lang="en">
+		fj is a command-line client for Forgejo (and Gitea), similar to gh, glab,
+		or tea. It complements git by handling Forgejo-specific tasks such as
+		issues, pull requests, repositories, organizations, and releases.
+	</longdescription>
+</pkgmetadata>
