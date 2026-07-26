@@ -161,6 +161,7 @@ CRATES="
 	serde_core@1.0.228
 	serde_derive@1.0.228
 	serde_derive_internals@0.29.1
+	serde_ignored@0.1.14
 	serde_json@1.0.149
 	serde_spanned@0.6.9
 	serial2@0.2.34
@@ -254,6 +255,7 @@ CRATES="
 # NOTE: Keep in sync with x11-terms/ghostty-terminfo; distfiles are
 #       identical and share the same DISTDIR entries.
 declare -g -r -A ZBS_DEPENDENCIES=(
+	[N-V-__8AAAYpBACKY0n8sQbPfzY47xFRRtjXiF766UVF5ZyD.tgz]='https://deps.files.ghostty.org/ghostty-themes-release-20260629-161812-8c97c3c.tgz'
 	[N-V-__8AAAzZywE3s51XfsLbP9eyEw57ae9swYB9aGB6fCMs.tar.gz]='https://deps.files.ghostty.org/wuffs-122037b39d577ec2db3fd7b2130e7b69ef6cc1807d68607a7c232c958315d381b5cd.tar.gz'
 	[N-V-__8AAB0eQwD-0MdOEBmz7intriBReIsIDNlukNVoNu6o.tar.gz]='https://deps.files.ghostty.org/zlib-1220fed0c74e1019b3ee29edae2051788b080cd96e90d56836eea857b0b966742efb.tar.gz'
 	[N-V-__8AABzkUgISeKGgXAzgtutgJsZc0-kkeqBBscJgMkvy.tar.gz]='https://deps.files.ghostty.org/glslang-12201278a1a05c0ce0b6eb6026c65cd3e9247aa041b1c260324bf29cee559dd23ba1.tar.gz'
@@ -278,7 +280,6 @@ declare -g -r -A ZBS_DEPENDENCIES=(
 	[N-V-__8AANT61wB--nJ95Gj_ctmzAtcjloZ__hRqNw5lC1Kr.tar.gz]='https://deps.files.ghostty.org/DearBindings_v0.17_ImGui_v1.92.5-docking.tar.gz'
 	[N-V-__8AANb6pwD7O1WG6L5nvD_rNMvnSc9Cpg1ijSlTYywv.tar.gz]='https://deps.files.ghostty.org/spirv_cross-1220fb3b5586e8be67bc3feb34cbe749cf42a60d628d2953632c2f8141302748c8da.tar.gz'
 	[N-V-__8AAPlZGwBEa-gxrcypGBZ2R8Bse4JYSfo_ul8i2jlG.tar.gz]='https://deps.files.ghostty.org/sentry-1220446be831adcca918167647c06c7b825849fa3fba5f22da394667974537a9c77e.tar.gz'
-	[N-V-__8AAPy1AwDnEoq1ww42uq58nusIeQgR16W4-5SQZFIM.tgz]='https://deps.files.ghostty.org/ghostty-themes-release-20260511-160054-2671288.tgz'
 	[gobject-0.3.0-Skun7ANLnwDvEfIpVmohcppXgOvg_I6YOJFmPIsKfXk-.tar.zst]='https://deps.files.ghostty.org/gobject-2025-11-08-23-1.tar.zst'
 	[libxev-0.0.0-86vtc4IcEwCqEYxEYoN_3KXmc6A9VLcm22aVImfvecYs.tar.gz]='https://deps.files.ghostty.org/libxev-34fa50878aec6e5fa8f532867001ab3c36fae23e.tar.gz'
 	[uucode-0.1.0-ZZjBPj96QADXyt5sqwBJUnhaDYs_qBeeKijZvlRa0eqM.tar.gz]='https://github.com/jacobsandlund/uucode/archive/5f05f8f83a75caea201f12cc8ea32a2d82ea9732.tar.gz'
