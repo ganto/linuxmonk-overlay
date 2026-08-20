@@ -66,6 +66,15 @@ CRATES="
 	fnv@1.0.7
 	foldhash@0.1.5
 	foldhash@0.2.0
+	futures-channel@0.3.33
+	futures-core@0.3.33
+	futures-executor@0.3.33
+	futures-io@0.3.33
+	futures-macro@0.3.33
+	futures-sink@0.3.33
+	futures-task@0.3.33
+	futures-util@0.3.33
+	futures@0.3.33
 	generic-array@0.14.7
 	getrandom@0.3.4
 	getrandom@0.4.2
@@ -82,6 +91,7 @@ CRATES="
 	itertools@0.14.0
 	itoa@1.0.18
 	js-sys@0.3.91
+	jsonc-parser@0.33.1
 	kasuari@0.4.12
 	lab@0.11.0
 	lazy_static@1.5.0
@@ -167,13 +177,13 @@ CRATES="
 	serial2@0.2.34
 	sha2@0.10.9
 	sharded-slab@0.1.7
-	shared_library@0.1.9
 	shell-words@1.1.1
 	signal-hook-mio@0.2.5
 	signal-hook-registry@1.4.8
 	signal-hook@0.3.18
 	simd-adler32@0.3.9
 	siphasher@1.0.2
+	slab@0.4.12
 	smallvec@1.15.1
 	static_assertions@1.1.0
 	strsim@0.11.1
@@ -190,6 +200,7 @@ CRATES="
 	thiserror@2.0.18
 	thread_local@1.1.9
 	time-core@0.1.8
+	time-macros@0.2.27
 	time@0.3.47
 	tokio-macros@2.6.1
 	tokio@1.50.0
@@ -236,8 +247,18 @@ CRATES="
 	winapi-i686-pc-windows-gnu@0.4.0
 	winapi-x86_64-pc-windows-gnu@0.4.0
 	winapi@0.3.9
+	windows-collections@0.3.2
+	windows-core@0.62.2
+	windows-future@0.3.2
+	windows-implement@0.60.2
+	windows-interface@0.59.3
 	windows-link@0.2.1
+	windows-numerics@0.3.1
+	windows-result@0.4.1
+	windows-strings@0.5.1
 	windows-sys@0.61.2
+	windows-threading@0.2.1
+	windows@0.62.2
 	winnow@0.7.15
 	winreg@0.10.1
 	wit-bindgen-core@0.51.0
@@ -246,6 +267,7 @@ CRATES="
 	wit-bindgen@0.51.0
 	wit-component@0.244.0
 	wit-parser@0.244.0
+	wmi@0.18.4
 	zmij@1.0.21
 "
 
@@ -359,4 +381,10 @@ src_test() {
 src_install() {
 	cargo_src_install
 	dodoc "${DOCS[@]}"
+	insinto /usr/share/herdr/skills/herdr
+	doins skills/herdr/SKILL.md
+}
+
+pkg_postinst() {
+	elog "The Herdr agent skill is available at /usr/share/herdr/skills/herdr/SKILL.md."
 }
