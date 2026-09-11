@@ -200,6 +200,7 @@ CRATES="
 	thiserror@2.0.18
 	thread_local@1.1.9
 	time-core@0.1.8
+	time-macros@0.2.27
 	time@0.3.47
 	tokio-macros@2.6.1
 	tokio@1.50.0
