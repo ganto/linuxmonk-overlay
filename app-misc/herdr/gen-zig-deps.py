@@ -23,7 +23,7 @@ import urllib.parse
 
 def git_url_to_tarball(url: str) -> str | None:
     """Convert git+https://github.com/<owner>/<repo>#<commit> to a tarball URL."""
-    m = re.match(r"git\+https://github\.com/([^/]+/[^#]+)#([0-9a-f]+)$", url)
+    m = re.match(r"git\+https://github\.com/([^/]+/[^#]+?)(?:\.git)?#([0-9a-f]+)$", url)
     if m:
         return f"https://github.com/{m.group(1)}/archive/{m.group(2)}.tar.gz"
     return None
