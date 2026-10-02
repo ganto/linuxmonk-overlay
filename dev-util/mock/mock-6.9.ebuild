@@ -6,11 +6,11 @@ EAPI=8
 DISTUTILS_USE_PEP517=setuptools
 PYTHON_COMPAT=( python3_{11..14} )
 
-inherit pam python-single-r1 bash-completion-r1
+inherit pam python-single-r1 shell-completion
 
 MY_PV=${PV}-1
 MY_P=${PN}-${MY_PV}
-CORE_CONFIGS_VERSION=44.4-1
+CORE_CONFIGS_VERSION=45.2-1
 
 DESCRIPTION="Builds RPM packages inside chroots"
 HOMEPAGE="
@@ -26,7 +26,7 @@ S="${WORKDIR}/mock-${MY_P}"
 LICENSE="GPL-2+"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE="test"
+IUSE="+policykit test"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 RESTRICT="
 	mirror
@@ -48,10 +48,11 @@ RDEPEND="
 		dev-python/rpmautospec-core[${PYTHON_USEDEP}]
 		>=dev-python/templated-dictionary-1.5[${PYTHON_USEDEP}]
 	')
-	>=dev-util/distribution-gpg-keys-1.117
+	>=dev-util/distribution-gpg-keys-1.122
 	sys-apps/iproute2
 	sys-apps/shadow
-	sys-apps/usermode
+	policykit? ( sys-auth/polkit )
+	!policykit? ( sys-apps/usermode )
 "
 BDEPEND="
 	${PYTHON_DEPS}
@@ -90,7 +91,7 @@ src_compile() {
 	pushd mock >/dev/null || die
 	# TODO: this fails when being executed through portage
 	#./precompile-bash-completion "mock.complete" || die "Failed to generate bash-completion"
-	cp "${FILESDIR}/mock-${PV}.complete" mock.complete
+	cp "${FILESDIR}/mock-6.9.complete" mock.complete
 	argparse-manpage --pyfile py/mock-hermetic-repo.py --function _argparser > mock-hermetic-repo.1 || die
 	popd >/dev/null
 }
@@ -105,15 +106,26 @@ src_install() {
 	python_scriptinto /usr/libexec/mock
 	python_newscript py/mock.py mock
 
-	dosym consolehelper /usr/bin/mock
+	if use policykit; then
+		newbin etc/polkit/mock-pkexec.sh mock
+	else
+		dosym consolehelper /usr/bin/mock
+	fi
 
 	dopamd etc/pam/*
 
 	insinto /etc/mock
 	doins etc/mock/*
 
-	insinto /etc/security/console.apps
-	doins etc/consolehelper/mock
+	if use policykit; then
+		insinto /usr/share/polkit-1/actions
+		doins etc/polkit/org.rpm.mock.policy
+		insinto /usr/share/polkit-1/rules.d
+		doins etc/polkit/org.rpm.mock.rules
+	else
+		insinto /etc/security/console.apps
+		doins etc/consolehelper/mock
+	fi
 
 	insinto /etc/ssl/mock
 	doins etc/pki/*

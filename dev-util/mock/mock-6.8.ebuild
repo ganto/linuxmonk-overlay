@@ -91,7 +91,7 @@ src_compile() {
 	pushd mock >/dev/null || die
 	# TODO: this fails when being executed through portage
 	#./precompile-bash-completion "mock.complete" || die "Failed to generate bash-completion"
-	cp "${FILESDIR}/mock-6.7.complete" mock.complete
+	cp "${FILESDIR}/mock-6.8.complete" mock.complete
 	argparse-manpage --pyfile py/mock-hermetic-repo.py --function _argparser > mock-hermetic-repo.1 || die
 	popd >/dev/null
 }
