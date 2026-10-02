@@ -9,6 +9,9 @@ CRATES="
 	allocator-api2@0.2.21
 	anstyle@1.0.14
 	anyhow@1.0.102
+	async-broadcast@0.7.2
+	async-recursion@1.1.1
+	async-trait@0.1.92
 	atomic@0.6.1
 	autocfg@1.5.0
 	base64@0.22.1
@@ -54,10 +57,16 @@ CRATES="
 	downcast-rs@1.2.1
 	dyn-clone@1.0.20
 	either@1.15.0
+	endi@1.1.1
+	enumflags2@0.7.12
+	enumflags2_derive@0.7.12
 	equivalent@1.0.2
 	errno@0.3.14
 	euclid@0.22.14
+	event-listener-strategy@0.5.4
+	event-listener@5.4.2
 	fancy-regex@0.11.0
+	fastrand@2.5.0
 	fdeflate@0.3.7
 	filedescriptor@0.8.3
 	finl_unicode@1.4.0
@@ -70,6 +79,7 @@ CRATES="
 	futures-core@0.3.33
 	futures-executor@0.3.33
 	futures-io@0.3.33
+	futures-lite@2.6.1
 	futures-macro@0.3.33
 	futures-sink@0.3.33
 	futures-task@0.3.33
@@ -124,6 +134,8 @@ CRATES="
 	objc2@0.6.4
 	once_cell@1.21.4
 	ordered-float@4.6.0
+	ordered-stream@0.2.0
+	parking@2.2.1
 	parking_lot@0.12.5
 	parking_lot_core@0.9.12
 	pest@2.8.6
@@ -140,6 +152,7 @@ CRATES="
 	portable-atomic@1.13.1
 	powerfmt@0.2.0
 	prettyplease@0.2.37
+	proc-macro-crate@3.5.0
 	proc-macro2@1.0.106
 	quote@1.0.45
 	r-efi@5.3.0
@@ -173,6 +186,7 @@ CRATES="
 	serde_derive_internals@0.29.1
 	serde_ignored@0.1.14
 	serde_json@1.0.149
+	serde_repr@0.1.21
 	serde_spanned@0.6.9
 	serial2@0.2.34
 	sha2@0.10.9
@@ -185,12 +199,15 @@ CRATES="
 	siphasher@1.0.2
 	slab@0.4.12
 	smallvec@1.15.1
+	socket2@0.6.5
 	static_assertions@1.1.0
 	strsim@0.11.1
 	strum@0.27.2
 	strum_macros@0.27.2
 	syn@1.0.109
 	syn@2.0.117
+	syn@3.0.6
+	tempfile@3.27.0
 	terminfo@0.9.0
 	termios@0.3.3
 	termwiz@0.23.3
@@ -206,7 +223,10 @@ CRATES="
 	tokio@1.50.0
 	toml@0.8.23
 	toml_datetime@0.6.11
+	toml_datetime@1.1.1+spec-1.1.0
 	toml_edit@0.22.27
+	toml_edit@0.25.15+spec-1.1.0
+	toml_parser@1.1.3+spec-1.1.0
 	toml_write@0.1.2
 	tracing-attributes@0.1.31
 	tracing-core@0.1.36
@@ -215,6 +235,7 @@ CRATES="
 	tracing@0.1.44
 	typenum@1.19.0
 	ucd-trie@0.1.7
+	uds_windows@1.2.1
 	unicode-ident@1.0.24
 	unicode-segmentation@1.13.1
 	unicode-truncate@2.0.1
@@ -260,6 +281,7 @@ CRATES="
 	windows-threading@0.2.1
 	windows@0.62.2
 	winnow@0.7.15
+	winnow@1.0.4
 	winreg@0.10.1
 	wit-bindgen-core@0.51.0
 	wit-bindgen-rust-macro@0.51.0
@@ -268,7 +290,14 @@ CRATES="
 	wit-component@0.244.0
 	wit-parser@0.244.0
 	wmi@0.18.4
+	zbus@5.19.0
+	zbus_macros@5.19.0
+	zbus_names@4.3.4
+	zcheapstr@1.1.0
 	zmij@1.0.21
+	zvariant@5.15.0
+	zvariant_derive@5.15.0
+	zvariant_utils@4.2.0
 "
 
 # Zig package dependencies of vendor/libghostty-vt (Ghostty Zig source
@@ -277,20 +306,18 @@ CRATES="
 # NOTE: Keep in sync with x11-terms/ghostty-terminfo; distfiles are
 #       identical and share the same DISTDIR entries.
 declare -g -r -A ZBS_DEPENDENCIES=(
-	[N-V-__8AAAYpBACKY0n8sQbPfzY47xFRRtjXiF766UVF5ZyD.tgz]='https://deps.files.ghostty.org/ghostty-themes-release-20260629-161812-8c97c3c.tgz'
-	[N-V-__8AAAzZywE3s51XfsLbP9eyEw57ae9swYB9aGB6fCMs.tar.gz]='https://deps.files.ghostty.org/wuffs-122037b39d577ec2db3fd7b2130e7b69ef6cc1807d68607a7c232c958315d381b5cd.tar.gz'
 	[N-V-__8AAB0eQwD-0MdOEBmz7intriBReIsIDNlukNVoNu6o.tar.gz]='https://deps.files.ghostty.org/zlib-1220fed0c74e1019b3ee29edae2051788b080cd96e90d56836eea857b0b966742efb.tar.gz'
 	[N-V-__8AABzkUgISeKGgXAzgtutgJsZc0-kkeqBBscJgMkvy.tar.gz]='https://deps.files.ghostty.org/glslang-12201278a1a05c0ce0b6eb6026c65cd3e9247aa041b1c260324bf29cee559dd23ba1.tar.gz'
 	[N-V-__8AADYiAAB_80AWnH1AxXC0tql9thT-R-DYO1gBqTLc.tar.gz]='https://deps.files.ghostty.org/pixels-12207ff340169c7d40c570b4b6a97db614fe47e0d83b5801a932dcd44917424c8806.tar.gz'
 	[N-V-__8AADcZkgn4cMhTUpIz6mShCKyqqB-NBtf_S2bHaTC-.tar.gz]='https://deps.files.ghostty.org/gettext-0.24.tar.gz'
-	[N-V-__8AAEbOfQBnvcFcCX2W5z7tDaN8vaNZGamEQtNOe0UI.tar.gz]='https://github.com/ocornut/imgui/archive/refs/tags/v1.92.5-docking.tar.gz'
-	[N-V-__8AAFdWDwA0ktbNUi9pFBHCRN4weXIgIfCrVjfGxqgA.tar.gz]='https://gitlab.freedesktop.org/wayland/wayland-protocols/-/archive/1.47/wayland-protocols-1.47.tar.gz'
+	[N-V-__8AAEFmBABuDGOKxAI6VMg41b9euMZ-z7HS9EcUdaor.tgz]='https://deps.files.ghostty.org/ghostty-themes-release-20260831-151010-752a9c0.tgz'
+	[N-V-__8AAEbOfQBnvcFcCX2W5z7tDaN8vaNZGamEQtNOe0UI.tar.gz]='https://deps.files.ghostty.org/N-V-__8AAEbOfQBnvcFcCX2W5z7tDaN8vaNZGamEQtNOe0UI.tar.gz'
+	[N-V-__8AAFdWDwA0ktbNUi9pFBHCRN4weXIgIfCrVjfGxqgA.tar.gz]='https://deps.files.ghostty.org/N-V-__8AAFdWDwA0ktbNUi9pFBHCRN4weXIgIfCrVjfGxqgA.tar.gz'
 	[N-V-__8AAG02ugUcWec-Ndp-i7JTsJ0dgF8nnJRUInkGLG7G.tar.xz]='https://deps.files.ghostty.org/harfbuzz-11.0.0.tar.xz'
 	[N-V-__8AAG3RoQEyRC2Vw7Qoro5SYBf62IHn3HjqtNVY6aWK.tar.gz]='https://deps.files.ghostty.org/libxml2-2.11.5.tar.gz'
 	[N-V-__8AAGmZhABbsPJLfbqrh6JTHsXhY6qCaLAQyx25e0XE.tar.gz]='https://deps.files.ghostty.org/highway-66486a10623fa0d72fe91260f96c892e41aceb06.tar.gz'
 	[N-V-__8AAHjwMQDBXnLq3Q2QhaivE0kE2aD138vtX2Bq1g7c.tar.gz]='https://deps.files.ghostty.org/oniguruma-1220c15e72eadd0d9085a8af134904d9a0f5dfcbed5f606ad60edc60ebeccd9706bb.tar.gz'
 	[N-V-__8AAIC5lwAVPJJzxnCAahSvZTIlG-HhtOvnM1uh-66x.tar.gz]='https://deps.files.ghostty.org/JetBrainsMono-2.304.tar.gz'
-	[N-V-__8AAIrfdwARSa-zMmxWwFuwpXf1T3asIN7s5jqi9c1v.tar.gz]='https://deps.files.ghostty.org/fontconfig-2.14.2.tar.gz'
 	[N-V-__8AAJrvXQCqAT8Mg9o_tk6m0yf5Fz-gCNEOKLyTSerD.tar.gz]='https://deps.files.ghostty.org/libpng-1220aa013f0c83da3fb64ea6d327f9173fa008d10e28bc9349eac3463457723b1c66.tar.gz'
 	[N-V-__8AAKLKpwC4H27Ps_0iL3bPkQb-z6ZVSrB-x_3EEkub.tar.gz]='https://deps.files.ghostty.org/freetype-1220b81f6ecfb3fd222f76cf9106fecfa6554ab07ec7fdc4124b9bb063ae2adf969d.tar.gz'
 	[N-V-__8AAKYZBAB-CFHBKs3u4JkeiT4BMvyHu3Y5aaWF3Bbs.tar.gz]='https://deps.files.ghostty.org/plasma_wayland_protocols-12207e0851c12acdeee0991e893e0132fc87bb763969a585dc16ecca33e88334c566.tar.gz'
@@ -301,21 +328,25 @@ declare -g -r -A ZBS_DEPENDENCIES=(
 	[N-V-__8AAMVLTABmYkLqhZPLXnMl-KyN38R8UVYqGrxqO26s.tar.gz]='https://deps.files.ghostty.org/NerdFontsSymbolsOnly-3.4.0.tar.gz'
 	[N-V-__8AANT61wB--nJ95Gj_ctmzAtcjloZ__hRqNw5lC1Kr.tar.gz]='https://deps.files.ghostty.org/DearBindings_v0.17_ImGui_v1.92.5-docking.tar.gz'
 	[N-V-__8AANb6pwD7O1WG6L5nvD_rNMvnSc9Cpg1ijSlTYywv.tar.gz]='https://deps.files.ghostty.org/spirv_cross-1220fb3b5586e8be67bc3feb34cbe749cf42a60d628d2953632c2f8141302748c8da.tar.gz'
+	[N-V-__8AAOgqbADacob-q2_DMQlmgaG4xKHRuW-6PJ4oJzMZ.tar.xz]='https://gitlab.freedesktop.org/api/v4/projects/890/packages/generic/fontconfig/2.18.3/fontconfig-2.18.3.tar.xz'
+	[N-V-__8AAP5JWgCGP_AD0teWpa4krRvE9VPZzvviGdbmN4jI.tar.gz]='https://deps.files.ghostty.org/wuffs-7411f488fe2e2c205c3d3b3d28638b7356522930.tar.gz'
 	[N-V-__8AAPlZGwBEa-gxrcypGBZ2R8Bse4JYSfo_ul8i2jlG.tar.gz]='https://deps.files.ghostty.org/sentry-1220446be831adcca918167647c06c7b825849fa3fba5f22da394667974537a9c77e.tar.gz'
-	[gobject-0.3.0-Skun7ANLnwDvEfIpVmohcppXgOvg_I6YOJFmPIsKfXk-.tar.zst]='https://deps.files.ghostty.org/gobject-2025-11-08-23-1.tar.zst'
-	[libxev-0.0.0-86vtc4IcEwCqEYxEYoN_3KXmc6A9VLcm22aVImfvecYs.tar.gz]='https://deps.files.ghostty.org/libxev-34fa50878aec6e5fa8f532867001ab3c36fae23e.tar.gz'
-	[uucode-0.1.0-ZZjBPj96QADXyt5sqwBJUnhaDYs_qBeeKijZvlRa0eqM.tar.gz]='https://github.com/jacobsandlund/uucode/archive/5f05f8f83a75caea201f12cc8ea32a2d82ea9732.tar.gz'
-	[uucode-0.2.0-ZZjBPqZVVABQepOqZHR7vV_NcaN-wats0IB6o-Exj6m9.tar.gz]='https://deps.files.ghostty.org/uucode-0.2.0-ZZjBPqZVVABQepOqZHR7vV_NcaN-wats0IB6o-Exj6m9.tar.gz'
-	[vaxis-0.5.1-BWNV_LosCQAGmCCNOLljCIw6j6-yt53tji6n6rwJ2BhS.tar.gz]='https://deps.files.ghostty.org/vaxis-7dbb9fd3122e4ffad262dd7c151d80d863b68558.tar.gz'
-	[wayland-0.5.0-dev-lQa1khrMAQDJDwYFKpdH3HizherB7sHo5dKMECfvxQHe.tar.gz]='https://deps.files.ghostty.org/zig_wayland-1b5c038ec10da20ed3a15b0b2a6db1c21383e8ea.tar.gz'
-	[z2d-0.10.0-j5P_Hu-6FgBsZNgwphIqh17jDnj8_yPtD8yzjO6PpHRQ.tar.gz]='https://deps.files.ghostty.org/z2d-0.10.0-j5P_Hu-6FgBsZNgwphIqh17jDnj8_yPtD8yzjO6PpHRQ.tar.gz'
-	[zf-0.10.3-OIRy8RuJAACKA3Lohoumrt85nRbHwbpMcUaLES8vxDnh.tar.gz]='https://deps.files.ghostty.org/zf-3c52637b7e937c5ae61fd679717da3e276765b23.tar.gz'
-	[zig_js-0.0.0-rjCAV-6GAADxFug7rDmPH-uM_XcnJ5NmuAMJCAscMjhi.tar.gz]='https://deps.files.ghostty.org/zig_js-04db83c617da1956ac5adc1cb9ba1e434c1cb6fd.tar.gz'
-	[zig_objc-0.0.0-Ir_Sp5gTAQCvxxR7oVIrPXxXwsfKgVP7_wqoOQrZjFeK.tar.gz]='https://deps.files.ghostty.org/zig_objc-f356ed02833f0f1b8e84d50bed9e807bf7cdc0ae.tar.gz'
-	[zigimg-0.1.0-8_eo2vHnEwCIVW34Q14Ec-xUlzIoVg86-7FU2ypPtxms.tar.gz]='https://github.com/ivanstepanovftw/zigimg/archive/d7b7ab0ba0899643831ef042bd73289510b39906.tar.gz'
+	[aro-0.0.0-JSD1Qk6lNgDdcDV4Vh7Sfy-34m2TluIVOdPzMmj_0BjX.tar.gz]='https://github.com/vancluever/arocc/archive/f97cdfc3779aec4b242299e2fc9a1c828c3547c6.tar.gz'
+	[gobject-0.3.2-Skun7F6HogCMynX2JqeSHS7xr-8pK4ob-qRFIcEasVi3.tar.zst]='https://deps.files.ghostty.org/gobject-2026-07-28-36-1.tar.zst'
+	[libxev-0.0.0-86vtcwIRFADbH4hk-EjROXxlrKIRPQdA41XiTSytYO-F.tar.gz]='https://deps.files.ghostty.org/libxev-9ce8e8e6ff89e583258a7f8e7adeeeaeae8611bf.tar.gz'
+	[translate_c-0.0.0-Q_BUWhVNBwDOEcIqub4VFPJPB6D9dgwzUMHTX5KWr8Xr.tar.gz]='https://codeberg.org/vancluever/translate-c/archive/4e879eb8aba615de112eabd1231ea6e01920cead.tar.gz'
+	[uucode-0.2.0-ZZjBPlK5VADj7fdoq7G8LIHzD5o6FSkcBXXrRWr4jnrA.tar.gz]='https://deps.files.ghostty.org/uucode-2826a37a4562284fdacd8fa029d49509cc9bffcd.tar.gz'
+	[vaxis-0.6.0-BWNV_CrbCQCscGpzsAlR402rYQ_tV3aAl081c2iRRkka.tar.gz]='https://deps.files.ghostty.org/vaxis-1dbbe575dff4586fe51e3217aa5c3fecdcbb6089.tar.gz'
+	[vaxis-0.6.0-BWNV_MjFCQCs9UDHiRkrgw_ayeiPkzOe4xVbaAqXkUWW.tar.gz]='https://github.com/rockorager/libvaxis/archive/c1e1f23be38951c425cdf31af455ba23ef178940.tar.gz'
+	[wayland-0.6.0-lQa1kqz8AQADQmdNJsNhLoNHcnEGEUjrOaPV-dtEnEmX.tar.gz]='https://deps.files.ghostty.org/wayland-0.6.0-lQa1kqz8AQADQmdNJsNhLoNHcnEGEUjrOaPV-dtEnEmX.tar.gz'
+	[z2d-0.12.1-j5P_Hsw8EQAKyZTQICCQnAH2xYkLDW8k9uefbsYdfPZ-.tar.gz]='https://deps.files.ghostty.org/z2d-7dbae85c81784dba9988320bf9543ed9a81350c8.tar.gz'
+	[zf-0.11.0-OIRy8X-RAAAwaRXHMYpj2uvBnuGTZWEE_3V7acqHQNtW.tar.gz]='https://deps.files.ghostty.org/zf-c35c421f84895193246db06c40683c1a30e616ef.tar.gz'
+	[zig_js-0.0.0-rjCAV7-GAADvMTBL7lPMuvDk7xgS9PCMIZWiOUXLZSlj.tar.gz]='https://deps.files.ghostty.org/zig_js-3c23860e47fdcdc5af805efb7fd0bdac5fd3e9bc.tar.gz'
+	[zig_objc-0.0.0-Ir_Sp9gsAQCPAJc0oF5xoWePHWP6Y6tCphDeyNUThJoi.tar.gz]='https://deps.files.ghostty.org/zig_objc-c8de82ff80281215ad92900866dab7103a8efa8b.tar.gz'
+	[zigimg-0.1.0-8_eo2oyaFwBZwJpmqPkCfVXWBrHcqbYwmrp1I6bTD3lI.tar.gz]='https://github.com/zigimg/zigimg/archive/d695acd97c02e57bb151e8f659d1280f5cd6ca70.tar.gz'
 )
 
-ZIG_SLOT="0.15"
+ZIG_SLOT="0.16"
 ZIG_OPTIONAL=1
 RUST_MIN_VER="1.88.0"
 inherit zig cargo
@@ -334,8 +365,8 @@ RESTRICT="mirror"
 # ZIG_OPTIONAL suppresses zig.eclass auto-BDEPEND; declare Zig deps manually.
 BDEPEND="
 	|| (
-		dev-lang/zig:0.15
-		dev-lang/zig-bin:0.15
+		dev-lang/zig:0.16
+		dev-lang/zig-bin:0.16
 	)
 	virtual/pkgconfig
 "
@@ -358,11 +389,28 @@ src_prepare() {
 	# environment variables.
 	zig-utils_setup
 
+	# Zig >=0.16's "zig fetch" no longer extracts folder packages when a
+	# --global-cache-dir is given (it only stores the compressed archive
+	# there).  Without --global-cache-dir, it still extracts tarballs into
+	# "./zig-pkg/<hash>/" relative to CWD (stripping the single top-level
+	# directory the same way older Zig releases did), which is the layout
+	# vendor/libghostty-vt's build.rs expects for "zig build --system".
+	# "zig fetch" also requires a build.zig file to exist in CWD.
+	local zig_gcache="${WORKDIR}/zig-gcache"
+	mkdir -p "${zig_gcache}" || die
+	pushd "${zig_gcache}" > /dev/null || die
+	touch build.zig || die
+
 	local dep
 	for dep in "${!ZBS_DEPENDENCIES[@]}"; do
-		ezig fetch --global-cache-dir "${WORKDIR}/zig-gcache" \
-			"${DISTDIR}/${dep}" > /dev/null
+		ezig fetch "${DISTDIR}/${dep}" > /dev/null
 	done
+
+	# Keep the "p/" directory name used by older Zig's
+	# "--global-cache-dir"-based fetch, for consistency.
+	mv zig-pkg p || die
+
+	popd > /dev/null || die
 }
 
 src_compile() {
@@ -370,6 +418,11 @@ src_compile() {
 	# the layout that vendor/libghostty-vt's build.rs expects when its
 	# LIBGHOSTTY_VT_ZIG_SYSTEM_DIR is set (equivalent to "zig build --system").
 	export LIBGHOSTTY_VT_ZIG_SYSTEM_DIR="${WORKDIR}/zig-gcache/p"
+	# build.rs shells out to "zig build" for vendor/libghostty-vt and
+	# otherwise falls back to whatever "zig" is first in PATH (which may
+	# be a different, unslotted Zig).  Point it at the Zig binary that
+	# zig-utils_setup selected for ZIG_SLOT.
+	export ZIG="${ZIG_EXE}"
 	cargo_src_compile
 }
 
