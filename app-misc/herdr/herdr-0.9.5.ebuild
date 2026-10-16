@@ -9,6 +9,9 @@ CRATES="
 	allocator-api2@0.2.21
 	anstyle@1.0.14
 	anyhow@1.0.102
+	async-broadcast@0.7.2
+	async-recursion@1.1.1
+	async-trait@0.1.92
 	atomic@0.6.1
 	autocfg@1.5.0
 	base64@0.22.1
@@ -22,14 +25,14 @@ CRATES="
 	block2@0.6.2
 	bumpalo@3.20.2
 	bytemuck@1.25.0
-	bytes@1.11.1
+	bytes@1.12.1
 	castaway@0.2.4
 	cfg-if@1.0.4
 	cfg_aliases@0.1.1
 	cfg_aliases@0.2.1
-	clap@4.6.1
-	clap_builder@4.6.0
-	clap_complete@4.6.5
+	clap@4.6.7
+	clap_builder@4.6.7
+	clap_complete@4.6.11
 	clap_lex@1.1.0
 	compact_str@0.9.0
 	convert_case@0.10.0
@@ -54,10 +57,16 @@ CRATES="
 	downcast-rs@1.2.1
 	dyn-clone@1.0.20
 	either@1.15.0
+	endi@1.1.1
+	enumflags2@0.7.12
+	enumflags2_derive@0.7.12
 	equivalent@1.0.2
 	errno@0.3.14
 	euclid@0.22.14
+	event-listener-strategy@0.5.4
+	event-listener@5.4.2
 	fancy-regex@0.11.0
+	fastrand@2.5.0
 	fdeflate@0.3.7
 	filedescriptor@0.8.3
 	finl_unicode@1.4.0
@@ -66,14 +75,15 @@ CRATES="
 	fnv@1.0.7
 	foldhash@0.1.5
 	foldhash@0.2.0
-	futures-channel@0.3.33
-	futures-core@0.3.33
+	futures-channel@0.3.34
+	futures-core@0.3.34
 	futures-executor@0.3.33
-	futures-io@0.3.33
-	futures-macro@0.3.33
-	futures-sink@0.3.33
-	futures-task@0.3.33
-	futures-util@0.3.33
+	futures-io@0.3.34
+	futures-lite@2.6.1
+	futures-macro@0.3.34
+	futures-sink@0.3.34
+	futures-task@0.3.34
+	futures-util@0.3.34
 	futures@0.3.33
 	generic-array@0.14.7
 	getrandom@0.3.4
@@ -87,7 +97,7 @@ CRATES="
 	indexmap@2.13.0
 	indoc@2.0.7
 	instability@0.3.12
-	interprocess@2.4.2
+	interprocess@2.4.4
 	itertools@0.14.0
 	itoa@1.0.18
 	js-sys@0.3.91
@@ -96,7 +106,7 @@ CRATES="
 	lab@0.11.0
 	lazy_static@1.5.0
 	leb128fmt@0.1.0
-	libc@0.2.183
+	libc@0.2.190
 	line-clipping@0.3.5
 	linux-raw-sys@0.12.1
 	litrs@1.0.0
@@ -116,7 +126,7 @@ CRATES="
 	nix@0.31.2
 	nom@7.1.3
 	nu-ansi-term@0.50.3
-	num-conv@0.2.1
+	num-conv@0.2.2
 	num-derive@0.4.2
 	num-traits@0.2.19
 	num_threads@0.1.7
@@ -124,6 +134,8 @@ CRATES="
 	objc2@0.6.4
 	once_cell@1.21.4
 	ordered-float@4.6.0
+	ordered-stream@0.2.0
+	parking@2.2.1
 	parking_lot@0.12.5
 	parking_lot_core@0.9.12
 	pest@2.8.6
@@ -140,6 +152,7 @@ CRATES="
 	portable-atomic@1.13.1
 	powerfmt@0.2.0
 	prettyplease@0.2.37
+	proc-macro-crate@3.5.0
 	proc-macro2@1.0.106
 	quote@1.0.45
 	r-efi@5.3.0
@@ -156,23 +169,24 @@ CRATES="
 	redox_syscall@0.5.18
 	ref-cast-impl@1.0.25
 	ref-cast@1.0.25
-	regex-automata@0.4.14
-	regex-syntax@0.8.10
-	regex@1.12.3
+	regex-automata@0.4.18
+	regex-syntax@0.8.11
+	regex@1.13.1
 	rustc_version@0.4.1
 	rustix@1.1.4
 	rustversion@1.0.22
 	ryu@1.0.23
-	schemars@1.2.1
-	schemars_derive@1.2.1
+	schemars@1.2.2
+	schemars_derive@1.2.2
 	scopeguard@1.2.0
 	semver@1.0.27
-	serde@1.0.228
-	serde_core@1.0.228
-	serde_derive@1.0.228
-	serde_derive_internals@0.29.1
+	serde@1.0.229
+	serde_core@1.0.229
+	serde_derive@1.0.229
+	serde_derive_internals@0.30.0
 	serde_ignored@0.1.14
-	serde_json@1.0.149
+	serde_json@1.0.151
+	serde_repr@0.1.21
 	serde_spanned@0.6.9
 	serial2@0.2.34
 	sha2@0.10.9
@@ -185,12 +199,15 @@ CRATES="
 	siphasher@1.0.2
 	slab@0.4.12
 	smallvec@1.15.1
+	socket2@0.6.5
 	static_assertions@1.1.0
 	strsim@0.11.1
 	strum@0.27.2
 	strum_macros@0.27.2
 	syn@1.0.109
 	syn@2.0.117
+	syn@3.0.6
+	tempfile@3.27.0
 	terminfo@0.9.0
 	termios@0.3.3
 	termwiz@0.23.3
@@ -199,14 +216,17 @@ CRATES="
 	thiserror@1.0.69
 	thiserror@2.0.18
 	thread_local@1.1.9
-	time-core@0.1.8
-	time-macros@0.2.27
-	time@0.3.47
+	time-core@0.1.9
+	time-macros@0.2.32
+	time@0.3.55
 	tokio-macros@2.6.1
 	tokio@1.50.0
 	toml@0.8.23
 	toml_datetime@0.6.11
+	toml_datetime@1.1.1+spec-1.1.0
 	toml_edit@0.22.27
+	toml_edit@0.25.15+spec-1.1.0
+	toml_parser@1.1.3+spec-1.1.0
 	toml_write@0.1.2
 	tracing-attributes@0.1.31
 	tracing-core@0.1.36
@@ -215,8 +235,9 @@ CRATES="
 	tracing@0.1.44
 	typenum@1.19.0
 	ucd-trie@0.1.7
+	uds_windows@1.2.1
 	unicode-ident@1.0.24
-	unicode-segmentation@1.13.1
+	unicode-segmentation@1.13.3
 	unicode-truncate@2.0.1
 	unicode-width@0.2.2
 	unicode-xid@0.2.6
@@ -260,6 +281,7 @@ CRATES="
 	windows-threading@0.2.1
 	windows@0.62.2
 	winnow@0.7.15
+	winnow@1.0.4
 	winreg@0.10.1
 	wit-bindgen-core@0.51.0
 	wit-bindgen-rust-macro@0.51.0
@@ -268,7 +290,14 @@ CRATES="
 	wit-component@0.244.0
 	wit-parser@0.244.0
 	wmi@0.18.4
+	zbus@5.19.0
+	zbus_macros@5.19.0
+	zbus_names@4.3.4
+	zcheapstr@1.1.0
 	zmij@1.0.21
+	zvariant@5.15.0
+	zvariant_derive@5.15.0
+	zvariant_utils@4.2.0
 "
 
 # Zig package dependencies of vendor/libghostty-vt (Ghostty Zig source
@@ -323,15 +352,16 @@ RUST_MIN_VER="1.88.0"
 inherit zig cargo
 
 DESCRIPTION="Terminal workspace manager for AI coding agents"
-HOMEPAGE="https://herdr.dev https://github.com/ogulcancelik/herdr"
-SRC_URI="https://github.com/ogulcancelik/${PN}/archive/refs/tags/v${PV}.tar.gz -> ${P}.tar.gz
+HOMEPAGE="https://herdr.dev https://github.com/herdrdev/herdr"
+SRC_URI="https://github.com/herdrdev/${PN}/archive/refs/tags/v${PV}.tar.gz -> ${P}.tar.gz
 	${CARGO_CRATE_URIS}
 	${ZBS_DEPENDENCIES_SRC_URI}"
 
-LICENSE="AGPL-3+ Apache-2.0 MIT Unicode-DFS-2016"
+LICENSE="Apache-2.0 MIT Unicode-DFS-2016"
 SLOT="0"
 KEYWORDS="~amd64"
-RESTRICT="mirror"
+IUSE="test"
+RESTRICT="mirror !test? ( test )"
 
 # ZIG_OPTIONAL suppresses zig.eclass auto-BDEPEND; declare Zig deps manually.
 BDEPEND="
@@ -340,6 +370,7 @@ BDEPEND="
 		dev-lang/zig-bin:0.16
 	)
 	virtual/pkgconfig
+	test? ( dev-util/cargo-nextest )
 "
 
 # Zig Build System ignores CFLAGS/LDFLAGS; silence QA warnings for the
@@ -398,8 +429,11 @@ src_compile() {
 }
 
 src_test() {
-	# Upstream's full integration suite is written for cargo-nextest isolation.
-	RUST_TEST_THREADS=1 cargo_src_test --bin herdr
+	# CLI tests change process-wide signal handlers; isolate each test.
+	set -- "${CARGO}" nextest run $(usev !debug --release) \
+		"${ECARGO_ARGS[@]}" --bin herdr --test-threads 1
+	einfo "${@}"
+	cargo_env "${@}" || die "cargo nextest failed"
 }
 
 src_install() {

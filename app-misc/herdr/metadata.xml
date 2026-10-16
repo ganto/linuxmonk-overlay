@@ -6,8 +6,8 @@
 		<name>Reto Gantenbein</name>
 	</maintainer>
 	<upstream>
-		<bugs-to>https://github.com/ogulcancelik/herdr/issues</bugs-to>
-		<remote-id type="github">ogulcancelik/herdr</remote-id>
+		<bugs-to>https://github.com/herdrdev/herdr/issues</bugs-to>
+		<remote-id type="github">herdrdev/herdr</remote-id>
 	</upstream>
 	<longdescription lang="en">
 		herdr is a terminal workspace manager and agent multiplexer for AI coding
