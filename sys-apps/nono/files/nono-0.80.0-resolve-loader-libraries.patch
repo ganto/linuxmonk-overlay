@@ -1,0 +1,461 @@
+Resolve native amd64 glibc libraries from a bounded system cache snapshot.
+
+Preserve ELF ABI and cache metadata for exact SONAME lookup. Native glibc uses
+RPATH/RUNPATH, its loader cache, then its compiled-in default directories;
+non-native interpreters retain their existing interpreter/FHS fallback.
+Root ownership, write-mode and size checks protect the cache provider.
+
+Requires the following loader-library-runtime patch for metadata selection,
+hwcaps extensions and the native loader diagnostic provider.
+
+--- a/crates/nono-cli/src/tool-sandbox/platform/linux.rs
++++ b/crates/nono-cli/src/tool-sandbox/platform/linux.rs
+@@ -4533,6 +4533,7 @@
+         )?;
+         super::env::override_proxy_env(&mut env, vars);
+     }
++    validate_loader_selection_env(&env)?;
+     Ok(env)
+ }
+ 
+@@ -5549,7 +5550,7 @@
+     /// during prep) filesystem, so caching is safe within a pass.
+     static ELF_CANON_CACHE: RefCell<HashMap<PathBuf, PathBuf>> = RefCell::new(HashMap::new());
+     /// Memoizes shared-library name resolution, keyed by
+-    /// `(soname, search_dirs, interpreter_dir)` — the only inputs that
++    /// `(soname, search_dirs, interpreter_dir, abi)` — the only inputs that
+     /// determine the result.
+     static ELF_LIB_CACHE: RefCell<HashMap<ElfLibCacheKey, PathBuf>> =
+         RefCell::new(HashMap::new());
+@@ -5560,9 +5561,14 @@
+     /// Memoizes file identity (dev+ino) keyed by canonical path, so the per-edge
+     /// `statx` used for closure dedup runs once per file per pass.
+     static ELF_FILEID_CACHE: RefCell<HashMap<PathBuf, FileId>> = RefCell::new(HashMap::new());
+-}
+-
+-type ElfLibCacheKey = (String, Vec<String>, Option<PathBuf>);
++    /// A bounded snapshot of the system loader cache, including read/parse errors.
++    static ELF_LOADER_CACHE: RefCell<Option<std::result::Result<LoaderCache, String>>> =
++        const { RefCell::new(None) };
++    static ELF_LOADER_CPU: RefCell<Option<std::result::Result<LoaderCpu, String>>> =
++        const { RefCell::new(None) };
++}
++
++type ElfLibCacheKey = (String, Vec<String>, Option<PathBuf>, Option<ElfAbi>);
+ 
+ /// Clears the per-pass ELF-resolution memo caches. Called at the start of each
+ /// batch that computes dependency closures so a fresh pass (or a later run in
+@@ -5572,6 +5578,8 @@
+     ELF_LIB_CACHE.with(|cache| cache.borrow_mut().clear());
+     ELF_PARSE_CACHE.with(|cache| cache.borrow_mut().clear());
+     ELF_FILEID_CACHE.with(|cache| cache.borrow_mut().clear());
++    ELF_LOADER_CACHE.with(|cache| *cache.borrow_mut() = None);
++    ELF_LOADER_CPU.with(|cache| *cache.borrow_mut() = None);
+ }
+ 
+ /// Canonicalize `path`, memoized via [`ELF_CANON_CACHE`] for the current pass.
+@@ -5613,7 +5621,16 @@
+     let mut seen = HashSet::new();
+     let mut result = Vec::new();
+     let interpreter_dir = interpreter_dir_of(binary)?;
+-    resolve_elf_recursive(binary, interpreter_dir.as_deref(), &mut seen, &mut result)?;
++    let canonical = cached_canonicalize(binary)?;
++    let native_loader =
++        uses_native_glibc_cache(parse_elf_cached(&canonical)?.interpreter.as_deref())?;
++    resolve_elf_recursive(
++        binary,
++        interpreter_dir.as_deref(),
++        native_loader,
++        &mut seen,
++        &mut result,
++    )?;
+     Ok(result)
+ }
+ 
+@@ -5655,6 +5672,7 @@
+ fn resolve_elf_recursive(
+     path: &Path,
+     interpreter_dir: Option<&Path>,
++    native_loader: bool,
+     seen: &mut HashSet<FileId>,
+     result: &mut Vec<PathBuf>,
+ ) -> Result<()> {
+@@ -5665,18 +5683,24 @@
+     result.push(canonical.clone());
+     let parsed = parse_elf_cached(&canonical)?;
+     if let Some(interpreter) = parsed.interpreter {
+-        resolve_elf_recursive(&interpreter, interpreter_dir, seen, result)?;
++        resolve_elf_recursive(&interpreter, interpreter_dir, native_loader, seen, result)?;
+     }
+     for needed in parsed.needed {
+-        let dep =
+-            resolve_shared_library(&needed, &parsed.search_dirs, interpreter_dir, &canonical)?;
+-        resolve_elf_recursive(&dep, interpreter_dir, seen, result)?;
++        let dep = resolve_shared_library(
++            &needed,
++            &parsed.search_dirs,
++            interpreter_dir,
++            native_loader,
++            &canonical,
++        )?;
++        resolve_elf_recursive(&dep, interpreter_dir, native_loader, seen, result)?;
+     }
+     Ok(())
+ }
+ 
+ #[derive(Clone)]
+ struct ParsedElf {
++    abi: Option<ElfAbi>,
+     interpreter: Option<PathBuf>,
+     needed: Vec<String>,
+     search_dirs: Vec<String>,
+@@ -5711,6 +5735,7 @@
+     })?;
+     if data.len() < 64 || &data[0..4] != b"\x7fELF" {
+         return Ok(ParsedElf {
++            abi: None,
+             interpreter: None,
+             needed: Vec::new(),
+             search_dirs: Vec::new(),
+@@ -5722,14 +5747,16 @@
+             path.display()
+         )));
+     }
+-    match data[4] {
++    let mut parsed = match data[4] {
+         1 => parse_elf32(path, &data),
+         2 => parse_elf64(path, &data),
+         _ => Err(NonoError::SandboxInit(format!(
+             "unknown ELF class for {}",
+             path.display()
+         ))),
+-    }
++    }?;
++    parsed.abi = Some(elf_abi(&data)?);
++    Ok(parsed)
+ }
+ 
+ fn parse_elf64(path: &Path, data: &[u8]) -> Result<ParsedElf> {
+@@ -5796,6 +5823,7 @@
+ ) -> Result<ParsedElf> {
+     let Some((dyn_off, dyn_size)) = dynamic else {
+         return Ok(ParsedElf {
++            abi: None,
+             interpreter,
+             needed: Vec::new(),
+             search_dirs: Vec::new(),
+@@ -5851,6 +5879,7 @@
+         }
+     }
+     Ok(ParsedElf {
++        abi: None,
+         interpreter,
+         needed,
+         search_dirs,
+@@ -5859,21 +5888,30 @@
+ 
+ /// Resolves the `NEEDED` soname `name` to a file, searching in order:
+ /// `search_dirs` (the referencing object's own `DT_RPATH`/`DT_RUNPATH`),
+-/// then `interpreter_dir` (see [`interpreter_dir_of`]), then the standard
+-/// FHS default directories.
++/// then the native glibc loader cache and its compiled-in default directories.
++/// Non-native interpreters retain the interpreter-directory and FHS fallback.
+ fn resolve_shared_library(
+     name: &str,
+     search_dirs: &[String],
+     interpreter_dir: Option<&Path>,
++    native_loader: bool,
+     binary: &Path,
+ ) -> Result<PathBuf> {
+-    // The result depends only on (soname, search_dirs, interpreter_dir);
++    // Synthetic callers and non-native interpreters retain the old fallback.
++    let abi = if native_loader {
++        parse_elf_cached(binary)?.abi
++    } else {
++        None
++    };
++    let cpu = abi.map(|_| native_loader_cpu()).transpose()?;
++    // The result depends only on (soname, search_dirs, interpreter_dir, abi);
+     // memoize it so a library referenced by many objects in the closure is
+     // searched + canonicalized once rather than once per referencing edge.
+     let cache_key = (
+         name.to_string(),
+         search_dirs.to_vec(),
+         interpreter_dir.map(Path::to_path_buf),
++        abi,
+     );
+     if let Some(resolved) = ELF_LIB_CACHE.with(|cache| cache.borrow().get(&cache_key).cloned()) {
+         return Ok(resolved);
+@@ -5891,21 +5929,267 @@
+         "/usr/local/lib64",
+     ];
+     let search_dir_paths = search_dirs.iter().map(|dir| Path::new(dir.as_str()));
+-    let default_paths = defaults.iter().copied().map(Path::new);
+-    for dir in search_dir_paths.chain(interpreter_dir).chain(default_paths) {
+-        let candidate = dir.join(name);
+-        if candidate.is_file() {
+-            let resolved = cached_canonicalize(&candidate)?;
++    let early_interpreter = interpreter_dir.filter(|_| !native_loader);
++    for dir in search_dir_paths.chain(early_interpreter) {
++        let resolved = if let (Some(abi), Some(cpu)) = (abi, cpu.as_ref()) {
++            resolve_in_loader_dir(dir, name, abi, cpu.level)?
++        } else {
++            let candidate = dir.join(name);
++            candidate
++                .is_file()
++                .then(|| cached_canonicalize(&candidate))
++                .transpose()?
++        };
++        if let Some(resolved) = resolved {
+             ELF_LIB_CACHE.with(|cache| {
+                 cache.borrow_mut().insert(cache_key, resolved.clone());
+             });
+             return Ok(resolved);
+         }
+     }
++    if let Some(abi) = abi {
++        let resolved = ELF_LOADER_CACHE.with(|cache| {
++            let mut cache = cache.borrow_mut();
++            let snapshot = cache.get_or_insert_with(|| {
++                read_loader_cache(Path::new("/etc/ld.so.cache")).map_err(|err| err.to_string())
++            });
++            match snapshot {
++                Ok(entries) => {
++                    resolve_cached_library(entries, name, abi, cpu.as_ref().map_or(1, |c| c.level))
++                }
++                Err(err) => Err(NonoError::SandboxInit(format!(
++                    "cannot read system ELF loader cache: {err}"
++                ))),
++            }
++        })?;
++        if let Some(resolved) = resolved {
++            ELF_LIB_CACHE.with(|cache| {
++                cache.borrow_mut().insert(cache_key, resolved.clone());
++            });
++            return Ok(resolved);
++        }
++    }
++    let default_dirs: Vec<&Path> = if let Some(cpu) = cpu.as_ref() {
++        cpu.default_dirs.iter().map(PathBuf::as_path).collect()
++    } else {
++        defaults.iter().copied().map(Path::new).collect()
++    };
++    for dir in default_dirs {
++        let resolved = if let (Some(abi), Some(cpu)) = (abi, cpu.as_ref()) {
++            resolve_in_loader_dir(dir, name, abi, cpu.level)?
++        } else {
++            let candidate = dir.join(name);
++            candidate
++                .is_file()
++                .then(|| cached_canonicalize(&candidate))
++                .transpose()?
++        };
++        if let Some(resolved) = resolved {
++            ELF_LIB_CACHE.with(|cache| {
++                cache.borrow_mut().insert(cache_key, resolved.clone());
++            });
++            return Ok(resolved);
++        }
++    }
+     Err(NonoError::SandboxInit(format!(
+         "failed to resolve ELF dependency '{name}' for {}",
+         binary.display()
+     )))
++}
++
++/// Use the system cache only for our own glibc interpreter. In particular, a
++/// musl or another glibc interpreter must not acquire host dependencies.
++/// Both interpreter paths are canonical, including symlinks to versioned ld.so.
++fn uses_native_glibc_cache(interpreter: Option<&Path>) -> Result<bool> {
++    if !cfg!(all(target_env = "gnu", target_arch = "x86_64")) || interpreter.is_none() {
++        return Ok(false);
++    }
++    let native = cached_canonicalize(Path::new("/proc/self/exe"))?;
++    let parsed = parse_elf_cached(&native)?;
++    Ok(parsed.interpreter.as_deref() == interpreter)
++}
++
++#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
++struct ElfAbi {
++    class: u8,
++    machine: u16,
++    flags: u32,
++}
++
++fn elf_abi(data: &[u8]) -> Result<ElfAbi> {
++    if data.len() < 64 || &data[..4] != b"\x7fELF" || data[5] != 1 {
++        return Err(NonoError::SandboxInit(
++            "invalid cached library ELF header".into(),
++        ));
++    }
++    let flags_offset = match data[4] {
++        1 => 36,
++        2 => 48,
++        _ => {
++            return Err(NonoError::SandboxInit(
++                "invalid cached library ELF class".into(),
++            ));
++        }
++    };
++    Ok(ElfAbi {
++        class: data[4],
++        machine: le_u16(data, 18)?,
++        flags: le_u32(data, flags_offset)?,
++    })
++}
++
++#[derive(Clone, Debug, Eq, PartialEq)]
++struct LoaderCacheEntry {
++    path: PathBuf,
++    flags: u32,
++    level: u8,
++    isa: u16,
++}
++
++type LoaderCache = HashMap<String, Vec<LoaderCacheEntry>>;
++const MAX_LOADER_CACHE_BYTES: usize = 16 * 1024 * 1024;
++
++fn invalid_loader_cache() -> NonoError {
++    NonoError::SandboxInit("invalid or unsupported glibc loader cache".into())
++}
++
++fn read_loader_cache(path: &Path) -> Result<LoaderCache> {
++    let file = match File::open(path) {
++        Ok(file) => file,
++        Err(err) if err.kind() == std::io::ErrorKind::NotFound => return Ok(HashMap::new()),
++        Err(source) => {
++            return Err(NonoError::ConfigRead {
++                path: path.into(),
++                source,
++            });
++        }
++    };
++    let metadata = file.metadata().map_err(|source| NonoError::ConfigRead {
++        path: path.into(),
++        source,
++    })?;
++    if !metadata.is_file() || metadata.uid() != 0 || metadata.mode() & 0o022 != 0 {
++        return Err(invalid_loader_cache());
++    }
++    let mut data = Vec::new();
++    file.take((MAX_LOADER_CACHE_BYTES + 1) as u64)
++        .read_to_end(&mut data)
++        .map_err(|source| NonoError::ConfigRead {
++            path: path.into(),
++            source,
++        })?;
++    parse_loader_cache(&data)
++}
++
++/// glibc's sysdeps/generic/dl-cache.h defines the 48-byte v1.1 header and
++/// 24-byte entries. Accept new and compat caches, not legacy libc5 caches.
++/// Offsets are relative to the new header, including in a compat cache.
++fn parse_loader_cache(data: &[u8]) -> Result<LoaderCache> {
++    if data.len() > MAX_LOADER_CACHE_BYTES {
++        return Err(invalid_loader_cache());
++    }
++    let base = if data.starts_with(b"ld.so-1.7.0") {
++        let old_count = le_u32(data, 12)? as usize;
++        old_count
++            .checked_mul(12)
++            .and_then(|n| n.checked_add(16 + 7))
++            .map(|n| n & !7)
++            .ok_or_else(invalid_loader_cache)?
++    } else {
++        0
++    };
++    let whole = data;
++    let data = whole.get(base..).ok_or_else(invalid_loader_cache)?;
++    if data.len() < 48
++        || !data.starts_with(b"glibc-ld.so.cache1.1")
++        || !matches!(data[28] & 3, 0 | 2)
++    {
++        return Err(invalid_loader_cache());
++    }
++    let count = le_u32(data, 20)? as usize;
++    let strings_start = count
++        .checked_mul(24)
++        .and_then(|n| n.checked_add(48))
++        .ok_or_else(invalid_loader_cache)?;
++    let strings_end = strings_start
++        .checked_add(le_u32(data, 24)? as usize)
++        .filter(|end| *end <= data.len())
++        .ok_or_else(invalid_loader_cache)?;
++    let string = |offset: u32, limit: usize| -> Result<String> {
++        let offset = offset as usize;
++        if !(strings_start..strings_end).contains(&offset) {
++            return Err(invalid_loader_cache());
++        }
++        let end = offset.saturating_add(limit + 1).min(strings_end);
++        read_cstr_string(&data[..end], offset)
++    };
++    // Extension-directory and hwcaps string offsets are file-relative, unlike
++    // the library string offsets. This matters for old/new compat caches.
++    let hwcaps = loader_cache_hwcaps(
++        whole,
++        le_u32(data, 32)? as usize,
++        base,
++        strings_start,
++        strings_end,
++    )?;
++    let mut entries = LoaderCache::new();
++    let mut decoded_bytes = 0usize;
++    for idx in 0..count {
++        let offset = 48 + idx * 24; // count and table bounds checked above
++        let flags = le_u32(data, offset)?;
++        if flags & 0xff != 3 {
++            continue;
++        }
++        let hwcap = le_u64(data, offset + 16)?;
++        let mut level = 1;
++        let mut isa = 0;
++        if hwcap != 0 {
++            // Legacy hwcaps were removed in glibc 2.37. The diagnostic reader
++            // requires that version or later, so only named extensions apply.
++            if (hwcap >> 32) & !0x3ff != 1 << 30 {
++                continue;
++            }
++            isa = ((hwcap >> 32) & 0x3ff) as u16;
++            if isa > 3 {
++                return Err(invalid_loader_cache());
++            }
++            let name = hwcaps
++                .get(hwcap as u32 as usize)
++                .ok_or_else(invalid_loader_cache)?;
++            level = match name.as_str() {
++                "x86-64-v2" => 2,
++                "x86-64-v3" => 3,
++                "x86-64-v4" => 4,
++                _ => continue, // not a native x86-64 built-in directory
++            };
++        }
++        let name = string(le_u32(data, offset + 4)?, 255)?;
++        let path = PathBuf::from(string(le_u32(data, offset + 8)?, 4096)?);
++        decoded_bytes = decoded_bytes.saturating_add(name.len() + path.as_os_str().len());
++        if decoded_bytes > MAX_LOADER_CACHE_BYTES {
++            return Err(invalid_loader_cache());
++        }
++        // Cache entries must name one library, never directories or searches.
++        if name.is_empty()
++            || name.contains('/')
++            || !path.is_absolute()
++            || path.file_name().is_none()
++            || path
++                .components()
++                .any(|c| matches!(c, std::path::Component::ParentDir))
++        {
++            return Err(invalid_loader_cache());
++        }
++        // Preserve cache order within each exact SONAME. Filename and SONAME
++        // are independent fields; the trusted cache supplies their mapping.
++        entries.entry(name).or_default().push(LoaderCacheEntry {
++            path,
++            flags,
++            level,
++            isa,
++        });
++    }
++    Ok(entries)
+ }
+ 
+ fn vaddr_to_offset(vaddr: u64, loads: &[LoadSegment]) -> Option<usize> {

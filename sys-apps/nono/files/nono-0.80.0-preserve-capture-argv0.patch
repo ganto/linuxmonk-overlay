@@ -1,0 +1,200 @@
+Subject: [PATCH] Preserve the invocation name of credential capture helpers
+
+Keep executing the canonical, validated helper path, but preserve the
+expanded configured command as argv[0]. Gentoo's python-exec multicall
+wrapper needs the original invocation name to select the interpreter.
+Apply the same handling to command and provider captures on Unix.
+
+Exercise real captures through argv0-sensitive native shell symlinks,
+including absolute paths, environment expansion, bare names and providers.
+
+--- a/crates/nono-cli/src/proxy_runtime.rs
++++ b/crates/nono-cli/src/proxy_runtime.rs
+@@ -21,6 +21,8 @@
+ use regex::Regex;
+ use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
+ use std::io::{Read, Write};
++#[cfg(unix)]
++use std::os::unix::process::CommandExt;
+ use std::path::{Path, PathBuf};
+ use std::process::{Command, Stdio};
+ use std::sync::{
+@@ -59,10 +61,12 @@
+ enum ResolvedCredentialCaptureSource {
+     Command {
+         command_path: PathBuf,
++        command_arg0: String,
+         args: Vec<String>,
+     },
+     Provider {
+         command_path: PathBuf,
++        command_arg0: String,
+         args: Vec<String>,
+         config: serde_json::Value,
+     },
+@@ -206,6 +210,15 @@
+         }
+     }
+ 
++    #[cfg(unix)]
++    fn command_arg0(&self) -> &str {
++        match self {
++            Self::Command { command_arg0, .. } | Self::Provider { command_arg0, .. } => {
++                command_arg0
++            }
++        }
++    }
++
+     fn is_provider(&self) -> bool {
+         matches!(self, Self::Provider { .. })
+     }
+@@ -236,6 +249,7 @@
+                 };
+                 ResolvedCredentialCaptureSource::Provider {
+                     command_path,
++                    command_arg0: crate::policy::expand_env_vars(command),
+                     args: provider
+                         .command
+                         .iter()
+@@ -261,6 +275,7 @@
+                 };
+                 ResolvedCredentialCaptureSource::Command {
+                     command_path,
++                    command_arg0: crate::policy::expand_env_vars(command),
+                     args: entry
+                         .command
+                         .iter()
+@@ -388,6 +403,9 @@
+     > {
+         let start = Instant::now();
+         let mut command = Command::new(entry.source.command_path());
++        // The executable remains canonical; argv0 only preserves its invocation name.
++        #[cfg(unix)]
++        command.arg0(entry.source.command_arg0());
+         let stdin = if entry.source.is_provider() {
+             Stdio::piped()
+         } else {
+@@ -4839,6 +4857,123 @@
+         Ok(())
+     }
+ 
++    // With no operand after -c's script, sh keeps its native argv[0] in $0.
++    #[cfg(unix)]
++    const CAPTURE_ARGV0_SCRIPT: &str =
++        r#"[ "$0" = "$NONO_REQUEST_PATH" ] || exit 42; printf %s capture-token"#;
++
++    #[cfg(unix)]
++    const PROVIDER_ARGV0_SCRIPT: &str = r#"IFS= read -r request || :
++[ -n "$request" ] || exit 43
++[ "$0" = "$NONO_REQUEST_PATH" ] || exit 42
++printf '%s' '{"material":{"type":"secret","value":"provider-token"}}'"#;
++
++    #[cfg(unix)]
++    fn capture_argv0_backend(
++        command: String,
++        script: &str,
++        provider: bool,
++    ) -> Result<ProxyCredentialCaptureBackend> {
++        let args = vec![command, "-c".to_string(), script.to_string()];
++        let mut entry =
++            test_capture_entry_no_cache(if provider { Vec::new() } else { args.clone() });
++        if provider {
++            entry.provider = Some(crate::profile::CredentialCaptureProvider {
++                command: args,
++                config: serde_json::json!({}),
++            });
++        }
++        let mut entries = HashMap::new();
++        entries.insert("argv0_fixture".to_string(), entry);
++        ProxyCredentialCaptureBackend::new(&entries, "sess-argv0".into(), Default::default())
++    }
++
++    #[cfg(unix)]
++    fn assert_capture_argv0(
++        backend: &ProxyCredentialCaptureBackend,
++        expected_argv0: &str,
++        expected_secret: &str,
++    ) -> Result<()> {
++        let entry = &backend.entries["argv0_fixture"];
++        assert_eq!(
++            entry.source.command_path(),
++            std::fs::canonicalize("/bin/sh").map_err(NonoError::Io)?
++        );
++        let request = nono_proxy::capture::CredentialCaptureRequest {
++            credential_name: "argv0_fixture".to_string(),
++            route_id: "argv0_fixture".to_string(),
++            request_host: "example.com".to_string(),
++            request_path: expected_argv0.to_string(),
++            request_method: "GET".to_string(),
++            session_id: String::new(),
++            cache_scope: String::new(),
++        };
++        let response = nono_proxy::capture::CredentialCaptureBackend::capture(backend, request)
++            .map_err(|err| NonoError::SandboxInit(err.to_string()))?;
++        assert_capture_secret(&response, expected_secret);
++        Ok(())
++    }
++
++    #[cfg(unix)]
++    #[test]
++    fn credential_capture_preserves_absolute_and_expanded_command_argv0() -> Result<()> {
++        let temp = tempfile::tempdir().map_err(NonoError::Io)?;
++        let helper = temp.path().join("capture-argv0-helper");
++        std::os::unix::fs::symlink("/bin/sh", &helper).map_err(NonoError::Io)?;
++        let expected = helper.to_string_lossy().into_owned();
++        let backend = capture_argv0_backend(expected.clone(), CAPTURE_ARGV0_SCRIPT, false)?;
++        assert_capture_argv0(&backend, &expected, "capture-token")?;
++
++        let expanded_backend = {
++            let _lock = crate::test_env::ENV_LOCK
++                .lock()
++                .unwrap_or_else(|poisoned| poisoned.into_inner());
++            let _env =
++                crate::test_env::EnvVarGuard::set_all(&[("NONO_CAPTURE_ARGV0_HELPER", &expected)]);
++            capture_argv0_backend(
++                "$NONO_CAPTURE_ARGV0_HELPER".to_string(),
++                CAPTURE_ARGV0_SCRIPT,
++                false,
++            )?
++        };
++        assert_capture_argv0(&expanded_backend, &expected, "capture-token")?;
++        Ok(())
++    }
++
++    #[cfg(unix)]
++    #[test]
++    fn credential_capture_preserves_bare_command_argv0() -> Result<()> {
++        let temp = tempfile::tempdir().map_err(NonoError::Io)?;
++        let name = "capture-argv0-helper";
++        std::os::unix::fs::symlink("/bin/sh", temp.path().join(name)).map_err(NonoError::Io)?;
++        let backend = {
++            let _lock = crate::test_env::ENV_LOCK
++                .lock()
++                .unwrap_or_else(|poisoned| poisoned.into_inner());
++            let path = format!(
++                "{}:{}",
++                temp.path().display(),
++                std::env::var("PATH").unwrap_or_default()
++            );
++            let _env = crate::test_env::EnvVarGuard::set_all(&[("PATH", &path)]);
++            capture_argv0_backend(name.to_string(), CAPTURE_ARGV0_SCRIPT, false)?
++        };
++        assert_capture_argv0(&backend, name, "capture-token")?;
++        Ok(())
++    }
++
++    #[cfg(unix)]
++    #[test]
++    fn credential_capture_provider_preserves_helper_argv0() -> Result<()> {
++        let temp = tempfile::tempdir().map_err(NonoError::Io)?;
++        let helper = temp.path().join("provider-argv0-helper");
++        std::os::unix::fs::symlink("/bin/sh", &helper).map_err(NonoError::Io)?;
++        let expected = helper.to_string_lossy().into_owned();
++        let backend = capture_argv0_backend(expected.clone(), PROVIDER_ARGV0_SCRIPT, true)?;
++        assert_capture_argv0(&backend, &expected, "provider-token")?;
++        Ok(())
++    }
++
+     #[test]
+     fn proxy_credential_capture_backend_waits_for_inflight_capture() -> Result<()> {
+         let temp = tempfile::tempdir().map_err(NonoError::Io)?;

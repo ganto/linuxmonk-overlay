@@ -1,0 +1,316 @@
+Regression tests for native glibc loader-cache resolution.
+
+Apply after nono-0.80.0-resolve-loader-libraries.patch. Cover non-default
+locations, exact SONAME lookup, versioned filenames, excluded hwcaps entries,
+ordered same-ABI alternatives, ABI-sensitive memoization, malformed caches,
+stale entries, per-pass reset and fail-closed errors. Preserve existing
+interpreter-directory precedence regressions with the new resolver argument.
+
+--- a/crates/nono-cli/src/tool-sandbox/platform/linux.rs
++++ b/crates/nono-cli/src/tool-sandbox/platform/linux.rs
+@@ -7967,6 +7967,273 @@
+         Ok(())
+     }
+ 
++    fn loader_cache_fixture(entries: &[(&str, &Path, u32, u64)]) -> Vec<u8> {
++        let mut data = vec![0; 48 + entries.len() * 24];
++        data[..20].copy_from_slice(b"glibc-ld.so.cache1.1");
++        data[20..24].copy_from_slice(&(entries.len() as u32).to_le_bytes());
++        data[28] = 2;
++        let strings_start = data.len();
++        for (idx, (name, path, flags, hwcap)) in entries.iter().enumerate() {
++            let offset = 48 + idx * 24;
++            data[offset..offset + 4].copy_from_slice(&flags.to_le_bytes());
++            let key = data.len() as u32;
++            data.extend_from_slice(name.as_bytes());
++            data.push(0);
++            let value = data.len() as u32;
++            data.extend_from_slice(path.as_os_str().as_bytes());
++            data.push(0);
++            data[offset + 4..offset + 8].copy_from_slice(&key.to_le_bytes());
++            data[offset + 8..offset + 12].copy_from_slice(&value.to_le_bytes());
++            data[offset + 16..offset + 24].copy_from_slice(&hwcap.to_le_bytes());
++        }
++        let strings_len = (data.len() - strings_start) as u32;
++        data[24..28].copy_from_slice(&strings_len.to_le_bytes());
++        data
++    }
++
++    fn write_loader_test_elf(path: &Path, class: u8, machine: u16) -> Result<()> {
++        let mut header = [0; 64];
++        header[..4].copy_from_slice(b"\x7fELF");
++        header[4] = class;
++        header[5] = 1;
++        header[16..18].copy_from_slice(&3u16.to_le_bytes());
++        header[18..20].copy_from_slice(&machine.to_le_bytes());
++        fs::write(path, header).map_err(|source| NonoError::ConfigWrite {
++            path: path.into(),
++            source,
++        })
++    }
++
++    #[test]
++    fn loader_cache_resolves_outside_defaults_without_granting_other_entries() -> Result<()> {
++        reset_elf_resolution_cache();
++        let tmp = test_tempdir()?;
++        let library = tmp.path().join("libloader-fixture.so.1.2");
++        let unrelated = tmp.path().join("libunrelated.so.1");
++        let requester = tmp.path().join("program");
++        write_loader_test_elf(&library, 2, 62)?;
++        write_loader_test_elf(&unrelated, 2, 62)?;
++        write_loader_test_elf(&requester, 2, 62)?;
++        let fixture = loader_cache_fixture(&[
++            ("libloader-fixture.so.1", &library, 0x303, 0),
++            ("libunrelated.so.1", &unrelated, 0x303, 0),
++        ]);
++        let cache = parse_loader_cache(&fixture)?;
++        ELF_LOADER_CACHE.with(|slot| *slot.borrow_mut() = Some(Ok(cache)));
++
++        let resolved =
++            resolve_shared_library("libloader-fixture.so.1", &[], None, true, &requester)?;
++        assert_eq!(resolved, cached_canonicalize(&library)?);
++        let mut closure = Vec::new();
++        resolve_elf_recursive(&resolved, None, true, &mut HashSet::new(), &mut closure)?;
++        assert_eq!(closure, vec![resolved]);
++        assert!(!closure.contains(&cached_canonicalize(&unrelated)?));
++        assert!(
++            resolve_shared_library("libloader-missing.so.1", &[], None, true, &requester).is_err()
++        );
++
++        // Resolution results and the loader snapshot must not leak into a new pass.
++        reset_elf_resolution_cache();
++        ELF_LOADER_CACHE.with(|slot| *slot.borrow_mut() = Some(Ok(HashMap::new())));
++        assert!(
++            resolve_shared_library("libloader-fixture.so.1", &[], None, true, &requester).is_err()
++        );
++        Ok(())
++    }
++
++    #[test]
++    fn loader_cache_preserves_explicit_precedence_and_fails_on_provider_error() -> Result<()> {
++        reset_elf_resolution_cache();
++        let tmp = test_tempdir()?;
++        let requester = tmp.path().join("program");
++        write_loader_test_elf(&requester, 2, 62)?;
++        let library = tmp.path().join("libloader-precedence.so.1");
++        write_loader_test_elf(&library, 2, 62)?;
++        ELF_LOADER_CACHE.with(|slot| *slot.borrow_mut() = Some(Err("corrupt fixture".into())));
++        let search_dirs = vec![tmp.path().display().to_string()];
++        assert_eq!(
++            resolve_shared_library(
++                "libloader-precedence.so.1",
++                &search_dirs,
++                None,
++                true,
++                &requester,
++            )?,
++            cached_canonicalize(&library)?
++        );
++        assert_eq!(
++            resolve_shared_library(
++                "libloader-precedence.so.1",
++                &[],
++                Some(tmp.path()),
++                true,
++                &requester,
++            )?,
++            cached_canonicalize(&library)?
++        );
++        let err = resolve_shared_library("libloader-precedence.so.1", &[], None, true, &requester)
++            .expect_err("provider errors must not turn into a grant");
++        assert!(err.to_string().contains("corrupt fixture"));
++        assert!(read_loader_cache(&tmp.path().join("absent-cache"))?.is_empty());
++        reset_elf_resolution_cache();
++        assert!(ELF_LOADER_CACHE.with(|slot| slot.borrow().is_none()));
++        assert!(!uses_native_glibc_cache(None)?);
++        assert!(!uses_native_glibc_cache(Some(&requester))?);
++        Ok(())
++    }
++
++    #[test]
++    fn loader_cache_parses_new_and_compat_and_ignores_hwcaps() -> Result<()> {
++        let fixture = loader_cache_fixture(&[
++            (
++                "libbase.so.1",
++                Path::new("/configured/glibc-hwcaps/x86-64-v3/libbase.so.1.2"),
++                0x303,
++                1 << 62,
++            ),
++            (
++                "libbase.so.1",
++                Path::new("/configured/libbase.so.1"),
++                0x303,
++                0,
++            ),
++            (
++                "libversioned.so.1",
++                Path::new("/configured/libversioned.so.1.2"),
++                0x303,
++                0,
++            ),
++            ("libold.so.1", Path::new("/configured/libold.so.1"), 2, 0),
++        ]);
++        let parsed = parse_loader_cache(&fixture)?;
++        assert_eq!(parsed.len(), 2);
++        assert_eq!(
++            parsed["libbase.so.1"],
++            vec![PathBuf::from("/configured/libbase.so.1")]
++        );
++        assert_eq!(
++            parsed["libversioned.so.1"],
++            vec![PathBuf::from("/configured/libversioned.so.1.2")]
++        );
++        // One old-format entry and four alignment bytes precede the new header.
++        let mut compat = vec![0; 32];
++        compat[..11].copy_from_slice(b"ld.so-1.7.0");
++        compat[12..16].copy_from_slice(&1u32.to_le_bytes());
++        compat.extend_from_slice(&fixture);
++        assert_eq!(parse_loader_cache(&compat)?, parsed);
++        Ok(())
++    }
++
++    #[test]
++    fn loader_cache_rejects_malformed_data_and_paths() {
++        let fixture = loader_cache_fixture(&[(
++            "libtest.so.1",
++            Path::new("/configured/libtest.so.1"),
++            0x303,
++            0,
++        )]);
++        for end in 0..fixture.len() {
++            assert!(parse_loader_cache(&fixture[..end]).is_err(), "prefix {end}");
++        }
++        for (offset, value) in [(20, u32::MAX), (24, u32::MAX), (52, u32::MAX), (56, 0)] {
++            let mut malformed = fixture.clone();
++            malformed[offset..offset + 4].copy_from_slice(&value.to_le_bytes());
++            assert!(parse_loader_cache(&malformed).is_err());
++        }
++        for endian in [1, 3] {
++            let mut malformed = fixture.clone();
++            malformed[28] = endian;
++            assert!(parse_loader_cache(&malformed).is_err());
++        }
++        for (name, path) in [
++            ("libtest.so.1", "relative/libtest.so.1"),
++            ("libtest.so.1", "/configured/../libtest.so.1"),
++            ("../libtest.so.1", "/configured/libtest.so.1"),
++            ("libtest.so.1", "/"),
++        ] {
++            assert!(
++                parse_loader_cache(&loader_cache_fixture(&[(name, Path::new(path), 0x303, 0)]))
++                    .is_err()
++            );
++        }
++        assert!(parse_loader_cache(&vec![0; MAX_LOADER_CACHE_BYTES + 1]).is_err());
++    }
++
++    #[test]
++    fn loader_cache_checks_abi_stale_entries_and_first_match() -> Result<()> {
++        reset_elf_resolution_cache();
++        let tmp = test_tempdir()?;
++        let native = tmp.path().join("native");
++        let other = tmp.path().join("other");
++        let foreign = tmp.path().join("foreign");
++        write_loader_test_elf(&native, 2, 62)?;
++        write_loader_test_elf(&other, 2, 62)?;
++        write_loader_test_elf(&foreign, 1, 3)?;
++        let abi = elf_abi(&fs::read(&native).expect("read test ELF"))?;
++        let mut cache = HashMap::from([(
++            "libtest.so.1".into(),
++            vec![
++                tmp.path().join("stale"),
++                foreign.clone(),
++                native.clone(),
++                native.clone(),
++            ],
++        )]);
++        assert_eq!(
++            resolve_cached_library(&cache, "libtest.so.1", abi)?,
++            Some(cached_canonicalize(&native)?)
++        );
++        assert_eq!(resolve_cached_library(&cache, "libabsent.so.1", abi)?, None);
++        // A cached result for one ELF class must not be reused for another.
++        let requester64 = tmp.path().join("requester64");
++        let requester32 = tmp.path().join("requester32");
++        write_loader_test_elf(&requester64, 2, 62)?;
++        write_loader_test_elf(&requester32, 1, 3)?;
++        ELF_LOADER_CACHE.with(|slot| *slot.borrow_mut() = Some(Ok(cache.clone())));
++        assert_eq!(
++            resolve_shared_library("libtest.so.1", &[], None, true, &requester64,)?,
++            cached_canonicalize(&native)?
++        );
++        assert_eq!(
++            resolve_shared_library("libtest.so.1", &[], None, true, &requester32,)?,
++            cached_canonicalize(&foreign)?
++        );
++        assert!(
++            resolve_shared_library("libtest.so.1", &[], None, false, &requester64,).is_err(),
++            "non-native loaders must ignore the glibc cache"
++        );
++        cache.insert("libtest.so.1".into(), vec![foreign]);
++        assert_eq!(resolve_cached_library(&cache, "libtest.so.1", abi)?, None);
++        // Slotted libraries can have the same SONAME and ABI. Only the first
++        // eligible path in cache order must be returned, never all slots.
++        let ordered = loader_cache_fixture(&[
++            ("libtest.so.1", &native, 0x303, 0),
++            ("libtest.so.1", &other, 0x303, 0),
++        ]);
++        cache = parse_loader_cache(&ordered)?;
++        assert_eq!(
++            resolve_cached_library(&cache, "libtest.so.1", abi)?,
++            Some(cached_canonicalize(&native)?)
++        );
++        cache
++            .get_mut("libtest.so.1")
++            .expect("fixture SONAME")
++            .reverse();
++        assert_eq!(
++            resolve_cached_library(&cache, "libtest.so.1", abi)?,
++            Some(cached_canonicalize(&other)?)
++        );
++        fs::write(&other, b"not an ELF library").expect("replace test ELF");
++        cache.insert("libtest.so.1".into(), vec![native.clone(), other.clone()]);
++        assert_eq!(
++            resolve_cached_library(&cache, "libtest.so.1", abi)?,
++            Some(cached_canonicalize(&native)?)
++        );
++        cache.insert("libtest.so.1".into(), vec![other]);
++        assert!(resolve_cached_library(&cache, "libtest.so.1", abi).is_err());
++        Ok(())
++    }
++
+     #[test]
+     fn resolve_shared_library_falls_back_to_interpreter_dir_when_runpath_empty() -> Result<()> {
+         // Regression for the Nix/NixOS case: a NEEDED entry with no RPATH/
+@@ -7992,8 +8259,13 @@
+                     source,
+                 })?;
+ 
+-        let resolved =
+-            resolve_shared_library("libneeded.so.1", &[], Some(&interp_dir), Path::new("/prog"))?;
++        let resolved = resolve_shared_library(
++            "libneeded.so.1",
++            &[],
++            Some(&interp_dir),
++            false,
++            Path::new("/prog"),
++        )?;
+ 
+         assert_eq!(
+             resolved, lib_canon,
+@@ -8038,6 +8310,7 @@
+             "libneeded.so.1",
+             &[rpath_dir.to_string_lossy().into_owned()],
+             Some(&interp_dir),
++            false,
+             Path::new("/prog"),
+         )?;
+ 
+@@ -8063,6 +8336,7 @@
+             "libmissing.so.1",
+             &[],
+             Some(&interp_dir),
++            false,
+             Path::new("/prog"),
+         )
+         .expect_err("missing NEEDED entry must error");

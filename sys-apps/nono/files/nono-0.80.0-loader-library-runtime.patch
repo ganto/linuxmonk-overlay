@@ -1,0 +1,335 @@
+Match glibc cache selection, CPU variants and stale-path fallback.
+
+Select one pathname by ABI/ISA/cache metadata before opening it. An unavailable
+selected pathname falls through to defaults, never another cache slot. Parse
+bounded glibc-hwcaps extensions and prefer the highest active built-in level.
+
+Query only the root-owned native interpreter with --list-diagnostics and no
+program argument. Clear its environment and bound output/time. This uses
+glibc's own CPU/OS eligibility and default directories, not an approximate
+CPUID implementation. Apply hwcaps to directory searches too. Reject nonempty
+child loader-selection overrides after every environment source is applied.
+Supports native x86-64 glibc >= 2.37; unsupported diagnostics fail closed.
+
+Apply after nono-0.80.0-resolve-loader-libraries.patch.
+
+--- a/crates/nono-cli/src/tool-sandbox/platform/linux.rs
++++ b/crates/nono-cli/src/tool-sandbox/platform/linux.rs
+@@ -6192,6 +6192,317 @@
+     Ok(entries)
+ }
+ 
++fn loader_cache_hwcaps(
++    whole: &[u8],
++    offset: usize,
++    base: usize,
++    strings_start: usize,
++    strings_end: usize,
++) -> Result<Vec<String>> {
++    if offset == 0 {
++        return Ok(Vec::new());
++    }
++    if offset % 4 != 0 || offset < base + strings_end {
++        return Err(invalid_loader_cache());
++    }
++    let directory = whole.get(offset..).ok_or_else(invalid_loader_cache)?;
++    if le_u32(directory, 0)? != 0u32.wrapping_sub(358342284) {
++        return Err(invalid_loader_cache());
++    }
++    let count = le_u32(directory, 4)? as usize;
++    if count > directory.len().saturating_sub(8) / 16 {
++        return Err(invalid_loader_cache());
++    }
++    let mut names = None;
++    for idx in 0..count {
++        let entry = 8 + idx * 16;
++        let start = le_u32(directory, entry + 8)? as usize;
++        let size = le_u32(directory, entry + 12)? as usize;
++        let end = start.checked_add(size).ok_or_else(invalid_loader_cache)?;
++        let section = whole.get(start..end).ok_or_else(invalid_loader_cache)?;
++        if le_u32(directory, entry)? != 1 {
++            continue;
++        }
++        if names.is_some()
++            || le_u32(directory, entry + 4)? != 0
++            || start % 4 != 0
++            || size == 0
++            || size % 4 != 0
++            || size > 4096
++        {
++            return Err(invalid_loader_cache());
++        }
++        let mut values = Vec::new();
++        for idx in (0..size).step_by(4) {
++            let string_offset = le_u32(section, idx)? as usize;
++            if !(base + strings_start..base + strings_end).contains(&string_offset) {
++                return Err(invalid_loader_cache());
++            }
++            values.push(read_cstr_string(
++                &whole[..(string_offset + 256).min(base + strings_end)],
++                string_offset,
++            )?);
++        }
++        names = Some(values);
++    }
++    Ok(names.unwrap_or_default())
++}
++
++fn resolve_cached_library(
++    cache: &LoaderCache,
++    name: &str,
++    abi: ElfAbi,
++    cpu_level: u8,
++) -> Result<Option<PathBuf>> {
++    let flags = match (abi.class, abi.machine) {
++        (2, 62) => 0x303,
++        (1, 3) => 3,
++        (1, 62) => 0x803,
++        _ => return Err(invalid_loader_cache()),
++    };
++    let mut selected: Option<&LoaderCacheEntry> = None;
++    for entry in cache.get(name).into_iter().flatten() {
++        if entry.flags != flags || entry.level > cpu_level || entry.isa >= cpu_level as u16 {
++            continue;
++        }
++        // Cache order breaks ties; active named hwcaps outrank all baselines.
++        if selected.is_none_or(|previous| entry.level > previous.level) {
++            selected = Some(entry);
++        }
++        if entry.level == 1 {
++            break;
++        }
++    }
++    // Select by metadata before touching the filesystem. glibc opens only this
++    // pathname, then tries default directories on ENOENT or wrong architecture.
++    match selected {
++        Some(entry) => open_loader_library(&entry.path, abi),
++        None => Ok(None),
++    }
++}
++
++fn open_loader_library(path: &Path, abi: ElfAbi) -> Result<Option<PathBuf>> {
++    let mut file = match File::open(path) {
++        Ok(file) => file,
++        Err(err)
++            if matches!(
++                err.raw_os_error(),
++                Some(libc::ENOENT | libc::ENOTDIR | libc::EACCES)
++            ) =>
++        {
++            return Ok(None);
++        }
++        Err(source) => {
++            return Err(NonoError::ConfigRead {
++                path: path.to_path_buf(),
++                source,
++            });
++        }
++    };
++    let mut header = [0; 64];
++    file.read_exact(&mut header)
++        .map_err(|source| NonoError::ConfigRead {
++            path: path.to_path_buf(),
++            source,
++        })?;
++    if elf_abi(&header)? != abi {
++        return Ok(None);
++    }
++    // Only shared objects, never arbitrary data files or executables.
++    if le_u16(&header, 16)? != 3 {
++        return Err(invalid_loader_cache());
++    }
++    cached_canonicalize(path).map(Some)
++}
++
++fn resolve_in_loader_dir(
++    dir: &Path,
++    name: &str,
++    abi: ElfAbi,
++    cpu_level: u8,
++) -> Result<Option<PathBuf>> {
++    for level in (2..=cpu_level).rev() {
++        let path = dir.join(format!("glibc-hwcaps/x86-64-v{level}")).join(name);
++        if let Some(path) = open_loader_library(&path, abi)? {
++            return Ok(Some(path));
++        }
++    }
++    open_loader_library(&dir.join(name), abi)
++}
++
++/// The closure is prepared before a request's environment exists. Default
++/// filtering drops LD_* but explicit export_env can re-admit them, and
++/// GLIBC_TUNABLES can arrive through set_vars/allow_vars. Reject overrides
++/// after every environment source has been applied, without logging values.
++fn validate_loader_selection_env(env: &[Vec<u8>]) -> Result<()> {
++    if cfg!(all(target_env = "gnu", target_arch = "x86_64")) {
++        for name in [
++            "GLIBC_TUNABLES",
++            "LD_HWCAP_MASK",
++            "LD_LIBRARY_PATH",
++            "LD_PRELOAD",
++            "LD_AUDIT",
++        ] {
++            let prefix = format!("{name}=");
++            if env
++                .iter()
++                .any(|entry| entry.starts_with(prefix.as_bytes()) && entry.len() > prefix.len())
++            {
++                return Err(NonoError::SandboxInit(format!(
++                    "command-mediation cannot model loader override '{name}'"
++                )));
++            }
++        }
++    }
++    Ok(())
++}
++
++#[derive(Clone, Debug, Eq, PartialEq)]
++struct LoaderCpu {
++    level: u8,
++    default_dirs: Vec<PathBuf>,
++}
++
++fn native_loader_cpu() -> Result<LoaderCpu> {
++    ELF_LOADER_CPU.with(|slot| {
++        let mut slot = slot.borrow_mut();
++        let result = slot.get_or_insert_with(|| {
++            (|| -> Result<LoaderCpu> {
++                let native = cached_canonicalize(Path::new("/proc/self/exe"))?;
++                let interpreter = parse_elf_cached(&native)?
++                    .interpreter
++                    .ok_or_else(invalid_loader_cache)?;
++                read_loader_cpu(&interpreter)
++            })()
++            .map_err(|err| err.to_string())
++        });
++        result.clone().map_err(NonoError::SandboxInit)
++    })
++}
++
++/// Query only our already-running, root-owned native interpreter, with no ELF
++/// filename argument. --list-diagnostics exits before loading any program.
++/// Unlike --list on an untrusted ELF, this cannot load its DT_AUDIT objects.
++/// Use an empty environment, a 1 MiB output limit and a two-second deadline.
++fn read_loader_cpu(interpreter: &Path) -> Result<LoaderCpu> {
++    let failure = || {
++        NonoError::SandboxInit("native glibc loader diagnostics unavailable or unsupported".into())
++    };
++    let metadata = fs::metadata(interpreter).map_err(|_| failure())?;
++    if !interpreter.is_absolute()
++        || !metadata.is_file()
++        || metadata.uid() != 0
++        || metadata.mode() & 0o022 != 0
++    {
++        return Err(failure());
++    }
++    let (mut reader, writer) = UnixStream::pair().map_err(|_| failure())?;
++    reader.set_nonblocking(true).map_err(|_| failure())?;
++    let mut child = Command::new(interpreter)
++        .arg("--list-diagnostics")
++        .env_clear()
++        .stdin(Stdio::null())
++        .stdout(OwnedFd::from(writer))
++        .stderr(Stdio::null())
++        .spawn()
++        .map_err(|_| failure())?;
++    let result = (|| {
++        let deadline = std::time::Instant::now() + std::time::Duration::from_secs(2);
++        let mut output = Vec::new();
++        let mut exited = None;
++        loop {
++            let mut buffer = [0; 8192];
++            match reader.read(&mut buffer) {
++                Ok(0) if exited.is_some() => break,
++                Ok(len) => output.extend_from_slice(&buffer[..len]),
++                Err(err) if err.kind() == std::io::ErrorKind::WouldBlock => {}
++                Err(err) if err.kind() == std::io::ErrorKind::Interrupted => continue,
++                Err(_) => return Err(failure()),
++            }
++            if output.len() > 1024 * 1024 || std::time::Instant::now() >= deadline {
++                return Err(failure());
++            }
++            if exited.is_none() {
++                exited = child.try_wait().map_err(|_| failure())?;
++            }
++            std::thread::sleep(std::time::Duration::from_millis(1));
++        }
++        if !exited.is_some_and(|status| status.success()) {
++            return Err(failure());
++        }
++        parse_loader_cpu(&output)
++    })();
++    if result.is_err() {
++        let _ = child.kill();
++        let _ = child.wait();
++    }
++    result
++}
++
++fn parse_loader_cpu(output: &[u8]) -> Result<LoaderCpu> {
++    if output.len() > 1024 * 1024 {
++        return Err(invalid_loader_cache());
++    }
++    let text = std::str::from_utf8(output).map_err(|_| invalid_loader_cache())?;
++    let field = |prefix: &str| -> Result<&str> {
++        let mut matches = text.lines().filter_map(|line| line.strip_prefix(prefix));
++        let value = matches.next().ok_or_else(invalid_loader_cache)?;
++        if matches.next().is_some() {
++            return Err(invalid_loader_cache());
++        }
++        Ok(value)
++    };
++    if field("dl_hwcaps_subdirs=")? != "\"x86-64-v4:x86-64-v3:x86-64-v2\"" {
++        return Err(invalid_loader_cache());
++    }
++    let version = field("version.version=")?;
++    let minor = version
++        .strip_prefix("\"2.")
++        .and_then(|v| v.strip_suffix('"'))
++        .and_then(|v| v.parse::<u32>().ok())
++        .ok_or_else(invalid_loader_cache)?;
++    if minor < 37 {
++        return Err(invalid_loader_cache());
++    }
++    let level = match field("dl_hwcaps_subdirs_active=")? {
++        "0x0" => 1,
++        "0x4" => 2,
++        "0x6" => 3,
++        "0x7" => 4,
++        _ => return Err(invalid_loader_cache()),
++    };
++    let mut default_dirs = Vec::new();
++    for line in text
++        .lines()
++        .filter(|line| line.starts_with("path.system_dirs["))
++    {
++        let prefix = format!("path.system_dirs[0x{:x}]=", default_dirs.len());
++        let path = line
++            .strip_prefix(&prefix)
++            .and_then(|s| s.strip_prefix('"'))
++            .and_then(|s| s.strip_suffix('"'))
++            .ok_or_else(invalid_loader_cache)?;
++        if default_dirs.len() >= 32
++            || path.len() > 4096
++            || path.contains(['\\', '"'])
++            || !Path::new(path).is_absolute()
++            || Path::new(path)
++                .components()
++                .any(|c| matches!(c, std::path::Component::ParentDir))
++        {
++            return Err(invalid_loader_cache());
++        }
++        default_dirs.push(PathBuf::from(path));
++    }
++    if default_dirs.is_empty() {
++        return Err(invalid_loader_cache());
++    }
++    Ok(LoaderCpu {
++        level,
++        default_dirs,
++    })
++}
++
+ fn vaddr_to_offset(vaddr: u64, loads: &[LoadSegment]) -> Option<usize> {
+     loads.iter().find_map(|load| {
+         let end = load.vaddr.checked_add(load.filesz)?;
