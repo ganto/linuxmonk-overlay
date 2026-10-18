@@ -1,14 +1,14 @@
 Regression tests for native glibc loader-cache resolution.
 
-Apply after nono-0.80.0-resolve-loader-libraries.patch. Cover non-default
-locations, exact SONAME lookup, versioned filenames, excluded hwcaps entries,
+Apply after nono-0.80.0-loader-library-runtime.patch. Cover non-default
+locations, exact SONAME lookup, versioned filenames, excluded legacy hwcaps,
 ordered same-ABI alternatives, ABI-sensitive memoization, malformed caches,
 stale entries, per-pass reset and fail-closed errors. Preserve existing
 interpreter-directory precedence regressions with the new resolver argument.
 
 --- a/crates/nono-cli/src/tool-sandbox/platform/linux.rs
 +++ b/crates/nono-cli/src/tool-sandbox/platform/linux.rs
-@@ -7967,6 +7967,273 @@
+@@ -7967,6 +7967,288 @@
          Ok(())
      }
  
@@ -111,7 +111,7 @@ interpreter-directory precedence regressions with the new resolver argument.
 +                "libloader-precedence.so.1",
 +                &[],
 +                Some(tmp.path()),
-+                true,
++                false,
 +                &requester,
 +            )?,
 +            cached_canonicalize(&library)?
@@ -128,13 +128,13 @@ interpreter-directory precedence regressions with the new resolver argument.
 +    }
 +
 +    #[test]
-+    fn loader_cache_parses_new_and_compat_and_ignores_hwcaps() -> Result<()> {
++    fn loader_cache_parses_new_and_compat_and_ignores_legacy_hwcaps() -> Result<()> {
 +        let fixture = loader_cache_fixture(&[
 +            (
 +                "libbase.so.1",
 +                Path::new("/configured/glibc-hwcaps/x86-64-v3/libbase.so.1.2"),
 +                0x303,
-+                1 << 62,
++                1 << 1,
 +            ),
 +            (
 +                "libbase.so.1",
@@ -153,12 +153,18 @@ interpreter-directory precedence regressions with the new resolver argument.
 +        let parsed = parse_loader_cache(&fixture)?;
 +        assert_eq!(parsed.len(), 2);
 +        assert_eq!(
-+            parsed["libbase.so.1"],
-+            vec![PathBuf::from("/configured/libbase.so.1")]
++            parsed["libbase.so.1"]
++                .iter()
++                .map(|entry| &entry.path)
++                .collect::<Vec<_>>(),
++            vec![Path::new("/configured/libbase.so.1")]
 +        );
 +        assert_eq!(
-+            parsed["libversioned.so.1"],
-+            vec![PathBuf::from("/configured/libversioned.so.1.2")]
++            parsed["libversioned.so.1"]
++                .iter()
++                .map(|entry| &entry.path)
++                .collect::<Vec<_>>(),
++            vec![Path::new("/configured/libversioned.so.1.2")]
 +        );
 +        // One old-format entry and four alignment bytes precede the new header.
 +        let mut compat = vec![0; 32];
@@ -215,20 +221,23 @@ interpreter-directory precedence regressions with the new resolver argument.
 +        write_loader_test_elf(&other, 2, 62)?;
 +        write_loader_test_elf(&foreign, 1, 3)?;
 +        let abi = elf_abi(&fs::read(&native).expect("read test ELF"))?;
-+        let mut cache = HashMap::from([(
-+            "libtest.so.1".into(),
-+            vec![
-+                tmp.path().join("stale"),
-+                foreign.clone(),
-+                native.clone(),
-+                native.clone(),
-+            ],
-+        )]);
++        let mut cache = parse_loader_cache(&loader_cache_fixture(&[
++            ("libtest.so.1", &tmp.path().join("stale"), 0x303, 0),
++            ("libtest.so.1", &foreign, 3, 0),
++            ("libtest.so.1", &native, 0x303, 0),
++        ]))?;
++        // A stale selected pathname falls through to default directories,
++        // never to another cache slot with the same SONAME and ABI.
++        assert_eq!(resolve_cached_library(&cache, "libtest.so.1", abi, 1)?, None);
++        cache
++            .get_mut("libtest.so.1")
++            .expect("fixture SONAME")
++            .remove(0);
 +        assert_eq!(
-+            resolve_cached_library(&cache, "libtest.so.1", abi)?,
++            resolve_cached_library(&cache, "libtest.so.1", abi, 1)?,
 +            Some(cached_canonicalize(&native)?)
 +        );
-+        assert_eq!(resolve_cached_library(&cache, "libabsent.so.1", abi)?, None);
++        assert_eq!(resolve_cached_library(&cache, "libabsent.so.1", abi, 1)?, None);
 +        // A cached result for one ELF class must not be reused for another.
 +        let requester64 = tmp.path().join("requester64");
 +        let requester32 = tmp.path().join("requester32");
@@ -247,8 +256,8 @@ interpreter-directory precedence regressions with the new resolver argument.
 +            resolve_shared_library("libtest.so.1", &[], None, false, &requester64,).is_err(),
 +            "non-native loaders must ignore the glibc cache"
 +        );
-+        cache.insert("libtest.so.1".into(), vec![foreign]);
-+        assert_eq!(resolve_cached_library(&cache, "libtest.so.1", abi)?, None);
++        cache = parse_loader_cache(&loader_cache_fixture(&[("libtest.so.1", &foreign, 3, 0)]))?;
++        assert_eq!(resolve_cached_library(&cache, "libtest.so.1", abi, 1)?, None);
 +        // Slotted libraries can have the same SONAME and ABI. Only the first
 +        // eligible path in cache order must be returned, never all slots.
 +        let ordered = loader_cache_fixture(&[
@@ -257,7 +266,7 @@ interpreter-directory precedence regressions with the new resolver argument.
 +        ]);
 +        cache = parse_loader_cache(&ordered)?;
 +        assert_eq!(
-+            resolve_cached_library(&cache, "libtest.so.1", abi)?,
++            resolve_cached_library(&cache, "libtest.so.1", abi, 1)?,
 +            Some(cached_canonicalize(&native)?)
 +        );
 +        cache
@@ -265,24 +274,30 @@ interpreter-directory precedence regressions with the new resolver argument.
 +            .expect("fixture SONAME")
 +            .reverse();
 +        assert_eq!(
-+            resolve_cached_library(&cache, "libtest.so.1", abi)?,
++            resolve_cached_library(&cache, "libtest.so.1", abi, 1)?,
 +            Some(cached_canonicalize(&other)?)
 +        );
 +        fs::write(&other, b"not an ELF library").expect("replace test ELF");
-+        cache.insert("libtest.so.1".into(), vec![native.clone(), other.clone()]);
++        cache = parse_loader_cache(&loader_cache_fixture(&[
++            ("libtest.so.1", &native, 0x303, 0),
++            ("libtest.so.1", &other, 0x303, 0),
++        ]))?;
 +        assert_eq!(
-+            resolve_cached_library(&cache, "libtest.so.1", abi)?,
++            resolve_cached_library(&cache, "libtest.so.1", abi, 1)?,
 +            Some(cached_canonicalize(&native)?)
 +        );
-+        cache.insert("libtest.so.1".into(), vec![other]);
-+        assert!(resolve_cached_library(&cache, "libtest.so.1", abi).is_err());
++        cache
++            .get_mut("libtest.so.1")
++            .expect("fixture SONAME")
++            .remove(0);
++        assert!(resolve_cached_library(&cache, "libtest.so.1", abi, 1).is_err());
 +        Ok(())
 +    }
 +
      #[test]
      fn resolve_shared_library_falls_back_to_interpreter_dir_when_runpath_empty() -> Result<()> {
          // Regression for the Nix/NixOS case: a NEEDED entry with no RPATH/
-@@ -7992,8 +8259,13 @@
+@@ -7992,8 +8274,13 @@
                      source,
                  })?;
  
@@ -298,7 +313,7 @@ interpreter-directory precedence regressions with the new resolver argument.
  
          assert_eq!(
              resolved, lib_canon,
-@@ -8038,6 +8310,7 @@
+@@ -8038,6 +8325,7 @@
              "libneeded.so.1",
              &[rpath_dir.to_string_lossy().into_owned()],
              Some(&interp_dir),
@@ -306,7 +321,7 @@ interpreter-directory precedence regressions with the new resolver argument.
              Path::new("/prog"),
          )?;
  
-@@ -8063,6 +8336,7 @@
+@@ -8063,6 +8351,7 @@
              "libmissing.so.1",
              &[],
              Some(&interp_dir),

@@ -573,14 +573,14 @@ BDEPEND="dev-build/cmake"
 PATCHES=(
 	"${FILESDIR}/${P}-preserve-capture-argv0.patch"
 	"${FILESDIR}/${P}-resolve-loader-libraries.patch"
+	"${FILESDIR}/${P}-loader-library-runtime.patch"
 	"${FILESDIR}/${P}-loader-library-tests.patch"
 )
 
-# non_tty_* tests fail in sandbox (/dev/tty absent); child_chaining and
-# tool_gate tests exceed SUN_LEN for Unix sockets under Portage's TMPDIR.
+# non_tty_* tests fail in sandbox (/dev/tty absent).
 CARGO_SKIP_TESTS=(
 	terminal_approval::tests::non_tty_
-	tool_sandbox::linux::tests::child_chaining_caps_do_not_grant_runtime_launch_specs
+	# Gentoo's python-exec wrapper cannot launch an interpreter under this exec gate.
 	exec_strategy::clone_files::tests::tool_gate_with_combined_notifications
 	alias_inventory_script_passes
 	lint_docs_script_passes
@@ -588,6 +588,14 @@ CARGO_SKIP_TESTS=(
 )
 
 DOCS=( README.md )
+
+src_test() {
+	# Command-mediation sockets exceed SUN_LEN under Portage's default TMPDIR.
+	local -x TMPDIR
+	TMPDIR=$(mktemp -d /tmp/nono-test.XXXXXXXX) || die
+	cargo_src_test
+	rm -r -- "${TMPDIR}" || die
+}
 
 src_install() {
 	cargo_src_install --path crates/nono-cli
