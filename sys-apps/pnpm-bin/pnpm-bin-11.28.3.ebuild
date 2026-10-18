@@ -7,7 +7,8 @@ inherit shell-completion
 
 DESCRIPTION="Fast, disk space efficient package manager, alternative to npm and yarn"
 HOMEPAGE="https://pnpm.io"
-SRC_URI="https://registry.npmjs.org/${PN}/-/${PN}-${PV}.tgz"
+MY_PN="pnpm"
+SRC_URI="https://registry.npmjs.org/${MY_PN}/-/${MY_PN}-${PV}.tgz"
 S="${WORKDIR}/package"
 
 LICENSE="MIT"
@@ -18,12 +19,12 @@ KEYWORDS="~amd64 ~arm64"
 RDEPEND="
 	>=net-libs/nodejs-22.13.1
 	!net-libs/nodejs[corepack(-)]
-	!!sys-apps/pnpm-bin
+	!!sys-apps/pnpm
 "
 
 # Pure JavaScript, nothing to strip; dist/node-gyp-bin ships helper scripts.
 RESTRICT="strip"
-QA_PREBUILT="usr/lib/node_modules/${PN}/dist/node-gyp-bin/*"
+QA_PREBUILT="usr/lib/node_modules/${MY_PN}/dist/node-gyp-bin/*"
 
 src_prepare() {
 	default
@@ -35,7 +36,7 @@ src_prepare() {
 }
 
 src_install() {
-	local instdir="/usr/lib/node_modules/${PN}"
+	local instdir="/usr/lib/node_modules/${MY_PN}"
 
 	insinto "${instdir}"
 	doins -r bin dist package.json
@@ -50,20 +51,20 @@ src_install() {
 
 	# Node resolves symlinks to their real path before resolving relative imports,
 	# so the relative ../dist/ reference in bin/pnpm.mjs works correctly via symlink.
-	dosym "../lib/node_modules/${PN}/bin/pnpm.mjs" /usr/bin/pnpm
-	dosym "../lib/node_modules/${PN}/bin/pnpx.mjs" /usr/bin/pnpx
-	dosym "../lib/node_modules/${PN}/bin/pnpm.mjs" /usr/bin/pn
-	dosym "../lib/node_modules/${PN}/bin/pnpx.mjs" /usr/bin/pnx
+	dosym "../lib/node_modules/${MY_PN}/bin/pnpm.mjs" /usr/bin/pnpm
+	dosym "../lib/node_modules/${MY_PN}/bin/pnpx.mjs" /usr/bin/pnpx
+	dosym "../lib/node_modules/${MY_PN}/bin/pnpm.mjs" /usr/bin/pn
+	dosym "../lib/node_modules/${MY_PN}/bin/pnpx.mjs" /usr/bin/pnx
 
 	local shell
 	for shell in bash zsh fish; do
-		sed -e "s/{pkgname}/${PN}/g" \
-			-e "s|{completer}|/usr/bin/${PN}|g" \
-			"${S}/dist/templates/completion.${shell}" > "${T}/${PN}.${shell}" || die
+		sed -e "s/{pkgname}/${MY_PN}/g" \
+			-e "s|{completer}|/usr/bin/${MY_PN}|g" \
+			"${S}/dist/templates/completion.${shell}" > "${T}/${MY_PN}.${shell}" || die
 	done
-	newbashcomp "${T}/${PN}.bash" "${PN}"
-	newzshcomp "${T}/${PN}.zsh" "_${PN}"
-	newfishcomp "${T}/${PN}.fish" "${PN}.fish"
+	newbashcomp "${T}/${MY_PN}.bash" "${MY_PN}"
+	newzshcomp "${T}/${MY_PN}.zsh" "_${MY_PN}"
+	newfishcomp "${T}/${MY_PN}.fish" "${MY_PN}.fish"
 
 	dodoc README.md
 }
