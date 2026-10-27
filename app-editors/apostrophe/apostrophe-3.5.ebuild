@@ -58,6 +58,10 @@ BDEPEND="
 src_prepare() {
 	default
 
+	# --math-method requires pandoc >=3.11, use the older equivalent option
+	sed -i 's/--math-method=mathjax/--mathjax/' \
+		apostrophe/{export_dialog,preview_converter}.py || die
+
 	plocale_find_changes po '' '.po'
 	rm_po() {
 		rm po/${1}.po || die
