@@ -1,11 +1,11 @@
-# Copyright 1999-2024 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{10..13} )
+PYTHON_COMPAT=( python3_{10..15} )
 
-USE_RUBY="ruby31 ruby32 ruby33"
+USE_RUBY="ruby32 ruby33 ruby34 ruby40"
 RUBY_OPTIONAL=yes
 
 inherit cmake python-r1 ruby-ng perl-module
@@ -25,7 +25,7 @@ RESTRICT="mirror"
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
 RDEPEND="
-	sys-libs/zlib
+	virtual/zlib
 	bzip2? ( app-arch/bzip2 )
 	expat? ( dev-libs/expat )
 	!expat? ( dev-libs/libxml2 )
@@ -47,6 +47,11 @@ BDEPEND="
 	sys-devel/gettext
 	virtual/pkgconfig
 "
+
+PATCHES=(
+	"${FILESDIR}"/0.7.36-Python-Provide-dist-info-metadata.patch
+	"${FILESDIR}"/0.7.36-Add-INSTALLER-to-Python-metadata.patch
+)
 
 pkg_setup() {
 	use perl && perl_set_version
@@ -112,10 +117,12 @@ src_configure() {
 }
 
 pysolv_phase_func() {
+	pushd "${BUILD_DIR}"
 	cmake_${EBUILD_PHASE_FUNC} bindings_python
 	if [[ "${EBUILD_PHASE_FUNC}" == "src_install" ]]; then
 		python_optimize "${D}${PYTHON_SITEDIR}"
 	fi
+	popd
 }
 
 src_compile() {
