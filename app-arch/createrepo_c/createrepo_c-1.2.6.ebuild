@@ -16,12 +16,7 @@ KEYWORDS="~amd64"
 IUSE="doc drpm legacy modulemd test zchunk"
 RESTRICT="!test? ( test )"
 
-BDEPEND="
-	doc? (
-		app-text/doxygen
-		dev-python/sphinx
-	)
-"
+BDEPEND="doc? ( app-text/doxygen )"
 
 DEPEND="
 	app-arch/bzip2:=
@@ -64,7 +59,7 @@ src_compile() {
 	cmake_src_compile
 	# Tests have a magic target!
 	use test && cmake_src_compile tests
-	use doc && cmake_src_compile doc
+	use doc && cmake_src_compile doc-c
 }
 
 src_test() {
