@@ -10,8 +10,8 @@ MY_PN="${PN%-bin}"
 DESCRIPTION="Fast JavaScript runtime, bundler, test runner, and package manager"
 HOMEPAGE="https://bun.sh https://github.com/oven-sh/bun"
 SRC_URI="
-	amd64? ( https://github.com/oven-sh/bun/releases/download/${MY_PN}-v${PV}/${MY_PN}-linux-x64.zip )
-	arm64? ( https://github.com/oven-sh/bun/releases/download/${MY_PN}-v${PV}/${MY_PN}-linux-aarch64.zip )
+	amd64? ( https://github.com/oven-sh/bun/releases/download/${MY_PN}-v${PV}/${MY_PN}-linux-x64.zip -> ${P}-linux-x64.zip )
+	arm64? ( https://github.com/oven-sh/bun/releases/download/${MY_PN}-v${PV}/${MY_PN}-linux-aarch64.zip -> ${P}-linux-aarch64.zip )
 	https://raw.githubusercontent.com/oven-sh/bun/${MY_PN}-v${PV}/LICENSE.md -> ${P}-LICENSE.md
 "
 S="${WORKDIR}"
