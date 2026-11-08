@@ -21,13 +21,14 @@ SLOT="0"
 KEYWORDS="~amd64"
 
 RDEPEND="
-	>=dev-python/aiohttp-3.14.3[${PYTHON_USEDEP}]
+	>=dev-python/aiohttp-3.14.5[${PYTHON_USEDEP}]
 	<dev-python/aiohttp-4[${PYTHON_USEDEP}]
 	>=dev-python/aiohttp-retry-2.9.1[${PYTHON_USEDEP}]
-	>=dev-python/certifi-2026.7.22[${PYTHON_USEDEP}]
+	>=dev-python/certifi-2024.7.4[${PYTHON_USEDEP}]
 	>=dev-python/durationpy-0.11[${PYTHON_USEDEP}]
-	>=dev-python/pydantic-2.13.5[${PYTHON_USEDEP}]
-	>=dev-python/python-dateutil-2.8.2[${PYTHON_USEDEP}]
+	>=dev-python/oauthlib-4.0.0[${PYTHON_USEDEP}]
+	>=dev-python/pydantic-2.14.2[${PYTHON_USEDEP}]
+	>=dev-python/python-dateutil-3.0.0[${PYTHON_USEDEP}]
 	>=dev-python/pyyaml-6.0.3[${PYTHON_USEDEP}]
 	dev-python/requests[${PYTHON_USEDEP}]
 	dev-python/requests-oauthlib[${PYTHON_USEDEP}]
@@ -37,7 +38,7 @@ RDEPEND="
 	>=dev-python/websocket-client-0.32.0[${PYTHON_USEDEP}]
 "
 BDEPEND="
-	>=dev-python/setuptools-84.0.0[${PYTHON_USEDEP}]
+	>=dev-python/setuptools-84.2.1[${PYTHON_USEDEP}]
 "
 
 DOCS=( CHANGELOG.md CONTRIBUTING.md README.md )
