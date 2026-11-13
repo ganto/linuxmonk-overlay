@@ -5,7 +5,7 @@ EAPI=8
 
 inherit go-module toolchain-funcs shell-completion
 
-GIT_COMMIT=bec5b06ed841fe5269972d864d5177944fd5970f
+GIT_COMMIT=8346aaa55e7161f7c547212d0a87f01367976727
 
 DESCRIPTION="Kubernetes Package Manager"
 HOMEPAGE="https://helm.sh https://github.com/helm/helm"
