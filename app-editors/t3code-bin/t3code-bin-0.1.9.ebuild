@@ -62,6 +62,7 @@ src_prepare() {
 	rm opt/t3code/resources/apparmor-profile || die
 	rm -r \
 		opt/t3code/resources/app.asar.unpacked/node_modules/@ff-labs/fff-bin-linux-x64-musl \
+		opt/t3code/resources/app.asar.unpacked/node_modules/@koromix/koffi-linux-x64/musl_x64 \
 		opt/t3code/resources/app.asar.unpacked/node_modules/@yuuang/ffi-rs-linux-x64-musl \
 		opt/t3code/resources/app.asar.unpacked/node_modules/node-pty/prebuilds/linux-arm64 || die
 }
