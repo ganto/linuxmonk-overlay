@@ -7,8 +7,7 @@ upstreams:
     strategy: fast
   groups:
     # these external DNS resolvers will be used. Blocky picks 2 random resolvers from the list for each query
-    # format for resolver: [net:]host:[port][/path][#commonname]. net could be empty (default, shortcut for tcp+udp), tcp+udp, tcp, udp, tcp-tls or https (DoH).
-    # If port is empty, default port will be used (53 for udp and tcp, 853 for tcp-tls, 443 for https (Doh))
+    # format for resolver: [net:]host[:port][/path][#commonname]. net could be empty (default, shortcut for tcp+udp), tcp+udp, tcp-tls, https (DoH) or quic (DoQ). If port is empty, default port will be used (53 for tcp+udp, 853 for tcp-tls and quic, 443 for https (DoH))
     # alternative format: DNS Stamp (sdns://...) - compact format that encodes all parameters including optional certificate hashes for automatic certificate pinning
     # this configuration is mandatory, please define at least one external DNS resolver
     default:
@@ -80,6 +79,8 @@ conditional:
   #mapping:
   #  fritz.box: 192.168.178.1
   #  lan.net: 192.168.178.1,192.168.178.2
+  #  # forward an entire TLD (e.g. all *.xyz) to a specific resolver
+  #  # xyz: 1.1.1.1
 
 # optional: use allow/denylists to block queries (for example ads, trackers, adult pages etc.)
 blocking:
@@ -98,7 +99,8 @@ blocking:
     #  - https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews/hosts
   # definition of allowlist groups.
   # Note: if the same group has both allow/denylists, allowlists take precedence. Meaning if a domain is both blocked and allowed, it will be allowed.
-  # If a group has only allowlist entries, only domains from this list are allowed, and all others be blocked.
+  # If every group assigned to a client has only allowlist entries, that client is in exclusive
+  # allow mode: only domains from those lists are allowed, and all others are blocked.
   allowlists:
     #ads:
     #  - allowlist.txt
@@ -142,8 +144,9 @@ blocking:
   # which response will be sent, if query is blocked:
   # zeroIp: 0.0.0.0 will be returned (default)
   # nxDomain: return NXDOMAIN as return code
-  # comma separated list of destination IP addresses (for example: 192.100.100.15, 2001:0db8:85a3:08d3:1319:8a2e:0370:7344).
-  # Should contain ipv4 and ipv6 to cover all query types. Useful with running web server on this address to display the "blocked" page.
+  # refused: return REFUSED as return code, for every query type. Note that stub resolvers commonly treat REFUSED
+  #   as a server failure and fall back to another configured DNS server, which bypasses blocking.
+  # comma separated list of destination IP addresses (for example: 192.100.100.15, 2001:0db8:85a3:08d3:1319:8a2e:0370:7344). Should contain ipv4 and ipv6 to cover all query types. Useful with running web server on this address to display the "blocked" page.
   blockType: zeroIp
   # optional: TTL for answers to blocked domains
   # default: 6h
@@ -246,6 +249,11 @@ prometheus:
   enable: true
   # url path, optional (default '/metrics')
   path: /metrics
+
+# optional: serve the Go profiler (pprof) endpoints under /debug on the HTTP(S) listeners
+pprof:
+  # default: true
+  enable: false
 
 # optional: write query information (question, answer, client, duration etc.) to daily csv file
 queryLog:
@@ -473,6 +481,18 @@ log:
   level: info
   # optional: Log format (text or json). Default: text
   format: text
+  # optional: where log entries go (stdout, stderr or syslog). Default: stdout
+  target: stdout
+  # optional: used when target is syslog
+  syslog:
+    # optional: empty for the local syslog socket, else udp or tcp. Default: empty
+    network: ""
+    # optional: host:port of the syslog server, when network is set
+    address: ""
+    # optional: tag each entry is logged under. Default: blocky
+    tag: blocky
+    # optional: syslog facility (daemon, user or local0-local7). Default: daemon
+    facility: daemon
   # optional: log timestamps. Default: true
   timestamp: true
   # optional: obfuscate log output (replace all alphanumeric characters with *) for user sensitive data like request domains or responses to increase privacy.
