@@ -28,7 +28,7 @@ RDEPEND="
 	>=dev-python/durationpy-0.11[${PYTHON_USEDEP}]
 	>=dev-python/oauthlib-4.0.0[${PYTHON_USEDEP}]
 	>=dev-python/pydantic-2.14.2[${PYTHON_USEDEP}]
-	>=dev-python/python-dateutil-3.0.0[${PYTHON_USEDEP}]
+	>=dev-python/python-dateutil-2.8.2[${PYTHON_USEDEP}]
 	>=dev-python/pyyaml-6.0.3[${PYTHON_USEDEP}]
 	dev-python/requests[${PYTHON_USEDEP}]
 	dev-python/requests-oauthlib[${PYTHON_USEDEP}]
