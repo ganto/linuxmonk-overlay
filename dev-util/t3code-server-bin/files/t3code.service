@@ -1,0 +1,13 @@
+[Unit]
+Description=T3 Code server
+
+[Service]
+Type=simple
+WorkingDirectory=%h
+Environment=T3CODE_HOME=%h/.t3
+ExecStart=/usr/bin/t3 serve --no-browser
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target
