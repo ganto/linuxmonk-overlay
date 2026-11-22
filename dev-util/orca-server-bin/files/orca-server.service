@@ -1,0 +1,12 @@
+[Unit]
+Description=Orca server
+
+[Service]
+Type=simple
+WorkingDirectory=%h
+ExecStart=/usr/bin/orca-server serve
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target
