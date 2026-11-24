@@ -79,6 +79,8 @@ conditional:
   #mapping:
   #  fritz.box: 192.168.178.1
   #  lan.net: 192.168.178.1,192.168.178.2
+  #  # forward an entire TLD (e.g. all *.xyz) to a specific resolver
+  #  # xyz: 1.1.1.1
 
 # optional: use allow/denylists to block queries (for example ads, trackers, adult pages etc.)
 blocking:
@@ -247,6 +249,15 @@ prometheus:
   enable: true
   # url path, optional (default '/metrics')
   path: /metrics
+  # use the client name (or IP) as the "client" label on blocky_query_total and
+  # blocky_client_response_total. Set to false to collapse the label to a single
+  # "unknown" value and bound metric cardinality (default: true)
+  enableClientLabel: true
+
+# optional: serve the Go profiler (pprof) endpoints under /debug on the HTTP(S) listeners
+pprof:
+  # default: true
+  enable: false
 
 # optional: write query information (question, answer, client, duration etc.) to daily csv file
 queryLog:
@@ -474,6 +485,18 @@ log:
   level: info
   # optional: Log format (text or json). Default: text
   format: text
+  # optional: where log entries go (stdout, stderr or syslog). Default: stdout
+  target: stdout
+  # optional: used when target is syslog
+  syslog:
+    # optional: empty for the local syslog socket, else udp or tcp. Default: empty
+    network: ""
+    # optional: host:port of the syslog server, when network is set
+    address: ""
+    # optional: tag each entry is logged under. Default: blocky
+    tag: blocky
+    # optional: syslog facility (daemon, user or local0-local7). Default: daemon
+    facility: daemon
   # optional: log timestamps. Default: true
   timestamp: true
   # optional: obfuscate log output (replace all alphanumeric characters with *) for user sensitive data like request domains or responses to increase privacy.
@@ -515,17 +538,18 @@ dnssec:
   # default: false
   validate: true
 
-  # Maximum domain label depth for chain of trust validation
-  # Prevents DoS with deeply nested domains (e.g., a.b.c.d.e.f.g.h.i.j.example.com)
+  # Maximum number of zones in a chain of trust below its trust anchor
+  # Prevents DoS with long chains of delegations; labels that are no zone of their own are not counted
   # default: 10
   maxChainDepth: 10
 
-  # How long to cache validation results (in hours)
-  # Improves performance by avoiding repeated validation of the same domains
+  # How long to cache validation results at most (in hours)
+  # Improves performance by avoiding repeated validation of the same domains; a result is dropped
+  # earlier when the TTL or the signature of the records that proved it ends
   # default: 1
   cacheExpirationHours: 1
 
-  # Maximum upstream DNS queries per validation request
+  # Maximum upstream DNS queries (DNSKEY/DS lookups) that the validation for one client query makes
   # Protects against DoS attacks with queries requiring many upstream lookups
   # (e.g., deeply nested delegation chains requiring DNSKEY + DS queries per level)
   # Validation will fail if budget is exhausted
